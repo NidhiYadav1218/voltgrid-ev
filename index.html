@@ -1770,6 +1770,7 @@
       };
 
       try {
+        // 1. Save booking document to MongoDB Atlas
         const res = await fetch('/api/bookings', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1781,7 +1782,7 @@
           throw new Error(errData.error || ('Server returned HTTP ' + res.status));
         }
 
-        // Only lock port if MongoDB Atlas confirmed save!
+        // 2. Lock port locally and persist to MongoDB Atlas stations collection
         port.status = 'reserved';
         port.customer = currentUser.name;
         port.phone = currentUser.phone;
@@ -1790,6 +1791,26 @@
         port.pin = newPin;
         port.paid = pendingCheckout.total;
         port.invoiceNumber = invNum;
+
+        // Broadcast slot hold to MongoDB Atlas so all devices see it locked instantly
+        try {
+          await fetch('/api/stations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'reserve',
+              stationId: pendingCheckout.stationId,
+              portId: port.id,
+              customer: currentUser.name,
+              phone: currentUser.phone,
+              vehicle: currentUser.car,
+              pin: newPin,
+              paid: pendingCheckout.total
+            })
+          });
+        } catch (stErr) {
+          console.warn('Could not sync station hold to cloud:', stErr);
+        }
 
         VoltGridDB.bookings.unshift(newBookingDoc);
         currentUser.sessionsCount = (currentUser.sessionsCount || 0) + 1;
@@ -1825,9 +1846,10 @@
       document.getElementById('invoiceModal').classList.add('hidden');
     }
 
-    function simulateArrivalCharge(portId) {
+    async function simulateArrivalCharge(portId) {
       const st = stations.find(s => s.id === currentStationId);
-      const port = st.ports.find(p => p.id === portId);
+      const port = st ? st.ports.find(p => p.id === portId) : null;
+      if (!port) return;
       
       const enteredPin = prompt("Enter the 4-digit unlock PIN shown on your Tax Invoice to unlock this port:", port.pin || "1234");
       if (enteredPin === null) return; // user cancelled
@@ -1842,14 +1864,25 @@
         renderPorts();
         updateLiveSessionHero();
         updateAdminDashboard();
+
+        // Broadcast charging session to MongoDB Atlas
+        try {
+          await fetch('/api/stations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'startCharging', stationId: currentStationId, portId })
+          });
+        } catch (e) {
+          console.warn('Could not sync startCharging to cloud stations:', e);
+        }
       } else {
         alert("❌ Incorrect PIN. Port remains locked for safety.");
       }
     }
 
-    function releasePort(portId) {
+    async function releasePort(portId) {
       const st = stations.find(s => s.id === currentStationId);
-      const port = st.ports.find(p => p.id === portId);
+      const port = st ? st.ports.find(p => p.id === portId) : null;
       if (port) {
         port.status = 'available';
         port.customer = null;
@@ -1859,13 +1892,26 @@
         port.secondsLeft = 0;
         port.soc = null;
         port.kw = null;
+        port.paid = 0;
         port.hasAlertedFull = false;
         saveVoltGridDB();
         renderPorts();
         updateLiveSessionHero();
         updateAdminDashboard();
         playNotificationSound('chime');
-        alert("✅ Charging session ended. Cable released and port is now available for other drivers.");
+
+        // Broadcast port release to MongoDB Atlas so all other devices update immediately
+        try {
+          await fetch('/api/stations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'release', stationId: currentStationId, portId })
+          });
+        } catch (e) {
+          console.warn('Could not sync release to cloud stations:', e);
+        }
+
+        alert("✅ Charging session ended. Cable released and port is now available across all devices.");
       }
     }
 
@@ -1876,9 +1922,10 @@
       const pulseEl = document.getElementById('cloudDbPulse');
 
       try {
-        const [uRes, bRes] = await Promise.all([
+        const [uRes, bRes, sRes] = await Promise.all([
           fetch('/api/users').catch(e => ({ ok: false, statusText: e.message })),
-          fetch('/api/bookings').catch(e => ({ ok: false, statusText: e.message }))
+          fetch('/api/bookings').catch(e => ({ ok: false, statusText: e.message })),
+          fetch('/api/stations').catch(e => ({ ok: false, statusText: e.message }))
         ]);
 
         if (uRes && uRes.ok) {
@@ -1924,6 +1971,41 @@
               }
             });
             saveVoltGridDB();
+          }
+        }
+
+        // Real-time multi-device station synchronization via MongoDB Atlas
+        if (sRes && sRes.ok) {
+          const cloudStations = await sRes.json().catch(() => null);
+          if (Array.isArray(cloudStations) && cloudStations.length > 0) {
+            // Keep local countdown smooth, but sync port statuses across devices
+            cloudStations.forEach(cSt => {
+              const localSt = stations.find(s => s.id === cSt.id);
+              if (localSt) {
+                cSt.ports.forEach(cP => {
+                  const localP = localSt.ports.find(p => p.id === cP.id);
+                  if (localP) {
+                    localP.status = cP.status;
+                    localP.customer = cP.customer;
+                    localP.phone = cP.phone;
+                    localP.vehicle = cP.vehicle;
+                    localP.pin = cP.pin;
+                    localP.paid = cP.paid;
+                    if (cP.status === 'available') {
+                      localP.secondsLeft = 0;
+                      localP.soc = null;
+                      localP.kw = null;
+                      localP.hasAlertedFull = false;
+                    } else if (cP.status === 'reserved' && cP.secondsLeft) {
+                      localP.secondsLeft = cP.secondsLeft;
+                    }
+                  }
+                });
+              }
+            });
+            saveVoltGridDB();
+            renderPorts();
+            updateLiveSessionHero();
           }
         }
 
@@ -2089,17 +2171,36 @@
       });
     }
 
-    function adminReleasePort(stationId, portId) {
+    async function adminReleasePort(stationId, portId) {
       const st = stations.find(s => s.id === stationId);
-      const port = st.ports.find(p => p.id === portId);
-      port.status = 'available';
-      port.customer = null;
-      port.phone = null;
-      port.vehicle = null;
-      port.pin = null;
-      port.secondsLeft = 0;
-      renderPorts();
-      updateAdminDashboard();
+      const port = st ? st.ports.find(p => p.id === portId) : null;
+      if (port) {
+        port.status = 'available';
+        port.customer = null;
+        port.phone = null;
+        port.vehicle = null;
+        port.pin = null;
+        port.soc = null;
+        port.kw = null;
+        port.secondsLeft = 0;
+        port.paid = 0;
+        port.hasAlertedFull = false;
+        saveVoltGridDB();
+        renderPorts();
+        updateLiveSessionHero();
+        updateAdminDashboard();
+
+        // Broadcast cancellation to MongoDB Atlas so all devices update in real-time
+        try {
+          await fetch('/api/stations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'release', stationId, portId })
+          });
+        } catch (e) {
+          console.warn('Could not sync admin port release to cloud:', e);
+        }
+      }
     }
 
     // ---------------- ACTIVE 1-SECOND TIMER FOR COUNTDOWNS & TELEMETRY ----------------
@@ -2160,19 +2261,21 @@
                 needsRerender = true;
               }
 
-              // Alert once when battery hits 100%
+              // Alert once when battery hits 100% - ONLY to the vehicle owner!
               if (!p.hasAlertedFull) {
                 p.hasAlertedFull = true;
-                playNotificationSound('batteryFull');
 
                 const wasMyVehicle = currentUser && (
-                  (currentUser.phone && p.phone && currentUser.phone === p.phone) ||
+                  (currentUser.phone && p.phone && currentUser.phone.replace(/\D/g, '') === p.phone.replace(/\D/g, '')) ||
                   (currentUser.name && p.customer && currentUser.name.trim().toLowerCase() === p.customer.trim().toLowerCase())
                 );
 
-                setTimeout(() => {
-                  alert(`⚡ CHARGING COMPLETE (100% FULL)!\n\nVehicle: ${p.vehicle || 'Your EV'}\nLocation: ${st.name} (${p.name})\n\n🎉 Your battery has reached 100%. Power draw has dropped to 0 kW.\nPlease disconnect your cable to free the charger for waiting drivers.`);
-                }, 100);
+                if (wasMyVehicle) {
+                  playNotificationSound('batteryFull');
+                  setTimeout(() => {
+                    alert(`⚡ CHARGING COMPLETE (100% FULL)!\n\nVehicle: ${p.vehicle || 'Your EV'}\nLocation: ${st.name} (${p.name})\n\n🎉 Your battery has reached 100%. Power draw has dropped to 0 kW.\nPlease disconnect your cable to free the charger for waiting drivers.`);
+                  }, 100);
+                }
               }
             }
           }
@@ -2198,6 +2301,11 @@
       updateLiveSessionHero();
       recalculateSavings();
       syncWithMongoDBAtlas();
+
+      // Continuous multi-device synchronization via MongoDB Atlas every 3.5s
+      setInterval(() => {
+        syncWithMongoDBAtlas(false);
+      }, 3500);
     });
   </script>
 </body>
