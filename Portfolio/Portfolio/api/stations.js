@@ -77,11 +77,17 @@ export default async function handler(req, res) {
 
     let doc = await stationsCol.findOne({ _id: 'global_stations' });
 
+    // Initialize in MongoDB Atlas if first time
     if (!doc || !doc.stations || !Array.isArray(doc.stations)) {
       doc = { _id: 'global_stations', stations: DEFAULT_STATIONS, updatedAt: new Date().toISOString() };
-      await stationsCol.updateOne({ _id: 'global_stations' }, { $set: doc }, { upsert: true });
+      await stationsCol.updateOne(
+        { _id: 'global_stations' },
+        { $set: doc },
+        { upsert: true }
+      );
     }
 
+    // Auto-clean any expired reservations older than 15 minutes (900,000 ms) in Atlas
     const now = Date.now();
     let docChanged = false;
     doc.stations.forEach(st => {
@@ -105,7 +111,10 @@ export default async function handler(req, res) {
     });
 
     if (docChanged) {
-      await stationsCol.updateOne({ _id: 'global_stations' }, { $set: { stations: doc.stations, updatedAt: new Date().toISOString() } });
+      await stationsCol.updateOne(
+        { _id: 'global_stations' },
+        { $set: { stations: doc.stations, updatedAt: new Date().toISOString() } }
+      );
     }
 
     if (req.method === 'GET') {
@@ -114,11 +123,28 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      if (!body) {
+        return res.status(400).json({ error: 'Payload required' });
+      }
+
+      // If client provides the full updated stations array:
+      if (body.stations && Array.isArray(body.stations)) {
+        await stationsCol.updateOne(
+          { _id: 'global_stations' },
+          { $set: { stations: body.stations, updatedAt: new Date().toISOString() } },
+          { upsert: true }
+        );
+        return res.status(200).json({ success: true, stations: body.stations });
+      }
+
+      // Otherwise handle specific actions (reserve, release, startCharging)
       const { action, stationId, portId } = body;
       const st = doc.stations.find(s => s.id === stationId);
       const port = st ? st.ports.find(p => p.id === portId) : null;
 
-      if (!port) return res.status(404).json({ error: 'Port not found' });
+      if (!port) {
+        return res.status(404).json({ error: 'Port not found' });
+      }
 
       if (action === 'reserve') {
         port.status = 'reserved';
@@ -145,7 +171,11 @@ export default async function handler(req, res) {
         port.kw = port.maxKw ? Math.round(port.maxKw * 0.75) : 120;
       }
 
-      await stationsCol.updateOne({ _id: 'global_stations' }, { $set: { stations: doc.stations, updatedAt: new Date().toISOString() } });
+      await stationsCol.updateOne(
+        { _id: 'global_stations' },
+        { $set: { stations: doc.stations, updatedAt: new Date().toISOString() } }
+      );
+
       return res.status(200).json({ success: true, stations: doc.stations });
     }
 
