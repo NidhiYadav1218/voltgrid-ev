@@ -1965,6 +1965,17 @@
       const port = st ? st.ports.find(p => p.id === portId) : null;
       if (!port) return;
 
+      // Strict security check: only the reserving driver can unlock this port
+      const isOwner = currentUser && (
+        (currentUser.phone && port.phone && currentUser.phone.replace(/\D/g, '') === port.phone.replace(/\D/g, '')) ||
+        (currentUser.name && port.customer && currentUser.name.trim().toLowerCase() === port.customer.trim().toLowerCase())
+      );
+
+      if (!isOwner) {
+        alert(`🔒 ACCESS DENIED!\n\nThis port is reserved by ${port.customer || 'another driver'}.\n\nOnly the verified driver who booked this slot can enter the security PIN or unlock this port.`);
+        return;
+      }
+
       currentArrivalPortId = portId;
 
       const stationNameEl = document.getElementById('pinModalStationName');
@@ -2008,6 +2019,18 @@
         return;
       }
 
+      // Re-verify ownership on submission
+      const isOwner = currentUser && (
+        (currentUser.phone && port.phone && currentUser.phone.replace(/\D/g, '') === port.phone.replace(/\D/g, '')) ||
+        (currentUser.name && port.customer && currentUser.name.trim().toLowerCase() === port.customer.trim().toLowerCase())
+      );
+
+      if (!isOwner) {
+        alert(`🔒 ACCESS DENIED! You are not authorized to unlock this port.`);
+        closePinModal();
+        return;
+      }
+
       const pinInput = document.getElementById('arrivalPinInput');
       const errorEl = document.getElementById('pinModalError');
       const enteredPin = pinInput ? pinInput.value.trim() : '';
@@ -2034,7 +2057,7 @@
           await fetch(`${API_BASE}/api/stations`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'startCharging', stationId: currentStationId, portId: currentArrivalPortId })
+            body: JSON.stringify({ action: 'startCharging', stationId: currentStationId, portId: currentArrivalPortId, pin: actualPin })
           });
         } catch (e) {
           console.warn('Could not sync startCharging to cloud stations:', e);
