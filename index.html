@@ -392,17 +392,20 @@
           </p>
         </div>
 
-        <!-- Real-Time Legend -->
-        <div class="flex items-center gap-3 text-xs font-semibold">
+        <!-- Real-Time Legend & Audio Test -->
+        <div class="flex flex-wrap items-center gap-3 text-xs font-semibold">
           <span class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Free to Book
           </span>
           <span class="flex items-center gap-1.5 text-cyan-600 dark:text-cyan-400">
-            <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> Currently Charging
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> In Use / Charging
           </span>
           <span class="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
-            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Locked / Reserved
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Reserved
           </span>
+          <button id="btnTestSound" onclick="testSoundFx()" title="Verify speaker output & unlock browser Web Audio" class="ml-1 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 dark:border-slate-700 hover:border-emerald-500 text-slate-700 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-cyan-400 bg-white dark:bg-slate-900 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+            <span>🔊</span> Test Sound
+          </button>
         </div>
       </div>
 
@@ -419,80 +422,10 @@
     </div>
   </section>
 
-  <!-- ================= LIVE IN-PROGRESS CHARGING STATUS ================= -->
-  <section id="live-session" class="py-14 bg-slate-100 dark:bg-slate-900/40 border-t border-slate-200 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-md">
-        
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
-          
-          <div class="w-full lg:w-1/2 space-y-3">
-            <div class="flex items-center gap-2">
-              <span class="flex h-3 w-3 relative">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-              </span>
-              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-cyan-400">
-                Live Real-Time Telemetry Monitor
-              </span>
-              <span class="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2.5 py-0.5 rounded-full">
-                Port #02 &bull; Active Draw
-              </span>
-            </div>
-
-            <h3 class="text-2xl font-bold text-slate-900 dark:text-white font-heading">
-              Porsche Taycan 4S &bull; Connected
-            </h3>
-            <p class="text-xs text-slate-500 dark:text-slate-400">
-              Delhi-Jaipur Expressway Hub (Km 42) &bull; 800V DC High-Speed Cable
-            </p>
-
-            <div class="grid grid-cols-3 gap-3 pt-2">
-              <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
-                <span class="text-[10px] font-bold uppercase text-slate-400 block">Current Draw</span>
-                <span id="liveSpeedText" class="text-lg font-extrabold text-emerald-600 dark:text-cyan-400">246 kW</span>
-              </div>
-              <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
-                <span class="text-[10px] font-bold uppercase text-slate-400 block">Energy Added</span>
-                <span id="liveKwhText" class="text-lg font-extrabold text-slate-900 dark:text-white">45.2 kWh</span>
-              </div>
-              <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
-                <span class="text-[10px] font-bold uppercase text-slate-400 block">Running Cost</span>
-                <span id="liveCostText" class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">₹1,265</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Circular Battery Dial -->
-          <div class="flex flex-col sm:flex-row items-center gap-6 w-full lg:w-auto justify-end">
-            <div class="relative w-40 h-40 flex items-center justify-center">
-              <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-100 dark:text-slate-800" />
-                <circle id="batteryDial" cx="50" cy="50" r="42" stroke="#10b981" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="66" stroke-linecap="round" fill="transparent" class="transition-all duration-700" />
-              </svg>
-              <div class="absolute flex flex-col items-center justify-center text-center">
-                <span class="text-xl">🔋</span>
-                <span id="batterySocText" class="text-2xl font-extrabold text-slate-900 dark:text-white font-heading mt-0.5">76%</span>
-                <span class="text-[10px] font-bold text-slate-400">Target: 80%</span>
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-2 text-center sm:text-left">
-              <button onclick="alert('Session stopped safely. The charging plug is unlocked!')" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-200 border border-rose-200 dark:border-rose-800 transition-all">
-                Stop & Unlock Cable
-              </button>
-              <span class="text-[10px] text-slate-400">
-                Safe uncouple available anytime
-              </span>
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
+  <!-- ================= LIVE IN-PROGRESS CHARGING STATUS (DYNAMIC) ================= -->
+  <section id="live-session" class="py-10 sm:py-14 bg-slate-100 dark:bg-slate-900/40 border-t border-slate-200 dark:border-slate-800">
+    <div id="liveSessionContainer" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Dynamically populated by updateLiveSessionHero() -->
     </div>
   </section>
 
@@ -829,6 +762,18 @@
           </div>
         </div>
 
+        <!-- Live MongoDB Atlas Connection Status Banner -->
+        <div class="flex flex-wrap items-center justify-between p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs">
+          <div class="flex items-center gap-2.5">
+            <span id="cloudDbPulse" class="w-3 h-3 rounded-full bg-amber-500 animate-pulse"></span>
+            <span class="font-bold text-slate-700 dark:text-slate-200">MongoDB Atlas Cloud:</span>
+            <span id="cloudDbStatus" class="font-mono font-bold text-amber-600 dark:text-amber-400">Checking live connection...</span>
+          </div>
+          <button type="button" onclick="syncWithMongoDBAtlas(true)" class="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-700 text-[11px] font-bold text-slate-800 dark:text-white shadow-sm hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5">
+            <span>🔄</span> Test / Sync Now
+          </button>
+        </div>
+
         <!-- Metric Summary Cards (5 cards with fix for adminActiveCharging) -->
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
           <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
@@ -949,6 +894,118 @@
     // =========================================================================
     // VOLTGRID IN-MEMORY DATABASE (MONGODB / MONGOOSE COMPLIANT SCHEMAS)
     // =========================================================================
+    // ---------------- SOUND NOTIFICATION ENGINE (WEB AUDIO API) ----------------
+    let globalAudioCtx = null;
+
+    function getAudioContext() {
+      if (!globalAudioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          globalAudioCtx = new AudioContextClass();
+        }
+      }
+      if (globalAudioCtx && globalAudioCtx.state === 'suspended') {
+        globalAudioCtx.resume().catch(() => {});
+      }
+      return globalAudioCtx;
+    }
+
+    // Auto-unlock Web Audio on first user interaction (bypasses browser autoplay policy)
+    ['click', 'touchstart', 'keydown'].forEach(evt => {
+      window.addEventListener(evt, () => {
+        getAudioContext();
+      }, { once: false, passive: true });
+    });
+
+    function playNotificationSound(type = 'chime') {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        if (ctx.state === 'suspended') {
+          ctx.resume().catch(() => {});
+        }
+
+        const now = ctx.currentTime;
+
+        if (type === 'batteryFull') {
+          // Celebratory 4-tone triumphant chime (C5 -> E5 -> G5 -> C6)
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.14);
+            gain.gain.setValueAtTime(0.4, now + idx * 0.14);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.14 + 0.4);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.14);
+            osc.stop(now + idx * 0.14 + 0.42);
+          });
+        } else if (type === 'expired') {
+          // 3-tone descending warning buzzer (E5 -> A4 -> E4)
+          const notes = [659.25, 440.00, 329.63];
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.18);
+            gain.gain.setValueAtTime(0.35, now + idx * 0.18);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.18 + 0.35);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.18);
+            osc.stop(now + idx * 0.18 + 0.38);
+          });
+        } else if (type === 'bookingSuccess' || type === 'test') {
+          // Bright ascending 3-tone chime (C5 -> G5 -> C6)
+          const notes = [523.25, 783.99, 1046.50];
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+            gain.gain.setValueAtTime(0.35, now + idx * 0.12);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 0.35);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.12);
+            osc.stop(now + idx * 0.12 + 0.38);
+          });
+        } else {
+          // Standard pleasant 2-tone chime
+          const notes = [659.25, 880.00];
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+            gain.gain.setValueAtTime(0.3, now + idx * 0.12);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 0.3);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.12);
+            osc.stop(now + idx * 0.12 + 0.32);
+          });
+        }
+      } catch (e) {
+        console.warn('AudioContext playback error:', e);
+      }
+    }
+
+    function testSoundFx() {
+      playNotificationSound('test');
+      const btn = document.getElementById('btnTestSound');
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span>🔊</span> Playing Chime...';
+        btn.classList.add('ring-2', 'ring-emerald-500');
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          btn.classList.remove('ring-2', 'ring-emerald-500');
+        }, 1200);
+      }
+    }
 
     const INITIAL_STATIONS = [
       {
@@ -961,10 +1018,10 @@
         solar: true,
         ports: [
           { id: 'p101', name: 'Port 01', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available' },
-          { id: 'p102', name: 'Port 02', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'charging', vehicle: 'Porsche Taycan', soc: 76, kw: 246 },
-          { id: 'p103', name: 'Port 03', type: '150kW Fast DC', maxKw: 150, status: 'reserved', customer: 'Vikas Sharma', phone: '+91 98111 22334', vehicle: 'Tesla Model Y', secondsLeft: 720, pin: '7192', paid: 1280 },
+          { id: 'p102', name: 'Port 02', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available' },
+          { id: 'p103', name: 'Port 03', type: '150kW Fast DC', maxKw: 150, status: 'available' },
           { id: 'p104', name: 'Port 04', type: '150kW Fast DC', maxKw: 150, status: 'available' },
-          { id: 'p105', name: 'Port 05', type: '100kW DC', maxKw: 100, status: 'charging', vehicle: 'Tata Nexon EV', soc: 82, kw: 48 },
+          { id: 'p105', name: 'Port 05', type: '100kW DC', maxKw: 100, status: 'available' },
           { id: 'p106', name: 'Port 06', type: '22kW AC Destination', maxKw: 22, status: 'available' }
         ]
       },
@@ -977,10 +1034,10 @@
         pricePerKwh: 26,
         solar: false,
         ports: [
-          { id: 'p201', name: 'Port 01', type: '180kW Fast DC', maxKw: 180, status: 'charging', vehicle: 'Hyundai Ioniq 5', soc: 52, kw: 165 },
+          { id: 'p201', name: 'Port 01', type: '180kW Fast DC', maxKw: 180, status: 'available' },
           { id: 'p202', name: 'Port 02', type: '180kW Fast DC', maxKw: 180, status: 'available' },
           { id: 'p203', name: 'Port 03', type: '43kW Fast AC', maxKw: 43, status: 'available' },
-          { id: 'p204', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'reserved', customer: 'Priya Verma', phone: '+91 99222 33445', vehicle: 'MG ZS EV', secondsLeft: 480, pin: '3920', paid: 840 }
+          { id: 'p204', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'available' }
         ]
       },
       {
@@ -993,7 +1050,7 @@
         solar: true,
         ports: [
           { id: 'p301', name: 'Port 01', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available' },
-          { id: 'p302', name: 'Port 02', type: '120kW Fast DC', maxKw: 120, status: 'charging', vehicle: 'Mahindra XUV400', soc: 68, kw: 58 },
+          { id: 'p302', name: 'Port 02', type: '120kW Fast DC', maxKw: 120, status: 'available' },
           { id: 'p303', name: 'Port 03', type: '120kW Fast DC', maxKw: 120, status: 'available' }
         ]
       }
@@ -1101,6 +1158,31 @@
     }
 
     let stations = VoltGridDB.stations;
+    // Auto-clean any mock demo vehicles or expired ports from previous stale sessions
+    stations.forEach(st => {
+      st.ports.forEach(p => {
+        // Wipe old mock demo cars that were hardcoded in prior sessions
+        if (p.vehicle === 'Porsche Taycan' || p.vehicle === 'Tata Nexon EV' || p.vehicle === 'Hyundai Ioniq 5' || p.vehicle === 'Mahindra XUV400') {
+          p.status = 'available';
+          p.vehicle = null;
+          p.customer = null;
+          p.phone = null;
+          p.pin = null;
+          p.soc = null;
+          p.kw = null;
+          p.secondsLeft = 0;
+        }
+        if (p.status === 'reserved' && (!p.secondsLeft || p.secondsLeft <= 0)) {
+          p.status = 'available';
+          p.customer = null;
+          p.phone = null;
+          p.vehicle = null;
+          p.pin = null;
+          p.secondsLeft = 0;
+        }
+      });
+    });
+    saveVoltGridDB();
     let currentUser = loadSaved('voltgrid_currentUser', null);
     let currentStationId = 'st-01';
     let pendingCheckout = null;
@@ -1236,55 +1318,49 @@
       document.getElementById('authModal').classList.add('hidden');
     }
 
-    function handleAuthSubmit(e) {
+    async function handleAuthSubmit(e) {
       e.preventDefault();
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const origText = submitBtn ? submitBtn.innerText : "Save";
+      if (submitBtn) {
+        submitBtn.innerText = "Connecting to MongoDB Atlas...";
+        submitBtn.disabled = true;
+      }
+
       const name = document.getElementById('authName').value.trim();
       const phone = document.getElementById('authPhone').value.trim();
       const email = document.getElementById('authEmail').value.trim();
       const car = document.getElementById('authCar').value;
 
-      // Find or insert in VoltGridDB.users
-      let existingUser = VoltGridDB.users.find(u => u.phone === phone || u.email === email);
-      if (!existingUser) {
-        existingUser = {
-          _id: 'usr_' + Date.now().toString(16),
-          name,
-          phone,
-          email,
-          car,
-          sessionsCount: 0,
-          totalKwhCharged: 0,
-          totalMoneySaved: 0,
-          totalCo2Saved: 0,
-          createdAt: new Date().toISOString()
-        };
-        VoltGridDB.users.push(existingUser);
-      } else {
-        existingUser.name = name;
-        existingUser.car = car;
-      }
+      const payload = { name, phone, email, car };
 
-      currentUser = existingUser;
-      saveVoltGridDB();
-      renderUserNav();
-      closeAuthModal();
-      updateAdminDashboard();
-
-      // Async live sync to MongoDB Atlas Cloud Cluster
       try {
-        fetch('/api/users', {
+        const res = await fetch('/api/users', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(existingUser)
-        })
-        .then(res => res.json())
-        .then(saved => {
-          console.log('User synced to MongoDB Atlas:', saved);
-          syncWithMongoDBAtlas();
-        })
-        .catch(err => console.log('Saved to device store (local offline fallback)'));
-      } catch (e) {
-        // Safe offline handling
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || ('Server returned HTTP ' + res.status));
+        }
+
+        const savedUser = await res.json();
+        currentUser = savedUser;
+        saveVoltGridDB();
+        renderUserNav();
+        closeAuthModal();
+        await syncWithMongoDBAtlas(false);
+        alert('✅ Success! ' + savedUser.name + ' is permanently saved in MongoDB Atlas!');
+      } catch (err) {
+        console.error('MongoDB Atlas registration error:', err);
+        alert('❌ CANNOT REGISTER: MongoDB Atlas is not connected!\n\nReason: ' + err.message + '\n\nPlease ensure api/users.js is committed to your GitHub repo so Vercel can run the database API.');
+      } finally {
+        if (submitBtn) {
+          submitBtn.innerText = origText;
+          submitBtn.disabled = false;
+        }
       }
     }
 
@@ -1348,18 +1424,37 @@
         const isRes = port.status === 'reserved';
         const isChg = port.status === 'charging';
 
+        // Strict role & ownership scoping:
+        // Current user ONLY owns this session if their phone or name matches the booking
+        const isMySession = (isRes || isChg) && currentUser && (
+          (currentUser.phone && port.phone && currentUser.phone.replace(/\D/g, '') === port.phone.replace(/\D/g, '')) ||
+          (currentUser.name && port.customer && currentUser.name.trim().toLowerCase() === port.customer.trim().toLowerCase())
+        );
+
         let badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400';
         let badgeText = 'AVAILABLE';
         let borderClass = 'border-slate-200 dark:border-slate-800';
 
         if (isRes) {
-          badgeClass = 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-400 animate-pulse';
-          badgeText = 'HELD • ' + formatTime(port.secondsLeft || 900);
-          borderClass = 'border-amber-400/50 dark:border-amber-500/50';
+          if (isMySession) {
+            badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-cyan-400 font-extrabold animate-pulse';
+            badgeText = 'YOUR HOLD • ' + formatTime(port.secondsLeft || 900);
+            borderClass = 'border-emerald-500/60 dark:border-cyan-400/60 ring-2 ring-emerald-500/20';
+          } else {
+            badgeClass = 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-400 font-bold';
+            badgeText = 'RESERVED';
+            borderClass = 'border-amber-400/40 dark:border-amber-500/40';
+          }
         } else if (isChg) {
-          badgeClass = 'bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-400';
-          badgeText = 'CHARGING (' + (port.soc || 65) + '%)';
-          borderClass = 'border-cyan-400/40 dark:border-cyan-500/40';
+          if (isMySession) {
+            badgeClass = 'bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-400 font-bold';
+            badgeText = 'CHARGING (' + (port.soc || 65) + '%)';
+            borderClass = 'border-cyan-400/40 dark:border-cyan-500/40 ring-2 ring-cyan-500/20';
+          } else {
+            badgeClass = 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold';
+            badgeText = 'IN USE';
+            borderClass = 'border-slate-300 dark:border-slate-700';
+          }
         }
 
         return `
@@ -1383,23 +1478,45 @@
                   </div>
                 ` : ''}
 
-                ${isRes ? `
-                  <div class="text-xs font-bold text-slate-800 dark:text-slate-200">Reserved for ${port.customer || 'Driver'}</div>
+                ${isRes && isMySession ? `
+                  <div class="text-xs font-extrabold text-emerald-600 dark:text-cyan-400 flex items-center gap-1.5">
+                    <span>✓</span> Reserved by You (${port.customer})
+                  </div>
                   <div class="flex items-center justify-between text-[11px] text-amber-600 dark:text-amber-400 mt-1 font-mono">
                     <span>15m Lock: ${formatTime(port.secondsLeft || 900)}</span>
-                    <span class="bg-amber-100 dark:bg-amber-950/90 px-1.5 py-0.5 rounded font-extrabold">PIN: ${port.pin || '••••'}</span>
+                    <span class="bg-amber-100 dark:bg-amber-950/90 px-1.5 py-0.5 rounded font-extrabold">Your PIN: ${port.pin}</span>
                   </div>
                 ` : ''}
 
-                ${isChg ? `
+                ${isRes && !isMySession ? `
+                  <div class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    Reserved by another driver
+                  </div>
+                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1 font-mono">
+                    Anti-steal hold active &bull; Locked with private PIN
+                  </div>
+                ` : ''}
+
+                ${isChg && isMySession ? `
                   <div class="flex justify-between text-xs font-medium">
-                    <span class="text-slate-600 dark:text-slate-300">${port.vehicle || 'Active EV'}</span>
+                    <span class="text-slate-600 dark:text-slate-300 font-bold">${port.vehicle || (currentUser ? currentUser.car : 'Your EV')}</span>
                     <span class="text-cyan-600 dark:text-cyan-400 font-bold">${port.soc || 65}%</span>
                   </div>
                   <div class="w-full bg-slate-100 dark:bg-slate-950 h-2 rounded-full overflow-hidden mt-1.5">
                     <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full" style="width: ${port.soc || 65}%"></div>
                   </div>
                   <div class="text-[11px] text-slate-400 mt-1">${port.kw || 120} kW active draw</div>
+                ` : ''}
+
+                ${isChg && !isMySession ? `
+                  <div class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+                    Occupied &bull; Vehicle charging
+                  </div>
+                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1 font-mono">
+                    Port locked to vehicle cable &bull; In use
+                  </div>
                 ` : ''}
               </div>
             </div>
@@ -1411,15 +1528,27 @@
                 </button>
               ` : ''}
 
-              ${isRes ? `
-                <button onclick="simulateArrivalCharge('${port.id}')" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-amber-500 hover:bg-amber-600 text-white dark:text-slate-950 shadow-md transition-all flex items-center justify-center gap-1.5">
-                  <span>⚡</span> Arrived? Enter PIN & Charge
+              ${isRes && isMySession ? `
+                <button onclick="simulateArrivalCharge('${port.id}')" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 text-white dark:text-slate-950 shadow-md shadow-emerald-500/20 transition-all flex items-center justify-center gap-1.5">
+                  <span>⚡</span> Arrived? Enter PIN (${port.pin}) & Charge
                 </button>
               ` : ''}
 
-              ${isChg ? `
+              ${isRes && !isMySession ? `
+                <button disabled class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700/60 flex items-center justify-center gap-1.5">
+                  <span>🔒</span> Spot Locked by Driver
+                </button>
+              ` : ''}
+
+              ${isChg && isMySession ? `
                 <button onclick="releasePort('${port.id}')" class="w-full py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950 dark:text-slate-300 dark:hover:text-rose-300 border border-slate-200 dark:border-slate-700 transition-all">
                   Stop / Disconnect Cable
+                </button>
+              ` : ''}
+
+              ${isChg && !isMySession ? `
+                <button disabled class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700/60 flex items-center justify-center gap-1.5">
+                  <span>🔒</span> In Use &bull; Cable Locked
                 </button>
               ` : ''}
             </div>
@@ -1428,7 +1557,135 @@
       }).join('');
     }
 
-    function selectStation(id) {
+    function updateLiveSessionHero() {
+      const container = document.getElementById('liveSessionContainer');
+      if (!container) return;
+
+      // Find user-owned active charging port
+      let activePort = null;
+      let activeStation = null;
+
+      for (const st of stations) {
+        for (const p of st.ports) {
+          if (p.status === 'charging') {
+            const isMine = currentUser && (
+              (currentUser.phone && p.phone && currentUser.phone.replace(/\D/g, '') === p.phone.replace(/\D/g, '')) ||
+              (currentUser.name && p.customer && currentUser.name.trim().toLowerCase() === p.customer.trim().toLowerCase())
+            );
+            if (isMine) {
+              activePort = p;
+              activeStation = st;
+              break;
+            }
+          }
+        }
+        if (activePort) break;
+      }
+
+      // If no active session belonging to current user:
+      if (!activePort) {
+        container.innerHTML = `
+          <div class="flex flex-col md:flex-row items-center justify-between gap-6 p-6 sm:p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm">
+            <div class="space-y-2 max-w-xl">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-cyan-400">
+                  Live Station Telemetry Standby
+                </span>
+              </div>
+              <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-heading">
+                No Active Charging Cable Connected
+              </h3>
+              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                Select an available high-speed bay in the reservation matrix below to lock your 15-minute arrival guarantee. Once you arrive at the charging hub, enter your private PIN to plug in and monitor real-time charging telemetry.
+              </p>
+            </div>
+            <div>
+              <a href="#chargers" class="px-5 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 dark:bg-cyan-400 dark:hover:bg-cyan-300 text-white dark:text-slate-950 shadow-md shadow-emerald-500/20 transition-all flex items-center gap-2">
+                <span>⚡</span> Select a Charging Bay Below
+              </a>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // Active charging session for currentUser:
+      const soc = activePort.soc || 50;
+      const kw = activePort.kw || (activePort.maxKw ? Math.round(activePort.maxKw * 0.75) : 120);
+      const kwhAdded = ((soc / 100) * 60).toFixed(1);
+      const cost = Math.round(kwhAdded * (activeStation.pricePerKwh || 28));
+      const offset = 264 - (264 * soc) / 100;
+
+      container.innerHTML = `
+        <div class="bg-white dark:bg-slate-900 border border-cyan-500/40 dark:border-cyan-400/40 rounded-3xl p-6 sm:p-8 shadow-lg ring-2 ring-cyan-500/10">
+          <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div class="w-full lg:w-1/2 space-y-3">
+              <div class="flex items-center gap-2">
+                <span class="flex h-3 w-3 relative">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                </span>
+                <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                  Live Real-Time Telemetry Monitor
+                </span>
+                <span class="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2.5 py-0.5 rounded-full">
+                  ${activePort.name} &bull; ${activePort.type}
+                </span>
+              </div>
+
+              <h3 class="text-2xl font-bold text-slate-900 dark:text-white font-heading">
+                ${activePort.vehicle || (currentUser ? currentUser.car : 'Your Vehicle')} &bull; Connected
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">
+                ${activeStation.name} &bull; Active Charging Session
+              </p>
+
+              <div class="grid grid-cols-3 gap-3 pt-2">
+                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
+                  <span class="text-[10px] font-bold uppercase text-slate-400 block">Current Draw</span>
+                  <span class="text-lg font-extrabold text-cyan-600 dark:text-cyan-400">${kw} kW</span>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
+                  <span class="text-[10px] font-bold uppercase text-slate-400 block">Energy Added</span>
+                  <span class="text-lg font-extrabold text-slate-900 dark:text-white">${kwhAdded} kWh</span>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
+                  <span class="text-[10px] font-bold uppercase text-slate-400 block">Running Cost</span>
+                  <span class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">₹${cost.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Circular Battery Dial -->
+            <div class="flex flex-col sm:flex-row items-center gap-6 w-full lg:w-auto justify-end">
+              <div class="relative w-40 h-40 flex items-center justify-center">
+                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-100 dark:text-slate-800" />
+                  <circle cx="50" cy="50" r="42" stroke="#06b6d4" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="${offset}" stroke-linecap="round" fill="transparent" class="transition-all duration-700" />
+                </svg>
+                <div class="absolute flex flex-col items-center justify-center text-center">
+                  <span class="text-xl">🔋</span>
+                  <span class="text-2xl font-extrabold text-slate-900 dark:text-white font-heading mt-0.5">${soc}%</span>
+                  <span class="text-[10px] font-bold text-slate-400">${soc >= 100 ? 'Fully Charged' : 'Target: 80%'}</span>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-2 text-center sm:text-left">
+                <button onclick="releasePort('${activePort.id}')" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-200 border border-rose-200 dark:border-rose-800 transition-all shadow-sm">
+                  Stop & Unlock Cable
+                </button>
+                <span class="text-[10px] text-slate-400">
+                  Safe uncouple available anytime
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+        function selectStation(id) {
       currentStationId = id;
       renderStationSelector();
     }
@@ -1480,47 +1737,61 @@
       pendingCheckout = null;
     }
 
-    function executePayment() {
-      if (!pendingCheckout || !currentUser) return;
+    async function executePayment() {
+      if (!pendingCheckout || !currentUser) {
+        alert('❌ Please sign in first before reserving a slot.');
+        openAuthModal();
+        return;
+      }
+
       const btn = document.getElementById('btnPayConfirm');
-      btn.innerText = "Authorizing Sandbox Payment...";
+      btn.innerText = "Persisting to MongoDB Atlas Cloud...";
+      btn.disabled = true;
 
-      setTimeout(() => {
-        btn.innerText = "Authorize Demo Payment & Lock Spot";
+      const st = stations.find(s => s.id === pendingCheckout.stationId);
+      const port = st.ports.find(p => p.id === pendingCheckout.portId);
 
-        const st = stations.find(s => s.id === pendingCheckout.stationId);
-        const port = st.ports.find(p => p.id === pendingCheckout.portId);
+      const newPin = Math.floor(1000 + Math.random() * 9000).toString();
+      const invNum = 'INV-2026-' + Math.floor(1000 + Math.random() * 9000);
 
-        const newPin = Math.floor(1000 + Math.random() * 9000).toString();
-        const invNum = 'INV-2026-' + Math.floor(1000 + Math.random() * 9000);
+      const newBookingDoc = {
+        _id: 'bkg_' + Date.now().toString(16),
+        invoiceNumber: invNum,
+        customerName: currentUser.name,
+        customerPhone: currentUser.phone,
+        vehicle: currentUser.car,
+        stationName: st.name,
+        portName: port.name + ' (' + port.type + ')',
+        pin: newPin,
+        amountPaid: pendingCheckout.total,
+        energyKwh: pendingCheckout.estKwh,
+        status: 'reserved',
+        createdAt: new Date().toISOString()
+      };
 
+      try {
+        const res = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newBookingDoc)
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || ('Server returned HTTP ' + res.status));
+        }
+
+        // Only lock port if MongoDB Atlas confirmed save!
         port.status = 'reserved';
         port.customer = currentUser.name;
         port.phone = currentUser.phone;
         port.vehicle = currentUser.car;
-        port.secondsLeft = 900; // 15 minutes live countdown
+        port.secondsLeft = 900;
         port.pin = newPin;
         port.paid = pendingCheckout.total;
         port.invoiceNumber = invNum;
 
-        // Save booking into VoltGridDB.bookings
-        const newBookingDoc = {
-          _id: 'bkg_' + Date.now().toString(16),
-          invoiceNumber: invNum,
-          customerName: currentUser.name,
-          customerPhone: currentUser.phone,
-          vehicle: currentUser.car,
-          stationName: st.name,
-          portName: port.name + ' (' + port.type + ')',
-          pin: newPin,
-          amountPaid: pendingCheckout.total,
-          energyKwh: pendingCheckout.estKwh,
-          status: 'reserved',
-          createdAt: new Date().toISOString()
-        };
         VoltGridDB.bookings.unshift(newBookingDoc);
-
-        // Update user stats in VoltGridDB.users
         currentUser.sessionsCount = (currentUser.sessionsCount || 0) + 1;
         currentUser.totalKwhCharged = +((currentUser.totalKwhCharged || 0) + pendingCheckout.estKwh).toFixed(1);
         currentUser.totalMoneySaved = (currentUser.totalMoneySaved || 0) + Math.round(pendingCheckout.estKwh * 18);
@@ -1529,21 +1800,10 @@
         saveVoltGridDB();
         closeCheckoutModal();
         renderPorts();
+        updateLiveSessionHero();
         updateAdminDashboard();
+        playNotificationSound('bookingSuccess');
 
-        // Async live sync to MongoDB Atlas Cloud Cluster
-        try {
-          fetch('/api/bookings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newBookingDoc)
-          })
-          .then(res => res.json())
-          .then(saved => console.log('Booking synced to MongoDB Atlas:', saved))
-          .catch(err => console.log('Saved to device store'));
-        } catch (e) {}
-
-        // Show Tax Invoice & Digital Pass
         document.getElementById('invNumber').innerText = invNum;
         document.getElementById('invCustomer').innerText = currentUser.name + ' (' + currentUser.phone + ')';
         document.getElementById('invVehicle').innerText = currentUser.car;
@@ -1552,7 +1812,13 @@
         document.getElementById('invPin').innerText = newPin;
 
         document.getElementById('invoiceModal').classList.remove('hidden');
-      }, 500);
+      } catch (err) {
+        console.error('Booking save error:', err);
+        alert('❌ BOOKING BLOCKED: Could not write to MongoDB Atlas!\n\nReason: ' + err.message + '\n\nSlot was not locked because database persistence is required.');
+      } finally {
+        btn.innerText = "Authorize Demo Payment & Lock Spot";
+        btn.disabled = false;
+      }
     }
 
     function closeInvoiceModal() {
@@ -1567,12 +1833,14 @@
       if (enteredPin === null) return; // user cancelled
 
       if (enteredPin.trim() === (port.pin || "").trim()) {
-        alert("🎉 PIN Verified! Anti-steal lock released. 350kW Fast DC charging session started!");
+        playNotificationSound('bookingSuccess');
+        alert("⚡ PIN Verified! Anti-steal lock released. Fast DC charging session started!");
         port.status = 'charging';
         port.soc = 42;
         port.kw = port.maxKw ? Math.round(port.maxKw * 0.75) : 120;
         saveVoltGridDB();
         renderPorts();
+        updateLiveSessionHero();
         updateAdminDashboard();
       } else {
         alert("❌ Incorrect PIN. Port remains locked for safety.");
@@ -1582,29 +1850,40 @@
     function releasePort(portId) {
       const st = stations.find(s => s.id === currentStationId);
       const port = st.ports.find(p => p.id === portId);
-      port.status = 'available';
-      port.customer = null;
-      port.phone = null;
-      port.vehicle = null;
-      port.pin = null;
-      port.secondsLeft = 0;
-      saveVoltGridDB();
-      renderPorts();
-      updateAdminDashboard();
+      if (port) {
+        port.status = 'available';
+        port.customer = null;
+        port.phone = null;
+        port.vehicle = null;
+        port.pin = null;
+        port.secondsLeft = 0;
+        port.soc = null;
+        port.kw = null;
+        port.hasAlertedFull = false;
+        saveVoltGridDB();
+        renderPorts();
+        updateLiveSessionHero();
+        updateAdminDashboard();
+        playNotificationSound('chime');
+        alert("✅ Charging session ended. Cable released and port is now available for other drivers.");
+      }
     }
 
     // ---------------- ADMIN COMMAND CENTER ----------------
     // Live fetch from MongoDB Atlas Cloud Cluster
-    async function syncWithMongoDBAtlas() {
+    async function syncWithMongoDBAtlas(isManual = false) {
+      const statusEl = document.getElementById('cloudDbStatus');
+      const pulseEl = document.getElementById('cloudDbPulse');
+
       try {
         const [uRes, bRes] = await Promise.all([
-          fetch('/api/users').catch(() => null),
-          fetch('/api/bookings').catch(() => null)
+          fetch('/api/users').catch(e => ({ ok: false, statusText: e.message })),
+          fetch('/api/bookings').catch(e => ({ ok: false, statusText: e.message }))
         ]);
 
         if (uRes && uRes.ok) {
           const cloudUsers = await uRes.json();
-          if (Array.isArray(cloudUsers) && cloudUsers.length > 0) {
+          if (Array.isArray(cloudUsers)) {
             cloudUsers.forEach(cu => {
               const idx = VoltGridDB.users.findIndex(u => u.phone === cu.phone);
               if (idx >= 0) {
@@ -1615,11 +1894,30 @@
             });
             saveVoltGridDB();
           }
+
+          if (statusEl && pulseEl) {
+            statusEl.innerText = 'Connected: MongoDB Atlas Cluster0 (AWS ap-south-1)';
+            statusEl.className = 'font-mono font-bold text-emerald-600 dark:text-emerald-400';
+            pulseEl.className = 'w-3 h-3 rounded-full bg-emerald-500';
+          }
+          if (isManual) {
+            alert('✅ MongoDB Atlas Synced! ' + (cloudUsers ? cloudUsers.length : 0) + ' cloud users retrieved.');
+          }
+        } else {
+          const status = uRes ? (uRes.status || uRes.statusText) : 'unreachable';
+          if (statusEl && pulseEl) {
+            statusEl.innerText = 'Disconnected: /api/users returned ' + status + ' (Backend not active on host)';
+            statusEl.className = 'font-mono font-bold text-rose-500';
+            pulseEl.className = 'w-3 h-3 rounded-full bg-rose-500';
+          }
+          if (isManual) {
+            alert('❌ MongoDB Atlas connection failed!\n\nServer returned: ' + status + '\n\nPlease verify that api/users.js is committed to your GitHub repo.');
+          }
         }
 
         if (bRes && bRes.ok) {
           const cloudBookings = await bRes.json();
-          if (Array.isArray(cloudBookings) && cloudBookings.length > 0) {
+          if (Array.isArray(cloudBookings)) {
             cloudBookings.forEach(cb => {
               if (!VoltGridDB.bookings.some(b => b.invoiceNumber === cb.invoiceNumber)) {
                 VoltGridDB.bookings.unshift(cb);
@@ -1631,7 +1929,11 @@
 
         updateAdminDashboard();
       } catch (err) {
-        // Offline / local preview fallback
+        if (statusEl && pulseEl) {
+          statusEl.innerText = 'Error: ' + err.message;
+          statusEl.className = 'font-mono font-bold text-rose-500';
+          pulseEl.className = 'w-3 h-3 rounded-full bg-rose-500';
+        }
       }
     }
 
@@ -1803,23 +2105,75 @@
     // ---------------- ACTIVE 1-SECOND TIMER FOR COUNTDOWNS & TELEMETRY ----------------
     setInterval(() => {
       let needsRerender = false;
+
       stations.forEach(st => {
         st.ports.forEach(p => {
-          if (p.status === 'reserved' && p.secondsLeft > 0) {
-            p.secondsLeft -= 1;
-            needsRerender = true;
-            if (p.secondsLeft <= 0) {
+          // 1. AUTO-EXPIRY & REFUND FOR EXPIRED RESERVATIONS
+          if (p.status === 'reserved') {
+            if (p.secondsLeft > 0) {
+              p.secondsLeft -= 1;
+              needsRerender = true;
+            } else {
+              // 15-minute slot has expired!
+              const wasMyBooking = currentUser && (
+                (currentUser.phone && p.phone && currentUser.phone === p.phone) ||
+                (currentUser.name && p.customer && currentUser.name.trim().toLowerCase() === p.customer.trim().toLowerCase())
+              );
+
+              const refundAmount = p.paid || 962.40;
+              const expiredCustomerName = p.customer || 'Driver';
+              const portName = p.name;
+
+              // Reset port back to available
               p.status = 'available';
               p.customer = null;
               p.phone = null;
               p.vehicle = null;
               p.pin = null;
-            }
-          } else if (p.status === 'charging' && (p.soc || 0) < 100) {
-            // Live simulation of battery percentage creep
-            if (Math.random() > 0.6) {
-              p.soc = Math.min(100, (p.soc || 50) + 1);
+              p.secondsLeft = 0;
+              p.paid = 0;
+
+              // Save to persistence
+              saveVoltGridDB();
               needsRerender = true;
+
+              // Play audio warning & notify customer
+              playNotificationSound('expired');
+
+              if (wasMyBooking) {
+                alert(`⏰ HOLD EXPIRED & REFUND PROCESSED!\n\nYou did not arrive within the 15-minute hold window for ${portName}.\n\nThe charging spot has been released for other waiting drivers.\n\n💰 Full refund of ₹${refundAmount} has been credited back to your original payment method.`);
+              }
+            }
+          }
+
+          // 2. CHARGING TELEMETRY & 100% BATTERY FULL NOTIFICATION WITH SOUND
+          else if (p.status === 'charging') {
+            if ((p.soc || 0) < 100) {
+              if (Math.random() > 0.6) {
+                p.soc = Math.min(100, (p.soc || 50) + 1);
+                needsRerender = true;
+              }
+            } else if ((p.soc || 0) >= 100) {
+              // Port reached 100%! Drop draw to 0 kW
+              if (p.kw !== 0) {
+                p.kw = 0;
+                needsRerender = true;
+              }
+
+              // Alert once when battery hits 100%
+              if (!p.hasAlertedFull) {
+                p.hasAlertedFull = true;
+                playNotificationSound('batteryFull');
+
+                const wasMyVehicle = currentUser && (
+                  (currentUser.phone && p.phone && currentUser.phone === p.phone) ||
+                  (currentUser.name && p.customer && currentUser.name.trim().toLowerCase() === p.customer.trim().toLowerCase())
+                );
+
+                setTimeout(() => {
+                  alert(`⚡ CHARGING COMPLETE (100% FULL)!\n\nVehicle: ${p.vehicle || 'Your EV'}\nLocation: ${st.name} (${p.name})\n\n🎉 Your battery has reached 100%. Power draw has dropped to 0 kW.\nPlease disconnect your cable to free the charger for waiting drivers.`);
+                }, 100);
+              }
             }
           }
         });
@@ -1827,13 +2181,7 @@
 
       if (needsRerender) {
         renderPorts();
-        // Update live in-progress hero card dial if port 02 is active
-        const livePort = stations[0].ports[1];
-        if (livePort && document.getElementById('batterySocText')) {
-          document.getElementById('batterySocText').innerText = (livePort.soc || 76) + '%';
-          const offset = 264 - (264 * (livePort.soc || 76)) / 100;
-          document.getElementById('batteryDial').setAttribute('stroke-dashoffset', offset);
-        }
+        updateLiveSessionHero();
         // Update admin if open
         const adminModal = document.getElementById('adminModal');
         if (adminModal && !adminModal.classList.contains('hidden')) {
@@ -1847,6 +2195,7 @@
       initTheme();
       renderUserNav();
       renderStationSelector();
+      updateLiveSessionHero();
       recalculateSavings();
       syncWithMongoDBAtlas();
     });
