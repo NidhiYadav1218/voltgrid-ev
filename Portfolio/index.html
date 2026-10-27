@@ -1817,14 +1817,16 @@
           console.warn('Could not sync station hold to cloud:', stErr);
         }
 
+        const bookedTotal = pendingCheckout.total;
+        const bookedKwh = pendingCheckout.estKwh;
+
         VoltGridDB.bookings.unshift(newBookingDoc);
         currentUser.sessionsCount = (currentUser.sessionsCount || 0) + 1;
-        currentUser.totalKwhCharged = +((currentUser.totalKwhCharged || 0) + pendingCheckout.estKwh).toFixed(1);
-        currentUser.totalMoneySaved = (currentUser.totalMoneySaved || 0) + Math.round(pendingCheckout.estKwh * 18);
-        currentUser.totalCo2Saved = (currentUser.totalCo2Saved || 0) + Math.round(pendingCheckout.estKwh * 1.8);
+        currentUser.totalKwhCharged = +((currentUser.totalKwhCharged || 0) + bookedKwh).toFixed(1);
+        currentUser.totalMoneySaved = (currentUser.totalMoneySaved || 0) + Math.round(bookedKwh * 18);
+        currentUser.totalCo2Saved = (currentUser.totalCo2Saved || 0) + Math.round(bookedKwh * 1.8);
 
         saveVoltGridDB();
-        closeCheckoutModal();
         renderPorts();
         updateLiveSessionHero();
         updateAdminDashboard();
@@ -1834,9 +1836,10 @@
         document.getElementById('invCustomer').innerText = currentUser.name + ' (' + currentUser.phone + ')';
         document.getElementById('invVehicle').innerText = currentUser.car;
         document.getElementById('invPort').innerText = port.name + ' • ' + st.name;
-        document.getElementById('invTotal').innerText = '₹' + pendingCheckout.total;
+        document.getElementById('invTotal').innerText = '₹' + bookedTotal;
         document.getElementById('invPin').innerText = newPin;
 
+        closeCheckoutModal();
         document.getElementById('invoiceModal').classList.remove('hidden');
       } catch (err) {
         console.error('Booking save error:', err);
