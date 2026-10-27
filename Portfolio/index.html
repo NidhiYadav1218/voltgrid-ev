@@ -577,18 +577,6 @@
         <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 text-white shadow-md transition-all">
           Save & Log In to VoltGrid
         </button>
-
-        <div class="pt-3 border-t border-slate-200 dark:border-slate-800 text-center">
-          <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">⚡ Quick Switch Demo Profile</p>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="switchDemoUser('Nidhi Yadav', '+91 98100 12345', 'nidhi@voltgrid.io', 'MG ZS EV')" class="py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 transition-all flex items-center justify-center gap-1.5">
-              <span>👤</span> Nidhi (Reserver)
-            </button>
-            <button type="button" onclick="switchDemoUser('Rahul Sharma', '+91 98765 43210', 'rahul@voltgrid.io', 'Tata Nexon EV Max')" class="py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-cyan-500 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 transition-all flex items-center justify-center gap-1.5">
-              <span>👤</span> Rahul (Observer)
-            </button>
-          </div>
-        </div>
       </form>
     </div>
   </div>
@@ -1283,6 +1271,34 @@
     let pendingCheckout = null;
     let activeAdminTab = 'bookings';
 
+    // ---------------- DEVICE SESSION IDENTITY & PERSISTENT HOLDS ----------------
+    function getDeviceSessionId() {
+      let sid = localStorage.getItem('voltgrid_device_session_id');
+      if (!sid) {
+        sid = 'dev_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+        localStorage.setItem('voltgrid_device_session_id', sid);
+      }
+      return sid;
+    }
+
+    function getMyLocalHolds() {
+      try {
+        return JSON.parse(localStorage.getItem('voltgrid_my_local_holds') || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveMyLocalHold(portId, data) {
+      const holds = getMyLocalHolds();
+      if (data) {
+        holds[portId] = data;
+      } else {
+        delete holds[portId];
+      }
+      localStorage.setItem('voltgrid_my_local_holds', JSON.stringify(holds));
+    }
+
     const vehicles = {
       'Tata Nexon EV Max': { battery: 40.5, speed: 60, efficiency: 7.2 },
       'Tesla Model 3 Long Range': { battery: 82, speed: 250, efficiency: 6.5 },
@@ -1531,11 +1547,14 @@
         const isRes = port.status === 'reserved';
         const isChg = port.status === 'charging';
 
-        // Strict role & ownership scoping:
-        // Current user ONLY owns this session if their phone or name matches the booking
-        const isMySession = (isRes || isChg) && currentUser && (
-          (currentUser.phone && port.phone && currentUser.phone.replace(/\D/g, '') === port.phone.replace(/\D/g, '')) ||
-          (currentUser.name && port.customer && currentUser.name.trim().toLowerCase() === port.customer.trim().toLowerCase())
+        // Strict Session-Bound Ownership:
+        // A port is ONLY controllable by the specific device/browser session that reserved it!
+        // No observer login or role switching required — all other devices are automatically locked out!
+        const myHolds = getMyLocalHolds();
+        const currentSid = getDeviceSessionId();
+        const isMySession = (isRes || isChg) && (
+          (myHolds[port.id] && myHolds[port.id].active) ||
+          (port.sessionId && port.sessionId === currentSid)
         );
 
         let badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400';
@@ -1672,13 +1691,13 @@
       let activePort = null;
       let activeStation = null;
 
+      const myHolds = getMyLocalHolds();
+      const currentSid = getDeviceSessionId();
+
       for (const st of stations) {
         for (const p of st.ports) {
           if (p.status === 'charging') {
-            const isMine = currentUser && (
-              (currentUser.phone && p.phone && currentUser.phone.replace(/\D/g, '') === p.phone.replace(/\D/g, '')) ||
-              (currentUser.name && p.customer && currentUser.name.trim().toLowerCase() === p.customer.trim().toLowerCase())
-            );
+            const isMine = (myHolds[p.id] && myHolds[p.id].active) || (p.sessionId && p.sessionId === currentSid);
             if (isMine) {
               activePort = p;
               activeStation = st;
@@ -1845,16 +1864,20 @@
     }
 
     async function executePayment() {
-      if (!pendingCheckout || !currentUser) {
-        alert('❌ Please sign in first before reserving a slot.');
-        openAuthModal();
-        return;
-      }
+      if (!pendingCheckout) return;
+
+      const activeUser = currentUser || {
+        name: 'EV Driver',
+        phone: '+91 98100 12345',
+        car: 'Tata Nexon EV Max',
+        email: 'driver@voltgrid.io'
+      };
 
       const bookedStationId = pendingCheckout.stationId;
       const bookedPortId = pendingCheckout.portId;
       const bookedTotal = pendingCheckout.total || 962.40;
       const bookedKwh = pendingCheckout.estKwh || 45.1;
+      const currentSid = getDeviceSessionId();
 
       const btn = document.getElementById('btnPayConfirm');
       btn.innerText = "Persisting to MongoDB Atlas Cloud...";
@@ -1869,9 +1892,9 @@
       const newBookingDoc = {
         _id: 'bkg_' + Date.now().toString(16),
         invoiceNumber: invNum,
-        customerName: currentUser.name,
-        customerPhone: currentUser.phone,
-        vehicle: currentUser.car,
+        customerName: activeUser.name,
+        customerPhone: activeUser.phone,
+        vehicle: activeUser.car,
         stationName: st.name,
         portName: port.name + ' (' + port.type + ')',
         pin: newPin,
@@ -1896,13 +1919,17 @@
 
         // 2. Lock port locally and persist to MongoDB Atlas stations collection
         port.status = 'reserved';
-        port.customer = currentUser.name;
-        port.phone = currentUser.phone;
-        port.vehicle = currentUser.car;
+        port.customer = activeUser.name;
+        port.phone = activeUser.phone;
+        port.vehicle = activeUser.car;
         port.secondsLeft = 900;
         port.pin = newPin;
         port.paid = bookedTotal;
+        port.sessionId = currentSid;
         port.invoiceNumber = invNum;
+
+        // Save local session hold so this device owns the port
+        saveMyLocalHold(port.id, { active: true, pin: newPin, invNum: invNum });
 
         // Broadcast slot hold to MongoDB Atlas so all devices see it locked instantly
         try {
@@ -1913,11 +1940,12 @@
               action: 'reserve',
               stationId: bookedStationId,
               portId: port.id,
-              customer: currentUser.name,
-              phone: currentUser.phone,
-              vehicle: currentUser.car,
+              customer: activeUser.name,
+              phone: activeUser.phone,
+              vehicle: activeUser.car,
               pin: newPin,
-              paid: bookedTotal
+              paid: bookedTotal,
+              sessionId: currentSid
             })
           });
         } catch (stErr) {
@@ -1925,10 +1953,12 @@
         }
 
         VoltGridDB.bookings.unshift(newBookingDoc);
-        currentUser.sessionsCount = (currentUser.sessionsCount || 0) + 1;
-        currentUser.totalKwhCharged = +((currentUser.totalKwhCharged || 0) + bookedKwh).toFixed(1);
-        currentUser.totalMoneySaved = (currentUser.totalMoneySaved || 0) + Math.round(bookedKwh * 18);
-        currentUser.totalCo2Saved = (currentUser.totalCo2Saved || 0) + Math.round(bookedKwh * 1.8);
+        if (currentUser) {
+          currentUser.sessionsCount = (currentUser.sessionsCount || 0) + 1;
+          currentUser.totalKwhCharged = +((currentUser.totalKwhCharged || 0) + bookedKwh).toFixed(1);
+          currentUser.totalMoneySaved = (currentUser.totalMoneySaved || 0) + Math.round(bookedKwh * 18);
+          currentUser.totalCo2Saved = (currentUser.totalCo2Saved || 0) + Math.round(bookedKwh * 1.8);
+        }
 
         saveVoltGridDB();
         renderPorts();
@@ -1937,8 +1967,8 @@
         playNotificationSound('bookingSuccess');
 
         document.getElementById('invNumber').innerText = invNum;
-        document.getElementById('invCustomer').innerText = currentUser.name + ' (' + currentUser.phone + ')';
-        document.getElementById('invVehicle').innerText = currentUser.car;
+        document.getElementById('invCustomer').innerText = activeUser.name + ' (' + activeUser.phone + ')';
+        document.getElementById('invVehicle').innerText = activeUser.car;
         document.getElementById('invPort').innerText = port.name + ' • ' + st.name;
         document.getElementById('invTotal').innerText = '₹' + bookedTotal;
         document.getElementById('invPin').innerText = newPin;
@@ -1965,14 +1995,12 @@
       const port = st ? st.ports.find(p => p.id === portId) : null;
       if (!port) return;
 
-      // Strict security check: only the reserving driver can unlock this port
-      const isOwner = currentUser && (
-        (currentUser.phone && port.phone && currentUser.phone.replace(/\D/g, '') === port.phone.replace(/\D/g, '')) ||
-        (currentUser.name && port.customer && currentUser.name.trim().toLowerCase() === port.customer.trim().toLowerCase())
-      );
+      const myHolds = getMyLocalHolds();
+      const currentSid = getDeviceSessionId();
+      const isOwner = (myHolds[port.id] && myHolds[port.id].active) || (port.sessionId && port.sessionId === currentSid);
 
       if (!isOwner) {
-        alert(`🔒 ACCESS DENIED!\n\nThis port is reserved by ${port.customer || 'another driver'}.\n\nOnly the verified driver who booked this slot can enter the security PIN or unlock this port.`);
+        alert("🔒 ACCESS DENIED!\n\nThis port was reserved in another session/device.\nOnly the browser that reserved this slot can unlock it.");
         return;
       }
 
@@ -2019,14 +2047,12 @@
         return;
       }
 
-      // Re-verify ownership on submission
-      const isOwner = currentUser && (
-        (currentUser.phone && port.phone && currentUser.phone.replace(/\D/g, '') === port.phone.replace(/\D/g, '')) ||
-        (currentUser.name && port.customer && currentUser.name.trim().toLowerCase() === port.customer.trim().toLowerCase())
-      );
+      const myHolds = getMyLocalHolds();
+      const currentSid = getDeviceSessionId();
+      const isOwner = (myHolds[port.id] && myHolds[port.id].active) || (port.sessionId && port.sessionId === currentSid);
 
       if (!isOwner) {
-        alert(`🔒 ACCESS DENIED! You are not authorized to unlock this port.`);
+        alert("🔒 ACCESS DENIED! You are not authorized to unlock this port.");
         closePinModal();
         return;
       }
@@ -2075,11 +2101,13 @@
       const st = stations.find(s => s.id === currentStationId);
       const port = st ? st.ports.find(p => p.id === portId) : null;
       if (port) {
+        saveMyLocalHold(portId, null);
         port.status = 'available';
         port.customer = null;
         port.phone = null;
         port.vehicle = null;
         port.pin = null;
+        port.sessionId = null;
         port.secondsLeft = 0;
         port.soc = null;
         port.kw = null;
@@ -2182,11 +2210,13 @@
                     localP.vehicle = cP.vehicle;
                     localP.pin = cP.pin;
                     localP.paid = cP.paid;
+                    localP.sessionId = cP.sessionId;
                     if (cP.status === 'available') {
                       localP.secondsLeft = 0;
                       localP.soc = null;
                       localP.kw = null;
                       localP.hasAlertedFull = false;
+                      saveMyLocalHold(cP.id, null);
                     } else if (cP.status === 'reserved' && cP.secondsLeft) {
                       localP.secondsLeft = cP.secondsLeft;
                     } else if (cP.status === 'charging') {
@@ -2410,10 +2440,9 @@
               needsRerender = true;
             } else {
               // 15-minute slot has expired!
-              const wasMyBooking = currentUser && (
-                (currentUser.phone && p.phone && currentUser.phone === p.phone) ||
-                (currentUser.name && p.customer && currentUser.name.trim().toLowerCase() === p.customer.trim().toLowerCase())
-              );
+              const myHolds = getMyLocalHolds();
+              const currentSid = getDeviceSessionId();
+              const wasMyBooking = (myHolds[p.id] && myHolds[p.id].active) || (p.sessionId && p.sessionId === currentSid);
 
               const refundAmount = p.paid || 962.40;
               const expiredCustomerName = p.customer || 'Driver';
@@ -2425,17 +2454,17 @@
               p.phone = null;
               p.vehicle = null;
               p.pin = null;
+              p.sessionId = null;
               p.secondsLeft = 0;
               p.paid = 0;
+              saveMyLocalHold(p.id, null);
 
               // Save to persistence
               saveVoltGridDB();
               needsRerender = true;
 
-              // Play audio warning & notify customer
-              playNotificationSound('expired');
-
               if (wasMyBooking) {
+                playNotificationSound('expired');
                 alert(`⏰ HOLD EXPIRED & REFUND PROCESSED!\n\nYou did not arrive within the 15-minute hold window for ${portName}.\n\nThe charging spot has been released for other waiting drivers.\n\n💰 Full refund of ₹${refundAmount} has been credited back to your original payment method.`);
               }
             }
@@ -2459,10 +2488,9 @@
               if (!p.hasAlertedFull) {
                 p.hasAlertedFull = true;
 
-                const wasMyVehicle = currentUser && (
-                  (currentUser.phone && p.phone && currentUser.phone.replace(/\D/g, '') === p.phone.replace(/\D/g, '')) ||
-                  (currentUser.name && p.customer && currentUser.name.trim().toLowerCase() === p.customer.trim().toLowerCase())
-                );
+                const myHolds = getMyLocalHolds();
+                const currentSid = getDeviceSessionId();
+                const wasMyVehicle = (myHolds[p.id] && myHolds[p.id].active) || (p.sessionId && p.sessionId === currentSid);
 
                 if (wasMyVehicle) {
                   playNotificationSound('batteryFull');

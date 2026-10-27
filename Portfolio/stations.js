@@ -100,6 +100,7 @@ export default async function handler(req, res) {
             p.phone = null;
             p.vehicle = null;
             p.pin = null;
+            p.sessionId = null;
             p.secondsLeft = 0;
             p.reservedAt = null;
             docChanged = true;
@@ -153,6 +154,7 @@ export default async function handler(req, res) {
         port.vehicle = body.vehicle;
         port.pin = body.pin;
         port.paid = body.paid;
+        port.sessionId = body.sessionId || null;
         port.secondsLeft = 900;
         port.reservedAt = Date.now();
       } else if (action === 'release') {
@@ -161,6 +163,7 @@ export default async function handler(req, res) {
         port.phone = null;
         port.vehicle = null;
         port.pin = null;
+        port.sessionId = null;
         port.soc = null;
         port.kw = null;
         port.secondsLeft = 0;
