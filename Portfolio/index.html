@@ -829,6 +829,18 @@
           </div>
         </div>
 
+        <!-- Live MongoDB Atlas Connection Status Banner -->
+        <div class="flex flex-wrap items-center justify-between p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs">
+          <div class="flex items-center gap-2.5">
+            <span id="cloudDbPulse" class="w-3 h-3 rounded-full bg-amber-500 animate-pulse"></span>
+            <span class="font-bold text-slate-700 dark:text-slate-200">MongoDB Atlas Cloud:</span>
+            <span id="cloudDbStatus" class="font-mono font-bold text-amber-600 dark:text-amber-400">Checking live connection...</span>
+          </div>
+          <button type="button" onclick="syncWithMongoDBAtlas(true)" class="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-700 text-[11px] font-bold text-slate-800 dark:text-white shadow-sm hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5">
+            <span>🔄</span> Test / Sync Now
+          </button>
+        </div>
+
         <!-- Metric Summary Cards (5 cards with fix for adminActiveCharging) -->
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
           <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
@@ -1069,15 +1081,39 @@
       }
     ];
 
-    // Safe in-memory database controller (prevents sensitive user leaks in localStorage)
+    // Device-level Persistent Database Controller (Syncs across page reloads & sessions)
+    function loadSaved(key, fallback) {
+      try {
+        const val = localStorage.getItem(key);
+        return val ? JSON.parse(val) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
     const VoltGridDB = {
-      users: JSON.parse(JSON.stringify(INITIAL_USERS)),
-      bookings: JSON.parse(JSON.stringify(INITIAL_BOOKINGS)),
-      stations: JSON.parse(JSON.stringify(INITIAL_STATIONS))
+      users: loadSaved('voltgrid_users', JSON.parse(JSON.stringify(INITIAL_USERS))),
+      bookings: loadSaved('voltgrid_bookings', JSON.parse(JSON.stringify(INITIAL_BOOKINGS))),
+      stations: loadSaved('voltgrid_stations', JSON.parse(JSON.stringify(INITIAL_STATIONS)))
     };
 
+    function saveVoltGridDB() {
+      try {
+        localStorage.setItem('voltgrid_users', JSON.stringify(VoltGridDB.users));
+        localStorage.setItem('voltgrid_bookings', JSON.stringify(VoltGridDB.bookings));
+        localStorage.setItem('voltgrid_stations', JSON.stringify(VoltGridDB.stations));
+        if (currentUser) {
+          localStorage.setItem('voltgrid_currentUser', JSON.stringify(currentUser));
+        } else {
+          localStorage.removeItem('voltgrid_currentUser');
+        }
+      } catch (e) {
+        console.warn('Storage quota or private mode active:', e);
+      }
+    }
+
     let stations = VoltGridDB.stations;
-    let currentUser = null;
+    let currentUser = loadSaved('voltgrid_currentUser', null);
     let currentStationId = 'st-01';
     let pendingCheckout = null;
     let activeAdminTab = 'bookings';
@@ -1096,6 +1132,12 @@
       VoltGridDB.bookings = JSON.parse(JSON.stringify(INITIAL_BOOKINGS));
       VoltGridDB.stations = JSON.parse(JSON.stringify(INITIAL_STATIONS));
       stations = VoltGridDB.stations;
+      currentUser = null;
+      localStorage.removeItem('voltgrid_users');
+      localStorage.removeItem('voltgrid_bookings');
+      localStorage.removeItem('voltgrid_stations');
+      localStorage.removeItem('voltgrid_currentUser');
+      renderUserNav();
       renderPorts();
       updateAdminDashboard();
       alert('Demo database reset to factory demo state.');
@@ -1206,42 +1248,55 @@
       document.getElementById('authModal').classList.add('hidden');
     }
 
-    function handleAuthSubmit(e) {
+    async function handleAuthSubmit(e) {
       e.preventDefault();
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const origText = submitBtn ? submitBtn.innerText : "Save";
+      if (submitBtn) {
+        submitBtn.innerText = "Connecting to MongoDB Atlas...";
+        submitBtn.disabled = true;
+      }
+
       const name = document.getElementById('authName').value.trim();
       const phone = document.getElementById('authPhone').value.trim();
       const email = document.getElementById('authEmail').value.trim();
       const car = document.getElementById('authCar').value;
 
-      // Find or insert in VoltGridDB.users
-      let existingUser = VoltGridDB.users.find(u => u.phone === phone || u.email === email);
-      if (!existingUser) {
-        existingUser = {
-          _id: 'usr_' + Date.now().toString(16),
-          name,
-          phone,
-          email,
-          car,
-          sessionsCount: 0,
-          totalKwhCharged: 0,
-          totalMoneySaved: 0,
-          totalCo2Saved: 0,
-          createdAt: new Date().toISOString()
-        };
-        VoltGridDB.users.push(existingUser);
-      } else {
-        existingUser.name = name;
-        existingUser.car = car;
-      }
+      const payload = { name, phone, email, car };
 
-      currentUser = existingUser;
-      renderUserNav();
-      closeAuthModal();
-      updateAdminDashboard();
+      try {
+        const res = await fetch('/api/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || ('Server returned HTTP ' + res.status));
+        }
+
+        const savedUser = await res.json();
+        currentUser = savedUser;
+        saveVoltGridDB();
+        renderUserNav();
+        closeAuthModal();
+        await syncWithMongoDBAtlas(false);
+        alert('✅ Success! ' + savedUser.name + ' is permanently saved in MongoDB Atlas!');
+      } catch (err) {
+        console.error('MongoDB Atlas registration error:', err);
+        alert('❌ CANNOT REGISTER: MongoDB Atlas is not connected!\n\nReason: ' + err.message + '\n\nPlease ensure api/users.js is committed to your GitHub repo so Vercel can run the database API.');
+      } finally {
+        if (submitBtn) {
+          submitBtn.innerText = origText;
+          submitBtn.disabled = false;
+        }
+      }
     }
 
     function logoutUser() {
       currentUser = null;
+      saveVoltGridDB();
       renderUserNav();
     }
 
@@ -1431,57 +1486,71 @@
       pendingCheckout = null;
     }
 
-    function executePayment() {
-      if (!pendingCheckout || !currentUser) return;
+    async function executePayment() {
+      if (!pendingCheckout || !currentUser) {
+        alert('❌ Please sign in first before reserving a slot.');
+        openAuthModal();
+        return;
+      }
+
       const btn = document.getElementById('btnPayConfirm');
-      btn.innerText = "Authorizing Sandbox Payment...";
+      btn.innerText = "Persisting to MongoDB Atlas Cloud...";
+      btn.disabled = true;
 
-      setTimeout(() => {
-        btn.innerText = "Authorize Demo Payment & Lock Spot";
+      const st = stations.find(s => s.id === pendingCheckout.stationId);
+      const port = st.ports.find(p => p.id === pendingCheckout.portId);
 
-        const st = stations.find(s => s.id === pendingCheckout.stationId);
-        const port = st.ports.find(p => p.id === pendingCheckout.portId);
+      const newPin = Math.floor(1000 + Math.random() * 9000).toString();
+      const invNum = 'INV-2026-' + Math.floor(1000 + Math.random() * 9000);
 
-        const newPin = Math.floor(1000 + Math.random() * 9000).toString();
-        const invNum = 'INV-2026-' + Math.floor(1000 + Math.random() * 9000);
+      const newBookingDoc = {
+        _id: 'bkg_' + Date.now().toString(16),
+        invoiceNumber: invNum,
+        customerName: currentUser.name,
+        customerPhone: currentUser.phone,
+        vehicle: currentUser.car,
+        stationName: st.name,
+        portName: port.name + ' (' + port.type + ')',
+        pin: newPin,
+        amountPaid: pendingCheckout.total,
+        energyKwh: pendingCheckout.estKwh,
+        status: 'reserved',
+        createdAt: new Date().toISOString()
+      };
 
+      try {
+        const res = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newBookingDoc)
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || ('Server returned HTTP ' + res.status));
+        }
+
+        // Only lock port if MongoDB Atlas confirmed save!
         port.status = 'reserved';
         port.customer = currentUser.name;
         port.phone = currentUser.phone;
         port.vehicle = currentUser.car;
-        port.secondsLeft = 900; // 15 minutes live countdown
+        port.secondsLeft = 900;
         port.pin = newPin;
         port.paid = pendingCheckout.total;
         port.invoiceNumber = invNum;
 
-        // Save booking into VoltGridDB.bookings
-        const newBookingDoc = {
-          _id: 'bkg_' + Date.now().toString(16),
-          invoiceNumber: invNum,
-          customerName: currentUser.name,
-          customerPhone: currentUser.phone,
-          vehicle: currentUser.car,
-          stationName: st.name,
-          portName: port.name + ' (' + port.type + ')',
-          pin: newPin,
-          amountPaid: pendingCheckout.total,
-          energyKwh: pendingCheckout.estKwh,
-          status: 'reserved',
-          createdAt: new Date().toISOString()
-        };
         VoltGridDB.bookings.unshift(newBookingDoc);
-
-        // Update user stats in VoltGridDB.users
         currentUser.sessionsCount = (currentUser.sessionsCount || 0) + 1;
         currentUser.totalKwhCharged = +((currentUser.totalKwhCharged || 0) + pendingCheckout.estKwh).toFixed(1);
         currentUser.totalMoneySaved = (currentUser.totalMoneySaved || 0) + Math.round(pendingCheckout.estKwh * 18);
         currentUser.totalCo2Saved = (currentUser.totalCo2Saved || 0) + Math.round(pendingCheckout.estKwh * 1.8);
 
+        saveVoltGridDB();
         closeCheckoutModal();
         renderPorts();
         updateAdminDashboard();
 
-        // Show Tax Invoice & Digital Pass
         document.getElementById('invNumber').innerText = invNum;
         document.getElementById('invCustomer').innerText = currentUser.name + ' (' + currentUser.phone + ')';
         document.getElementById('invVehicle').innerText = currentUser.car;
@@ -1490,7 +1559,13 @@
         document.getElementById('invPin').innerText = newPin;
 
         document.getElementById('invoiceModal').classList.remove('hidden');
-      }, 500);
+      } catch (err) {
+        console.error('Booking save error:', err);
+        alert('❌ BOOKING BLOCKED: Could not write to MongoDB Atlas!\n\nReason: ' + err.message + '\n\nSlot was not locked because database persistence is required.');
+      } finally {
+        btn.innerText = "Authorize Demo Payment & Lock Spot";
+        btn.disabled = false;
+      }
     }
 
     function closeInvoiceModal() {
@@ -1509,6 +1584,7 @@
         port.status = 'charging';
         port.soc = 42;
         port.kw = port.maxKw ? Math.round(port.maxKw * 0.75) : 120;
+        saveVoltGridDB();
         renderPorts();
         updateAdminDashboard();
       } else {
@@ -1525,14 +1601,83 @@
       port.vehicle = null;
       port.pin = null;
       port.secondsLeft = 0;
+      saveVoltGridDB();
       renderPorts();
       updateAdminDashboard();
     }
 
     // ---------------- ADMIN COMMAND CENTER ----------------
+    // Live fetch from MongoDB Atlas Cloud Cluster
+    async function syncWithMongoDBAtlas(isManual = false) {
+      const statusEl = document.getElementById('cloudDbStatus');
+      const pulseEl = document.getElementById('cloudDbPulse');
+
+      try {
+        const [uRes, bRes] = await Promise.all([
+          fetch('/api/users').catch(e => ({ ok: false, statusText: e.message })),
+          fetch('/api/bookings').catch(e => ({ ok: false, statusText: e.message }))
+        ]);
+
+        if (uRes && uRes.ok) {
+          const cloudUsers = await uRes.json();
+          if (Array.isArray(cloudUsers)) {
+            cloudUsers.forEach(cu => {
+              const idx = VoltGridDB.users.findIndex(u => u.phone === cu.phone);
+              if (idx >= 0) {
+                VoltGridDB.users[idx] = { ...VoltGridDB.users[idx], ...cu };
+              } else {
+                VoltGridDB.users.unshift(cu);
+              }
+            });
+            saveVoltGridDB();
+          }
+
+          if (statusEl && pulseEl) {
+            statusEl.innerText = 'Connected: MongoDB Atlas Cluster0 (AWS ap-south-1)';
+            statusEl.className = 'font-mono font-bold text-emerald-600 dark:text-emerald-400';
+            pulseEl.className = 'w-3 h-3 rounded-full bg-emerald-500';
+          }
+          if (isManual) {
+            alert('✅ MongoDB Atlas Synced! ' + (cloudUsers ? cloudUsers.length : 0) + ' cloud users retrieved.');
+          }
+        } else {
+          const status = uRes ? (uRes.status || uRes.statusText) : 'unreachable';
+          if (statusEl && pulseEl) {
+            statusEl.innerText = 'Disconnected: /api/users returned ' + status + ' (Backend not active on host)';
+            statusEl.className = 'font-mono font-bold text-rose-500';
+            pulseEl.className = 'w-3 h-3 rounded-full bg-rose-500';
+          }
+          if (isManual) {
+            alert('❌ MongoDB Atlas connection failed!\n\nServer returned: ' + status + '\n\nPlease verify that api/users.js is committed to your GitHub repo.');
+          }
+        }
+
+        if (bRes && bRes.ok) {
+          const cloudBookings = await bRes.json();
+          if (Array.isArray(cloudBookings)) {
+            cloudBookings.forEach(cb => {
+              if (!VoltGridDB.bookings.some(b => b.invoiceNumber === cb.invoiceNumber)) {
+                VoltGridDB.bookings.unshift(cb);
+              }
+            });
+            saveVoltGridDB();
+          }
+        }
+
+        updateAdminDashboard();
+      } catch (err) {
+        if (statusEl && pulseEl) {
+          statusEl.innerText = 'Error: ' + err.message;
+          statusEl.className = 'font-mono font-bold text-rose-500';
+          pulseEl.className = 'w-3 h-3 rounded-full bg-rose-500';
+        }
+      }
+    }
+
     function openAdminModal() {
       document.getElementById('adminModal').classList.remove('hidden');
       updateAdminDashboard();
+      syncWithMongoDBAtlas();
     }
 
     function closeAdminModal() {
@@ -1742,6 +1887,7 @@
       renderUserNav();
       renderStationSelector();
       recalculateSavings();
+      syncWithMongoDBAtlas();
     });
   </script>
 </body>
