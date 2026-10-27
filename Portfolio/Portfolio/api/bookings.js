@@ -34,9 +34,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
       const bookingData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      if (!bookingData) {
-        return res.status(400).json({ error: 'Booking payload required' });
-      }
+      if (!bookingData) return res.status(400).json({ error: 'Booking payload required' });
 
       bookingData.createdAt = new Date().toISOString();
       const insertResult = await bookingsCol.insertOne(bookingData);
