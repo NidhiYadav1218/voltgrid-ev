@@ -1851,12 +1851,17 @@
         return;
       }
 
+      const bookedStationId = pendingCheckout.stationId;
+      const bookedPortId = pendingCheckout.portId;
+      const bookedTotal = pendingCheckout.total || 962.40;
+      const bookedKwh = pendingCheckout.estKwh || 45.1;
+
       const btn = document.getElementById('btnPayConfirm');
       btn.innerText = "Persisting to MongoDB Atlas Cloud...";
       btn.disabled = true;
 
-      const st = stations.find(s => s.id === pendingCheckout.stationId);
-      const port = st.ports.find(p => p.id === pendingCheckout.portId);
+      const st = stations.find(s => s.id === bookedStationId);
+      const port = st.ports.find(p => p.id === bookedPortId);
 
       const newPin = Math.floor(1000 + Math.random() * 9000).toString();
       const invNum = 'INV-2026-' + Math.floor(1000 + Math.random() * 9000);
@@ -1870,8 +1875,8 @@
         stationName: st.name,
         portName: port.name + ' (' + port.type + ')',
         pin: newPin,
-        amountPaid: pendingCheckout.total,
-        energyKwh: pendingCheckout.estKwh,
+        amountPaid: bookedTotal,
+        energyKwh: bookedKwh,
         status: 'reserved',
         createdAt: new Date().toISOString()
       };
@@ -1896,7 +1901,7 @@
         port.vehicle = currentUser.car;
         port.secondsLeft = 900;
         port.pin = newPin;
-        port.paid = pendingCheckout.total;
+        port.paid = bookedTotal;
         port.invoiceNumber = invNum;
 
         // Broadcast slot hold to MongoDB Atlas so all devices see it locked instantly
@@ -1906,21 +1911,18 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               action: 'reserve',
-              stationId: pendingCheckout.stationId,
+              stationId: bookedStationId,
               portId: port.id,
               customer: currentUser.name,
               phone: currentUser.phone,
               vehicle: currentUser.car,
               pin: newPin,
-              paid: pendingCheckout.total
+              paid: bookedTotal
             })
           });
         } catch (stErr) {
           console.warn('Could not sync station hold to cloud:', stErr);
         }
-
-        const bookedTotal = pendingCheckout.total;
-        const bookedKwh = pendingCheckout.estKwh;
 
         VoltGridDB.bookings.unshift(newBookingDoc);
         currentUser.sessionsCount = (currentUser.sessionsCount || 0) + 1;
