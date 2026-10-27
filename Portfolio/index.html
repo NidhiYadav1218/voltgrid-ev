@@ -961,6 +961,49 @@
     // =========================================================================
     // VOLTGRID IN-MEMORY DATABASE (MONGODB / MONGOOSE COMPLIANT SCHEMAS)
     // =========================================================================
+    // ---------------- SOUND NOTIFICATION ENGINE (WEB AUDIO API) ----------------
+    function playNotificationSound(type = 'chime') {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+
+        if (type === 'batteryFull') {
+          // Cheerful 4-tone ascending chime (C5 -> E5 -> G5 -> C6)
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.12);
+            gain.gain.setValueAtTime(0.25, ctx.currentTime + idx * 0.12);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.12 + 0.35);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + idx * 0.12);
+            osc.stop(ctx.currentTime + idx * 0.12 + 0.35);
+          });
+        } else if (type === 'expired') {
+          // 2-tone descending warning (E5 -> C5)
+          const notes = [659.25, 440.00];
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.2);
+            gain.gain.setValueAtTime(0.25, ctx.currentTime + idx * 0.2);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.2 + 0.4);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + idx * 0.2);
+            osc.stop(ctx.currentTime + idx * 0.2 + 0.4);
+          });
+        }
+      } catch (e) {
+        console.warn('AudioContext blocked or unsupported:', e);
+      }
+    }
+
 
     const INITIAL_STATIONS = [
       {
@@ -974,7 +1017,7 @@
         ports: [
           { id: 'p101', name: 'Port 01', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available' },
           { id: 'p102', name: 'Port 02', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'charging', vehicle: 'Porsche Taycan', soc: 76, kw: 246 },
-          { id: 'p103', name: 'Port 03', type: '150kW Fast DC', maxKw: 150, status: 'reserved', customer: 'Vikas Sharma', phone: '+91 98111 22334', vehicle: 'Tesla Model Y', secondsLeft: 720, pin: '7192', paid: 1280 },
+          { id: 'p103', name: 'Port 03', type: '150kW Fast DC', maxKw: 150, status: 'available' },
           { id: 'p104', name: 'Port 04', type: '150kW Fast DC', maxKw: 150, status: 'available' },
           { id: 'p105', name: 'Port 05', type: '100kW DC', maxKw: 100, status: 'charging', vehicle: 'Tata Nexon EV', soc: 82, kw: 48 },
           { id: 'p106', name: 'Port 06', type: '22kW AC Destination', maxKw: 22, status: 'available' }
@@ -992,7 +1035,7 @@
           { id: 'p201', name: 'Port 01', type: '180kW Fast DC', maxKw: 180, status: 'charging', vehicle: 'Hyundai Ioniq 5', soc: 52, kw: 165 },
           { id: 'p202', name: 'Port 02', type: '180kW Fast DC', maxKw: 180, status: 'available' },
           { id: 'p203', name: 'Port 03', type: '43kW Fast AC', maxKw: 43, status: 'available' },
-          { id: 'p204', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'reserved', customer: 'Priya Verma', phone: '+91 99222 33445', vehicle: 'MG ZS EV', secondsLeft: 480, pin: '3920', paid: 840 }
+          { id: 'p204', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'available' }
         ]
       },
       {
@@ -1113,6 +1156,19 @@
     }
 
     let stations = VoltGridDB.stations;
+    // Auto-clean any expired ports from previous stale sessions
+    stations.forEach(st => {
+      st.ports.forEach(p => {
+        if (p.status === 'reserved' && (!p.secondsLeft || p.secondsLeft <= 0)) {
+          p.status = 'available';
+          p.customer = null;
+          p.phone = null;
+          p.vehicle = null;
+          p.pin = null;
+          p.secondsLeft = 0;
+        }
+      });
+    });
     let currentUser = loadSaved('voltgrid_currentUser', null);
     let currentStationId = 'st-01';
     let pendingCheckout = null;
@@ -1354,14 +1410,26 @@
         const isRes = port.status === 'reserved';
         const isChg = port.status === 'charging';
 
+        // Check if the current logged-in user is the one who made this reservation
+        const isMyBooking = isRes && currentUser && (
+          (currentUser.phone && port.phone && currentUser.phone.replace(/\D/g, '') === port.phone.replace(/\D/g, '')) ||
+          (currentUser.name && port.customer && currentUser.name.trim().toLowerCase() === port.customer.trim().toLowerCase())
+        );
+
         let badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400';
         let badgeText = 'AVAILABLE';
         let borderClass = 'border-slate-200 dark:border-slate-800';
 
         if (isRes) {
-          badgeClass = 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-400 animate-pulse';
-          badgeText = 'HELD • ' + formatTime(port.secondsLeft || 900);
-          borderClass = 'border-amber-400/50 dark:border-amber-500/50';
+          if (isMyBooking) {
+            badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-cyan-400 font-extrabold animate-pulse';
+            badgeText = 'YOUR HOLD • ' + formatTime(port.secondsLeft || 900);
+            borderClass = 'border-emerald-500/60 dark:border-cyan-400/60 ring-2 ring-emerald-500/20';
+          } else {
+            badgeClass = 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-400';
+            badgeText = 'RESERVED (' + formatTime(port.secondsLeft || 900) + ')';
+            borderClass = 'border-amber-400/40 dark:border-amber-500/40';
+          }
         } else if (isChg) {
           badgeClass = 'bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-400';
           badgeText = 'CHARGING (' + (port.soc || 65) + '%)';
@@ -1389,11 +1457,23 @@
                   </div>
                 ` : ''}
 
-                ${isRes ? `
-                  <div class="text-xs font-bold text-slate-800 dark:text-slate-200">Reserved for ${port.customer || 'Driver'}</div>
+                ${isRes && isMyBooking ? `
+                  <div class="text-xs font-extrabold text-emerald-600 dark:text-cyan-400 flex items-center gap-1.5">
+                    <span>✓</span> Reserved by You (${port.customer})
+                  </div>
                   <div class="flex items-center justify-between text-[11px] text-amber-600 dark:text-amber-400 mt-1 font-mono">
                     <span>15m Lock: ${formatTime(port.secondsLeft || 900)}</span>
-                    <span class="bg-amber-100 dark:bg-amber-950/90 px-1.5 py-0.5 rounded font-extrabold">PIN: ${port.pin || '••••'}</span>
+                    <span class="bg-amber-100 dark:bg-amber-950/90 px-1.5 py-0.5 rounded font-extrabold">Your PIN: ${port.pin}</span>
+                  </div>
+                ` : ''}
+
+                ${isRes && !isMyBooking ? `
+                  <div class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    Reserved by another driver
+                  </div>
+                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1 font-mono">
+                    Anti-steal hold active &bull; Locked with private PIN
                   </div>
                 ` : ''}
 
@@ -1417,9 +1497,15 @@
                 </button>
               ` : ''}
 
-              ${isRes ? `
-                <button onclick="simulateArrivalCharge('${port.id}')" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-amber-500 hover:bg-amber-600 text-white dark:text-slate-950 shadow-md transition-all flex items-center justify-center gap-1.5">
-                  <span>⚡</span> Arrived? Enter PIN & Charge
+              ${isRes && isMyBooking ? `
+                <button onclick="simulateArrivalCharge('${port.id}')" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 text-white dark:text-slate-950 shadow-md shadow-emerald-500/20 transition-all flex items-center justify-center gap-1.5">
+                  <span>⚡</span> Arrived? Enter PIN (${port.pin}) & Charge
+                </button>
+              ` : ''}
+
+              ${isRes && !isMyBooking ? `
+                <button disabled class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700/60 flex items-center justify-center gap-1.5">
+                  <span>🔒</span> Spot Locked by Driver
                 </button>
               ` : ''}
 
@@ -1434,7 +1520,7 @@
       }).join('');
     }
 
-    function selectStation(id) {
+        function selectStation(id) {
       currentStationId = id;
       renderStationSelector();
     }
@@ -1842,23 +1928,75 @@
     // ---------------- ACTIVE 1-SECOND TIMER FOR COUNTDOWNS & TELEMETRY ----------------
     setInterval(() => {
       let needsRerender = false;
+
       stations.forEach(st => {
         st.ports.forEach(p => {
-          if (p.status === 'reserved' && p.secondsLeft > 0) {
-            p.secondsLeft -= 1;
-            needsRerender = true;
-            if (p.secondsLeft <= 0) {
+          // 1. AUTO-EXPIRY & REFUND FOR EXPIRED RESERVATIONS
+          if (p.status === 'reserved') {
+            if (p.secondsLeft > 0) {
+              p.secondsLeft -= 1;
+              needsRerender = true;
+            } else {
+              // 15-minute slot has expired!
+              const wasMyBooking = currentUser && (
+                (currentUser.phone && p.phone && currentUser.phone === p.phone) ||
+                (currentUser.name && p.customer && currentUser.name.trim().toLowerCase() === p.customer.trim().toLowerCase())
+              );
+
+              const refundAmount = p.paid || 962.40;
+              const expiredCustomerName = p.customer || 'Driver';
+              const portName = p.name;
+
+              // Reset port back to available
               p.status = 'available';
               p.customer = null;
               p.phone = null;
               p.vehicle = null;
               p.pin = null;
-            }
-          } else if (p.status === 'charging' && (p.soc || 0) < 100) {
-            // Live simulation of battery percentage creep
-            if (Math.random() > 0.6) {
-              p.soc = Math.min(100, (p.soc || 50) + 1);
+              p.secondsLeft = 0;
+              p.paid = 0;
+
+              // Save to persistence
+              saveVoltGridDB();
               needsRerender = true;
+
+              // Play audio warning & notify customer
+              playNotificationSound('expired');
+
+              if (wasMyBooking) {
+                alert(`⏰ HOLD EXPIRED & REFUND PROCESSED!\n\nYou did not arrive within the 15-minute hold window for ${portName}.\n\nThe charging spot has been released for other waiting drivers.\n\n💰 Full refund of ₹${refundAmount} has been credited back to your original payment method.`);
+              }
+            }
+          }
+
+          // 2. CHARGING TELEMETRY & 100% BATTERY FULL NOTIFICATION WITH SOUND
+          else if (p.status === 'charging') {
+            if ((p.soc || 0) < 100) {
+              if (Math.random() > 0.6) {
+                p.soc = Math.min(100, (p.soc || 50) + 1);
+                needsRerender = true;
+              }
+            } else if ((p.soc || 0) >= 100) {
+              // Port reached 100%! Drop draw to 0 kW
+              if (p.kw !== 0) {
+                p.kw = 0;
+                needsRerender = true;
+              }
+
+              // Alert once when battery hits 100%
+              if (!p.hasAlertedFull) {
+                p.hasAlertedFull = true;
+                playNotificationSound('batteryFull');
+
+                const wasMyVehicle = currentUser && (
+                  (currentUser.phone && p.phone && currentUser.phone === p.phone) ||
+                  (currentUser.name && p.customer && currentUser.name.trim().toLowerCase() === p.customer.trim().toLowerCase())
+                );
+
+                setTimeout(() => {
+                  alert(`⚡ CHARGING COMPLETE (100% FULL)!\n\nVehicle: ${p.vehicle || 'Your EV'}\nLocation: ${st.name} (${p.name})\n\n🎉 Your battery has reached 100%. Power draw has dropped to 0 kW.\nPlease disconnect your cable to free the charger for waiting drivers.`);
+                }, 100);
+              }
             }
           }
         });
