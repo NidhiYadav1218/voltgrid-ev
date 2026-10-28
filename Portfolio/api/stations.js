@@ -1,10 +1,14 @@
 import { MongoClient } from 'mongodb';
 
 const MONGODB_URI = process.env.MONGODB_URI;
+
 let cachedClient = null;
 
 async function getClient() {
   if (cachedClient) return cachedClient;
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI environment variable is missing on Vercel.');
+  }
   const client = new MongoClient(MONGODB_URI);
   await client.connect();
   cachedClient = client;
@@ -99,6 +103,8 @@ export default async function handler(req, res) {
             p.phone = null;
             p.vehicle = null;
             p.pin = null;
+            p.userId = null;
+            p.sessionId = null;
             p.secondsLeft = 0;
             p.reservedAt = null;
             docChanged = true;
@@ -147,24 +153,31 @@ export default async function handler(req, res) {
 
       if (action === 'reserve') {
         port.status = 'reserved';
+        port.userId = body.userId || null;
         port.customer = body.customer;
         port.phone = body.phone;
         port.vehicle = body.vehicle;
         port.pin = body.pin;
         port.paid = body.paid;
+        port.sessionId = body.sessionId || null;
         port.secondsLeft = 900;
         port.reservedAt = Date.now();
       } else if (action === 'release') {
         port.status = 'available';
+        port.userId = null;
         port.customer = null;
         port.phone = null;
         port.vehicle = null;
         port.pin = null;
+        port.sessionId = null;
         port.soc = null;
         port.kw = null;
         port.secondsLeft = 0;
         port.reservedAt = null;
       } else if (action === 'startCharging') {
+        if (body.pin && String(body.pin).trim() !== String(port.pin).trim()) {
+          return res.status(403).json({ error: 'Security PIN mismatch' });
+        }
         port.status = 'charging';
         port.soc = 42;
         port.kw = port.maxKw ? Math.round(port.maxKw * 0.75) : 120;

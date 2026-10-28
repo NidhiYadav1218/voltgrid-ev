@@ -1,10 +1,14 @@
 import { MongoClient } from 'mongodb';
 
 const MONGODB_URI = process.env.MONGODB_URI;
+
 let cachedClient = null;
 
 async function getClient() {
   if (cachedClient) return cachedClient;
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI environment variable is missing on Vercel.');
+  }
   const client = new MongoClient(MONGODB_URI);
   await client.connect();
   cachedClient = client;
