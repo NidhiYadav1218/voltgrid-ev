@@ -1,7 +1,6 @@
 import { MongoClient } from 'mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://nidhiyadav1218_db_user:XGf1HxV2xA60BGeC@cluster0.jg04gws.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-
+const MONGODB_URI = process.env.MONGODB_URI;
 let cachedClient = null;
 
 async function getClient() {
