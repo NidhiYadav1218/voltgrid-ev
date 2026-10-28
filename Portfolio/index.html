@@ -624,15 +624,15 @@
         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">Select Demo Payment Method</label>
         
         <div class="grid grid-cols-2 gap-2 text-xs">
-          <label class="flex items-center gap-2 p-3 rounded-xl border border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 cursor-pointer">
-            <input type="radio" name="payMethod" value="card" checked class="accent-emerald-500" />
+          <label id="payOptionCard" onclick="selectPayMethod('card')" class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition-all">
+            <input type="radio" name="payMethod" value="card" class="accent-emerald-500" />
             <div>
               <strong class="block text-slate-900 dark:text-white">Demo Card</strong>
               <span class="text-[10px] text-slate-500">&bull;&bull;&bull;&bull; 4242</span>
             </div>
           </label>
 
-          <label class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 cursor-pointer">
+          <label id="payOptionUpi" onclick="selectPayMethod('upi')" class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition-all">
             <input type="radio" name="payMethod" value="upi" class="accent-emerald-500" />
             <div>
               <strong class="block text-slate-900 dark:text-white">Demo UPI</strong>
@@ -1299,6 +1299,74 @@
       localStorage.setItem('voltgrid_my_local_holds', JSON.stringify(holds));
     }
 
+    // Single source of truth for booking ownership:
+    // A port is owned by the user if:
+    // 1. This device/session created the hold (localStorage hold token or matching sessionId)
+    // 2. The logged-in user matches the booking customer phone or name
+    function isPortOwner(port) {
+      if (!port) return false;
+      const myHolds = getMyLocalHolds();
+      const currentSid = getDeviceSessionId();
+
+      if (myHolds[port.id] && myHolds[port.id].active) return true;
+      if (port.sessionId && port.sessionId === currentSid) return true;
+
+      if (currentUser) {
+        if (port.phone && currentUser.phone && String(port.phone).trim() === String(currentUser.phone).trim()) return true;
+        if (port.customer && currentUser.name && String(port.customer).trim().toLowerCase() === String(currentUser.name).trim().toLowerCase()) return true;
+      }
+
+      return false;
+    }
+
+    // ---------------- PAYMENT METHOD SELECTION STATE ----------------
+    let selectedPaymentMethod = null;
+
+    function resetPaymentSelection() {
+      selectedPaymentMethod = null;
+      const cardRadio = document.querySelector('input[name="payMethod"][value="card"]');
+      const upiRadio = document.querySelector('input[name="payMethod"][value="upi"]');
+      if (cardRadio) cardRadio.checked = false;
+      if (upiRadio) upiRadio.checked = false;
+
+      const cardLabel = document.getElementById('payOptionCard');
+      const upiLabel = document.getElementById('payOptionUpi');
+      if (cardLabel) {
+        cardLabel.className = 'flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition-all';
+      }
+      if (upiLabel) {
+        upiLabel.className = 'flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition-all';
+      }
+    }
+
+    function selectPayMethod(method) {
+      selectedPaymentMethod = method;
+      const cardRadio = document.querySelector('input[name="payMethod"][value="card"]');
+      const upiRadio = document.querySelector('input[name="payMethod"][value="upi"]');
+      const cardLabel = document.getElementById('payOptionCard');
+      const upiLabel = document.getElementById('payOptionUpi');
+
+      if (method === 'card') {
+        if (cardRadio) cardRadio.checked = true;
+        if (upiRadio) upiRadio.checked = false;
+        if (cardLabel) {
+          cardLabel.className = 'flex items-center gap-2 p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 cursor-pointer shadow-sm transition-all';
+        }
+        if (upiLabel) {
+          upiLabel.className = 'flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 cursor-pointer transition-all';
+        }
+      } else if (method === 'upi') {
+        if (upiRadio) upiRadio.checked = true;
+        if (cardRadio) cardRadio.checked = false;
+        if (upiLabel) {
+          upiLabel.className = 'flex items-center gap-2 p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 cursor-pointer shadow-sm transition-all';
+        }
+        if (cardLabel) {
+          cardLabel.className = 'flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 cursor-pointer transition-all';
+        }
+      }
+    }
+
     const vehicles = {
       'Tata Nexon EV Max': { battery: 40.5, speed: 60, efficiency: 7.2 },
       'Tesla Model 3 Long Range': { battery: 82, speed: 250, efficiency: 6.5 },
@@ -1547,15 +1615,10 @@
         const isRes = port.status === 'reserved';
         const isChg = port.status === 'charging';
 
-        // Strict Session-Bound Ownership:
-        // A port is ONLY controllable by the specific device/browser session that reserved it!
-        // No observer login or role switching required — all other devices are automatically locked out!
-        const myHolds = getMyLocalHolds();
-        const currentSid = getDeviceSessionId();
-        const isMySession = (isRes || isChg) && (
-          (myHolds[port.id] && myHolds[port.id].active) ||
-          (port.sessionId && port.sessionId === currentSid)
-        );
+        // Strict Booking Ownership:
+        // A port is ONLY controllable by the user or browser session that reserved it!
+        // All other users/devices see a clean Reserved badge with disabled buttons and hidden PIN.
+        const isMySession = (isRes || isChg) && isPortOwner(port);
 
         let badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400';
         let badgeText = 'AVAILABLE';
@@ -1619,8 +1682,8 @@
                     <span class="w-2 h-2 rounded-full bg-amber-500"></span>
                     Reserved by another driver
                   </div>
-                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1 font-mono">
-                    Anti-steal hold active &bull; Locked with private PIN
+                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+                    15-min arrival hold in progress &bull; Slot unavailable
                   </div>
                 ` : ''}
 
@@ -1638,10 +1701,10 @@
                 ${isChg && !isMySession ? `
                   <div class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
-                    Occupied &bull; Vehicle charging
+                    In Use &bull; Vehicle charging
                   </div>
-                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1 font-mono">
-                    Port locked to vehicle cable &bull; In use
+                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+                    Port occupied &bull; Cable locked
                   </div>
                 ` : ''}
               </div>
@@ -1662,7 +1725,7 @@
 
               ${isRes && !isMySession ? `
                 <button disabled class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700/60 flex items-center justify-center gap-1.5">
-                  <span>🔒</span> Spot Locked by Driver
+                  <span>🔒</span> Reserved by Another Driver
                 </button>
               ` : ''}
 
@@ -1855,16 +1918,23 @@
       document.getElementById('billGst').innerText = gst;
       document.getElementById('billTotal').innerText = total;
 
+      resetPaymentSelection();
       document.getElementById('checkoutModal').classList.remove('hidden');
     }
 
     function closeCheckoutModal() {
       document.getElementById('checkoutModal').classList.add('hidden');
       pendingCheckout = null;
+      resetPaymentSelection();
     }
 
     async function executePayment() {
       if (!pendingCheckout) return;
+
+      if (!selectedPaymentMethod) {
+        alert('⚠️ Please select a demo payment method (Demo Card or Demo UPI) to proceed.');
+        return;
+      }
 
       const activeUser = currentUser || {
         name: 'EV Driver',
@@ -1995,12 +2065,8 @@
       const port = st ? st.ports.find(p => p.id === portId) : null;
       if (!port) return;
 
-      const myHolds = getMyLocalHolds();
-      const currentSid = getDeviceSessionId();
-      const isOwner = (myHolds[port.id] && myHolds[port.id].active) || (port.sessionId && port.sessionId === currentSid);
-
-      if (!isOwner) {
-        alert("🔒 ACCESS DENIED!\n\nThis port was reserved in another session/device.\nOnly the browser that reserved this slot can unlock it.");
+      if (!isPortOwner(port)) {
+        alert("🔒 ACCESS DENIED!\n\nThis port was reserved by another driver.\nOnly the verified driver who booked this slot can unlock it.");
         return;
       }
 
@@ -2047,11 +2113,7 @@
         return;
       }
 
-      const myHolds = getMyLocalHolds();
-      const currentSid = getDeviceSessionId();
-      const isOwner = (myHolds[port.id] && myHolds[port.id].active) || (port.sessionId && port.sessionId === currentSid);
-
-      if (!isOwner) {
+      if (!isPortOwner(port)) {
         alert("🔒 ACCESS DENIED! You are not authorized to unlock this port.");
         closePinModal();
         return;
@@ -2101,6 +2163,10 @@
       const st = stations.find(s => s.id === currentStationId);
       const port = st ? st.ports.find(p => p.id === portId) : null;
       if (port) {
+        if (!isPortOwner(port)) {
+          alert("🔒 ACCESS DENIED! You cannot disconnect another driver's charging cable.");
+          return;
+        }
         saveMyLocalHold(portId, null);
         port.status = 'available';
         port.customer = null;
@@ -2217,11 +2283,17 @@
                       localP.kw = null;
                       localP.hasAlertedFull = false;
                       saveMyLocalHold(cP.id, null);
-                    } else if (cP.status === 'reserved' && cP.secondsLeft) {
-                      localP.secondsLeft = cP.secondsLeft;
+                    } else if (cP.status === 'reserved') {
+                      if (cP.secondsLeft) localP.secondsLeft = cP.secondsLeft;
+                      if (isPortOwner(localP)) {
+                        saveMyLocalHold(localP.id, { active: true, pin: localP.pin, invNum: localP.invoiceNumber });
+                      }
                     } else if (cP.status === 'charging') {
                       localP.soc = (cP.soc !== undefined && cP.soc !== null) ? cP.soc : (localP.soc || 42);
                       localP.kw = (cP.kw !== undefined && cP.kw !== null) ? cP.kw : (localP.kw || 120);
+                      if (isPortOwner(localP)) {
+                        saveMyLocalHold(localP.id, { active: true, pin: localP.pin, invNum: localP.invoiceNumber });
+                      }
                     }
                   }
                 });
