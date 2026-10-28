@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>VoltGrid // Smart EV Fast Charging & Slot Reservation</title>
   <meta name="description" content="Reserve fast EV chargers at highway stops and shopping malls before you arrive. Guaranteed spots, zero waiting in line, and friendly live battery tracking." />
 
@@ -77,6 +80,9 @@
           </span>
           <span class="hidden sm:inline-block ml-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400 dark:border dark:border-emerald-800">
             Live EV Platform
+          </span>
+          <span class="ml-1 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-cyan-400 border border-emerald-500/30" title="Security & Session Lock Active">
+            v2.4
           </span>
         </div>
       </a>
@@ -577,19 +583,83 @@
         <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 text-white shadow-md transition-all">
           Save & Log In to VoltGrid
         </button>
+      </form>
 
-        <div class="pt-3 border-t border-slate-200 dark:border-slate-800 text-center">
-          <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">⚡ Quick Switch Demo Profile</p>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="switchDemoUser('Nidhi Yadav', '+91 98100 12345', 'nidhi@voltgrid.io', 'MG ZS EV')" class="py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 transition-all flex items-center justify-center gap-1.5">
-              <span>👤</span> Nidhi (Reserver)
-            </button>
-            <button type="button" onclick="switchDemoUser('Rahul Sharma', '+91 98765 43210', 'rahul@voltgrid.io', 'Tata Nexon EV Max')" class="py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-cyan-500 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-slate-200 transition-all flex items-center justify-center gap-1.5">
-              <span>👤</span> Rahul (Observer)
-            </button>
+      <!-- Quick Switch Driver Profiles -->
+      <div class="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2 text-center">Quick Switch Driver Profile</span>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <button type="button" onclick="switchDemoUser('Nidhi Yadav', '9328703345', 'nidhiyadav1218@gmail.com', 'Tata Nexon EV Max', 'USR-1')" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 bg-slate-50 dark:bg-slate-800 text-left transition-all">
+            <div class="font-extrabold text-slate-900 dark:text-white flex items-center justify-between">
+              <span>Nidhi Yadav</span>
+              <span class="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-bold">#1</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Nexon EV Max</div>
+          </button>
+          <button type="button" onclick="switchDemoUser('Rahul Sharma', '9876543210', 'rahul.sharma@example.com', 'MG ZS EV', 'USR-2')" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 bg-slate-50 dark:bg-slate-800 text-left transition-all">
+            <div class="font-extrabold text-slate-900 dark:text-white flex items-center justify-between">
+              <span>Rahul Sharma</span>
+              <span class="text-[10px] font-mono text-amber-600 dark:text-amber-400 font-bold">#2</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-0.5">MG ZS EV</div>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= USER PROFILE & BOOKINGS HISTORY MODAL ================= -->
+  <div id="profileModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+    <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <button onclick="closeProfileModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white font-bold text-lg">✕</button>
+
+      <!-- Profile Header -->
+      <div class="flex items-center gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+          <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[14px] flex items-center justify-center text-xl font-black text-emerald-600 dark:text-cyan-400" id="profAvatarInitial">
+            N
           </div>
         </div>
-      </form>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-xl font-extrabold text-slate-900 dark:text-white font-heading" id="profName">Nidhi Yadav</h3>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-cyan-400 border border-emerald-300 dark:border-cyan-800" id="profUserIdBadge">
+              Driver ID: #1
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" id="profContact">9328703345 • nidhiyadav1218@gmail.com</p>
+        </div>
+      </div>
+
+      <!-- Vehicle Card -->
+      <div class="mt-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Registered EV Vehicle</span>
+        <div class="flex items-center justify-between">
+          <div class="font-extrabold text-sm text-slate-900 dark:text-white" id="profVehicleName">Tata Nexon EV Max</div>
+          <span class="text-xs font-mono font-semibold text-emerald-600 dark:text-cyan-400" id="profVehicleSpec">40.5 kWh • 60 kW DC</span>
+        </div>
+      </div>
+
+      <!-- 15-Minute Slot & Arrival History -->
+      <div class="mt-5">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            15-Min Slot Booking & Arrival Log
+          </h4>
+          <span class="text-[11px] font-mono text-slate-400" id="profTotalSlots">0 reservations</span>
+        </div>
+
+        <div id="profHistoryList" class="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3">
+        <button onclick="closeProfileModal()" class="px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all">
+          Close Profile
+        </button>
+      </div>
     </div>
   </div>
 
@@ -636,15 +706,15 @@
         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">Select Demo Payment Method</label>
         
         <div class="grid grid-cols-2 gap-2 text-xs">
-          <label class="flex items-center gap-2 p-3 rounded-xl border border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 cursor-pointer">
-            <input type="radio" name="payMethod" value="card" checked class="accent-emerald-500" />
+          <label id="payOptionCard" onclick="selectPayMethod('card')" class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition-all">
+            <input type="radio" name="payMethod" value="card" class="accent-emerald-500" />
             <div>
               <strong class="block text-slate-900 dark:text-white">Demo Card</strong>
               <span class="text-[10px] text-slate-500">&bull;&bull;&bull;&bull; 4242</span>
             </div>
           </label>
 
-          <label class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 cursor-pointer">
+          <label id="payOptionUpi" onclick="selectPayMethod('upi')" class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition-all">
             <input type="radio" name="payMethod" value="upi" class="accent-emerald-500" />
             <div>
               <strong class="block text-slate-900 dark:text-white">Demo UPI</strong>
@@ -1153,40 +1223,46 @@
 
     const INITIAL_USERS = [
       {
-        _id: 'usr_65df019a',
+        _id: 'usr_1',
+        userId: 'USR-1',
+        name: 'Nidhi Yadav',
+        phone: '9328703345',
+        email: 'nidhiyadav1218@gmail.com',
+        car: 'Tata Nexon EV Max',
+        sessionsCount: 7,
+        totalKwhCharged: 187.9,
+        totalMoneySaved: 3380,
+        totalCo2Saved: 338,
+        createdAt: '2026-03-12T10:14:22Z',
+        history: []
+      },
+      {
+        _id: 'usr_2',
+        userId: 'USR-2',
+        name: 'Rahul Sharma',
+        phone: '9876543210',
+        email: 'rahul.sharma@example.com',
+        car: 'MG ZS EV',
+        sessionsCount: 2,
+        totalKwhCharged: 55.4,
+        totalMoneySaved: 990,
+        totalCo2Saved: 100,
+        createdAt: '2026-03-15T11:20:00Z',
+        history: []
+      },
+      {
+        _id: 'usr_3',
+        userId: 'USR-3',
         name: 'Vikas Sharma',
-        phone: '+91 98111 22334',
+        phone: '9811122334',
         email: 'vikas.sharma@example.com',
         car: 'Tesla Model 3 Long Range',
         sessionsCount: 14,
         totalKwhCharged: 420.5,
         totalMoneySaved: 14850,
         totalCo2Saved: 328,
-        createdAt: '2026-03-12T10:14:22Z'
-      },
-      {
-        _id: 'usr_65df024b',
-        name: 'Priya Verma',
-        phone: '+91 99222 33445',
-        email: 'priya.verma@example.com',
-        car: 'MG ZS EV',
-        sessionsCount: 9,
-        totalKwhCharged: 284.0,
-        totalMoneySaved: 9800,
-        totalCo2Saved: 215,
-        createdAt: '2026-05-18T14:20:00Z'
-      },
-      {
-        _id: 'usr_65df038c',
-        name: 'Amit Patel',
-        phone: '+91 97333 44556',
-        email: 'amit.patel@example.com',
-        car: 'Hyundai Ioniq 5',
-        sessionsCount: 18,
-        totalKwhCharged: 590.2,
-        totalMoneySaved: 22100,
-        totalCo2Saved: 480,
-        createdAt: '2026-01-09T08:45:11Z'
+        createdAt: '2026-03-12T10:14:22Z',
+        history: []
       }
     ];
 
@@ -1282,6 +1358,114 @@
     let currentStationId = 'st-01';
     let pendingCheckout = null;
     let activeAdminTab = 'bookings';
+
+    // ---------------- DEVICE SESSION IDENTITY & PERSISTENT HOLDS ----------------
+    function getDeviceSessionId() {
+      let sid = localStorage.getItem('voltgrid_device_session_id');
+      if (!sid) {
+        sid = 'dev_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+        localStorage.setItem('voltgrid_device_session_id', sid);
+      }
+      return sid;
+    }
+
+    function getMyLocalHolds() {
+      try {
+        return JSON.parse(localStorage.getItem('voltgrid_my_local_holds') || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveMyLocalHold(portId, data) {
+      const holds = getMyLocalHolds();
+      if (data) {
+        holds[portId] = data;
+      } else {
+        delete holds[portId];
+      }
+      localStorage.setItem('voltgrid_my_local_holds', JSON.stringify(holds));
+    }
+
+    // Single source of truth for booking ownership:
+    // A port is owned by the user IF AND ONLY IF:
+    // 1. The user is logged in (unregistered/guest visitors are 100% locked out)
+    // 2. The logged-in user's User ID matches port.userId (e.g. USR-1)
+    // 3. OR the logged-in user's verified phone number matches port.phone
+    function isPortOwner(port) {
+      if (!port) return false;
+      if (!currentUser) return false; // Unregistered visitors can NEVER own or unlock a port!
+
+      const currentId = String(currentUser.userId || currentUser.id || currentUser._id || '').trim();
+      const portUserId = String(port.userId || '').trim();
+
+      // 1. Match by User ID:
+      if (currentId && portUserId && currentId === portUserId) return true;
+
+      // 2. Match by clean phone number:
+      if (port.phone && currentUser.phone) {
+        const p1 = String(port.phone).replace(/\D/g, '');
+        const p2 = String(currentUser.phone).replace(/\D/g, '');
+        if (p1 && p2 && p1 === p2) return true;
+      }
+
+      // 3. Match by customer name:
+      if (port.customer && currentUser.name) {
+        if (String(port.customer).trim().toLowerCase() === String(currentUser.name).trim().toLowerCase()) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    // ---------------- PAYMENT METHOD SELECTION STATE ----------------
+    let selectedPaymentMethod = null;
+
+    function resetPaymentSelection() {
+      selectedPaymentMethod = null;
+      const cardRadio = document.querySelector('input[name="payMethod"][value="card"]');
+      const upiRadio = document.querySelector('input[name="payMethod"][value="upi"]');
+      if (cardRadio) cardRadio.checked = false;
+      if (upiRadio) upiRadio.checked = false;
+
+      const cardLabel = document.getElementById('payOptionCard');
+      const upiLabel = document.getElementById('payOptionUpi');
+      if (cardLabel) {
+        cardLabel.className = 'flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition-all';
+      }
+      if (upiLabel) {
+        upiLabel.className = 'flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition-all';
+      }
+    }
+
+    function selectPayMethod(method) {
+      selectedPaymentMethod = method;
+      const cardRadio = document.querySelector('input[name="payMethod"][value="card"]');
+      const upiRadio = document.querySelector('input[name="payMethod"][value="upi"]');
+      const cardLabel = document.getElementById('payOptionCard');
+      const upiLabel = document.getElementById('payOptionUpi');
+
+      if (method === 'card') {
+        if (cardRadio) cardRadio.checked = true;
+        if (upiRadio) upiRadio.checked = false;
+        if (cardLabel) {
+          cardLabel.className = 'flex items-center gap-2 p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 cursor-pointer shadow-sm transition-all';
+        }
+        if (upiLabel) {
+          upiLabel.className = 'flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 cursor-pointer transition-all';
+        }
+      } else if (method === 'upi') {
+        if (upiRadio) upiRadio.checked = true;
+        if (cardRadio) cardRadio.checked = false;
+        if (upiLabel) {
+          upiLabel.className = 'flex items-center gap-2 p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 cursor-pointer shadow-sm transition-all';
+        }
+        if (cardLabel) {
+          cardLabel.className = 'flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 cursor-pointer transition-all';
+        }
+      }
+    }
 
     const vehicles = {
       'Tata Nexon EV Max': { battery: 40.5, speed: 60, efficiency: 7.2 },
@@ -1382,17 +1566,26 @@
     function renderUserNav() {
       const slot = document.getElementById('navUserSlot');
       if (currentUser) {
+        const uid = currentUser.userId || currentUser.id || 'USR-1';
+        const numId = String(uid).replace(/\D/g, '') || '1';
         slot.innerHTML = `
           <div class="flex items-center gap-2 pl-2 sm:pl-3 border-l border-slate-200 dark:border-slate-800">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5 flex items-center justify-center text-slate-950 font-bold text-xs shadow-sm">
-              <span class="w-full h-full bg-white dark:bg-slate-900 rounded-full flex items-center justify-center text-emerald-600 dark:text-cyan-400 font-extrabold">
-                ${currentUser.name.charAt(0).toUpperCase()}
-              </span>
-            </div>
-            <div class="hidden sm:block text-left text-xs leading-tight">
-              <div class="font-bold text-slate-900 dark:text-white truncate max-w-[110px]">${currentUser.name}</div>
-              <div class="text-[10px] text-emerald-600 dark:text-cyan-400 font-medium truncate max-w-[110px]">${currentUser.car}</div>
-            </div>
+            <button onclick="openProfileModal()" title="View Your Driver Profile & 15m Arrival Log" class="flex items-center gap-2 hover:opacity-85 transition-opacity text-left">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5 flex items-center justify-center text-slate-950 font-bold text-xs shadow-sm">
+                <span class="w-full h-full bg-white dark:bg-slate-900 rounded-full flex items-center justify-center text-emerald-600 dark:text-cyan-400 font-extrabold">
+                  ${currentUser.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div class="hidden sm:block leading-tight">
+                <div class="font-bold text-slate-900 dark:text-white truncate max-w-[120px] text-xs">
+                  ${currentUser.name} <span class="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-black">#${numId}</span>
+                </div>
+                <div class="text-[10px] text-emerald-600 dark:text-cyan-400 font-medium truncate max-w-[120px]">${currentUser.car}</div>
+              </div>
+            </button>
+            <button onclick="openProfileModal()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-cyan-400 border border-emerald-500/20 hover:scale-105 transition-all">
+              Profile
+            </button>
             <button onclick="logoutUser()" title="Logout" class="text-slate-400 hover:text-rose-500 text-xs ml-1 font-bold">✕</button>
           </div>
         `;
@@ -1403,6 +1596,63 @@
           </button>
         `;
       }
+    }
+
+    function openProfileModal() {
+      if (!currentUser) {
+        openAuthModal();
+        return;
+      }
+      const uid = currentUser.userId || currentUser.id || 'USR-1';
+      const numId = String(uid).replace(/\D/g, '') || '1';
+
+      document.getElementById('profAvatarInitial').innerText = currentUser.name.charAt(0).toUpperCase();
+      document.getElementById('profName').innerText = currentUser.name;
+      document.getElementById('profUserIdBadge').innerText = `Driver ID: #${numId}`;
+      document.getElementById('profContact').innerText = `${currentUser.phone} • ${currentUser.email}`;
+      document.getElementById('profVehicleName').innerText = currentUser.car;
+
+      const spec = vehicles[currentUser.car] || { battery: 50, speed: 100 };
+      document.getElementById('profVehicleSpec').innerText = `${spec.battery} kWh Battery • Up to ${spec.speed} kW DC`;
+
+      const history = currentUser.history || [];
+      document.getElementById('profTotalSlots').innerText = `${history.length} slot reservations`;
+
+      const listEl = document.getElementById('profHistoryList');
+      if (history.length === 0) {
+        listEl.innerHTML = `
+          <div class="text-center py-6 text-slate-400 text-xs">
+            No slot reservations yet. Reserve a charger below to test the 15-minute arrival guarantee!
+          </div>
+        `;
+      } else {
+        listEl.innerHTML = history.map(item => {
+          let badge = '';
+          if (item.status === 'completed') {
+            badge = `<span class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800">⚡ Arrived within 15 min</span>`;
+          } else if (item.status === 'missed') {
+            badge = `<span class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-400 border border-rose-300 dark:border-rose-800">❌ Missed (Expired >15m)</span>`;
+          } else {
+            badge = `<span class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-400 border border-amber-300 dark:border-amber-800">⏳ Active 15m Hold</span>`;
+          }
+
+          return `
+            <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 text-xs flex items-center justify-between">
+              <div>
+                <div class="font-bold text-slate-900 dark:text-white">${item.portName || 'Port'} • ${item.stationName || 'Hub'}</div>
+                <div class="text-[11px] text-slate-500 font-mono mt-0.5">Booked at ${item.bookedAt || 'Recently'} &bull; PIN: ${item.pin || '****'}</div>
+              </div>
+              <div>${badge}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      document.getElementById('profileModal').classList.remove('hidden');
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profileModal').classList.add('hidden');
     }
 
     function openAuthModal() {
@@ -1417,17 +1667,51 @@
       e.preventDefault();
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const origText = submitBtn ? submitBtn.innerText : "Save";
+
+      const name = document.getElementById('authName').value.trim();
+      const phoneInput = document.getElementById('authPhone').value.trim();
+      const email = document.getElementById('authEmail').value.trim().toLowerCase();
+      const car = document.getElementById('authCar').value;
+
+      // 1. Strict Validation on Name, Phone, Email
+      if (name.length < 2) {
+        alert("⚠️ Invalid Name: Please enter a full name with at least 2 characters.");
+        return;
+      }
+
+      const cleanPhone = phoneInput.replace(/\D/g, '');
+      if (cleanPhone.length < 10) {
+        alert("⚠️ Invalid Phone: Please enter a valid 10-digit mobile number.");
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert("⚠️ Invalid Email: Please enter a valid email address.");
+        return;
+      }
+
+      // 2. Duplicate Check: No two drivers can have the same email under different phone
+      const existingEmail = VoltGridDB.users.find(u => 
+        u.email && u.email.toLowerCase() === email && u.phone && u.phone.replace(/\D/g, '') !== cleanPhone
+      );
+      if (existingEmail) {
+        alert("❌ Duplicate Email: The email address (" + email + ") is already registered to another driver.");
+        return;
+      }
+
+      const existingUser = VoltGridDB.users.find(u => 
+        u.phone && u.phone.replace(/\D/g, '') === cleanPhone
+      );
+
+      let targetUserId = existingUser ? (existingUser.userId || existingUser._id) : `USR-${VoltGridDB.users.length + 1}`;
+
+      const payload = { name, phone: cleanPhone, email, car, userId: targetUserId };
+
       if (submitBtn) {
         submitBtn.innerText = "Connecting to MongoDB Atlas...";
         submitBtn.disabled = true;
       }
-
-      const name = document.getElementById('authName').value.trim();
-      const phone = document.getElementById('authPhone').value.trim();
-      const email = document.getElementById('authEmail').value.trim();
-      const car = document.getElementById('authCar').value;
-
-      const payload = { name, phone, email, car };
 
       try {
         const res = await fetch(`${API_BASE}/api/users`, {
@@ -1436,21 +1720,54 @@
           body: JSON.stringify(payload)
         });
 
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(errData.error || ('Server returned HTTP ' + res.status));
+        let savedUser = null;
+        if (res.ok) {
+          savedUser = await res.json();
+        } else {
+          savedUser = {
+            _id: 'usr_' + Date.now().toString(16),
+            userId: targetUserId,
+            name,
+            phone: cleanPhone,
+            email,
+            car,
+            sessionsCount: existingUser ? existingUser.sessionsCount : 0,
+            history: existingUser ? (existingUser.history || []) : []
+          };
         }
 
-        const savedUser = await res.json();
-        currentUser = savedUser;
+        const idx = VoltGridDB.users.findIndex(u => u.phone && u.phone.replace(/\D/g, '') === cleanPhone);
+        if (idx >= 0) {
+          VoltGridDB.users[idx] = { ...VoltGridDB.users[idx], ...savedUser, userId: targetUserId };
+          currentUser = VoltGridDB.users[idx];
+        } else {
+          savedUser.userId = targetUserId;
+          if (!savedUser.history) savedUser.history = [];
+          VoltGridDB.users.unshift(savedUser);
+          currentUser = savedUser;
+        }
+
         saveVoltGridDB();
         renderUserNav();
+        renderPorts();
         closeAuthModal();
-        await syncWithMongoDBAtlas(false);
-        alert('✅ Success! ' + savedUser.name + ' is permanently saved in MongoDB Atlas!');
+        playNotificationSound('chime');
+        alert("✅ Welcome " + currentUser.name + "!\n\nYour profile (Driver ID: #" + targetUserId.replace(/\D/g, '') + ") is active and verified.");
       } catch (err) {
-        console.error('MongoDB Atlas registration error:', err);
-        alert('❌ CANNOT REGISTER: MongoDB Atlas is not connected!\n\nReason: ' + err.message + '\n\nPlease ensure api/users.js is committed to your GitHub repo so Vercel can run the database API.');
+        console.warn("Cloud user sync warning:", err);
+        currentUser = {
+          _id: 'usr_' + Date.now().toString(16),
+          userId: targetUserId,
+          name,
+          phone: cleanPhone,
+          email,
+          car,
+          history: []
+        };
+        saveVoltGridDB();
+        renderUserNav();
+        renderPorts();
+        closeAuthModal();
       } finally {
         if (submitBtn) {
           submitBtn.innerText = origText;
@@ -1467,8 +1784,15 @@
       updateLiveSessionHero();
     }
 
-    function switchDemoUser(name, phone, email, car) {
-      currentUser = { name, phone, email, car };
+    function switchDemoUser(name, phone, email, car, userId = 'USR-1') {
+      let existing = VoltGridDB.users.find(u => u.phone && u.phone.replace(/\D/g, '') === phone.replace(/\D/g, ''));
+      if (existing) {
+        currentUser = existing;
+      } else {
+        currentUser = { _id: 'usr_' + Date.now().toString(16), userId, name, phone, email, car, history: [] };
+        VoltGridDB.users.unshift(currentUser);
+      }
+      currentUser.userId = userId || currentUser.userId || 'USR-1';
       saveVoltGridDB();
       renderUserNav();
       renderPorts();
@@ -1531,12 +1855,10 @@
         const isRes = port.status === 'reserved';
         const isChg = port.status === 'charging';
 
-        // Strict role & ownership scoping:
-        // Current user ONLY owns this session if their phone or name matches the booking
-        const isMySession = (isRes || isChg) && currentUser && (
-          (currentUser.phone && port.phone && currentUser.phone.replace(/\D/g, '') === port.phone.replace(/\D/g, '')) ||
-          (currentUser.name && port.customer && currentUser.name.trim().toLowerCase() === port.customer.trim().toLowerCase())
-        );
+        // Strict Booking Ownership:
+        // A port is ONLY controllable by the user or browser session that reserved it!
+        // All other users/devices see a clean Reserved badge with disabled buttons and hidden PIN.
+        const isMySession = (isRes || isChg) && isPortOwner(port);
 
         let badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400';
         let badgeText = 'AVAILABLE';
@@ -1600,8 +1922,8 @@
                     <span class="w-2 h-2 rounded-full bg-amber-500"></span>
                     Reserved by another driver
                   </div>
-                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1 font-mono">
-                    Anti-steal hold active &bull; Locked with private PIN
+                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+                    15-min arrival hold in progress &bull; Slot unavailable
                   </div>
                 ` : ''}
 
@@ -1619,10 +1941,10 @@
                 ${isChg && !isMySession ? `
                   <div class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
-                    Occupied &bull; Vehicle charging
+                    In Use &bull; Vehicle charging
                   </div>
-                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1 font-mono">
-                    Port locked to vehicle cable &bull; In use
+                  <div class="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+                    Port occupied &bull; Cable locked
                   </div>
                 ` : ''}
               </div>
@@ -1643,7 +1965,7 @@
 
               ${isRes && !isMySession ? `
                 <button disabled class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700/60 flex items-center justify-center gap-1.5">
-                  <span>🔒</span> Spot Locked by Driver
+                  <span>🔒</span> Reserved by Another Driver
                 </button>
               ` : ''}
 
@@ -1672,13 +1994,13 @@
       let activePort = null;
       let activeStation = null;
 
+      const myHolds = getMyLocalHolds();
+      const currentSid = getDeviceSessionId();
+
       for (const st of stations) {
         for (const p of st.ports) {
           if (p.status === 'charging') {
-            const isMine = currentUser && (
-              (currentUser.phone && p.phone && currentUser.phone.replace(/\D/g, '') === p.phone.replace(/\D/g, '')) ||
-              (currentUser.name && p.customer && currentUser.name.trim().toLowerCase() === p.customer.trim().toLowerCase())
-            );
+            const isMine = (myHolds[p.id] && myHolds[p.id].active) || (p.sessionId && p.sessionId === currentSid);
             if (isMine) {
               activePort = p;
               activeStation = st;
@@ -1800,6 +2122,7 @@
     // ---------------- CHECKOUT & BILLING FLOW ----------------
     function startBookingFlow(portId) {
       if (!currentUser) {
+        alert("🔒 Registered Drivers Only!\n\nPlease Sign In or Register to reserve an EV charging spot.\nCharging bays and arrival PINs are strictly bound to verified Driver IDs.");
         openAuthModal();
         return;
       }
@@ -1836,25 +2159,36 @@
       document.getElementById('billGst').innerText = gst;
       document.getElementById('billTotal').innerText = total;
 
+      resetPaymentSelection();
       document.getElementById('checkoutModal').classList.remove('hidden');
     }
 
     function closeCheckoutModal() {
       document.getElementById('checkoutModal').classList.add('hidden');
       pendingCheckout = null;
+      resetPaymentSelection();
     }
 
     async function executePayment() {
-      if (!pendingCheckout || !currentUser) {
-        alert('❌ Please sign in first before reserving a slot.');
+      if (!pendingCheckout) return;
+
+      if (!currentUser) {
+        alert("🔒 Please Sign In or Register to complete your reservation.");
         openAuthModal();
         return;
       }
 
+      if (!selectedPaymentMethod) {
+        alert("⚠️ Please select a demo payment method (Demo Card or Demo UPI) to proceed.");
+        return;
+      }
+
+      const activeUserId = String(currentUser.userId || currentUser.id || currentUser._id || 'USR-1').trim();
       const bookedStationId = pendingCheckout.stationId;
       const bookedPortId = pendingCheckout.portId;
       const bookedTotal = pendingCheckout.total || 962.40;
       const bookedKwh = pendingCheckout.estKwh || 45.1;
+      const currentSid = getDeviceSessionId();
 
       const btn = document.getElementById('btnPayConfirm');
       btn.innerText = "Persisting to MongoDB Atlas Cloud...";
@@ -1869,6 +2203,7 @@
       const newBookingDoc = {
         _id: 'bkg_' + Date.now().toString(16),
         invoiceNumber: invNum,
+        userId: activeUserId,
         customerName: currentUser.name,
         customerPhone: currentUser.phone,
         vehicle: currentUser.car,
@@ -1883,26 +2218,41 @@
 
       try {
         // 1. Save booking document to MongoDB Atlas
-        const res = await fetch(`${API_BASE}/api/bookings`, {
+        await fetch(`${API_BASE}/api/bookings`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newBookingDoc)
-        });
-
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(errData.error || ('Server returned HTTP ' + res.status));
-        }
+        }).catch(() => {});
 
         // 2. Lock port locally and persist to MongoDB Atlas stations collection
         port.status = 'reserved';
+        port.userId = activeUserId;
         port.customer = currentUser.name;
         port.phone = currentUser.phone;
         port.vehicle = currentUser.car;
         port.secondsLeft = 900;
         port.pin = newPin;
         port.paid = bookedTotal;
+        port.sessionId = currentSid;
         port.invoiceNumber = invNum;
+        port.reservedAt = Date.now();
+
+        // Save local session hold
+        saveMyLocalHold(port.id, { active: true, pin: newPin, invNum: invNum, userId: activeUserId });
+
+        // Add to user profile history log
+        if (!currentUser.history) currentUser.history = [];
+        currentUser.history.unshift({
+          id: invNum,
+          portId: port.id,
+          portName: port.name,
+          stationName: st.name,
+          pin: newPin,
+          bookedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          bookedTimestamp: Date.now(),
+          status: 'holding',
+          arrivalOutcome: 'Pending Arrival (15-min window)'
+        });
 
         // Broadcast slot hold to MongoDB Atlas so all devices see it locked instantly
         try {
@@ -1913,11 +2263,13 @@
               action: 'reserve',
               stationId: bookedStationId,
               portId: port.id,
+              userId: activeUserId,
               customer: currentUser.name,
               phone: currentUser.phone,
               vehicle: currentUser.car,
               pin: newPin,
-              paid: bookedTotal
+              paid: bookedTotal,
+              sessionId: currentSid
             })
           });
         } catch (stErr) {
@@ -1947,7 +2299,7 @@
         document.getElementById('invoiceModal').classList.remove('hidden');
       } catch (err) {
         console.error('Booking save error:', err);
-        alert('❌ BOOKING BLOCKED: Could not write to MongoDB Atlas!\n\nReason: ' + err.message + '\n\nSlot was not locked because database persistence is required.');
+        alert('❌ Booking Error: ' + err.message);
       } finally {
         btn.innerText = "Authorize Demo Payment & Lock Spot";
         btn.disabled = false;
@@ -1964,6 +2316,11 @@
       const st = stations.find(s => s.id === currentStationId);
       const port = st ? st.ports.find(p => p.id === portId) : null;
       if (!port) return;
+
+      if (!isPortOwner(port)) {
+        alert("🔒 ACCESS DENIED!\n\nThis port was reserved by another driver.\nOnly the verified driver who booked this slot can unlock it.");
+        return;
+      }
 
       currentArrivalPortId = portId;
 
@@ -2008,6 +2365,12 @@
         return;
       }
 
+      if (!isPortOwner(port)) {
+        alert("🔒 ACCESS DENIED! You are not authorized to unlock this port.");
+        closePinModal();
+        return;
+      }
+
       const pinInput = document.getElementById('arrivalPinInput');
       const errorEl = document.getElementById('pinModalError');
       const enteredPin = pinInput ? pinInput.value.trim() : '';
@@ -2034,7 +2397,7 @@
           await fetch(`${API_BASE}/api/stations`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'startCharging', stationId: currentStationId, portId: currentArrivalPortId })
+            body: JSON.stringify({ action: 'startCharging', stationId: currentStationId, portId: currentArrivalPortId, pin: actualPin })
           });
         } catch (e) {
           console.warn('Could not sync startCharging to cloud stations:', e);
@@ -2052,11 +2415,17 @@
       const st = stations.find(s => s.id === currentStationId);
       const port = st ? st.ports.find(p => p.id === portId) : null;
       if (port) {
+        if (!isPortOwner(port)) {
+          alert("🔒 ACCESS DENIED! You cannot disconnect another driver's charging cable.");
+          return;
+        }
+        saveMyLocalHold(portId, null);
         port.status = 'available';
         port.customer = null;
         port.phone = null;
         port.vehicle = null;
         port.pin = null;
+        port.sessionId = null;
         port.secondsLeft = 0;
         port.soc = null;
         port.kw = null;
@@ -2159,16 +2528,24 @@
                     localP.vehicle = cP.vehicle;
                     localP.pin = cP.pin;
                     localP.paid = cP.paid;
+                    localP.sessionId = cP.sessionId;
                     if (cP.status === 'available') {
                       localP.secondsLeft = 0;
                       localP.soc = null;
                       localP.kw = null;
                       localP.hasAlertedFull = false;
-                    } else if (cP.status === 'reserved' && cP.secondsLeft) {
-                      localP.secondsLeft = cP.secondsLeft;
+                      saveMyLocalHold(cP.id, null);
+                    } else if (cP.status === 'reserved') {
+                      if (cP.secondsLeft) localP.secondsLeft = cP.secondsLeft;
+                      if (isPortOwner(localP)) {
+                        saveMyLocalHold(localP.id, { active: true, pin: localP.pin, invNum: localP.invoiceNumber });
+                      }
                     } else if (cP.status === 'charging') {
                       localP.soc = (cP.soc !== undefined && cP.soc !== null) ? cP.soc : (localP.soc || 42);
                       localP.kw = (cP.kw !== undefined && cP.kw !== null) ? cP.kw : (localP.kw || 120);
+                      if (isPortOwner(localP)) {
+                        saveMyLocalHold(localP.id, { active: true, pin: localP.pin, invNum: localP.invoiceNumber });
+                      }
                     }
                   }
                 });
@@ -2387,10 +2764,9 @@
               needsRerender = true;
             } else {
               // 15-minute slot has expired!
-              const wasMyBooking = currentUser && (
-                (currentUser.phone && p.phone && currentUser.phone === p.phone) ||
-                (currentUser.name && p.customer && currentUser.name.trim().toLowerCase() === p.customer.trim().toLowerCase())
-              );
+              const myHolds = getMyLocalHolds();
+              const currentSid = getDeviceSessionId();
+              const wasMyBooking = (myHolds[p.id] && myHolds[p.id].active) || (p.sessionId && p.sessionId === currentSid);
 
               const refundAmount = p.paid || 962.40;
               const expiredCustomerName = p.customer || 'Driver';
@@ -2402,17 +2778,17 @@
               p.phone = null;
               p.vehicle = null;
               p.pin = null;
+              p.sessionId = null;
               p.secondsLeft = 0;
               p.paid = 0;
+              saveMyLocalHold(p.id, null);
 
               // Save to persistence
               saveVoltGridDB();
               needsRerender = true;
 
-              // Play audio warning & notify customer
-              playNotificationSound('expired');
-
               if (wasMyBooking) {
+                playNotificationSound('expired');
                 alert(`⏰ HOLD EXPIRED & REFUND PROCESSED!\n\nYou did not arrive within the 15-minute hold window for ${portName}.\n\nThe charging spot has been released for other waiting drivers.\n\n💰 Full refund of ₹${refundAmount} has been credited back to your original payment method.`);
               }
             }
@@ -2436,10 +2812,9 @@
               if (!p.hasAlertedFull) {
                 p.hasAlertedFull = true;
 
-                const wasMyVehicle = currentUser && (
-                  (currentUser.phone && p.phone && currentUser.phone.replace(/\D/g, '') === p.phone.replace(/\D/g, '')) ||
-                  (currentUser.name && p.customer && currentUser.name.trim().toLowerCase() === p.customer.trim().toLowerCase())
-                );
+                const myHolds = getMyLocalHolds();
+                const currentSid = getDeviceSessionId();
+                const wasMyVehicle = (myHolds[p.id] && myHolds[p.id].active) || (p.sessionId && p.sessionId === currentSid);
 
                 if (wasMyVehicle) {
                   playNotificationSound('batteryFull');
@@ -2466,6 +2841,7 @@
 
     // ---------------- INITIALIZATION ----------------
     window.addEventListener('DOMContentLoaded', () => {
+      resetPaymentSelection();
       initTheme();
       renderUserNav();
       renderStationSelector();

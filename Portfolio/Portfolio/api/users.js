@@ -1,11 +1,14 @@
 import { MongoClient } from 'mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://nidhiyadav1218_db_user:XGf1HxV2xA60BGeC@cluster0.jg04gws.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 let cachedClient = null;
 
 async function getClient() {
   if (cachedClient) return cachedClient;
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI environment variable is missing on Vercel.');
+  }
   const client = new MongoClient(MONGODB_URI);
   await client.connect();
   cachedClient = client;
@@ -33,17 +36,39 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
       const userData = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      if (!userData || !userData.name || !userData.phone) {
-        return res.status(400).json({ error: 'Name and phone are required' });
+      if (!userData || !userData.name || !userData.phone || !userData.email) {
+        return res.status(400).json({ error: 'Name, phone, and email are all strictly required.' });
       }
 
-      const filter = { phone: userData.phone };
+      const cleanPhone = String(userData.phone).trim();
+      const cleanEmail = String(userData.email).trim().toLowerCase();
+      const cleanName = String(userData.name).trim();
+
+      // Check for duplicate email under a different phone
+      const existingEmailUser = await usersCol.findOne({
+        email: cleanEmail,
+        phone: { $ne: cleanPhone }
+      });
+      if (existingEmailUser) {
+        return res.status(409).json({ error: 'This email is already registered under another account.' });
+      }
+
+      // Check if user already exists with this phone
+      const existingPhoneUser = await usersCol.findOne({ phone: cleanPhone });
+      let assignedUserId = existingPhoneUser && existingPhoneUser.userId ? existingPhoneUser.userId : null;
+      if (!assignedUserId) {
+        const count = await usersCol.countDocuments();
+        assignedUserId = `USR-${count + 1}`;
+      }
+
+      const filter = { phone: cleanPhone };
       const update = {
         $set: {
-          name: userData.name,
-          phone: userData.phone,
-          email: userData.email || '',
-          car: userData.car || '',
+          name: cleanName,
+          phone: cleanPhone,
+          email: cleanEmail,
+          car: userData.car || 'Tata Nexon EV Max',
+          userId: assignedUserId,
           updatedAt: new Date().toISOString()
         },
         $setOnInsert: {
@@ -51,7 +76,8 @@ export default async function handler(req, res) {
           sessionsCount: 0,
           totalKwhCharged: 0,
           totalMoneySaved: 0,
-          totalCo2Saved: 0
+          totalCo2Saved: 0,
+          history: []
         }
       };
 
