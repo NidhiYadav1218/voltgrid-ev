@@ -159,6 +159,14 @@ export default async function handler(req, res) {
         return res.status(404).json({ error: 'Port not found' });
       }
 
+      function getEstMinutes(p, soc) {
+        const portKw = p.maxKw || 60;
+        const isAc = portKw <= 22;
+        const effKw = isAc ? Math.min(portKw, 22) : Math.min(portKw, 80);
+        const needed = Math.max(5, ((100 - (Number(soc) || 22)) / 100) * 50.3);
+        return Math.max(10, Math.round((needed / Math.max(5, effKw)) * 60));
+      }
+
       if (action === 'reserve') {
         port.status = 'reserved';
         port.userId = body.userId || null;
@@ -170,9 +178,9 @@ export default async function handler(req, res) {
         port.sessionId = body.sessionId || null;
         port.secondsLeft = 900;
         port.reservedAt = Date.now();
-        port.initialSoc = Number(body.currentSoc) || 25;
+        port.initialSoc = Number(body.currentSoc) || 22;
         port.soc = port.initialSoc;
-        port.chargingDurationMinutes = Number(body.chargingDurationMinutes) || 18;
+        port.chargingDurationMinutes = Number(body.chargingDurationMinutes) || getEstMinutes(port, port.initialSoc);
       } else if (action === 'release') {
         port.status = 'available';
         port.userId = null;
@@ -194,11 +202,11 @@ export default async function handler(req, res) {
           return res.status(403).json({ error: 'Security PIN mismatch' });
         }
         port.status = 'charging';
-        port.initialSoc = Number(body.soc) || port.initialSoc || 25;
+        port.initialSoc = Number(body.soc) || port.initialSoc || 22;
         port.soc = port.initialSoc;
         port.targetSoc = 100;
         port.kw = body.kw || (port.maxKw ? Math.round(port.maxKw * 0.75) : 120);
-        const durationMinutes = Number(body.chargingDurationMinutes) || port.chargingDurationMinutes || 18;
+        const durationMinutes = Number(body.chargingDurationMinutes) || port.chargingDurationMinutes || getEstMinutes(port, port.initialSoc);
         port.chargingDurationMinutes = durationMinutes;
         port.chargingDurationSeconds = durationMinutes * 60;
         port.secondsLeft = durationMinutes * 60;

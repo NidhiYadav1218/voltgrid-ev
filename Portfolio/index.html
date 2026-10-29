@@ -1866,11 +1866,43 @@
       playNotificationSound('chime');
     }
 
-    // ---------------- FORMAT SECONDS TO MM:SS ----------------
+    // ---------------- FORMAT SECONDS & TIME CALCULATIONS ----------------
+    function formatMinutes(mins) {
+      if (!mins || mins <= 0) return '0 mins';
+      if (mins >= 60) {
+        const h = Math.floor(mins / 60);
+        const rem = mins % 60;
+        return rem > 0 ? `${h}h ${rem}m` : `${h}h`;
+      }
+      return `${mins} mins`;
+    }
+
     function formatTime(sec) {
+      if (!sec || sec <= 0) return '0:00';
+      if (sec >= 3600) {
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        return `${h}h ${m}m`;
+      }
       const m = Math.floor(sec / 60);
       const s = sec % 60;
       return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function getRealisticChargingDurationMinutes(port, carName, currentSoc) {
+      const car = carName || (currentUser ? currentUser.car : 'MG ZS EV');
+      const carSpec = vehicles[car] || { battery: 50.3, speed: 80 };
+      const batteryCap = carSpec.battery || 50.3;
+      const startSoc = (currentSoc !== undefined && currentSoc !== null) ? Number(currentSoc) : 22;
+      const neededKwh = Math.max(2, ((100 - startSoc) / 100) * batteryCap);
+
+      const portMaxKw = port ? (port.maxKw || 60) : 60;
+      // AC destination chargers (e.g. 22kW) vs DC fast chargers (50kW - 350kW)
+      const isAcPort = portMaxKw <= 22 || (port && port.type && port.type.includes('AC'));
+      const effectiveKw = isAcPort ? Math.min(portMaxKw, 22) : Math.min(portMaxKw, carSpec.speed || 80);
+
+      const estMins = Math.max(10, Math.round((neededKwh / Math.max(5, effectiveKw)) * 60));
+      return estMins;
     }
 
     // ---------------- RENDER STATIONS & PORTS ----------------
@@ -2209,15 +2241,17 @@
     // ---------------- CHECKOUT & BILLING FLOW ----------------
     function updateBatteryEstimation(currentSocVal) {
       if (!pendingCheckout) return;
-      const currentSoc = parseInt(currentSocVal) || 25;
-      const userCarName = currentUser ? currentUser.car : 'Tata Nexon EV Max';
-      const carSpec = vehicles[userCarName] || { battery: 50, speed: 100 };
-      const batteryCapacity = carSpec.battery || 50;
-      const percentNeeded = Math.max(15, 100 - currentSoc);
+      const currentSoc = parseInt(currentSocVal) || 22;
+      const userCarName = currentUser ? currentUser.car : 'MG ZS EV';
+      const carSpec = vehicles[userCarName] || { battery: 50.3, speed: 80, efficiency: 6.8 };
+      const batteryCapacity = carSpec.battery || 50.3;
+      const percentNeeded = Math.max(10, 100 - currentSoc);
       const neededKwh = +((percentNeeded / 100) * batteryCapacity).toFixed(1);
 
-      const effectiveKw = Math.min(pendingCheckout.maxKw || 150, carSpec.speed || 150);
-      const estMinutes = Math.max(10, Math.round((neededKwh / effectiveKw) * 60));
+      const chargerKw = pendingCheckout.maxKw || 60;
+      const isAcPort = chargerKw <= 22;
+      const effectiveKw = isAcPort ? Math.min(chargerKw, 22) : Math.min(chargerKw, carSpec.speed || 80);
+      const estMinutes = Math.max(10, Math.round((neededKwh / Math.max(5, effectiveKw)) * 60));
 
       const baseCost = +(neededKwh * pendingCheckout.pricePerKwh).toFixed(2);
       const gridFee = 40.00;
@@ -2243,8 +2277,8 @@
       if (sliderEl && sliderEl.value != currentSoc) sliderEl.value = currentSoc;
       if (neededEl) neededEl.innerText = `${percentNeeded}`;
       if (kwhNeededEl) kwhNeededEl.innerText = `${neededKwh}`;
-      if (estMinsEl) estMinsEl.innerText = `${estMinutes}`;
-      if (badgeEl) badgeEl.innerText = `${estMinutes}`;
+      if (estMinsEl) estMinsEl.innerText = formatMinutes(estMinutes);
+      if (badgeEl) badgeEl.innerText = formatMinutes(estMinutes);
 
       // Update interactive visual two-tone battery diagram
       const visualCurrent = document.getElementById('batteryVisualCurrent');
@@ -2561,9 +2595,9 @@
       if (customerEl) customerEl.innerText = port.customer || (currentUser ? currentUser.name : 'Driver');
       if (displayPinEl) displayPinEl.innerText = port.pin ? String(port.pin) : '1234';
       if (planEl) {
-        const startSoc = port.initialSoc || 25;
-        const mins = port.chargingDurationMinutes || 18;
-        planEl.innerText = `${startSoc}% ➔ 100% (~${mins} mins)`;
+        const startSoc = (port.initialSoc !== undefined && port.initialSoc !== null) ? port.initialSoc : 22;
+        const mins = port.chargingDurationMinutes || getRealisticChargingDurationMinutes(port, port.vehicle, startSoc);
+        planEl.innerText = `${startSoc}% ➔ 100% (~${formatMinutes(mins)})`;
       }
       
       // Auto-prefill the PIN so the driver can tap 1 button to unlock immediately
@@ -2615,10 +2649,10 @@
 
         // 1. Mark as charging locally with custom battery plan
         port.status = 'charging';
-        port.initialSoc = port.initialSoc || 25;
+        port.initialSoc = (port.initialSoc !== undefined && port.initialSoc !== null) ? port.initialSoc : 22;
         port.soc = port.initialSoc;
         port.targetSoc = 100;
-        const durationMinutes = port.chargingDurationMinutes || 18;
+        const durationMinutes = port.chargingDurationMinutes || getRealisticChargingDurationMinutes(port, port.vehicle, port.initialSoc);
         port.chargingDurationMinutes = durationMinutes;
         port.secondsLeft = durationMinutes * 60;
         port.totalChargingSeconds = durationMinutes * 60;
