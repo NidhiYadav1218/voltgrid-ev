@@ -99,6 +99,17 @@
       <!-- Right Controls: Admin Portal, Auth, Theme Toggle -->
       <div class="flex items-center gap-2.5 sm:gap-3">
         
+        <!-- Virtual Vehicle Simulator Trigger -->
+        <button 
+          onclick="openVehicleSimulatorModal()" 
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-100 text-cyan-900 dark:bg-cyan-950/80 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 hover:scale-105 active:scale-95 transition-all shadow-sm"
+          title="Open Smartcar Virtual Vehicle Simulator & BMS IoT Lab"
+        >
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>🚗</span>
+          <span class="hidden sm:inline">Car</span> Sim
+        </button>
+
         <!-- Admin Console Trigger -->
         <button 
           onclick="openAdminModal()" 
@@ -692,15 +703,25 @@
               <span class="text-xs font-bold text-white tracking-wide">Smartcar Connected Telematics</span>
               <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Live IoT</span>
             </div>
-            <button 
-              type="button" 
-              onclick="syncLiveSmartcarBattery(true)" 
-              title="Re-query vehicle telematics"
-              class="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono font-bold flex items-center gap-1 transition-colors"
-            >
-              <span id="smartcarSyncIcon">🔄</span>
-              <span id="smartcarSyncText">Re-sync</span>
-            </button>
+            <div class="flex items-center gap-2.5">
+              <button 
+                type="button" 
+                onclick="openVehicleSimulatorModal()" 
+                title="Open Smartcar Virtual Vehicle Simulator"
+                class="text-[10px] text-emerald-400 hover:text-emerald-300 font-mono font-bold flex items-center gap-1 transition-colors underline"
+              >
+                <span>🚗</span> Sim Lab
+              </button>
+              <button 
+                type="button" 
+                onclick="syncLiveSmartcarBattery(true)" 
+                title="Re-query vehicle telematics"
+                class="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono font-bold flex items-center gap-1 transition-colors"
+              >
+                <span id="smartcarSyncIcon">🔄</span>
+                <span id="smartcarSyncText">Re-sync</span>
+              </button>
+            </div>
           </div>
 
           <div class="flex items-center justify-between pt-1">
@@ -987,6 +1008,225 @@
           <span>⚡</span> Unlock Cable & Charge
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- ================= SMARTCAR VIRTUAL VEHICLE SIMULATOR MODAL ================= -->
+  <div id="vehicleSimulatorModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+    <div class="relative w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl max-h-[92vh] overflow-y-auto">
+      
+      <button onclick="closeVehicleSimulatorModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white font-bold text-lg">✕</button>
+
+      <!-- Header with Live IoT Telemetry Indicators -->
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-emerald-400 p-0.5 shadow-lg shadow-cyan-500/20 shrink-0">
+          <div class="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center text-xl text-white">
+            🚗
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-xl font-extrabold text-slate-900 dark:text-white font-heading">
+              Smartcar Virtual Vehicle Simulator
+            </h3>
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-500/30">
+              ● Live eSIM Connected
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Simulate real-time vehicle BMS telemetry, battery consumption, and cellular IoT payloads for VoltGrid.
+          </p>
+        </div>
+      </div>
+
+      <!-- Network & Hardware Diagnostics Pill Bar -->
+      <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono">
+        <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-slate-400 block uppercase font-bold text-[9px]">eSIM Network</span>
+          <strong class="text-slate-800 dark:text-slate-200">Jio-IoT 4G LTE</strong>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-slate-400 block uppercase font-bold text-[9px]">Cell Signal</span>
+          <strong class="text-emerald-500 font-bold">-68 dBm (Strong)</strong>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-slate-400 block uppercase font-bold text-[9px]">BMS Bus Protocol</span>
+          <strong class="text-cyan-500">CAN 2.0B / ISO 15118</strong>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-slate-400 block uppercase font-bold text-[9px]">API Latency</span>
+          <strong class="text-amber-500" id="simLatency">134 ms</strong>
+        </div>
+      </div>
+
+      <!-- Vehicle Model Selector -->
+      <div class="mt-5 space-y-2">
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+          Select Simulated EV Model
+        </label>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+          <button type="button" onclick="setSimulatedVehicle('MG ZS EV')" id="simCarBtn_MG_ZS_EV" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">MG ZS EV</span>
+            <span class="text-[10px] text-slate-400 font-mono">50.3 kWh • 80 kW DC</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Tata Nexon EV Max')" id="simCarBtn_Tata_Nexon_EV_Max" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">Tata Nexon EV</span>
+            <span class="text-[10px] text-slate-400 font-mono">40.5 kWh • 60 kW DC</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Hyundai Ioniq 5')" id="simCarBtn_Hyundai_Ioniq_5" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">Hyundai Ioniq 5</span>
+            <span class="text-[10px] text-slate-400 font-mono">77.4 kWh • 350 kW 800V</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Tesla Model 3 Long Range')" id="simCarBtn_Tesla_Model_3_Long_Range" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">Tesla Model 3</span>
+            <span class="text-[10px] text-slate-400 font-mono">82.0 kWh • 250 kW DC</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Mahindra XUV400')" id="simCarBtn_Mahindra_XUV400" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">Mahindra XUV400</span>
+            <span class="text-[10px] text-slate-400 font-mono">39.4 kWh • 50 kW DC</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Porsche Taycan 4S')" id="simCarBtn_Porsche_Taycan_4S" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">Porsche Taycan</span>
+            <span class="text-[10px] text-slate-400 font-mono">93.4 kWh • 270 kW 800V</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Virtual BMS Cockpit -->
+      <div class="mt-5 p-4 rounded-2xl bg-slate-900 text-white border border-slate-700/80 shadow-inner space-y-4">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-extrabold text-white" id="simVehicleTitle">MG ZS EV</span>
+              <span class="text-[10px] font-mono text-slate-400" id="simVinDisplay">VIN: 1MGZS48EV20265921</span>
+            </div>
+            <p class="text-[11px] text-slate-400" id="simVehicleSub">
+              50.3 kWh Lithium-ion Pack • 6.8 km/kWh efficiency
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="text-right">
+              <span class="text-2xl font-black font-mono text-emerald-400" id="simSocDisplay">22%</span>
+              <span class="block text-[10px] text-slate-400 font-mono" id="simRangeDisplay">88 km remaining</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-lg">
+              🔋
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Battery Bar -->
+        <div class="space-y-1">
+          <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 border border-slate-700">
+            <div id="simProgressBar" class="h-full rounded-full bg-gradient-to-r from-amber-500 via-emerald-400 to-cyan-400 transition-all duration-300" style="width: 22%"></div>
+          </div>
+          <div class="flex justify-between text-[9px] font-mono text-slate-400">
+            <span>0% Empty</span>
+            <span>Usable Energy: <span id="simKwhRemaining" class="text-white font-bold">11.1 kWh</span> / <span id="simTotalKwh">50.3 kWh</span></span>
+            <span>100% Full</span>
+          </div>
+        </div>
+
+        <!-- Real-Time Interactive Slider -->
+        <div class="space-y-1.5 pt-1">
+          <div class="flex justify-between text-xs font-bold">
+            <span class="text-slate-300">Live Battery State-of-Charge (SoC) Slider:</span>
+            <span class="text-cyan-400 font-mono" id="simSliderVal">22%</span>
+          </div>
+          <input 
+            type="range" 
+            id="simBatterySlider" 
+            min="5" 
+            max="100" 
+            value="22" 
+            step="1" 
+            oninput="onSimBatterySliderChange(this.value)"
+            class="w-full h-2.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-400" 
+          />
+        </div>
+
+        <!-- Quick Scenario Injection Buttons -->
+        <div class="space-y-1.5">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Inject Real-World Road Scenarios:</span>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11px] font-bold">
+            <button type="button" onclick="injectSimScenario(12)" class="px-2.5 py-1.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 transition-all text-center">
+              🚨 Critical Low (12%)
+            </button>
+            <button type="button" onclick="injectSimScenario(22)" class="px-2.5 py-1.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 transition-all text-center">
+              🚗 Highway Stop (22%)
+            </button>
+            <button type="button" onclick="injectSimScenario(45)" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 transition-all text-center">
+              🔋 Half Charge (45%)
+            </button>
+            <button type="button" onclick="injectSimScenario(100)" class="px-2.5 py-1.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border border-cyan-800 transition-all text-center">
+              ⚡ 100% Full Tank
+            </button>
+          </div>
+        </div>
+
+        <!-- Live BMS Hardware Sensor Feeds -->
+        <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800 text-[10px] font-mono">
+          <div class="text-center">
+            <span class="text-slate-400 block">Pack Voltage</span>
+            <span class="text-white font-bold" id="simVoltageDisplay">394.2 V DC</span>
+          </div>
+          <div class="text-center">
+            <span class="text-slate-400 block">Cell Temp</span>
+            <span class="text-emerald-400 font-bold" id="simTempDisplay">28.4 °C (Normal)</span>
+          </div>
+          <div class="text-center">
+            <span class="text-slate-400 block">Plug Port Status</span>
+            <span class="text-cyan-400 font-bold" id="simPlugStateDisplay">Ready to Connect</span>
+          </div>
+        </div>
+
+        <!-- Simulate Drive Button -->
+        <div class="pt-1 flex gap-2">
+          <button 
+            type="button" 
+            onclick="simulateCarDrive(5)" 
+            class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
+          >
+            <span>🛣️</span> Drive 20 km (-5% Battery)
+          </button>
+          <button 
+            type="button" 
+            onclick="applySimulatorToVoltGrid()" 
+            class="flex-1 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow-md shadow-emerald-500/20 transition-all flex items-center justify-center gap-1.5"
+          >
+            <span>⚡</span> Sync to VoltGrid Bay
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Developer REST JSON Inspector (Smartcar API v2.0 Payload) -->
+      <div class="mt-4 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+        <div class="bg-slate-100 dark:bg-slate-950 px-3.5 py-2 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 text-xs font-mono">
+          <div class="flex items-center gap-2">
+            <span class="px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 font-bold text-[10px]">GET</span>
+            <span class="text-slate-600 dark:text-slate-300">/v2.0/vehicles/<span id="simPayloadCarId">veh_mg_zs_ev</span>/battery</span>
+          </div>
+          <span class="text-[10px] text-slate-400">Response 200 OK</span>
+        </div>
+        <pre id="simJsonPayload" class="p-3 bg-slate-950 text-emerald-400 font-mono text-[11px] overflow-x-auto max-h-40 leading-relaxed"></pre>
+      </div>
+
+      <div class="mt-4 flex justify-between items-center text-xs">
+        <span class="text-slate-400 text-[11px]">
+          💡 Changes here instantly broadcast to VoltGrid Checkout & Stations.
+        </span>
+        <button 
+          type="button" 
+          onclick="closeVehicleSimulatorModal()" 
+          class="px-5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-slate-200 transition-colors"
+        >
+          Done / Close
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -2322,6 +2562,243 @@
       }
     }
 
+    // ================= SMARTCAR VIRTUAL VEHICLE SIMULATOR ENGINE =================
+    const VIRTUAL_VIN_MAP = {
+      'MG ZS EV': '1MGZS48EV20265921',
+      'Tata Nexon EV Max': 'MAT621NEXON202688',
+      'Hyundai Ioniq 5': 'KMH88IONIQ5202677',
+      'Tesla Model 3 Long Range': '5YJ3E1EB20269941',
+      'Mahindra XUV400': 'MAH400XUV2026392',
+      'Porsche Taycan 4S': 'WP0AB2Y120269344'
+    };
+
+    let virtualCarState = loadSaved('voltgrid_virtual_car', {
+      car: (currentUser && currentUser.car) ? currentUser.car : 'MG ZS EV',
+      soc: 22,
+      vin: '1MGZS48EV20265921',
+      voltage: 394.2,
+      temp: 28.4
+    });
+
+    function saveVirtualCarState() {
+      try {
+        localStorage.setItem('voltgrid_virtual_car', JSON.stringify(virtualCarState));
+      } catch (e) {}
+    }
+
+    function openVehicleSimulatorModal() {
+      const modal = document.getElementById('vehicleSimulatorModal');
+      if (!modal) return;
+      if (currentUser && currentUser.car) {
+        virtualCarState.car = currentUser.car;
+      }
+      renderSimulatorUI();
+      modal.classList.remove('hidden');
+    }
+
+    function closeVehicleSimulatorModal() {
+      const modal = document.getElementById('vehicleSimulatorModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function setSimulatedVehicle(carName) {
+      if (!vehicles[carName]) return;
+      virtualCarState.car = carName;
+      virtualCarState.vin = VIRTUAL_VIN_MAP[carName] || ('VIN_' + Date.now().toString(16));
+      
+      // Update logged-in user profile vehicle as well so whole app syncs!
+      if (currentUser) {
+        currentUser.car = carName;
+        currentUser.lastKnownBmsSoc = virtualCarState.soc;
+        saveVoltGridDB();
+        renderUserNav();
+        renderPorts();
+        updateLiveSessionHero();
+      }
+
+      saveVirtualCarState();
+      renderSimulatorUI();
+
+      // If checkout modal is open, sync vehicle title and estimation immediately!
+      const checkoutModal = document.getElementById('checkoutModal');
+      if (checkoutModal && !checkoutModal.classList.contains('hidden')) {
+        const smartcarCarName = document.getElementById('smartcarCarName');
+        const smartcarVinBadge = document.getElementById('smartcarVinBadge');
+        if (smartcarCarName) smartcarCarName.innerText = carName;
+        if (smartcarVinBadge) smartcarVinBadge.innerText = `• VIN: ...${virtualCarState.vin.slice(-4)}`;
+        updateBatteryEstimation(virtualCarState.soc);
+      }
+
+      showToast(`🚗 Virtual Vehicle switched to ${carName}!`);
+      playNotificationSound('chime');
+    }
+
+    function onSimBatterySliderChange(val) {
+      const soc = Math.max(5, Math.min(100, parseInt(val) || 22));
+      virtualCarState.soc = soc;
+      virtualCarState.voltage = +(350 + (soc / 100) * 55).toFixed(1);
+      virtualCarState.temp = +(27 + (soc > 80 ? 3.5 : 1.2)).toFixed(1);
+
+      if (currentUser) {
+        currentUser.lastKnownBmsSoc = soc;
+        saveVoltGridDB();
+      }
+      saveVirtualCarState();
+      renderSimulatorUI();
+
+      // Live update checkout if open!
+      const checkoutModal = document.getElementById('checkoutModal');
+      if (checkoutModal && !checkoutModal.classList.contains('hidden')) {
+        updateBatteryEstimation(soc);
+      }
+    }
+
+    function injectSimScenario(socVal) {
+      onSimBatterySliderChange(socVal);
+      const slider = document.getElementById('simBatterySlider');
+      if (slider) slider.value = socVal;
+      showToast(`📡 Injected Telematics: Battery SoC set to ${socVal}%!`);
+      playNotificationSound('chime');
+    }
+
+    function simulateCarDrive(dropPercent = 5) {
+      const newSoc = Math.max(6, virtualCarState.soc - dropPercent);
+      onSimBatterySliderChange(newSoc);
+      const slider = document.getElementById('simBatterySlider');
+      if (slider) slider.value = newSoc;
+      showToast(`🛣️ Simulated 20 km drive! Battery consumed ${dropPercent}% (now at ${newSoc}%).`);
+      playNotificationSound('chime');
+    }
+
+    function applySimulatorToVoltGrid() {
+      // Broadcast this virtual car's battery state to VoltGrid
+      if (currentUser) {
+        currentUser.car = virtualCarState.car;
+        currentUser.lastKnownBmsSoc = virtualCarState.soc;
+        saveVoltGridDB();
+      }
+
+      const checkoutModal = document.getElementById('checkoutModal');
+      if (checkoutModal && !checkoutModal.classList.contains('hidden')) {
+        syncLiveSmartcarBattery(true);
+      }
+
+      closeVehicleSimulatorModal();
+      showToast(`⚡ Virtual BMS Telemetry successfully pushed to VoltGrid!`);
+      playNotificationSound('bookingSuccess');
+    }
+
+    function renderSimulatorUI() {
+      const carName = virtualCarState.car || 'MG ZS EV';
+      const soc = virtualCarState.soc || 22;
+      const vin = virtualCarState.vin || VIRTUAL_VIN_MAP[carName] || '1MGZS48EV20265921';
+      const spec = vehicles[carName] || { battery: 50.3, speed: 80, efficiency: 6.8 };
+      
+      const totalKwh = spec.battery || 50.3;
+      const usableKwh = +((soc / 100) * totalKwh).toFixed(1);
+      const rangeKm = Math.round((soc / 100) * (totalKwh * (spec.efficiency || 6.8)));
+      const voltage = virtualCarState.voltage || +(350 + (soc / 100) * 55).toFixed(1);
+      const temp = virtualCarState.temp || 28.4;
+
+      // Update Car selector buttons
+      ['MG_ZS_EV', 'Tata_Nexon_EV_Max', 'Hyundai_Ioniq_5', 'Tesla_Model_3_Long_Range', 'Mahindra_XUV400', 'Porsche_Taycan_4S'].forEach(key => {
+        const btn = document.getElementById(`simCarBtn_${key}`);
+        if (!btn) return;
+        const matches = key.replace(/_/g, ' ') === carName;
+        if (matches) {
+          btn.className = 'p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-white font-bold text-left shadow-sm ring-1 ring-emerald-500/30';
+        } else {
+          btn.className = 'p-2.5 rounded-xl border border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-slate-300 font-bold text-left transition-all';
+        }
+      });
+
+      // Update header & gauges
+      const titleEl = document.getElementById('simVehicleTitle');
+      const subEl = document.getElementById('simVehicleSub');
+      const vinEl = document.getElementById('simVinDisplay');
+      const socEl = document.getElementById('simSocDisplay');
+      const rangeEl = document.getElementById('simRangeDisplay');
+      const barEl = document.getElementById('simProgressBar');
+      const kwhRemEl = document.getElementById('simKwhRemaining');
+      const totalKwhEl = document.getElementById('simTotalKwh');
+      const sliderEl = document.getElementById('simBatterySlider');
+      const sliderValEl = document.getElementById('simSliderVal');
+      const voltEl = document.getElementById('simVoltageDisplay');
+      const tempEl = document.getElementById('simTempDisplay');
+      const plugEl = document.getElementById('simPlugStateDisplay');
+      const jsonEl = document.getElementById('simJsonPayload');
+      const payloadCarId = document.getElementById('simPayloadCarId');
+
+      if (titleEl) titleEl.innerText = carName;
+      if (subEl) subEl.innerText = `${totalKwh} kWh Lithium-ion Pack • ${spec.speed || 80} kW DC acceptance`;
+      if (vinEl) vinEl.innerText = `VIN: ${vin}`;
+      if (socEl) socEl.innerText = `${soc}%`;
+      if (rangeEl) rangeEl.innerText = `${rangeKm} km remaining`;
+      if (barEl) barEl.style.width = `${soc}%`;
+      if (kwhRemEl) kwhRemEl.innerText = `${usableKwh} kWh`;
+      if (totalKwhEl) totalKwhEl.innerText = `${totalKwh} kWh`;
+      if (sliderEl && sliderEl.value != soc) sliderEl.value = soc;
+      if (sliderValEl) sliderValEl.innerText = `${soc}%`;
+      if (voltEl) voltEl.innerText = `${voltage} V DC`;
+      if (tempEl) tempEl.innerText = `${temp} °C (Normal)`;
+
+      // Check if this vehicle is currently charging in VoltGrid:
+      let isCharging = false;
+      let chargingPortName = '';
+      stations.forEach(st => {
+        st.ports.forEach(p => {
+          if (p.status === 'charging' && isPortOwner(p)) {
+            isCharging = true;
+            chargingPortName = `${st.name} • ${p.name}`;
+          }
+        });
+      });
+
+      if (plugEl) {
+        if (isCharging) {
+          plugEl.innerText = `⚡ Fast Charging (${chargingPortName})`;
+          plugEl.className = 'text-emerald-400 font-bold animate-pulse';
+        } else {
+          plugEl.innerText = 'Ready to Connect (Unplugged)';
+          plugEl.className = 'text-cyan-400 font-bold';
+        }
+      }
+
+      const slugCarId = 'veh_' + carName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      if (payloadCarId) payloadCarId.innerText = slugCarId;
+
+      // Realistic Smartcar API v2.0 JSON format
+      const smartcarPayload = {
+        id: slugCarId,
+        make: carName.split(' ')[0],
+        model: carName.split(' ').slice(1).join(' '),
+        year: 2026,
+        battery: {
+          percentRemaining: +(soc / 100).toFixed(2),
+          rangeKm: rangeKm,
+          capacityKwh: totalKwh,
+          usableKwhRemaining: usableKwh
+        },
+        diagnostics: {
+          packVoltageDC: voltage,
+          cellTempCelsius: temp,
+          stateOfHealthPercent: 99.4
+        },
+        telematics: {
+          status: "ONLINE",
+          vin: vin,
+          eSIM: "89910045812930219",
+          cellularCarrier: "Jio-IoT 4G LTE",
+          bmsProtocol: "CAN 2.0B / ISO 15118",
+          lastPing: new Date().toISOString()
+        }
+      };
+
+      if (jsonEl) {
+        jsonEl.innerText = JSON.stringify(smartcarPayload, null, 2);
+      }
+    }
+
     function toggleManualBatteryControls() {
       const el = document.getElementById('manualBatteryControls');
       const lbl = document.getElementById('manualToggleLabel');
@@ -2341,9 +2818,13 @@
       const sub = document.getElementById('smartcarStatusSub');
       const carEl = document.getElementById('smartcarCarName');
       const rangeEl = document.getElementById('smartcarRangeSub');
+      const vinEl = document.getElementById('smartcarVinBadge');
 
-      const carName = currentUser ? currentUser.car : 'MG ZS EV';
+      const carName = (virtualCarState && virtualCarState.car) ? virtualCarState.car : (currentUser ? currentUser.car : 'MG ZS EV');
       if (carEl) carEl.innerText = carName;
+      if (vinEl && virtualCarState && virtualCarState.vin) {
+        vinEl.innerText = `• VIN: ...${virtualCarState.vin.slice(-4)}`;
+      }
 
       if (icon) icon.className = 'inline-block animate-spin';
       if (text) text.innerText = 'Syncing...';
@@ -2353,10 +2834,8 @@
         await new Promise(r => setTimeout(r, 600));
       }
 
-      // Stable vehicle arrival State-of-Charge (SoC)
-      // When booking a charger, the vehicle is arriving with a low battery that needs charging.
-      // Re-syncing re-verifies the stable BMS reading from the vehicle (it does NOT increase while unplugged!)
-      const liveSoc = (currentUser && currentUser.lastKnownBmsSoc) ? currentUser.lastKnownBmsSoc : 22;
+      // Read directly from the Virtual Vehicle Simulator!
+      const liveSoc = (virtualCarState && virtualCarState.soc !== undefined) ? virtualCarState.soc : ((currentUser && currentUser.lastKnownBmsSoc) ? currentUser.lastKnownBmsSoc : 22);
 
       const carSpec = vehicles[carName] || { battery: 50.3, efficiency: 6.8 };
       const estRangeKm = Math.round((liveSoc / 100) * (carSpec.battery * (carSpec.efficiency || 6.8)));
@@ -3169,6 +3648,15 @@
                 p.soc = Math.min(100, current + 1);
                 p.lastAdvanceTime = now;
                 needsRerender = true;
+
+                if (isPortOwner(p)) {
+                  virtualCarState.soc = p.soc;
+                  saveVirtualCarState();
+                  const simModal = document.getElementById('vehicleSimulatorModal');
+                  if (simModal && !simModal.classList.contains('hidden')) {
+                    renderSimulatorUI();
+                  }
+                }
 
                 // Sync progressive soc to Atlas periodically
                 if (p.soc % 5 === 0 && isPortOwner(p)) {
