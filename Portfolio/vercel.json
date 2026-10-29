@@ -1,6 +1,8 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/simulator", "destination": "/simulator.html" }
+    { "source": "/simulator", "destination": "/simulator.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/vendor", "destination": "/vendor.html" }
   ]
 }
