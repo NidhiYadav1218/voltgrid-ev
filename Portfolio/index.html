@@ -1723,6 +1723,12 @@
       }
     }
 
+    function getMyLocalHold(portId) {
+      if (!portId) return null;
+      const holds = getMyLocalHolds();
+      return holds[portId] || null;
+    }
+
     function saveMyLocalHold(portId, data) {
       const holds = getMyLocalHolds();
       if (data) {
