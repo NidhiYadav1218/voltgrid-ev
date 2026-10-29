@@ -118,11 +118,6 @@ export default async function handler(req, res) {
             p.soc = 100;
             p.kw = 0;
             p.secondsLeft = 0;
-          } else {
-            p.secondsLeft = totalSec - elapsedSec;
-            const startSoc = p.initialSoc || 25;
-            const progress = elapsedSec / totalSec;
-            p.soc = Math.min(100, Math.round(startSoc + (100 - startSoc) * progress));
           }
         }
       });
@@ -208,6 +203,12 @@ export default async function handler(req, res) {
         port.chargingDurationSeconds = durationMinutes * 60;
         port.secondsLeft = durationMinutes * 60;
         port.chargingStartedAt = Date.now();
+      } else if (action === 'updateTelemetry') {
+        if (port.status === 'charging') {
+          if (body.soc !== undefined) port.soc = Number(body.soc);
+          if (body.secondsLeft !== undefined) port.secondsLeft = Number(body.secondsLeft);
+          if (body.kw !== undefined) port.kw = Number(body.kw);
+        }
       }
 
       await stationsCol.updateOne(
