@@ -779,7 +779,7 @@
             </div>
             <!-- Right: Needed Charge to 100% -->
             <div id="batteryVisualNeeded" class="bg-gradient-to-r from-cyan-500 to-emerald-400 text-slate-950 transition-all duration-300 flex items-center justify-center truncate px-1" style="width: 78%;">
-              <span id="batteryVisualNeededText">⚡ +78% Needed (100%)</span>
+              <span id="batteryVisualNeededText">⚡ +78% to Reach 100% Full</span>
             </div>
           </div>
         </div>
@@ -2578,7 +2578,7 @@
         if (visualCurrent) visualCurrent.style.width = `${currentSoc}%`;
         if (visualCurrentText) visualCurrentText.innerText = `🔋 ${currentSoc}% Left`;
         if (visualNeeded) visualNeeded.style.width = `${percentNeeded}%`;
-        if (visualNeededText) visualNeededText.innerText = `⚡ +${percentNeeded}% Needed (100%)`;
+        if (visualNeededText) visualNeededText.innerText = `⚡ +${percentNeeded}% to Reach 100% Full`;
       }
 
       // Update preset buttons styling
@@ -2699,6 +2699,14 @@
           handleLiveTelematicsPacket(JSON.parse(e.newValue));
         } catch (err) {}
       }
+    });
+
+    // Auto-refresh telematics whenever the user switches back to this tab!
+    window.addEventListener('focus', () => {
+      try {
+        const fresh = localStorage.getItem('voltgrid_virtual_car');
+        if (fresh) handleLiveTelematicsPacket(JSON.parse(fresh));
+      } catch (err) {}
     });
 
     function updateCheckoutTripTelematics(carData) {
@@ -2981,6 +2989,12 @@
       if (manualTrigger) {
         await new Promise(r => setTimeout(r, 600));
       }
+
+      // Always reload the freshest state from localStorage!
+      try {
+        const fresh = localStorage.getItem('voltgrid_virtual_car');
+        if (fresh) virtualCarState = JSON.parse(fresh);
+      } catch (e) {}
 
       // Read directly from the Virtual Vehicle Simulator!
       const liveSoc = (virtualCarState && virtualCarState.soc !== undefined) ? virtualCarState.soc : ((currentUser && currentUser.lastKnownBmsSoc) ? currentUser.lastKnownBmsSoc : 22);
