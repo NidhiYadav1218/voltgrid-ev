@@ -99,16 +99,19 @@
       <!-- Right Controls: Admin Portal, Auth, Theme Toggle -->
       <div class="flex items-center gap-2.5 sm:gap-3">
         
-        <!-- Virtual Vehicle Simulator Trigger -->
-        <button 
-          onclick="openVehicleSimulatorModal()" 
+        <!-- Virtual Vehicle Simulator Trigger (Opens Standalone Driving Simulator Page) -->
+        <a 
+          href="simulator.html" 
+          target="_blank"
+          id="navCarSimLink" 
           class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-100 text-cyan-900 dark:bg-cyan-950/80 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 hover:scale-105 active:scale-95 transition-all shadow-sm"
-          title="Open Smartcar Virtual Vehicle Simulator & BMS IoT Lab"
+          title="Open Virtual EV Driving Simulator & 4G eSIM Telematics in New Tab"
         >
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>🚗</span>
-          <span class="hidden sm:inline">Car</span> Sim
-        </button>
+          <span class="hidden sm:inline">Drive Sim:</span>
+          <span id="navSimStatusText" class="font-mono text-[11px] font-black text-emerald-600 dark:text-cyan-400">Open &rarr;</span>
+        </a>
 
         <!-- Admin Console Trigger -->
         <button 
@@ -704,14 +707,14 @@
               <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Live IoT</span>
             </div>
             <div class="flex items-center gap-2.5">
-              <button 
-                type="button" 
-                onclick="openVehicleSimulatorModal()" 
-                title="Open Smartcar Virtual Vehicle Simulator"
+              <a 
+                href="simulator.html" 
+                target="_blank"
+                title="Open Standalone Driving Simulator & 4G eSIM Telematics in New Tab"
                 class="text-[10px] text-emerald-400 hover:text-emerald-300 font-mono font-bold flex items-center gap-1 transition-colors underline"
               >
-                <span>🚗</span> Sim Lab
-              </button>
+                <span>🚗</span> Sim Page ↗
+              </a>
               <button 
                 type="button" 
                 onclick="syncLiveSmartcarBattery(true)" 
@@ -747,6 +750,22 @@
               <span id="smartcarRangeSub" class="block text-[10px] text-slate-400 font-mono mt-0.5">
                 88 km range
               </span>
+            </div>
+          </div>
+
+          <!-- 4G eSIM Trip Telematics Bar (Driven vs Consumed) -->
+          <div class="mt-2.5 grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[10px] font-mono">
+            <div>
+              <span class="text-slate-400 block text-[9px] uppercase font-bold">Odometer</span>
+              <strong id="checkoutOdometer" class="text-white">14,250.0 km</strong>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[9px] uppercase font-bold">Trip Driven</span>
+              <strong id="checkoutTripDistance" class="text-cyan-400">+0.0 km</strong>
+            </div>
+            <div class="text-right">
+              <span class="text-slate-400 block text-[9px] uppercase font-bold">Trip Consumed</span>
+              <strong id="checkoutTripConsumed" class="text-amber-400">-78% SoC</strong>
             </div>
           </div>
         </div>
@@ -809,6 +828,25 @@
           </div>
         </div>
 
+        <!-- Notice if Car is already 100% Full -->
+        <div id="checkoutFullBatteryNotice" class="hidden p-3 rounded-2xl bg-amber-500/10 border border-amber-500/40 text-amber-900 dark:text-amber-300 text-xs space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="text-base">🎉</span>
+            <div>
+              <strong class="block text-xs font-bold text-amber-800 dark:text-amber-200">Vehicle Battery is Already 100% Full!</strong>
+              <span class="text-[11px] text-amber-700/90 dark:text-amber-300/80">No charging energy needed. Booking is blocked to prevent occupying charging bays unnecessarily.</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 pt-1 border-t border-amber-500/20">
+            <button type="button" onclick="simulateCarDrive(15)" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[10px] shadow-sm flex items-center gap-1">
+              <span>🛣️</span> Drive 30 km (-15% Battery) to Test
+            </button>
+            <button type="button" onclick="injectSimScenario(22)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-[10px] shadow-sm flex items-center gap-1">
+              <span>🚗</span> Reset to 22% Arrival
+            </button>
+          </div>
+        </div>
+
       </div>
 
       <!-- Itemized Bill Table -->
@@ -828,6 +866,9 @@
         <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-between text-sm font-extrabold text-slate-900 dark:text-white">
           <span>Total Payable Amount</span>
           <span class="text-emerald-600 dark:text-cyan-400">₹<span id="billTotal">1,537.30</span></span>
+        </div>
+        <div id="billTripNote" class="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1 pt-1.5 border-t border-slate-200 dark:border-slate-800">
+          <span>ℹ️</span> <span>Telematics: Billed to refill battery consumed over <strong id="billTripKm" class="text-cyan-600 dark:text-cyan-400">0.0</strong> km trip back to 100%.</span>
         </div>
       </div>
 
@@ -2482,21 +2523,23 @@
     function updateBatteryEstimation(currentSocVal) {
       if (!pendingCheckout) return;
       const currentSoc = parseInt(currentSocVal) || 22;
-      const userCarName = currentUser ? currentUser.car : 'MG ZS EV';
+      const userCarName = (virtualCarState && virtualCarState.car) ? virtualCarState.car : ((currentUser && currentUser.car) ? currentUser.car : 'MG ZS EV');
       const carSpec = vehicles[userCarName] || { battery: 50.3, speed: 80, efficiency: 6.8 };
       const batteryCapacity = carSpec.battery || 50.3;
-      const percentNeeded = Math.max(10, 100 - currentSoc);
-      const neededKwh = +((percentNeeded / 100) * batteryCapacity).toFixed(1);
+
+      const isFull = currentSoc >= 100;
+      const percentNeeded = isFull ? 0 : Math.max(1, 100 - currentSoc);
+      const neededKwh = isFull ? 0 : +((percentNeeded / 100) * batteryCapacity).toFixed(1);
 
       const chargerKw = pendingCheckout.maxKw || 60;
       const isAcPort = chargerKw <= 22;
       const effectiveKw = isAcPort ? Math.min(chargerKw, 22) : Math.min(chargerKw, carSpec.speed || 80);
-      const estMinutes = Math.max(10, Math.round((neededKwh / Math.max(5, effectiveKw)) * 60));
+      const estMinutes = isFull ? 0 : Math.max(5, Math.round((neededKwh / Math.max(5, effectiveKw)) * 60));
 
-      const baseCost = +(neededKwh * pendingCheckout.pricePerKwh).toFixed(2);
-      const gridFee = 40.00;
-      const gst = +((baseCost + gridFee) * 0.18).toFixed(2);
-      const total = +(baseCost + gridFee + gst).toFixed(2);
+      const baseCost = isFull ? 0 : +(neededKwh * pendingCheckout.pricePerKwh).toFixed(2);
+      const gridFee = isFull ? 0 : 40.00;
+      const gst = isFull ? 0 : +((baseCost + gridFee) * 0.18).toFixed(2);
+      const total = isFull ? 0 : +(baseCost + gridFee + gst).toFixed(2);
 
       pendingCheckout.currentSoc = currentSoc;
       pendingCheckout.targetSoc = 100;
@@ -2517,8 +2560,8 @@
       if (sliderEl && sliderEl.value != currentSoc) sliderEl.value = currentSoc;
       if (neededEl) neededEl.innerText = `${percentNeeded}`;
       if (kwhNeededEl) kwhNeededEl.innerText = `${neededKwh}`;
-      if (estMinsEl) estMinsEl.innerText = formatMinutes(estMinutes);
-      if (badgeEl) badgeEl.innerText = formatMinutes(estMinutes);
+      if (estMinsEl) estMinsEl.innerText = isFull ? '0 mins (Full)' : formatMinutes(estMinutes);
+      if (badgeEl) badgeEl.innerText = isFull ? '0 mins (Full)' : formatMinutes(estMinutes);
 
       // Update interactive visual two-tone battery diagram
       const visualCurrent = document.getElementById('batteryVisualCurrent');
@@ -2526,10 +2569,17 @@
       const visualNeeded = document.getElementById('batteryVisualNeeded');
       const visualNeededText = document.getElementById('batteryVisualNeededText');
 
-      if (visualCurrent) visualCurrent.style.width = `${currentSoc}%`;
-      if (visualCurrentText) visualCurrentText.innerText = `🔋 ${currentSoc}% Left`;
-      if (visualNeeded) visualNeeded.style.width = `${percentNeeded}%`;
-      if (visualNeededText) visualNeededText.innerText = `⚡ +${percentNeeded}% Needed (100%)`;
+      if (isFull) {
+        if (visualCurrent) visualCurrent.style.width = '100%';
+        if (visualCurrentText) visualCurrentText.innerText = '🔋 100% Fully Charged';
+        if (visualNeeded) visualNeeded.style.width = '0%';
+        if (visualNeededText) visualNeededText.innerText = '';
+      } else {
+        if (visualCurrent) visualCurrent.style.width = `${currentSoc}%`;
+        if (visualCurrentText) visualCurrentText.innerText = `🔋 ${currentSoc}% Left`;
+        if (visualNeeded) visualNeeded.style.width = `${percentNeeded}%`;
+        if (visualNeededText) visualNeededText.innerText = `⚡ +${percentNeeded}% Needed (100%)`;
+      }
 
       // Update preset buttons styling
       [15, 25, 45, 65].forEach(val => {
@@ -2557,9 +2607,30 @@
       const estRangeKm = Math.round((currentSoc / 100) * (batteryCapacity * (carSpec.efficiency || 6.8)));
       if (rangeEl) rangeEl.innerText = `${estRangeKm} km range`;
 
+      // Full Battery Notice & Payment Button State
+      const fullNoticeEl = document.getElementById('checkoutFullBatteryNotice');
+      const btnPay = document.getElementById('btnPayConfirm');
+
+      if (isFull) {
+        if (fullNoticeEl) fullNoticeEl.classList.remove('hidden');
+        if (btnPay) {
+          btnPay.disabled = true;
+          btnPay.className = 'w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-300 dark:bg-slate-800 text-slate-500 dark:text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-700 shadow-none transition-all';
+          btnPay.innerText = '🚫 Battery 100% Full • Booking Disabled';
+        }
+      } else {
+        if (fullNoticeEl) fullNoticeEl.classList.add('hidden');
+        if (btnPay) {
+          btnPay.disabled = false;
+          btnPay.className = 'w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 dark:bg-cyan-400 dark:hover:bg-cyan-300 text-white dark:text-slate-950 shadow-lg shadow-emerald-500/25 transition-all cursor-pointer';
+          btnPay.innerText = 'Authorize Demo Payment & Lock Spot';
+        }
+      }
+
       if (currentUser) {
         currentUser.lastKnownBmsSoc = currentSoc;
       }
+      updateCheckoutTripTelematics(virtualCarState);
     }
 
     // ================= SMARTCAR VIRTUAL VEHICLE SIMULATOR ENGINE =================
@@ -2575,10 +2646,79 @@
     let virtualCarState = loadSaved('voltgrid_virtual_car', {
       car: (currentUser && currentUser.car) ? currentUser.car : 'MG ZS EV',
       soc: 22,
+      initialDaySoc: 100,
+      odometer: 14272.8,
+      tripDistance: 22.8,
+      energyConsumedKwh: 3.35,
+      speed: 0,
+      isDriving: false,
+      gear: 'P',
       vin: '1MGZS48EV20265921',
-      voltage: 394.2,
+      voltage: 364.2,
       temp: 28.4
     });
+
+    // Cross-tab Telematics Bridge (Syncs with simulator.html in real-time!)
+    const telematicsChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('voltgrid_telematics') : null;
+
+    function handleLiveTelematicsPacket(data) {
+      if (!data) return;
+      virtualCarState = data;
+      if (currentUser) {
+        currentUser.car = data.car;
+        currentUser.lastKnownBmsSoc = data.soc;
+      }
+
+      // Update nav link status
+      const navStatus = document.getElementById('navSimStatusText');
+      if (navStatus) {
+        navStatus.innerText = `${Math.round(data.soc)}% (${Number(data.tripDistance || 0).toFixed(0)} km)`;
+      }
+
+      // If checkout modal is open, dynamically update the bill and telemetry breakdown!
+      const checkoutModal = document.getElementById('checkoutModal');
+      if (checkoutModal && !checkoutModal.classList.contains('hidden')) {
+        const smartcarCarName = document.getElementById('smartcarCarName');
+        const smartcarVinBadge = document.getElementById('smartcarVinBadge');
+        if (smartcarCarName) smartcarCarName.innerText = data.car || 'MG ZS EV';
+        if (smartcarVinBadge && data.vin) smartcarVinBadge.innerText = `• VIN: ...${data.vin.slice(-4)}`;
+        updateBatteryEstimation(data.soc);
+        updateCheckoutTripTelematics(data);
+      }
+    }
+
+    if (telematicsChannel) {
+      telematicsChannel.onmessage = (event) => {
+        if (event.data) handleLiveTelematicsPacket(event.data);
+      };
+    }
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'voltgrid_virtual_car' && e.newValue) {
+        try {
+          handleLiveTelematicsPacket(JSON.parse(e.newValue));
+        } catch (err) {}
+      }
+    });
+
+    function updateCheckoutTripTelematics(carData) {
+      const data = carData || virtualCarState;
+      if (!data) return;
+      const odoEl = document.getElementById('checkoutOdometer');
+      const tripDistEl = document.getElementById('checkoutTripDistance');
+      const tripConsEl = document.getElementById('checkoutTripConsumed');
+      const tripNoteKm = document.getElementById('billTripKm');
+
+      const odo = data.odometer !== undefined ? Number(data.odometer).toFixed(1) : '14,250.0';
+      const tripKm = data.tripDistance !== undefined ? Number(data.tripDistance).toFixed(1) : '0.0';
+      const soc = data.soc !== undefined ? Math.round(data.soc) : 22;
+      const dropped = Math.max(0, 100 - soc);
+
+      if (odoEl) odoEl.innerText = `${odo} km`;
+      if (tripDistEl) tripDistEl.innerText = `+${tripKm} km`;
+      if (tripConsEl) tripConsEl.innerText = `-${dropped}% SoC`;
+      if (tripNoteKm) tripNoteKm.innerText = tripKm;
+    }
 
     function saveVirtualCarState() {
       try {
@@ -2650,6 +2790,14 @@
       const checkoutModal = document.getElementById('checkoutModal');
       if (checkoutModal && !checkoutModal.classList.contains('hidden')) {
         updateBatteryEstimation(soc);
+        const sub = document.getElementById('smartcarStatusSub');
+        if (sub) {
+          if (soc >= 100) {
+            sub.innerHTML = `<span class="text-amber-400 font-bold">✓ Live BMS Synced:</span> ${virtualCarState.car} at <strong class="text-white">100% Full</strong> (No charge needed)`;
+          } else {
+            sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${virtualCarState.car} at <strong class="text-white">${soc}%</strong> (Needs charge to 100%)`;
+          }
+        }
       }
     }
 
@@ -2841,11 +2989,16 @@
       const estRangeKm = Math.round((liveSoc / 100) * (carSpec.battery * (carSpec.efficiency || 6.8)));
 
       updateBatteryEstimation(liveSoc);
+      updateCheckoutTripTelematics(virtualCarState);
 
       if (icon) icon.className = '';
       if (text) text.innerText = 'Re-sync';
       if (sub) {
-        sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${carName} at <strong class="text-white">${liveSoc}%</strong> (Needs charge to 100%)`;
+        if (liveSoc >= 100) {
+          sub.innerHTML = `<span class="text-amber-400 font-bold">✓ Live BMS Synced:</span> ${carName} at <strong class="text-white">100% Full</strong> (No charge needed)`;
+        } else {
+          sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${carName} at <strong class="text-white">${liveSoc}%</strong> (Needs charge to 100%)`;
+        }
       }
       if (rangeEl) {
         rangeEl.innerText = `${estRangeKm} km range`;
@@ -2901,6 +3054,11 @@
       if (!currentUser) {
         alert("🔒 Please Sign In or Register to complete your reservation.");
         openAuthModal();
+        return;
+      }
+
+      if (pendingCheckout.currentSoc >= 100) {
+        alert("🚫 Battery is already 100% full!\n\nYour electric vehicle is fully charged and does not require energy.\nSpot reservation is disabled to keep the charging bay available for drivers needing power.\n\nTip: Click 'Drive 30 km' in the notice or use the Virtual Car Simulator to lower your battery to test charging.");
         return;
       }
 
@@ -3707,6 +3865,10 @@
                 if (isPortOwner(p)) {
                   playNotificationSound('batteryFull');
                   showToast(`🎉 CHARGING COMPLETE: Your ${p.vehicle || 'EV'} has reached 100% full capacity! 0 kW draw. Ready to unplug.`);
+                  // Signal simulator.html over BroadcastChannel to refill virtual vehicle!
+                  if (telematicsChannel) {
+                    telematicsChannel.postMessage({ action: 'CHARGE_COMPLETE', targetSoc: 100 });
+                  }
                   setTimeout(() => {
                     alert(`⚡ CHARGING COMPLETE (100% FULL)!\n\nVehicle: ${p.vehicle || 'Your EV'}\nCharging Bay: ${st.name} • ${p.name}\n\n🎉 Your battery has reached 100% full capacity! Power draw is now 0 kW.\n\nPlease disconnect your charging cable to free the bay for waiting drivers.`);
                   }, 120);
@@ -3736,6 +3898,7 @@
       renderStationSelector();
       updateLiveSessionHero();
       recalculateSavings();
+      handleLiveTelematicsPacket(virtualCarState);
       syncWithMongoDBAtlas();
 
       // Continuous multi-device synchronization via MongoDB Atlas every 3.5s
