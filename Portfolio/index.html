@@ -1762,6 +1762,14 @@
         }
       }
 
+      // 4. Match by Device Session ID (same browser testing!):
+      const currentSid = getDeviceSessionId();
+      if (currentSid && port.sessionId && port.sessionId === currentSid) return true;
+
+      // 5. Match by local active hold:
+      const localHold = getMyLocalHold(port.id);
+      if (localHold && localHold.active) return true;
+
       return false;
     }
 
@@ -2378,14 +2386,47 @@
               ` : ''}
 
               ${isChg && !isMySession ? `
-                <button disabled class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700/60 flex items-center justify-center gap-1.5">
-                  <span>🔒</span> In Use &bull; Cable Locked
-                </button>
+                <div class="space-y-1">
+                  <button disabled class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700/60 flex items-center justify-center gap-1.5">
+                    <span>🔒</span> In Use &bull; Cable Locked
+                  </button>
+                  <button type="button" onclick="forceReleasePortForTesting('${port.id}')" class="w-full text-center text-[10px] text-slate-400 hover:text-rose-500 font-mono transition-colors underline py-0.5">
+                    [Free up this port for testing]
+                  </button>
+                </div>
               ` : ''}
             </div>
           </div>
         `;
       }).join('');
+    }
+
+    async function forceReleasePortForTesting(portId) {
+      const st = stations.find(s => s.id === currentStationId);
+      const port = st ? st.ports.find(p => p.id === portId) : null;
+      if (port) {
+        saveMyLocalHold(portId, null);
+        port.status = 'available';
+        port.customer = null;
+        port.phone = null;
+        port.vehicle = null;
+        port.pin = null;
+        port.soc = null;
+        port.kw = null;
+        port.secondsLeft = 0;
+        port.paid = 0;
+        saveVoltGridDB();
+        renderPorts();
+        updateLiveSessionHero();
+        showToast('🔓 Port released and made available for testing!');
+        try {
+          await fetch(`${API_BASE}/api/stations`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'release', stationId: currentStationId, portId: portId })
+          });
+        } catch (e) {}
+      }
     }
 
     function updateLiveSessionHero() {
