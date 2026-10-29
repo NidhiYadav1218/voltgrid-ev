@@ -665,7 +665,7 @@
 
   <!-- ================= CHECKOUT & BILLING MODAL (SANDBOX - NO REAL MONEY) ================= -->
   <div id="checkoutModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-    <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+    <div class="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl">
       <button onclick="closeCheckoutModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white">✕</button>
 
       <div>
@@ -783,13 +783,6 @@
           <div class="text-right">
             <span class="block text-[10px] uppercase font-bold text-slate-400">Est. Charging Time Needed</span>
             <strong class="text-emerald-600 dark:text-cyan-400 font-mono font-bold"><span id="checkoutEstMinutes">18</span> mins</strong>
-          </div>
-        </div>
-
-        <div class="text-[10px] text-slate-600 dark:text-slate-400 bg-white/80 dark:bg-slate-900/80 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-2">
-          <span>⏱️</span>
-          <div>
-            <strong>15-Min Arrival Window:</strong> Guaranteed hold reserved now so you can drive to the charger. Once you arrive & enter PIN, your <strong><span id="checkoutAllocatedTimeBadge">18</span>-min charging slot</strong> starts!
           </div>
         </div>
       </div>
