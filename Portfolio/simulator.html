@@ -51,33 +51,54 @@
     .font-mono { font-family: 'JetBrains Mono', monospace; }
 
     /* Moving Road Perspective Animation */
-    @keyframes roadMove {
-      0% { background-position: 0 0; }
-      100% { background-position: 0 80px; }
+    @keyframes roadMoveDown {
+      0% { background-position-y: 0px; }
+      100% { background-position-y: 64px; }
     }
     .road-surface {
-      background: linear-gradient(180deg, #090e1a 0%, #151d2f 100%);
+      background: #0b1120;
       position: relative;
       overflow: hidden;
+      border: 2px solid #1e293b;
     }
-    .road-lanes {
+    /* Yellow Center Dashed Road Divider */
+    .road-center-line {
       position: absolute;
-      inset: 0;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 4px;
+      transform: translateX(-50%);
       background-image: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 25px,
-        rgba(255, 255, 255, 0.4) 25px,
-        rgba(255, 255, 255, 0.4) 50px
+        to bottom,
+        #facc15 0px,
+        #facc15 32px,
+        transparent 32px,
+        transparent 64px
       );
-      background-size: 4px 60px;
-      background-position: center top;
+      background-size: 4px 64px;
     }
-    .road-lanes.driving {
-      animation: roadMove 0.4s linear infinite;
+    .road-center-line.moving {
+      animation: roadMoveDown 0.35s linear infinite;
     }
-    .road-lanes.driving-fast {
-      animation: roadMove 0.15s linear infinite;
+    .road-center-line.moving-fast {
+      animation: roadMoveDown 0.15s linear infinite;
+    }
+    .road-shoulder-left {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 18px;
+      width: 3px;
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+    .road-shoulder-right {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 18px;
+      width: 3px;
+      background-color: rgba(255, 255, 255, 0.4);
     }
 
     /* Headlight Glow Effect */
@@ -197,6 +218,44 @@
       </div>
     </div>
 
+    <!-- ================= LIVE DRIVE IN PROGRESS & FAST-FORWARD HERO ================= -->
+    <div class="p-4 rounded-3xl bg-slate-900/90 border-2 border-emerald-500/40 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="relative flex h-3.5 w-3.5">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+        </span>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-heading font-black text-sm text-white flex items-center gap-2">
+              <span>⚡</span> <span id="heroDriveTitle">LIVE EV HIGHWAY DRIVE RUNNING</span>
+            </h3>
+            <span id="heroDriveBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse">
+              Cruising on Highway
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-300 font-mono mt-1">
+            Speed: <strong class="text-cyan-400" id="liveSpeedText">85 km/h</strong> &bull;
+            Distance Driven: <strong class="text-white" id="liveDistText">+0.0 km</strong> &bull;
+            Battery SoC: <strong class="text-amber-400" id="liveSocText">100%</strong> &bull;
+            Clock: <strong class="text-emerald-400" id="liveClockText">5x Fast Rate</strong>
+          </p>
+        </div>
+      </div>
+      <!-- Instant 1-Click Fast Drive Actions -->
+      <div class="flex flex-wrap items-center gap-2 shrink-0">
+        <button onclick="injectPresetDrive(20)" class="px-3 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-heading font-black text-xs shadow-md active:scale-95 transition-all">
+          🛣️ Drive 20 km (-15% SoC)
+        </button>
+        <button onclick="injectPresetDrive(50)" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-heading font-black text-xs shadow-md active:scale-95 transition-all">
+          🛣️ Drive 50 km (-38% SoC)
+        </button>
+        <button onclick="toggleDrivePower()" id="heroBtnPause" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-xs border border-slate-700 font-bold active:scale-95 transition-all">
+          ⏸️ Pause Drive
+        </button>
+      </div>
+    </div>
+
     <!-- ================= THE DIGITAL COCKPIT INSTRUMENT CLUSTER ================= -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -279,8 +338,11 @@
 
         <!-- Animated Highway Road & Car Graphic -->
         <div class="road-surface my-4 h-64 rounded-2xl border border-slate-800 flex flex-col items-center justify-center relative">
-          <!-- Animated Road Markings -->
-          <div id="roadLanes" class="road-lanes"></div>
+          <!-- Road White Shoulder Lines -->
+          <div class="road-shoulder-left"></div>
+          <div class="road-shoulder-right"></div>
+          <!-- Animated Center Yellow Dashed Highway Divider -->
+          <div id="roadCenterLine" class="road-center-line moving"></div>
 
           <!-- Speed Limit Sign -->
           <div class="absolute top-3 right-3 w-8 h-8 rounded-full border-2 border-red-500 bg-white text-slate-950 flex items-center justify-center font-heading font-black text-[10px] shadow-md">
@@ -519,11 +581,18 @@ Loading live telematics stream...
       'Porsche Taycan 4S': { battery: 93.4, speed: 170, efficiency: 5.4, vin: 'WP0AB2Y120269344', range: 505 }
     };
 
-    // Load or initialize state
+    // Load or initialize state (Auto-starts driving so page is dynamic immediately!)
     function loadSavedState() {
       try {
         const raw = localStorage.getItem('voltgrid_virtual_car');
-        if (raw) return JSON.parse(raw);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          // Always ensure auto-drive is running when viewing simulator!
+          parsed.isDriving = true;
+          if (!parsed.speed || parsed.speed <= 0) parsed.speed = 85;
+          parsed.gear = 'D';
+          return parsed;
+        }
       } catch (e) {}
       return {
         car: 'MG ZS EV',
@@ -532,10 +601,10 @@ Loading live telematics stream...
         odometer: 14250.0,
         tripDistance: 0.0,
         energyConsumedKwh: 0.0,
-        speed: 0,
-        targetSpeed: 0,
-        gear: 'P',
-        isDriving: false,
+        speed: 85,
+        targetSpeed: 85,
+        gear: 'D',
+        isDriving: true,
         vin: '1MGZS48EV20265921',
         voltage: 398.5,
         temp: 28.4,
@@ -544,7 +613,7 @@ Loading live telematics stream...
     }
 
     let state = loadSavedState();
-    let simMultiplier = 1;
+    let simMultiplier = 5; // Default to 5x so distance and battery tick live before user's eyes!
     let driveInterval = null;
 
     // BroadcastChannel for cross-tab communication
@@ -772,13 +841,41 @@ Loading live telematics stream...
       }
 
       // Road Animation class toggle
-      const roadLanes = document.getElementById('roadLanes');
+      const roadCenter = document.getElementById('roadCenterLine');
       const headlightBeams = document.getElementById('headlightBeams');
-      if (roadLanes) {
-        roadLanes.className = state.speed > 80 ? 'road-lanes driving-fast' : (state.speed > 0 ? 'road-lanes driving' : 'road-lanes');
+      if (roadCenter) {
+        if (state.speed > 80) roadCenter.className = 'road-center-line moving-fast';
+        else if (state.speed > 0) roadCenter.className = 'road-center-line moving';
+        else roadCenter.className = 'road-center-line';
       }
       if (headlightBeams) {
         headlightBeams.style.opacity = state.speed > 0 ? '0.75' : '0.2';
+      }
+
+      // Update Top Hero Live Drive Bar
+      const liveSpd = document.getElementById('liveSpeedText');
+      const liveDst = document.getElementById('liveDistText');
+      const liveSc = document.getElementById('liveSocText');
+      const liveClk = document.getElementById('liveClockText');
+      const heroBadge = document.getElementById('heroDriveBadge');
+      const heroPause = document.getElementById('heroBtnPause');
+
+      if (liveSpd) liveSpd.innerText = `${Math.round(state.speed)} km/h`;
+      if (liveDst) liveDst.innerText = `+${Number(state.tripDistance).toFixed(1)} km`;
+      if (liveSc) liveSc.innerText = `${Math.round(state.soc)}%`;
+      if (liveClk) liveClk.innerText = `${simMultiplier}x Fast Rate`;
+
+      if (heroBadge) {
+        if (state.isDriving && state.speed > 0) {
+          heroBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse';
+          heroBadge.innerText = 'Cruising on Highway';
+        } else {
+          heroBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700';
+          heroBadge.innerText = 'Drive Paused [P]';
+        }
+      }
+      if (heroPause) {
+        heroPause.innerText = (state.isDriving && state.speed > 0) ? '⏸️ Pause Drive' : '▶️ Resume Drive';
       }
 
       // Wheel animation
