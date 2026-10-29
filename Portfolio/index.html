@@ -2282,6 +2282,10 @@
       const rangeEl = document.getElementById('smartcarRangeSub');
       const estRangeKm = Math.round((currentSoc / 100) * (batteryCapacity * (carSpec.efficiency || 6.8)));
       if (rangeEl) rangeEl.innerText = `${estRangeKm} km range`;
+
+      if (currentUser) {
+        currentUser.lastKnownBmsSoc = currentSoc;
+      }
     }
 
     function toggleManualBatteryControls() {
@@ -2315,28 +2319,10 @@
         await new Promise(r => setTimeout(r, 600));
       }
 
-      // 1. Check if user's car is ALREADY actively charging on any port
-      let activeChargingPort = null;
-      stations.forEach(st => {
-        st.ports.forEach(p => {
-          if (p.status === 'charging' && isPortOwner(p)) {
-            activeChargingPort = p;
-          }
-        });
-      });
-
-      let liveSoc;
-      let statusNote = '';
-      if (activeChargingPort) {
-        liveSoc = (activeChargingPort.soc !== undefined && activeChargingPort.soc !== null) ? activeChargingPort.soc : 78;
-        statusNote = ` • Currently connected on ${activeChargingPort.name}`;
-      } else if (currentUser && currentUser.lastKnownBmsSoc) {
-        liveSoc = currentUser.lastKnownBmsSoc;
-      } else {
-        // Realistic arriving battery percentage
-        liveSoc = 22;
-        if (currentUser) currentUser.lastKnownBmsSoc = liveSoc;
-      }
+      // Stable vehicle arrival State-of-Charge (SoC)
+      // When booking a charger, the vehicle is arriving with a low battery that needs charging.
+      // Re-syncing re-verifies the stable BMS reading from the vehicle (it does NOT increase while unplugged!)
+      const liveSoc = (currentUser && currentUser.lastKnownBmsSoc) ? currentUser.lastKnownBmsSoc : 22;
 
       const carSpec = vehicles[carName] || { battery: 50.3, efficiency: 6.8 };
       const estRangeKm = Math.round((liveSoc / 100) * (carSpec.battery * (carSpec.efficiency || 6.8)));
@@ -2346,14 +2332,14 @@
       if (icon) icon.className = '';
       if (text) text.innerText = 'Re-sync';
       if (sub) {
-        sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${carName} at <strong class="text-white">${liveSoc}%</strong>${statusNote}`;
+        sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${carName} at <strong class="text-white">${liveSoc}%</strong> (Needs charge to 100%)`;
       }
       if (rangeEl) {
         rangeEl.innerText = `${estRangeKm} km range`;
       }
 
       if (manualTrigger) {
-        showToast(`📡 Smartcar Connected: Fetched live ${liveSoc}% battery from your ${carName}!`);
+        showToast(`📡 Smartcar Connected: Verified stable ${liveSoc}% battery from ${carName}!`);
         playNotificationSound('chime');
       }
     }
