@@ -3034,6 +3034,16 @@
       const st = stations.find(s => s.id === currentStationId);
       const port = st.ports.find(p => p.id === portId);
 
+      // Always reload freshest vehicle telematics from simulator
+      try {
+        const fresh = localStorage.getItem('voltgrid_virtual_car');
+        if (fresh) virtualCarState = JSON.parse(fresh);
+      } catch (e) {}
+
+      const currentLiveSoc = (virtualCarState && virtualCarState.soc !== undefined)
+        ? virtualCarState.soc
+        : ((currentUser && currentUser.lastKnownBmsSoc) ? currentUser.lastKnownBmsSoc : 22);
+
       pendingCheckout = {
         stationId: st.id,
         stationName: st.name,
@@ -3041,7 +3051,7 @@
         portName: port.name,
         maxKw: port.maxKw,
         pricePerKwh: st.pricePerKwh,
-        currentSoc: 22,
+        currentSoc: currentLiveSoc,
         targetSoc: 100
       };
 
@@ -3298,10 +3308,20 @@
       if (enteredPin === actualPin) {
         closePinModal();
 
-        // 1. Mark as charging locally with custom battery plan
+        // Query the vehicle's live BMS battery upon physical cable handshake
+        try {
+          const fresh = localStorage.getItem('voltgrid_virtual_car');
+          if (fresh) virtualCarState = JSON.parse(fresh);
+        } catch (e) {}
+
+        const liveHandshakeSoc = (virtualCarState && virtualCarState.soc !== undefined)
+          ? virtualCarState.soc
+          : ((port.initialSoc !== undefined && port.initialSoc !== null) ? port.initialSoc : 22);
+
+        // 1. Mark as charging locally starting directly from car's actual battery!
         port.status = 'charging';
-        port.initialSoc = (port.initialSoc !== undefined && port.initialSoc !== null) ? port.initialSoc : 22;
-        port.soc = port.initialSoc;
+        port.initialSoc = liveHandshakeSoc;
+        port.soc = liveHandshakeSoc;
         port.targetSoc = 100;
         const durationMinutes = port.chargingDurationMinutes || getRealisticChargingDurationMinutes(port, port.vehicle, port.initialSoc);
         port.chargingDurationMinutes = durationMinutes;
@@ -3824,6 +3844,15 @@
                 if (isPortOwner(p)) {
                   virtualCarState.soc = p.soc;
                   saveVirtualCarState();
+                  // Broadcast charging progress to simulator.html!
+                  if (telematicsChannel) {
+                    telematicsChannel.postMessage({ action: 'INJECT_SOC', soc: p.soc });
+                  }
+                  // Update navbar pill live
+                  const navStatus = document.getElementById('navSimStatusText');
+                  if (navStatus) {
+                    navStatus.innerText = `${p.soc}% SoC (Charging)`;
+                  }
                   const simModal = document.getElementById('vehicleSimulatorModal');
                   if (simModal && !simModal.classList.contains('hidden')) {
                     renderSimulatorUI();
