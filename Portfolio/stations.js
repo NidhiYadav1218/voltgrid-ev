@@ -205,9 +205,15 @@ export default async function handler(req, res) {
         port.chargingStartedAt = Date.now();
       } else if (action === 'updateTelemetry') {
         if (port.status === 'charging') {
-          if (body.soc !== undefined) port.soc = Number(body.soc);
-          if (body.secondsLeft !== undefined) port.secondsLeft = Number(body.secondsLeft);
-          if (body.kw !== undefined) port.kw = Number(body.kw);
+          if (body.soc !== undefined) {
+            port.soc = Number(body.soc);
+            if (port.soc >= 100) {
+              port.kw = 0;
+              port.secondsLeft = 0;
+            }
+          }
+          if (body.secondsLeft !== undefined && (port.soc === undefined || port.soc < 100)) port.secondsLeft = Number(body.secondsLeft);
+          if (body.kw !== undefined && (port.soc === undefined || port.soc < 100)) port.kw = Number(body.kw);
         }
       }
 

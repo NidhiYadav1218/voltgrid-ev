@@ -681,96 +681,66 @@
         <p id="checkoutStationSub" class="text-xs text-slate-500">Delhi-Jaipur Expressway Hub (Km 42)</p>
       </div>
 
-      <!-- Vehicle Battery Level & Smart Charging Slot Allocator -->
-      <div class="mt-4 bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl p-4 space-y-3.5">
-        <div class="flex items-center justify-between">
-          <div>
-            <label class="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-              <span>🔋</span> Car Remaining Battery
-            </label>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400">
-              How much charge is currently left in your car's battery?
-            </p>
-          </div>
-          <span id="checkoutBatteryDisplay" class="px-2.5 py-1 rounded-xl font-mono font-black text-sm bg-emerald-500 text-white shadow-sm">
-            25% Left
-          </span>
-        </div>
-
-        <!-- Smartcar Connected Vehicle Telematics Bridge -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 rounded-2xl bg-slate-900 text-white dark:bg-slate-950 border border-slate-700/80 shadow-sm">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/40 flex items-center justify-center text-sm">
-              📡
+      <!-- Automated Smartcar Connected Telematics & Battery Allocation -->
+      <div class="mt-4 bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl p-4 space-y-3">
+        
+        <!-- Smartcar Connected Telematics Bridge (Automatic) -->
+        <div class="p-3.5 rounded-2xl bg-slate-900 text-white dark:bg-slate-950 border border-emerald-500/30 shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-xs font-bold text-white tracking-wide">Smartcar Connected Telematics</span>
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Live IoT</span>
             </div>
-            <div>
-              <div class="flex items-center gap-1.5">
-                <span class="font-bold text-xs text-white">Smartcar Connected Telematics</span>
-                <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Live IoT</span>
+            <button 
+              type="button" 
+              onclick="syncLiveSmartcarBattery(true)" 
+              title="Re-query vehicle telematics"
+              class="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono font-bold flex items-center gap-1 transition-colors"
+            >
+              <span id="smartcarSyncIcon">🔄</span>
+              <span id="smartcarSyncText">Re-sync</span>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/40 flex items-center justify-center text-base">
+                🚗
               </div>
-              <span id="smartcarStatusSub" class="text-[10px] text-slate-400 block mt-0.5">
-                Auto-read vehicle BMS battery over cellular telematics
+              <div>
+                <div class="text-xs font-extrabold text-white flex items-center gap-1.5">
+                  <span id="smartcarCarName">MG ZS EV</span>
+                  <span class="text-[10px] font-mono font-normal text-slate-400" id="smartcarVinBadge">&bull; VIN: ...5921</span>
+                </div>
+                <div id="smartcarStatusSub" class="text-[11px] text-slate-300 mt-0.5">
+                  <span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> Battery auto-detected via Onboard eSIM
+                </div>
+              </div>
+            </div>
+
+            <div class="text-right">
+              <span id="checkoutBatteryDisplay" class="px-3 py-1 rounded-xl font-mono font-black text-sm bg-emerald-500 text-white shadow-sm inline-block">
+                22% Left
+              </span>
+              <span id="smartcarRangeSub" class="block text-[10px] text-slate-400 font-mono mt-0.5">
+                88 km range
               </span>
             </div>
           </div>
-          <button 
-            type="button" 
-            id="btnSyncSmartcar" 
-            onclick="syncLiveSmartcarBattery()" 
-            class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-slate-950 font-extrabold text-[11px] uppercase tracking-wider shadow-md shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 shrink-0"
-          >
-            <span id="smartcarSyncIcon">⚡</span>
-            <span id="smartcarSyncText">Fetch from Car</span>
-          </button>
         </div>
 
         <!-- Visual Two-Tone Battery Graphic (Left = Remaining in Car, Right = To Be Charged) -->
         <div class="relative p-1.5 bg-slate-200/80 dark:bg-slate-800/80 rounded-2xl border border-slate-300 dark:border-slate-700">
           <div class="flex h-7 rounded-xl overflow-hidden font-mono font-extrabold text-[10px] leading-7 text-center">
             <!-- Left: Current Battery in Vehicle -->
-            <div id="batteryVisualCurrent" class="bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 transition-all duration-300 flex items-center justify-center truncate px-1 shadow-sm" style="width: 25%;">
-              <span id="batteryVisualCurrentText">🔋 25% Left</span>
+            <div id="batteryVisualCurrent" class="bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 transition-all duration-300 flex items-center justify-center truncate px-1 shadow-sm" style="width: 22%;">
+              <span id="batteryVisualCurrentText">🔋 22% Left</span>
             </div>
             <!-- Right: Needed Charge to 100% -->
-            <div id="batteryVisualNeeded" class="bg-gradient-to-r from-cyan-500 to-emerald-400 text-slate-950 transition-all duration-300 flex items-center justify-center truncate px-1" style="width: 75%;">
-              <span id="batteryVisualNeededText">⚡ +75% Needed (100%)</span>
+            <div id="batteryVisualNeeded" class="bg-gradient-to-r from-cyan-500 to-emerald-400 text-slate-950 transition-all duration-300 flex items-center justify-center truncate px-1" style="width: 78%;">
+              <span id="batteryVisualNeededText">⚡ +78% Needed (100%)</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Quick Select Preset Buttons -->
-        <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold">
-          <span class="text-[10px] uppercase text-slate-400 font-bold mr-1">Quick Select:</span>
-          <button type="button" onclick="updateBatteryEstimation(15)" id="btnPreset15" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">
-            15% (Low)
-          </button>
-          <button type="button" onclick="updateBatteryEstimation(25)" id="btnPreset25" class="px-2.5 py-1 rounded-lg bg-emerald-500 text-white font-black shadow-sm transition-all">
-            25% (Low)
-          </button>
-          <button type="button" onclick="updateBatteryEstimation(45)" id="btnPreset45" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">
-            45% (Half)
-          </button>
-          <button type="button" onclick="updateBatteryEstimation(65)" id="btnPreset65" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">
-            65% (Fair)
-          </button>
-        </div>
-
-        <!-- Slider with Min / Max Labels -->
-        <div class="space-y-1">
-          <input 
-            type="range" 
-            id="checkoutBatterySlider" 
-            min="5" 
-            max="85" 
-            value="25" 
-            step="5" 
-            oninput="updateBatteryEstimation(this.value)" 
-            class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500" 
-          />
-          <div class="flex justify-between text-[10px] text-slate-400 font-bold font-mono">
-            <span>0% (Empty)</span>
-            <span>50% (Half Tank)</span>
-            <span>100% (Full)</span>
           </div>
         </div>
 
@@ -778,13 +748,46 @@
         <div class="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-emerald-200/60 dark:border-emerald-800/40">
           <div class="text-slate-600 dark:text-slate-400">
             <span class="block text-[10px] uppercase font-bold text-slate-400">Energy Needed to Reach 100%</span>
-            <strong class="text-slate-800 dark:text-slate-200 font-mono"><span id="checkoutPercentNeeded">75</span>% (<span id="checkoutKwhNeeded">37.7</span> kWh)</strong>
+            <strong class="text-slate-800 dark:text-slate-200 font-mono"><span id="checkoutPercentNeeded">78</span>% (<span id="checkoutKwhNeeded">39.2</span> kWh)</strong>
           </div>
           <div class="text-right">
             <span class="block text-[10px] uppercase font-bold text-slate-400">Est. Charging Time Needed</span>
-            <strong class="text-emerald-600 dark:text-cyan-400 font-mono font-bold"><span id="checkoutEstMinutes">18</span> mins</strong>
+            <strong class="text-emerald-600 dark:text-cyan-400 font-mono font-bold"><span id="checkoutEstMinutes">16</span> mins</strong>
           </div>
         </div>
+
+        <!-- Collapsible Manual Override (Hidden by default, user doesn't have to do anything!) -->
+        <div class="pt-0.5">
+          <button 
+            type="button" 
+            onclick="toggleManualBatteryControls()" 
+            class="text-[10px] font-semibold text-slate-400 hover:text-emerald-600 dark:hover:text-cyan-400 flex items-center gap-1 transition-colors"
+          >
+            <span>⚙️</span>
+            <span id="manualToggleLabel">Override battery percentage manually (optional)</span>
+          </button>
+
+          <div id="manualBatteryControls" class="hidden mt-2 pt-2 border-t border-emerald-200/50 dark:border-emerald-800/40 space-y-2">
+            <div class="flex flex-wrap items-center gap-1.5 text-[10px] font-bold">
+              <span class="text-slate-400 uppercase mr-1">Presets:</span>
+              <button type="button" onclick="updateBatteryEstimation(15)" id="btnPreset15" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">15%</button>
+              <button type="button" onclick="updateBatteryEstimation(25)" id="btnPreset25" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">25%</button>
+              <button type="button" onclick="updateBatteryEstimation(45)" id="btnPreset45" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">45%</button>
+              <button type="button" onclick="updateBatteryEstimation(65)" id="btnPreset65" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">65%</button>
+            </div>
+            <input 
+              type="range" 
+              id="checkoutBatterySlider" 
+              min="5" 
+              max="85" 
+              value="22" 
+              step="5" 
+              oninput="updateBatteryEstimation(this.value)" 
+              class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500" 
+            />
+          </div>
+        </div>
+
       </div>
 
       <!-- Itemized Bill Table -->
@@ -1937,13 +1940,20 @@
             borderClass = 'border-amber-400/40 dark:border-amber-500/40';
           }
         } else if (isChg) {
+          const isFull = (port.soc || 0) >= 100;
           if (isMySession) {
-            badgeClass = 'bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-400 font-bold';
-            badgeText = 'CHARGING (' + (port.soc || 65) + '%)';
-            borderClass = 'border-cyan-400/40 dark:border-cyan-500/40 ring-2 ring-cyan-500/20';
+            if (isFull) {
+              badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-extrabold animate-pulse';
+              badgeText = 'FULLY CHARGED (100%)';
+              borderClass = 'border-emerald-500/60 dark:border-emerald-400/60 ring-2 ring-emerald-500/20';
+            } else {
+              badgeClass = 'bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-400 font-bold';
+              badgeText = 'CHARGING (' + (port.soc || 25) + '%)';
+              borderClass = 'border-cyan-400/40 dark:border-cyan-500/40 ring-2 ring-cyan-500/20';
+            }
           } else {
             badgeClass = 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold';
-            badgeText = 'IN USE';
+            badgeText = isFull ? 'CHARGED' : 'IN USE';
             borderClass = 'border-slate-300 dark:border-slate-700';
           }
         }
@@ -1993,17 +2003,20 @@
                   <div class="space-y-1.5">
                     <div class="flex justify-between items-center text-xs">
                       <span class="text-slate-800 dark:text-white font-extrabold flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                        <span class="w-2 h-2 rounded-full ${(port.soc || 0) >= 100 ? 'bg-emerald-400' : 'bg-cyan-400 animate-pulse'}"></span>
                         ${port.vehicle || (currentUser ? currentUser.car : 'Your EV')}
                       </span>
-                      <span class="text-cyan-600 dark:text-cyan-400 font-mono font-black text-sm">${port.soc || 25}%</span>
+                      <span class="${(port.soc || 0) >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-cyan-600 dark:text-cyan-400'} font-mono font-black text-sm">${port.soc || 25}%</span>
                     </div>
                     <div class="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden p-0.5">
-                      <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full transition-all duration-300" style="width: ${port.soc || 25}%"></div>
+                      <div class="${(port.soc || 0) >= 100 ? 'bg-emerald-500' : 'bg-gradient-to-r from-emerald-500 to-cyan-400'} h-full rounded-full transition-all duration-300" style="width: ${port.soc || 25}%"></div>
                     </div>
                     <div class="flex justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                      <span>⚡ ${port.kw || 120} kW active draw</span>
-                      <span class="text-amber-500 font-bold">⏳ ${formatTime(port.secondsLeft || 600)} to 100%</span>
+                      <span>⚡ ${(port.soc || 0) >= 100 ? 0 : (port.kw !== undefined ? port.kw : 120)} kW active draw</span>
+                      ${(port.soc || 0) >= 100 
+                        ? `<span class="text-emerald-500 dark:text-emerald-400 font-extrabold">🎉 Battery 100% Full</span>`
+                        : `<span class="text-amber-500 font-bold">⏳ ${formatTime(port.secondsLeft || 600)} to 100%</span>`
+                      }
                     </div>
                   </div>
                 ` : ''}
@@ -2040,9 +2053,15 @@
               ` : ''}
 
               ${isChg && isMySession ? `
-                <button onclick="releasePort('${port.id}')" class="w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/70 dark:hover:bg-rose-900/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 transition-all flex items-center justify-center gap-1.5 shadow-sm">
-                  <span>⏹️</span> Stop / Disconnect Cable
-                </button>
+                ${(port.soc || 0) >= 100 ? `
+                  <button onclick="releasePort('${port.id}')" class="w-full py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-1.5 animate-pulse">
+                    <span>🔌</span> Unplug Cable & Finish (100% Full)
+                  </button>
+                ` : `
+                  <button onclick="releasePort('${port.id}')" class="w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/70 dark:hover:bg-rose-900/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 transition-all flex items-center justify-center gap-1.5 shadow-sm">
+                    <span>⏹️</span> Stop / Disconnect Cable
+                  </button>
+                `}
               ` : ''}
 
               ${isChg && !isMySession ? `
@@ -2107,23 +2126,24 @@
       }
 
       // Active charging session for currentUser:
-      const soc = activePort.soc || 50;
-      const kw = activePort.kw || (activePort.maxKw ? Math.round(activePort.maxKw * 0.75) : 120);
+      const isFull = (activePort.soc || 0) >= 100;
+      const soc = isFull ? 100 : (activePort.soc || 50);
+      const kw = isFull ? 0 : (activePort.kw !== undefined ? activePort.kw : (activePort.maxKw ? Math.round(activePort.maxKw * 0.75) : 120));
       const kwhAdded = ((soc / 100) * 60).toFixed(1);
       const cost = Math.round(kwhAdded * (activeStation.pricePerKwh || 28));
       const offset = 264 - (264 * soc) / 100;
 
       container.innerHTML = `
-        <div class="bg-white dark:bg-slate-900 border border-cyan-500/40 dark:border-cyan-400/40 rounded-3xl p-6 sm:p-8 shadow-lg ring-2 ring-cyan-500/10">
+        <div class="bg-white dark:bg-slate-900 border ${isFull ? 'border-emerald-500/50' : 'border-cyan-500/40 dark:border-cyan-400/40'} rounded-3xl p-6 sm:p-8 shadow-lg ring-2 ${isFull ? 'ring-emerald-500/20' : 'ring-cyan-500/10'}">
           <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div class="w-full lg:w-1/2 space-y-3">
               <div class="flex items-center gap-2">
                 <span class="flex h-3 w-3 relative">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full ${isFull ? 'bg-emerald-400' : 'bg-cyan-400'} opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 ${isFull ? 'bg-emerald-500' : 'bg-cyan-500'}"></span>
                 </span>
-                <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
-                  Live Real-Time Telemetry Monitor
+                <span class="text-xs font-bold uppercase tracking-wider ${isFull ? 'text-emerald-600 dark:text-emerald-400' : 'text-cyan-600 dark:text-cyan-400'}">
+                  ${isFull ? 'Charging Complete • 100% Full' : 'Live Real-Time Telemetry Monitor'}
                 </span>
                 <span class="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2.5 py-0.5 rounded-full">
                   ${activePort.name} &bull; ${activePort.type}
@@ -2131,23 +2151,23 @@
               </div>
 
               <h3 class="text-2xl font-bold text-slate-900 dark:text-white font-heading">
-                ${activePort.vehicle || (currentUser ? currentUser.car : 'Your Vehicle')} &bull; Connected
+                ${activePort.vehicle || (currentUser ? currentUser.car : 'Your Vehicle')} &bull; ${isFull ? 'Fully Charged' : 'Connected'}
               </h3>
               <p class="text-xs text-slate-500 dark:text-slate-400">
-                ${activeStation.name} &bull; Active Charging Session
+                ${activeStation.name} &bull; ${isFull ? 'Session Complete (0 kW Draw)' : 'Active Charging Session'}
               </p>
 
               <div class="grid grid-cols-3 gap-3 pt-2">
                 <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
                   <span class="text-[10px] font-bold uppercase text-slate-400 block">Current Draw</span>
-                  <span class="text-lg font-extrabold text-cyan-600 dark:text-cyan-400">${kw} kW</span>
+                  <span class="text-lg font-extrabold ${isFull ? 'text-emerald-500' : 'text-cyan-600 dark:text-cyan-400'}">${kw} kW ${isFull ? '(Idle)' : ''}</span>
                 </div>
                 <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
                   <span class="text-[10px] font-bold uppercase text-slate-400 block">Energy Added</span>
                   <span class="text-lg font-extrabold text-slate-900 dark:text-white">${kwhAdded} kWh</span>
                 </div>
                 <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
-                  <span class="text-[10px] font-bold uppercase text-slate-400 block">Running Cost</span>
+                  <span class="text-[10px] font-bold uppercase text-slate-400 block">Total Cost</span>
                   <span class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">₹${cost.toLocaleString()}</span>
                 </div>
               </div>
@@ -2158,21 +2178,21 @@
               <div class="relative w-40 h-40 flex items-center justify-center">
                 <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-100 dark:text-slate-800" />
-                  <circle cx="50" cy="50" r="42" stroke="#06b6d4" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="${offset}" stroke-linecap="round" fill="transparent" class="transition-all duration-700" />
+                  <circle cx="50" cy="50" r="42" stroke="${isFull ? '#10b981' : '#06b6d4'}" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="${offset}" stroke-linecap="round" fill="transparent" class="transition-all duration-700" />
                 </svg>
                 <div class="absolute flex flex-col items-center justify-center text-center">
                   <span class="text-xl">🔋</span>
                   <span class="text-2xl font-extrabold text-slate-900 dark:text-white font-heading mt-0.5">${soc}%</span>
-                  <span class="text-[10px] font-bold text-slate-400">${soc >= 100 ? 'Fully Charged' : 'Target: 80%'}</span>
+                  <span class="text-[10px] font-bold ${isFull ? 'text-emerald-500 font-extrabold' : 'text-slate-400'}">${isFull ? '🎉 Fully Charged' : 'Target: 100%'}</span>
                 </div>
               </div>
 
               <div class="flex flex-col gap-2 text-center sm:text-left">
-                <button onclick="releasePort('${activePort.id}')" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-200 border border-rose-200 dark:border-rose-800 transition-all shadow-sm">
-                  Stop & Unlock Cable
+                <button onclick="releasePort('${activePort.id}')" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider ${isFull ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/25 animate-pulse' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-200 border border-rose-200 dark:border-rose-800'} transition-all shadow-sm">
+                  ${isFull ? '🔌 Unplug Cable & Finish' : 'Stop & Unlock Cable'}
                 </button>
                 <span class="text-[10px] text-slate-400">
-                  Safe uncouple available anytime
+                  ${isFull ? 'Ready to unplug & release bay' : 'Safe uncouple available anytime'}
                 </span>
               </div>
             </div>
@@ -2258,50 +2278,84 @@
       if (billBase) billBase.innerText = baseCost;
       if (billGst) billGst.innerText = gst;
       if (billTotal) billTotal.innerText = total;
+
+      const rangeEl = document.getElementById('smartcarRangeSub');
+      const estRangeKm = Math.round((currentSoc / 100) * (batteryCapacity * (carSpec.efficiency || 6.8)));
+      if (rangeEl) rangeEl.innerText = `${estRangeKm} km range`;
     }
 
-    async function syncLiveSmartcarBattery() {
-      const btn = document.getElementById('btnSyncSmartcar');
+    function toggleManualBatteryControls() {
+      const el = document.getElementById('manualBatteryControls');
+      const lbl = document.getElementById('manualToggleLabel');
+      if (!el) return;
+      if (el.classList.contains('hidden')) {
+        el.classList.remove('hidden');
+        if (lbl) lbl.innerText = 'Hide manual override';
+      } else {
+        el.classList.add('hidden');
+        if (lbl) lbl.innerText = 'Override battery percentage manually (optional)';
+      }
+    }
+
+    async function syncLiveSmartcarBattery(manualTrigger = false) {
       const icon = document.getElementById('smartcarSyncIcon');
       const text = document.getElementById('smartcarSyncText');
       const sub = document.getElementById('smartcarStatusSub');
+      const carEl = document.getElementById('smartcarCarName');
+      const rangeEl = document.getElementById('smartcarRangeSub');
 
-      if (!currentUser) {
-        alert("🔒 Please sign in to link your car's Smartcar telematics.");
-        return;
-      }
+      const carName = currentUser ? currentUser.car : 'MG ZS EV';
+      if (carEl) carEl.innerText = carName;
 
-      const carName = currentUser.car || 'Tata Nexon EV Max';
-
-      if (btn) {
-        btn.disabled = true;
-        btn.classList.add('opacity-75');
-      }
       if (icon) icon.className = 'inline-block animate-spin';
-      if (text) text.innerText = 'Connecting...';
+      if (text) text.innerText = 'Syncing...';
       if (sub) sub.innerText = `Establishing cellular telematics bridge to ${carName}...`;
 
-      // Realistic 1.2s API handshake simulation
-      await new Promise(r => setTimeout(r, 1200));
+      if (manualTrigger) {
+        await new Promise(r => setTimeout(r, 600));
+      }
 
-      const liveSoc = Math.floor(20 + Math.random() * 10);
-      const carSpec = vehicles[carName] || { battery: 50, efficiency: 7.0 };
+      // 1. Check if user's car is ALREADY actively charging on any port
+      let activeChargingPort = null;
+      stations.forEach(st => {
+        st.ports.forEach(p => {
+          if (p.status === 'charging' && isPortOwner(p)) {
+            activeChargingPort = p;
+          }
+        });
+      });
+
+      let liveSoc;
+      let statusNote = '';
+      if (activeChargingPort) {
+        liveSoc = (activeChargingPort.soc !== undefined && activeChargingPort.soc !== null) ? activeChargingPort.soc : 78;
+        statusNote = ` • Currently connected on ${activeChargingPort.name}`;
+      } else if (currentUser && currentUser.lastKnownBmsSoc) {
+        liveSoc = currentUser.lastKnownBmsSoc;
+      } else {
+        // Realistic arriving battery percentage
+        liveSoc = 22;
+        if (currentUser) currentUser.lastKnownBmsSoc = liveSoc;
+      }
+
+      const carSpec = vehicles[carName] || { battery: 50.3, efficiency: 6.8 };
       const estRangeKm = Math.round((liveSoc / 100) * (carSpec.battery * (carSpec.efficiency || 6.8)));
 
       updateBatteryEstimation(liveSoc);
 
-      if (btn) {
-        btn.disabled = false;
-        btn.classList.remove('opacity-75');
-      }
       if (icon) icon.className = '';
-      if (text) text.innerText = '✓ Synced';
+      if (text) text.innerText = 'Re-sync';
       if (sub) {
-        sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${carName} is at <strong class="text-white">${liveSoc}%</strong> (${estRangeKm} km range)`;
+        sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${carName} at <strong class="text-white">${liveSoc}%</strong>${statusNote}`;
+      }
+      if (rangeEl) {
+        rangeEl.innerText = `${estRangeKm} km range`;
       }
 
-      showToast(`📡 Smartcar Connected: Fetched live ${liveSoc}% battery from your ${carName}!`);
-      playNotificationSound('chime');
+      if (manualTrigger) {
+        showToast(`📡 Smartcar Connected: Fetched live ${liveSoc}% battery from your ${carName}!`);
+        playNotificationSound('chime');
+      }
     }
 
     function startBookingFlow(portId) {
@@ -2321,7 +2375,7 @@
         portName: port.name,
         maxKw: port.maxKw,
         pricePerKwh: st.pricePerKwh,
-        currentSoc: 25,
+        currentSoc: 22,
         targetSoc: 100
       };
 
@@ -2329,7 +2383,9 @@
       document.getElementById('checkoutStationSub').innerText = st.name;
       document.getElementById('billRate').innerText = st.pricePerKwh;
 
-      updateBatteryEstimation(25);
+      // Automatically sync car battery from Smartcar on modal open!
+      syncLiveSmartcarBattery(false);
+
       resetPaymentSelection();
       document.getElementById('checkoutModal').classList.remove('hidden');
     }
@@ -3114,10 +3170,26 @@
               }
             } else if ((p.soc || 0) >= 100) {
               p.soc = 100;
-              // Port reached 100%! Drop draw to 0 kW
-              if (p.kw !== 0) {
+              // Port reached 100%! Drop draw to 0 kW and remaining timer to 0
+              if (p.kw !== 0 || p.secondsLeft !== 0) {
                 p.kw = 0;
+                p.secondsLeft = 0;
                 needsRerender = true;
+
+                if (isPortOwner(p)) {
+                  fetch(`${API_BASE}/api/stations`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      action: 'updateTelemetry',
+                      stationId: st.id,
+                      portId: p.id,
+                      soc: 100,
+                      secondsLeft: 0,
+                      kw: 0
+                    })
+                  }).catch(() => {});
+                }
               }
 
               // Alert once when battery hits 100% - ONLY to the vehicle owner!
@@ -3126,6 +3198,7 @@
 
                 if (isPortOwner(p)) {
                   playNotificationSound('batteryFull');
+                  showToast(`🎉 CHARGING COMPLETE: Your ${p.vehicle || 'EV'} has reached 100% full capacity! 0 kW draw. Ready to unplug.`);
                   setTimeout(() => {
                     alert(`⚡ CHARGING COMPLETE (100% FULL)!\n\nVehicle: ${p.vehicle || 'Your EV'}\nCharging Bay: ${st.name} • ${p.name}\n\n🎉 Your battery has reached 100% full capacity! Power draw is now 0 kW.\n\nPlease disconnect your charging cable to free the bay for waiting drivers.`);
                   }, 120);
