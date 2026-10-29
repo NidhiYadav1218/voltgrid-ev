@@ -1,10 +1,14 @@
 import { MongoClient } from 'mongodb';
 
 const MONGODB_URI = process.env.MONGODB_URI;
+
 let cachedClient = null;
 
 async function getClient() {
   if (cachedClient) return cachedClient;
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI environment variable is missing on Vercel.');
+  }
   const client = new MongoClient(MONGODB_URI);
   await client.connect();
   cachedClient = client;
@@ -99,12 +103,26 @@ export default async function handler(req, res) {
             p.phone = null;
             p.vehicle = null;
             p.pin = null;
+            p.userId = null;
             p.sessionId = null;
             p.secondsLeft = 0;
             p.reservedAt = null;
             docChanged = true;
           } else {
             p.secondsLeft = Math.max(0, Math.floor((900000 - ageMs) / 1000));
+          }
+        } else if (p.status === 'charging' && p.chargingStartedAt) {
+          const totalSec = p.chargingDurationSeconds || 1080;
+          const elapsedSec = Math.floor((now - p.chargingStartedAt) / 1000);
+          if (elapsedSec >= totalSec) {
+            p.soc = 100;
+            p.kw = 0;
+            p.secondsLeft = 0;
+          } else {
+            p.secondsLeft = totalSec - elapsedSec;
+            const startSoc = p.initialSoc || 25;
+            const progress = elapsedSec / totalSec;
+            p.soc = Math.min(100, Math.round(startSoc + (100 - startSoc) * progress));
           }
         }
       });
@@ -148,6 +166,7 @@ export default async function handler(req, res) {
 
       if (action === 'reserve') {
         port.status = 'reserved';
+        port.userId = body.userId || null;
         port.customer = body.customer;
         port.phone = body.phone;
         port.vehicle = body.vehicle;
@@ -156,8 +175,12 @@ export default async function handler(req, res) {
         port.sessionId = body.sessionId || null;
         port.secondsLeft = 900;
         port.reservedAt = Date.now();
+        port.initialSoc = Number(body.currentSoc) || 25;
+        port.soc = port.initialSoc;
+        port.chargingDurationMinutes = Number(body.chargingDurationMinutes) || 18;
       } else if (action === 'release') {
         port.status = 'available';
+        port.userId = null;
         port.customer = null;
         port.phone = null;
         port.vehicle = null;
@@ -167,13 +190,24 @@ export default async function handler(req, res) {
         port.kw = null;
         port.secondsLeft = 0;
         port.reservedAt = null;
+        port.chargingStartedAt = null;
+        port.chargingDurationSeconds = null;
+        port.chargingDurationMinutes = null;
+        port.initialSoc = null;
       } else if (action === 'startCharging') {
         if (body.pin && String(body.pin).trim() !== String(port.pin).trim()) {
           return res.status(403).json({ error: 'Security PIN mismatch' });
         }
         port.status = 'charging';
-        port.soc = 42;
-        port.kw = port.maxKw ? Math.round(port.maxKw * 0.75) : 120;
+        port.initialSoc = Number(body.soc) || port.initialSoc || 25;
+        port.soc = port.initialSoc;
+        port.targetSoc = 100;
+        port.kw = body.kw || (port.maxKw ? Math.round(port.maxKw * 0.75) : 120);
+        const durationMinutes = Number(body.chargingDurationMinutes) || port.chargingDurationMinutes || 18;
+        port.chargingDurationMinutes = durationMinutes;
+        port.chargingDurationSeconds = durationMinutes * 60;
+        port.secondsLeft = durationMinutes * 60;
+        port.chargingStartedAt = Date.now();
       }
 
       await stationsCol.updateOne(

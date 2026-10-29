@@ -681,6 +681,47 @@
         <p id="checkoutStationSub" class="text-xs text-slate-500">Delhi-Jaipur Expressway Hub (Km 42)</p>
       </div>
 
+      <!-- Vehicle Battery Level & Smart Charging Slot Allocator -->
+      <div class="mt-4 bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+            <span>🔋</span> Your Vehicle Current Battery
+          </label>
+          <span id="checkoutBatteryDisplay" class="px-2.5 py-0.5 rounded-full font-mono font-black text-xs bg-emerald-500 text-white shadow-sm">
+            25%
+          </span>
+        </div>
+
+        <input 
+          type="range" 
+          id="checkoutBatterySlider" 
+          min="5" 
+          max="85" 
+          value="25" 
+          step="5" 
+          oninput="updateBatteryEstimation(this.value)" 
+          class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500" 
+        />
+
+        <div class="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-emerald-200/60 dark:border-emerald-800/40">
+          <div class="text-slate-600 dark:text-slate-400">
+            <span class="block text-[10px] uppercase font-bold text-slate-400">Target Full Charge</span>
+            <strong class="text-slate-800 dark:text-slate-200 font-mono">100% (+<span id="checkoutPercentNeeded">75</span>%)</strong>
+          </div>
+          <div class="text-right">
+            <span class="block text-[10px] uppercase font-bold text-slate-400">Est. Charging Time Needed</span>
+            <strong class="text-emerald-600 dark:text-cyan-400 font-mono font-bold"><span id="checkoutEstMinutes">18</span> mins</strong>
+          </div>
+        </div>
+
+        <div class="text-[10px] text-slate-600 dark:text-slate-400 bg-white/80 dark:bg-slate-900/80 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-2">
+          <span>⏱️</span>
+          <div>
+            <strong>15-Min Arrival Window:</strong> Reserved now to reach charger. Once you arrive & enter PIN, your <strong><span id="checkoutAllocatedTimeBadge">18</span>-min charging slot</strong> starts!
+          </div>
+        </div>
+      </div>
+
       <!-- Itemized Bill Table -->
       <div class="mt-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 space-y-2 text-xs">
         <div class="flex justify-between text-slate-600 dark:text-slate-300">
@@ -830,6 +871,10 @@
         <div class="flex justify-between items-center text-xs">
           <span class="text-slate-500">Booked Driver:</span>
           <span id="pinModalCustomer" class="font-bold text-slate-800 dark:text-slate-200">Nidhi Yadav</span>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-500">Battery Charging Plan:</span>
+          <span id="pinModalBatteryPlan" class="font-mono font-bold text-cyan-600 dark:text-cyan-400">25% ➔ 100% (~18 mins)</span>
         </div>
         <div class="flex justify-between items-center text-xs pt-2 border-t border-dashed border-slate-200 dark:border-slate-800">
           <span class="text-slate-500 font-medium">Your Security PIN:</span>
@@ -1860,14 +1905,22 @@
                 ` : ''}
 
                 ${isChg && isMySession ? `
-                  <div class="flex justify-between text-xs font-medium">
-                    <span class="text-slate-600 dark:text-slate-300 font-bold">${port.vehicle || (currentUser ? currentUser.car : 'Your EV')}</span>
-                    <span class="text-cyan-600 dark:text-cyan-400 font-bold">${port.soc || 65}%</span>
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between items-center text-xs">
+                      <span class="text-slate-800 dark:text-white font-extrabold flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                        ${port.vehicle || (currentUser ? currentUser.car : 'Your EV')}
+                      </span>
+                      <span class="text-cyan-600 dark:text-cyan-400 font-mono font-black text-sm">${port.soc || 25}%</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden p-0.5">
+                      <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full transition-all duration-300" style="width: ${port.soc || 25}%"></div>
+                    </div>
+                    <div class="flex justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                      <span>⚡ ${port.kw || 120} kW active draw</span>
+                      <span class="text-amber-500 font-bold">⏳ ${formatTime(port.secondsLeft || 600)} to 100%</span>
+                    </div>
                   </div>
-                  <div class="w-full bg-slate-100 dark:bg-slate-950 h-2 rounded-full overflow-hidden mt-1.5">
-                    <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full" style="width: ${port.soc || 65}%"></div>
-                  </div>
-                  <div class="text-[11px] text-slate-400 mt-1">${port.kw || 120} kW active draw</div>
                 ` : ''}
 
                 ${isChg && !isMySession ? `
@@ -1902,8 +1955,8 @@
               ` : ''}
 
               ${isChg && isMySession ? `
-                <button onclick="releasePort('${port.id}')" class="w-full py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950 dark:text-slate-300 dark:hover:text-rose-300 border border-slate-200 dark:border-slate-700 transition-all">
-                  Stop / Disconnect Cable
+                <button onclick="releasePort('${port.id}')" class="w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/70 dark:hover:bg-rose-900/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 transition-all flex items-center justify-center gap-1.5 shadow-sm">
+                  <span>⏹️</span> Stop / Disconnect Cable
                 </button>
               ` : ''}
 
@@ -1931,13 +1984,10 @@
 
       for (const st of stations) {
         for (const p of st.ports) {
-          if (p.status === 'charging') {
-            const isMine = (myHolds[p.id] && myHolds[p.id].active) || (p.sessionId && p.sessionId === currentSid);
-            if (isMine) {
-              activePort = p;
-              activeStation = st;
-              break;
-            }
+          if (p.status === 'charging' && isPortOwner(p)) {
+            activePort = p;
+            activeStation = st;
+            break;
           }
         }
         if (activePort) break;
@@ -2052,6 +2102,54 @@
     }
 
     // ---------------- CHECKOUT & BILLING FLOW ----------------
+    function updateBatteryEstimation(currentSocVal) {
+      if (!pendingCheckout) return;
+      const currentSoc = parseInt(currentSocVal) || 25;
+      const userCarName = currentUser ? currentUser.car : 'Tata Nexon EV Max';
+      const carSpec = vehicles[userCarName] || { battery: 50, speed: 100 };
+      const batteryCapacity = carSpec.battery || 50;
+      const percentNeeded = Math.max(15, 100 - currentSoc);
+      const neededKwh = +((percentNeeded / 100) * batteryCapacity).toFixed(1);
+
+      const effectiveKw = Math.min(pendingCheckout.maxKw || 150, carSpec.speed || 150);
+      const estMinutes = Math.max(10, Math.round((neededKwh / effectiveKw) * 60));
+
+      const baseCost = +(neededKwh * pendingCheckout.pricePerKwh).toFixed(2);
+      const gridFee = 40.00;
+      const gst = +((baseCost + gridFee) * 0.18).toFixed(2);
+      const total = +(baseCost + gridFee + gst).toFixed(2);
+
+      pendingCheckout.currentSoc = currentSoc;
+      pendingCheckout.targetSoc = 100;
+      pendingCheckout.estKwh = neededKwh;
+      pendingCheckout.estMinutes = estMinutes;
+      pendingCheckout.baseCost = baseCost;
+      pendingCheckout.gst = gst;
+      pendingCheckout.total = total;
+
+      const dispEl = document.getElementById('checkoutBatteryDisplay');
+      const sliderEl = document.getElementById('checkoutBatterySlider');
+      const neededEl = document.getElementById('checkoutPercentNeeded');
+      const estMinsEl = document.getElementById('checkoutEstMinutes');
+      const badgeEl = document.getElementById('checkoutAllocatedTimeBadge');
+
+      if (dispEl) dispEl.innerText = `${currentSoc}%`;
+      if (sliderEl && sliderEl.value != currentSoc) sliderEl.value = currentSoc;
+      if (neededEl) neededEl.innerText = `${percentNeeded}`;
+      if (estMinsEl) estMinsEl.innerText = `${estMinutes}`;
+      if (badgeEl) badgeEl.innerText = `${estMinutes}`;
+
+      const billKwh = document.getElementById('billKwh');
+      const billBase = document.getElementById('billBase');
+      const billGst = document.getElementById('billGst');
+      const billTotal = document.getElementById('billTotal');
+
+      if (billKwh) billKwh.innerText = neededKwh;
+      if (billBase) billBase.innerText = baseCost;
+      if (billGst) billGst.innerText = gst;
+      if (billTotal) billTotal.innerText = total;
+    }
+
     function startBookingFlow(portId) {
       if (!currentUser) {
         alert("🔒 Registered Drivers Only!\n\nPlease Sign In or Register to reserve an EV charging spot.\nCharging bays and arrival PINs are strictly bound to verified Driver IDs.");
@@ -2062,13 +2160,6 @@
       const st = stations.find(s => s.id === currentStationId);
       const port = st.ports.find(p => p.id === portId);
 
-      const carSpec = vehicles[currentUser.car] || { battery: 50, speed: 100 };
-      const estKwh = +(0.55 * carSpec.battery).toFixed(1);
-      const baseCost = +(estKwh * st.pricePerKwh).toFixed(2);
-      const gridFee = 40.00;
-      const gst = +((baseCost + gridFee) * 0.18).toFixed(2);
-      const total = +(baseCost + gridFee + gst).toFixed(2);
-
       pendingCheckout = {
         stationId: st.id,
         stationName: st.name,
@@ -2076,21 +2167,15 @@
         portName: port.name,
         maxKw: port.maxKw,
         pricePerKwh: st.pricePerKwh,
-        estKwh,
-        baseCost,
-        gridFee,
-        gst,
-        total
+        currentSoc: 25,
+        targetSoc: 100
       };
 
       document.getElementById('checkoutPortTitle').innerText = `${port.name} • ${port.type}`;
       document.getElementById('checkoutStationSub').innerText = st.name;
-      document.getElementById('billKwh').innerText = estKwh;
       document.getElementById('billRate').innerText = st.pricePerKwh;
-      document.getElementById('billBase').innerText = baseCost;
-      document.getElementById('billGst').innerText = gst;
-      document.getElementById('billTotal').innerText = total;
 
+      updateBatteryEstimation(25);
       resetPaymentSelection();
       document.getElementById('checkoutModal').classList.remove('hidden');
     }
@@ -2120,6 +2205,8 @@
       const bookedPortId = pendingCheckout.portId;
       const bookedTotal = pendingCheckout.total || 962.40;
       const bookedKwh = pendingCheckout.estKwh || 45.1;
+      const bookedCurrentSoc = pendingCheckout.currentSoc || 25;
+      const bookedEstMinutes = pendingCheckout.estMinutes || 18;
       const currentSid = getDeviceSessionId();
 
       const btn = document.getElementById('btnPayConfirm');
@@ -2144,6 +2231,8 @@
         pin: newPin,
         amountPaid: bookedTotal,
         energyKwh: bookedKwh,
+        currentSoc: bookedCurrentSoc,
+        chargingDurationMinutes: bookedEstMinutes,
         status: 'reserved',
         createdAt: new Date().toISOString()
       };
@@ -2168,6 +2257,11 @@
         port.sessionId = currentSid;
         port.invoiceNumber = invNum;
         port.reservedAt = Date.now();
+        port.initialSoc = bookedCurrentSoc;
+        port.soc = bookedCurrentSoc;
+        port.targetSoc = 100;
+        port.chargingDurationMinutes = bookedEstMinutes;
+        port.chargingDurationSeconds = bookedEstMinutes * 60;
 
         // Save local session hold
         saveMyLocalHold(port.id, { active: true, pin: newPin, invNum: invNum, userId: activeUserId });
@@ -2201,7 +2295,9 @@
               vehicle: currentUser.car,
               pin: newPin,
               paid: bookedTotal,
-              sessionId: currentSid
+              sessionId: currentSid,
+              currentSoc: bookedCurrentSoc,
+              chargingDurationMinutes: bookedEstMinutes
             })
           });
         } catch (stErr) {
@@ -2260,6 +2356,7 @@
       const portNameEl = document.getElementById('pinModalPortName');
       const customerEl = document.getElementById('pinModalCustomer');
       const displayPinEl = document.getElementById('pinModalDisplayPin');
+      const planEl = document.getElementById('pinModalBatteryPlan');
       const pinInput = document.getElementById('arrivalPinInput');
       const errorEl = document.getElementById('pinModalError');
 
@@ -2267,6 +2364,11 @@
       if (portNameEl) portNameEl.innerText = `${port.name} (${port.maxKw} kW)`;
       if (customerEl) customerEl.innerText = port.customer || (currentUser ? currentUser.name : 'Driver');
       if (displayPinEl) displayPinEl.innerText = port.pin ? String(port.pin) : '1234';
+      if (planEl) {
+        const startSoc = port.initialSoc || 25;
+        const mins = port.chargingDurationMinutes || 18;
+        planEl.innerText = `${startSoc}% ➔ 100% (~${mins} mins)`;
+      }
       
       // Auto-prefill the PIN so the driver can tap 1 button to unlock immediately
       if (pinInput) {
@@ -2290,8 +2392,12 @@
     }
 
     async function submitArrivalPin() {
-      const st = stations.find(s => s.id === currentStationId);
-      const port = st ? st.ports.find(p => p.id === currentArrivalPortId) : null;
+      const targetPortId = currentArrivalPortId;
+      const targetStationId = currentStationId;
+      if (!targetPortId) return;
+
+      const st = stations.find(s => s.id === targetStationId);
+      const port = st ? st.ports.find(p => p.id === targetPortId) : null;
       if (!port) {
         closePinModal();
         return;
@@ -2309,31 +2415,57 @@
       const actualPin = port.pin ? String(port.pin).trim() : '1234';
 
       if (enteredPin === actualPin) {
-        playNotificationSound('bookingSuccess');
         closePinModal();
 
+        // 1. Mark as charging locally with custom battery plan
         port.status = 'charging';
-        port.soc = 42;
+        port.initialSoc = port.initialSoc || 25;
+        port.soc = port.initialSoc;
+        port.targetSoc = 100;
+        const durationMinutes = port.chargingDurationMinutes || 18;
+        port.chargingDurationMinutes = durationMinutes;
+        port.secondsLeft = durationMinutes * 60;
+        port.totalChargingSeconds = durationMinutes * 60;
+        port.chargingStartedAt = Date.now();
         port.kw = port.maxKw ? Math.round(port.maxKw * 0.75) : 120;
         port.hasAlertedFull = false;
+
+        // Update profile history log
+        if (currentUser && currentUser.history) {
+          const histItem = currentUser.history.find(h => h.portId === targetPortId && h.status === 'holding');
+          if (histItem) {
+            histItem.status = 'charging';
+            histItem.arrivalOutcome = '⚡ Arrived within 15 min';
+          }
+        }
 
         saveVoltGridDB();
         renderPorts();
         updateLiveSessionHero();
         updateAdminDashboard();
+        playNotificationSound('bookingSuccess');
 
-        alert("⚡ PIN Verified! Anti-steal lock released.\n\nCable connected! High-speed 350 kW DC charging session started!");
-
-        // Broadcast charging session to MongoDB Atlas
+        // Broadcast charging session to MongoDB Atlas immediately
         try {
           await fetch(`${API_BASE}/api/stations`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'startCharging', stationId: currentStationId, portId: currentArrivalPortId, pin: actualPin })
+            body: JSON.stringify({
+              action: 'startCharging',
+              stationId: targetStationId,
+              portId: targetPortId,
+              pin: actualPin,
+              soc: port.soc,
+              kw: port.kw,
+              secondsLeft: port.secondsLeft,
+              chargingDurationMinutes: durationMinutes
+            })
           });
         } catch (e) {
           console.warn('Could not sync startCharging to cloud stations:', e);
         }
+
+        alert(`⚡ Cable Connected & Charging Started!\n\nVehicle: ${port.vehicle || 'Your EV'}\nStarting Battery: ${port.soc}%\nAllocated Slot: ~${durationMinutes} minutes to reach 100% full capacity.\n\nReal-time telemetry and battery progress is live!`);
       } else {
         if (errorEl) {
           errorEl.classList.remove('hidden');
@@ -2357,6 +2489,7 @@
         port.phone = null;
         port.vehicle = null;
         port.pin = null;
+        port.userId = null;
         port.sessionId = null;
         port.secondsLeft = 0;
         port.soc = null;
@@ -2369,7 +2502,7 @@
         updateAdminDashboard();
         playNotificationSound('chime');
 
-        // Broadcast port release to MongoDB Atlas so all other devices update immediately
+        // Broadcast port release to MongoDB Atlas
         try {
           await fetch(`${API_BASE}/api/stations`, {
             method: 'POST',
@@ -2380,7 +2513,7 @@
           console.warn('Could not sync release to cloud stations:', e);
         }
 
-        alert("✅ Charging session ended. Cable released and port is now available across all devices.");
+        alert("✅ Cable disconnected. Charging session ended and bay is now available for other drivers.");
       }
     }
 
@@ -2468,19 +2601,27 @@
                     localP.paid = cP.paid;
                     localP.sessionId = cP.sessionId;
                     if (cP.status === 'available') {
+                      localP.status = 'available';
                       localP.secondsLeft = 0;
                       localP.soc = null;
                       localP.kw = null;
                       localP.hasAlertedFull = false;
                       saveMyLocalHold(cP.id, null);
                     } else if (cP.status === 'reserved') {
+                      localP.status = 'reserved';
                       if (cP.secondsLeft) localP.secondsLeft = cP.secondsLeft;
+                      localP.initialSoc = cP.initialSoc || 25;
+                      localP.soc = cP.initialSoc || 25;
+                      localP.chargingDurationMinutes = cP.chargingDurationMinutes || 18;
                       if (isPortOwner(localP)) {
                         saveMyLocalHold(localP.id, { active: true, pin: localP.pin, invNum: localP.invoiceNumber });
                       }
                     } else if (cP.status === 'charging') {
-                      localP.soc = (cP.soc !== undefined && cP.soc !== null) ? cP.soc : (localP.soc || 42);
+                      localP.status = 'charging';
+                      localP.soc = (cP.soc !== undefined && cP.soc !== null) ? cP.soc : (localP.soc || 25);
                       localP.kw = (cP.kw !== undefined && cP.kw !== null) ? cP.kw : (localP.kw || 120);
+                      if (cP.secondsLeft !== undefined) localP.secondsLeft = cP.secondsLeft;
+                      if (cP.chargingDurationMinutes) localP.chargingDurationMinutes = cP.chargingDurationMinutes;
                       if (isPortOwner(localP)) {
                         saveMyLocalHold(localP.id, { active: true, pin: localP.pin, invNum: localP.invoiceNumber });
                       }
@@ -2775,8 +2916,19 @@
           // 2. CHARGING TELEMETRY & 100% BATTERY FULL NOTIFICATION WITH SOUND
           else if (p.status === 'charging') {
             if ((p.soc || 0) < 100) {
-              if (Math.random() > 0.6) {
-                p.soc = Math.min(100, (p.soc || 50) + 1);
+              if (p.secondsLeft > 0) {
+                p.secondsLeft -= 1;
+              }
+              const totalSec = p.totalChargingSeconds || (p.chargingDurationMinutes ? p.chargingDurationMinutes * 60 : 1080);
+              const startSoc = p.initialSoc || 25;
+              const elapsedSec = Math.max(0, totalSec - p.secondsLeft);
+              const progress = Math.min(1, elapsedSec / totalSec);
+              const calculatedSoc = Math.min(100, Math.round(startSoc + (100 - startSoc) * progress));
+
+              if (calculatedSoc !== p.soc) {
+                p.soc = calculatedSoc;
+                needsRerender = true;
+              } else if (p.secondsLeft % 4 === 0) {
                 needsRerender = true;
               }
             } else if ((p.soc || 0) >= 100) {
@@ -2790,15 +2942,11 @@
               if (!p.hasAlertedFull) {
                 p.hasAlertedFull = true;
 
-                const myHolds = getMyLocalHolds();
-                const currentSid = getDeviceSessionId();
-                const wasMyVehicle = (myHolds[p.id] && myHolds[p.id].active) || (p.sessionId && p.sessionId === currentSid);
-
-                if (wasMyVehicle) {
+                if (isPortOwner(p)) {
                   playNotificationSound('batteryFull');
                   setTimeout(() => {
-                    alert(`⚡ CHARGING COMPLETE (100% FULL)!\n\nVehicle: ${p.vehicle || 'Your EV'}\nLocation: ${st.name} (${p.name})\n\n🎉 Your battery has reached 100%. Power draw has dropped to 0 kW.\nPlease disconnect your cable to free the charger for waiting drivers.`);
-                  }, 100);
+                    alert(`⚡ CHARGING COMPLETE (100% FULL)!\n\nVehicle: ${p.vehicle || 'Your EV'}\nCharging Bay: ${st.name} • ${p.name}\n\n🎉 Your battery has reached 100% full capacity! Power draw is now 0 kW.\n\nPlease disconnect your charging cable to free the bay for waiting drivers.`);
+                  }, 120);
                 }
               }
             }
