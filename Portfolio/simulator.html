@@ -158,8 +158,8 @@
       </select>
     </div>
 
-    <!-- Telematics eSIM & Cross-Tab Bridge Badges -->
-    <div class="flex items-center gap-3">
+    <!-- Telematics eSIM & Quick Navigation Links -->
+    <div class="flex items-center gap-2 sm:gap-3">
       <!-- 4G eSIM Live Pill -->
       <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800 text-[11px] font-mono">
         <span class="relative flex h-2.5 w-2.5">
@@ -167,12 +167,23 @@
           <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
         </span>
         <span class="text-slate-300 font-bold">4G eSIM Active</span>
-        <span class="text-[10px] text-slate-500 hidden sm:inline">&bull; IP: 10.45.12.98</span>
       </div>
 
+      <!-- Admin HQ Link -->
+      <a href="admin.html" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-amber-300 border border-slate-800 flex items-center gap-1.5 transition-all">
+        <span>🛡️</span>
+        <span class="hidden md:inline">Admin</span> HQ
+      </a>
+
+      <!-- Vendor Hub Link -->
+      <a href="vendor.html" class="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-emerald-300 border border-slate-800 flex items-center gap-1.5 transition-all">
+        <span>💼</span>
+        <span class="hidden md:inline">Vendor</span> Hub
+      </a>
+
       <!-- Jump to VoltGrid Booking Portal -->
-      <a href="index.html#reserve" target="_blank" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 shadow-md shadow-emerald-500/20 active:scale-95 transition-all">
-        <span>⚡ Book Charging Slot on VoltGrid</span>
+      <a href="index.html#chargers" target="_blank" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 shadow-md shadow-emerald-500/20 active:scale-95 transition-all">
+        <span>⚡ Book Slot</span>
         <span class="font-mono text-[11px]">&rarr;</span>
       </a>
     </div>

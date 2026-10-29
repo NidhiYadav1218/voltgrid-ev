@@ -18,48 +18,123 @@ async function getClient() {
 const DEFAULT_STATIONS = [
   {
     id: 'st-01',
-    name: 'Expressway HyperHub • Delhi-Jaipur (NH 48, Km 42)',
-    type: 'Highway Ultra-Hub',
-    location: 'NH 48 Highway Corridor, Near Manesar Toll',
-    mapsUrl: 'https://maps.google.com/?q=NH48+Manesar+Gurugram',
+    vendorId: 'vendor-jiobp',
+    vendorName: 'Jio-bp pulse',
+    vendorLogo: '⛽',
+    vendorColor: 'blue',
+    name: 'Jio-bp pulse Expressway HyperHub (NH-48)',
+    type: 'Highway Ultra-Fast Hub',
+    location: 'NH 48 Highway Corridor, Near Manesar Toll, Gurugram',
+    lat: 28.3587,
+    lng: 76.9388,
+    mapsUrl: 'https://maps.google.com/?q=28.3587,76.9388',
+    directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.3587,76.9388',
     pricePerKwh: 28,
     solar: true,
+    rating: 4.9,
+    amenities: ['24x7 Cafe', 'Restrooms', 'Free Wi-Fi', 'EV Lounge'],
     ports: [
-      { id: 'p101', name: 'Port 01', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available' },
-      { id: 'p102', name: 'Port 02', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available' },
-      { id: 'p103', name: 'Port 03', type: '150kW Fast DC', maxKw: 150, status: 'available' },
-      { id: 'p104', name: 'Port 04', type: '150kW Fast DC', maxKw: 150, status: 'available' },
-      { id: 'p105', name: 'Port 05', type: '100kW DC', maxKw: 100, status: 'available' },
-      { id: 'p106', name: 'Port 06', type: '22kW AC Destination', maxKw: 22, status: 'available' }
+      { id: 'p101', name: 'Port 01', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available', connector: 'CCS2' },
+      { id: 'p102', name: 'Port 02', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available', connector: 'CCS2' },
+      { id: 'p103', name: 'Port 03', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2' },
+      { id: 'p104', name: 'Port 04', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2' },
+      { id: 'p105', name: 'Port 05', type: '100kW DC', maxKw: 100, status: 'available', connector: 'CHAdeMO' },
+      { id: 'p106', name: 'Port 06', type: '22kW AC Destination', maxKw: 22, status: 'available', connector: 'Type 2' }
     ]
   },
   {
     id: 'st-02',
-    name: 'DLF Cyber Hub • Sector 24 Gurugram',
-    type: 'Corporate Destination Hub',
-    location: 'Cyber City, Basement Parking Bay B4, Gurugram',
-    mapsUrl: 'https://maps.google.com/?q=DLF+Cyber+Hub+Gurugram',
+    vendorId: 'vendor-tata',
+    vendorName: 'Tata Power EZ Charge',
+    vendorLogo: '⚡',
+    vendorColor: 'emerald',
+    name: 'Tata Power Cyber Hub Destination Hub',
+    type: 'Corporate Ultra-Hub',
+    location: 'DLF Cyber City, Basement Bay B4, Sector 24, Gurugram',
+    lat: 28.4952,
+    lng: 77.0891,
+    mapsUrl: 'https://maps.google.com/?q=28.4952,77.0891',
+    directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.4952,77.0891',
     pricePerKwh: 26,
     solar: false,
+    rating: 4.8,
+    amenities: ['Mall Access', 'Dining', 'Valet Parking', 'Security'],
     ports: [
-      { id: 'p201', name: 'Port 01', type: '180kW Fast DC', maxKw: 180, status: 'available' },
-      { id: 'p202', name: 'Port 02', type: '180kW Fast DC', maxKw: 180, status: 'available' },
-      { id: 'p203', name: 'Port 03', type: '43kW Fast AC', maxKw: 43, status: 'available' },
-      { id: 'p204', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'available' }
+      { id: 'p201', name: 'Port 01', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2' },
+      { id: 'p202', name: 'Port 02', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2' },
+      { id: 'p203', name: 'Port 03', type: '43kW Fast AC', maxKw: 43, status: 'available', connector: 'Type 2' },
+      { id: 'p204', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'available', connector: 'Type 2' }
     ]
   },
   {
     id: 'st-03',
-    name: 'Aerocity Gateway • IGI Airport T3',
+    vendorId: 'vendor-zeon',
+    vendorName: 'Zeon Charging',
+    vendorLogo: '🔋',
+    vendorColor: 'indigo',
+    name: 'Zeon Aerocity Airport Gateway',
     type: 'Airport Hypergrid',
-    location: 'Hospitality District, Worldmark Aerocity, New Delhi',
-    mapsUrl: 'https://maps.google.com/?q=Aerocity+New+Delhi',
+    location: 'Worldmark Hospitality District, Aerocity, New Delhi',
+    lat: 28.5504,
+    lng: 77.1215,
+    mapsUrl: 'https://maps.google.com/?q=28.5504,77.1215',
+    directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.5504,77.1215',
     pricePerKwh: 30,
     solar: true,
+    rating: 4.7,
+    amenities: ['Airport Shuttle', 'Coffee Lounge', '24x7 Security'],
     ports: [
-      { id: 'p301', name: 'Port 01', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available' },
-      { id: 'p302', name: 'Port 02', type: '120kW Fast DC', maxKw: 120, status: 'available' },
-      { id: 'p303', name: 'Port 03', type: '120kW Fast DC', maxKw: 120, status: 'available' }
+      { id: 'p301', name: 'Port 01', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available', connector: 'CCS2' },
+      { id: 'p302', name: 'Port 02', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2' },
+      { id: 'p303', name: 'Port 03', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'Type 2' }
+    ]
+  },
+  {
+    id: 'st-04',
+    vendorId: 'vendor-statiq',
+    vendorName: 'Statiq EV Fast Hub',
+    vendorLogo: '🚀',
+    vendorColor: 'amber',
+    name: 'Statiq Horizon Fast Hub • Golf Course Road',
+    type: 'Luxury Commercial Hub',
+    location: 'One Horizon Centre, Golf Course Rd, DLF Phase 5, Gurugram',
+    lat: 28.4728,
+    lng: 77.0982,
+    mapsUrl: 'https://maps.google.com/?q=28.4728,77.0982',
+    directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.4728,77.0982',
+    pricePerKwh: 27,
+    solar: true,
+    rating: 4.6,
+    amenities: ['Fine Dining', 'Car Wash', 'EV Lounge'],
+    ports: [
+      { id: 'p401', name: 'Port 01', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2' },
+      { id: 'p402', name: 'Port 02', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2' },
+      { id: 'p403', name: 'Port 03', type: '60kW DC', maxKw: 60, status: 'available', connector: 'CCS2' },
+      { id: 'p404', name: 'Port 04', type: '22kW AC Destination', maxKw: 22, status: 'available', connector: 'Type 2' }
+    ]
+  },
+  {
+    id: 'st-05',
+    vendorId: 'vendor-voltgrid',
+    vendorName: 'VoltGrid Direct Flagship',
+    vendorLogo: '🛡️',
+    vendorColor: 'cyan',
+    name: 'VoltGrid CP SuperHub • Connaught Place',
+    type: 'Central Metro Hub',
+    location: 'Outer Circle, Near Shivaji Stadium Metro, New Delhi',
+    lat: 28.6328,
+    lng: 77.2197,
+    mapsUrl: 'https://maps.google.com/?q=28.6328,77.2197',
+    directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.6328,77.2197',
+    pricePerKwh: 25,
+    solar: true,
+    rating: 5.0,
+    amenities: ['Solar Canopy', 'Metro Link', '100% Green Energy'],
+    ports: [
+      { id: 'p501', name: 'Port 01', type: '360kW Hyper-DC', maxKw: 360, status: 'available', connector: 'CCS2' },
+      { id: 'p502', name: 'Port 02', type: '200kW Fast DC', maxKw: 200, status: 'available', connector: 'CCS2' },
+      { id: 'p503', name: 'Port 03', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2' },
+      { id: 'p504', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'available', connector: 'Type 2' }
     ]
   }
 ];
@@ -80,8 +155,9 @@ export default async function handler(req, res) {
 
     let doc = await stationsCol.findOne({ _id: 'global_stations' });
 
-    // Initialize in MongoDB Atlas if first time
-    if (!doc || !doc.stations || !Array.isArray(doc.stations)) {
+    // Initialize in MongoDB Atlas if first time or if missing vendor attributes
+    const needsMigration = !doc || !doc.stations || !Array.isArray(doc.stations) || !doc.stations.some(s => s.vendorId);
+    if (needsMigration) {
       doc = { _id: 'global_stations', stations: DEFAULT_STATIONS, updatedAt: new Date().toISOString() };
       await stationsCol.updateOne(
         { _id: 'global_stations' },
@@ -150,8 +226,59 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, stations: body.stations });
       }
 
-      // Otherwise handle specific actions (reserve, release, startCharging)
       const { action, stationId, portId } = body;
+
+      // Handle Vendor/Admin adding a port to a station
+      if (action === 'add_port') {
+        const targetStation = doc.stations.find(s => s.id === stationId);
+        if (!targetStation) {
+          return res.status(404).json({ error: 'Station not found' });
+        }
+
+        const newPort = {
+          id: 'p' + Math.floor(100 + Math.random() * 900),
+          name: body.portName || `Port 0${targetStation.ports.length + 1}`,
+          type: body.portType || '150kW Fast DC',
+          maxKw: Number(body.maxKw) || 150,
+          connector: body.connector || 'CCS2',
+          status: 'available'
+        };
+
+        targetStation.ports.push(newPort);
+        await stationsCol.updateOne(
+          { _id: 'global_stations' },
+          { $set: { stations: doc.stations, updatedAt: new Date().toISOString() } }
+        );
+        return res.status(200).json({ success: true, message: 'Port added successfully', port: newPort, stations: doc.stations });
+      }
+
+      // Handle Vendor toggling maintenance mode
+      if (action === 'toggle_maintenance') {
+        const targetStation = doc.stations.find(s => s.id === stationId);
+        const targetPort = targetStation ? targetStation.ports.find(p => p.id === portId) : null;
+        if (!targetPort) {
+          return res.status(404).json({ error: 'Port not found' });
+        }
+
+        targetPort.status = targetPort.status === 'maintenance' ? 'available' : 'maintenance';
+        await stationsCol.updateOne(
+          { _id: 'global_stations' },
+          { $set: { stations: doc.stations, updatedAt: new Date().toISOString() } }
+        );
+        return res.status(200).json({ success: true, port: targetPort, stations: doc.stations });
+      }
+
+      // Handle Reset to Default Multi-Vendor Fleet
+      if (action === 'reset_to_default') {
+        doc.stations = DEFAULT_STATIONS;
+        await stationsCol.updateOne(
+          { _id: 'global_stations' },
+          { $set: { stations: DEFAULT_STATIONS, updatedAt: new Date().toISOString() } }
+        );
+        return res.status(200).json({ success: true, stations: DEFAULT_STATIONS });
+      }
+
+      // Otherwise handle specific booking actions (reserve, release, startCharging, updateTelemetry)
       const st = doc.stations.find(s => s.id === stationId);
       const port = st ? st.ports.find(p => p.id === portId) : null;
 
@@ -168,6 +295,10 @@ export default async function handler(req, res) {
       }
 
       if (action === 'reserve') {
+        const reqSoc = Number(body.currentSoc);
+        if (!isNaN(reqSoc) && reqSoc >= 100) {
+          return res.status(400).json({ error: 'Vehicle battery is already 100% full. Charging reservation not permitted.' });
+        }
         port.status = 'reserved';
         port.userId = body.userId || null;
         port.customer = body.customer;

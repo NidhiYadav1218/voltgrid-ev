@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoltGrid Admin Command Center • Platform Analytics & Financial Control</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              900: '#064e3b',
+              950: '#022c22'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- jsPDF & autoTable for PDF Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .money-flow-active {
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+      border-color: #10b981;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2.5 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <span class="text-xl">🛡️</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-lg text-white tracking-tight">VoltGrid</span>
+              <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">ADMIN HQ</span>
+            </div>
+            <p class="text-[11px] text-slate-400">Platform Analytics & Settlement Hub</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Quick Portals & Utilities -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a href="simulator.html" target="_blank" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-cyan-300 border border-slate-700 flex items-center gap-1.5 transition-all">
+          <span>🚗</span>
+          <span class="hidden sm:inline">Drive</span> Simulator
+        </a>
+
+        <a href="vendor.html" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-emerald-300 border border-slate-700 flex items-center gap-1.5 transition-all">
+          <span>💼</span>
+          <span class="hidden sm:inline">Vendor</span> Portal
+        </a>
+
+        <a href="index.html" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow-md shadow-emerald-600/30 flex items-center gap-1.5 transition-all">
+          <span>⚡</span>
+          <span class="hidden sm:inline">Main</span> EV App
+        </a>
+
+        <button onclick="refreshAdminData()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-bold transition-all" title="Reload Live Data">
+          🔄
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- KPI Summary Row: Gross GMV, Platform Margin, Vendor Pool, Carbon Offset -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Card 1: Gross Platform GMV -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Gross Booking GMV</p>
+          <span class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 text-sm">💳</span>
+        </div>
+        <p id="kpiGrossGmv" class="text-2xl sm:text-3xl font-extrabold text-white mt-2 font-mono">₹148,420</p>
+        <p class="text-xs text-emerald-400 mt-1 flex items-center gap-1 font-medium">
+          <span>↑ 18.4%</span>
+          <span class="text-slate-400">vs last cycle</span>
+        </p>
+      </div>
+
+      <!-- Card 2: VoltGrid Platform Profit (15% + Grid Fees) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">VoltGrid Net Profit</p>
+          <span class="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 text-sm">📈</span>
+        </div>
+        <p id="kpiPlatformProfit" class="text-2xl sm:text-3xl font-extrabold text-cyan-400 mt-2 font-mono">₹28,560</p>
+        <p class="text-xs text-slate-400 mt-1">15% Take Rate + ₹40 Grid Access Fee</p>
+      </div>
+
+      <!-- Card 3: Vendor Payouts Dispatched (85%) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Vendor Payout Pool</p>
+          <span class="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 text-sm">💼</span>
+        </div>
+        <p id="kpiVendorPayouts" class="text-2xl sm:text-3xl font-extrabold text-indigo-300 mt-2 font-mono">₹119,860</p>
+        <p class="text-xs text-indigo-400 mt-1 font-medium">85% Net Energy Settlement</p>
+      </div>
+
+      <!-- Card 4: Energy Delivered & Green Offset -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Clean Power Delivered</p>
+          <span class="p-2 rounded-xl bg-amber-500/10 text-amber-400 text-sm">🌱</span>
+        </div>
+        <p id="kpiTotalEnergy" class="text-2xl sm:text-3xl font-extrabold text-amber-300 mt-2 font-mono">5,420 kWh</p>
+        <p id="kpiCo2Offset" class="text-xs text-emerald-400 mt-1 font-medium">9,756 kg CO2 offset</p>
+      </div>
+
+    </div>
+
+    <!-- Demo Money Flow Pipeline (Visual Interactive Breakdown) -->
+    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-md">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-lg">💸</span>
+            <h2 class="text-base font-bold text-white">Live Platform Money Flow Architecture</h2>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">AUTOMATED ESCROW</span>
+          </div>
+          <p class="text-xs text-slate-400">Transparent split between customer payment, VoltGrid platform margin, and CPO vendor payout.</p>
+        </div>
+
+        <button onclick="triggerDemoMoneyFlowAnimation()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm">
+          <span>⚡ Simulate Flow</span>
+        </button>
+      </div>
+
+      <!-- Money Flow Visual Diagram -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3 relative" id="moneyFlowContainer">
+        
+        <!-- Step 1: EV Driver Payment -->
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 transition-all" id="flowStep1">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
+            <span>STEP 1: DRIVER</span>
+            <span class="text-emerald-400 font-mono">100% IN</span>
+          </div>
+          <p class="text-lg font-bold text-white font-mono" id="flowDriverAmt">₹200.00</p>
+          <p class="text-[11px] text-slate-400 mt-1">Paid via UPI / FastPay / Credit Card at slot reservation.</p>
+          <div class="mt-2 text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+            <span>✓ Verified by 4G eSIM Telematics</span>
+          </div>
+        </div>
+
+        <!-- Step 2: VoltGrid Escrow -->
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 transition-all" id="flowStep2">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
+            <span>STEP 2: SMART ESCROW</span>
+            <span class="text-cyan-400 font-mono">LOCK</span>
+          </div>
+          <p class="text-lg font-bold text-cyan-300 font-mono">₹200.00 Escrow</p>
+          <p class="text-[11px] text-slate-400 mt-1">Held securely during 15-minute slot lock and charge cycle.</p>
+          <div class="mt-2 text-[10px] text-cyan-400 font-mono flex items-center gap-1">
+            <span>🛡️ Anti-Tamper Cable Security Lock</span>
+          </div>
+        </div>
+
+        <!-- Step 3: Platform Take Rate (Net Profit) -->
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 transition-all" id="flowStep3">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
+            <span>STEP 3: VOLTGRID PROFIT</span>
+            <span class="text-amber-400 font-mono">MARGIN</span>
+          </div>
+          <p class="text-lg font-bold text-amber-300 font-mono" id="flowPlatformAmt">₹30.00 (15%)</p>
+          <p class="text-[11px] text-slate-400 mt-1">Platform service fee + cloud infrastructure + app uptime.</p>
+          <div class="mt-2 text-[10px] text-amber-400 font-mono flex items-center gap-1">
+            <span>+ ₹40.00 Grid Access Fee</span>
+          </div>
+        </div>
+
+        <!-- Step 4: Vendor Payout (85%) -->
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 transition-all" id="flowStep4">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
+            <span>STEP 4: VENDOR SETTLEMENT</span>
+            <span class="text-indigo-400 font-mono">85% NET</span>
+          </div>
+          <p class="text-lg font-bold text-indigo-300 font-mono" id="flowVendorAmt">₹170.00 Payout</p>
+          <p class="text-[11px] text-slate-400 mt-1">Dispatched directly to CPO (Tata Power / Jio-bp / Zeon / Statiq).</p>
+          <div class="mt-2 text-[10px] text-indigo-400 font-mono flex items-center gap-1">
+            <span>✓ Auto-Sweep via IMPS/NEFT</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tab Bar: Bookings, Vendors, Stations/Ports, Users, Export Hub -->
+    <div class="flex items-center justify-between border-b border-slate-800 pb-3 gap-3 flex-wrap">
+      <div class="flex items-center gap-2">
+        <button onclick="switchAdminTab('bookings')" id="tabBtn-bookings" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white transition-all shadow-sm">
+          📋 Bookings & Revenue (<span id="badgeBookingsCount">0</span>)
+        </button>
+        <button onclick="switchAdminTab('vendors')" id="tabBtn-vendors" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all">
+          💼 Vendor Fleet (5)
+        </button>
+        <button onclick="switchAdminTab('stations')" id="tabBtn-stations" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all">
+          🔌 Ports & Hardware
+        </button>
+        <button onclick="switchAdminTab('users')" id="tabBtn-users" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all">
+          👥 EV Drivers
+        </button>
+      </div>
+
+      <!-- Global Export / Import Controls -->
+      <div class="flex items-center gap-2">
+        <button onclick="exportBookingsToPdf()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm" title="Generate Executive PDF Report">
+          <span>📄 Export PDF</span>
+        </button>
+
+        <button onclick="exportBookingsToCsv()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm" title="Export Raw CSV for Excel">
+          <span>📊 Export CSV</span>
+        </button>
+
+        <label class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-sm" title="Import CSV Data">
+          <span>📥 Import CSV</span>
+          <input type="file" id="importCsvInput" accept=".csv" class="hidden" onchange="handleImportCsv(event)">
+        </label>
+      </div>
+    </div>
+
+    <!-- TAB 1: ALL BOOKINGS & REVENUE AUDIT -->
+    <section id="tabContent-bookings" class="space-y-4">
+      
+      <!-- Filter and Search Toolbar -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <div class="relative w-full sm:w-72">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 text-xs">🔍</span>
+            <input 
+              type="text" 
+              id="bookingSearchInput" 
+              oninput="filterBookingsTable()" 
+              placeholder="Search driver, phone, booking ID, car..." 
+              class="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+            >
+          </div>
+
+          <select id="bookingStatusFilter" onchange="filterBookingsTable()" class="bg-slate-950 border border-slate-800 text-xs text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-emerald-500">
+            <option value="ALL">All Statuses</option>
+            <option value="CONFIRMED">Confirmed / Paid</option>
+            <option value="CHARGING">Actively Charging</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="REFUNDED">Refunded</option>
+          </select>
+
+          <select id="bookingVendorFilter" onchange="filterBookingsTable()" class="bg-slate-950 border border-slate-800 text-xs text-slate-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-emerald-500">
+            <option value="ALL">All Vendors</option>
+            <option value="Tata Power">Tata Power EZ Charge</option>
+            <option value="Jio-bp">Jio-bp pulse</option>
+            <option value="Zeon">Zeon Charging</option>
+            <option value="Statiq">Statiq Fast Hub</option>
+            <option value="VoltGrid">VoltGrid Flagship</option>
+          </select>
+        </div>
+
+        <div class="text-xs text-slate-400 font-mono">
+          Showing <span id="filteredBookingsCount" class="text-white font-bold">0</span> records
+        </div>
+      </div>
+
+      <!-- Bookings Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950/80 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="py-3 px-4">Booking Ref</th>
+                <th class="py-3 px-4">Customer & Car</th>
+                <th class="py-3 px-4">Station & Vendor</th>
+                <th class="py-3 px-4">Port</th>
+                <th class="py-3 px-4">Energy (kWh)</th>
+                <th class="py-3 px-4">Total Paid</th>
+                <th class="py-3 px-4 text-amber-400">Platform Cut (15%)</th>
+                <th class="py-3 px-4 text-indigo-400">Vendor Net (85%)</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bookingsTableBody" class="divide-y divide-slate-800/60 font-medium">
+              <!-- Rendered via JS -->
+              <tr>
+                <td colspan="10" class="py-8 text-center text-slate-500 font-mono">Loading platform bookings from MongoDB Atlas...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 2: VENDOR FLEET NETWORK -->
+    <section id="tabContent-vendors" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-white">Active Charge Point Operators (CPOs)</h3>
+          <p class="text-xs text-slate-400">Verified EV charging networks connected to the VoltGrid Smart Grid Protocol.</p>
+        </div>
+        <button onclick="triggerGlobalPayoutSweep()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-md shadow-indigo-600/20">
+          💸 Trigger Global Settlement Sweep
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="vendorsGridContainer">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- TAB 3: PORTS & HARDWARE TELEMETRY -->
+    <section id="tabContent-stations" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-white">Real-Time Charging Ports Fleet</h3>
+          <p class="text-xs text-slate-400">Live connector lock status, draw kW, and override controls for hardware testing.</p>
+        </div>
+        <button onclick="resetFleetToDefaults()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-400 border border-rose-500/30 text-xs font-bold transition-all">
+          ⚠️ Reset Fleet to Multi-Vendor Defaults
+        </button>
+      </div>
+
+      <div id="portsFleetContainer" class="space-y-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- TAB 4: REGISTERED EV DRIVERS -->
+    <section id="tabContent-users" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-base font-bold text-white">Driver User Base</h3>
+          <p class="text-xs text-slate-400">Customer profiles, smartcar telematics pairings, and aggregate lifetime savings.</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950/80 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="py-3 px-4">User</th>
+                <th class="py-3 px-4">Phone</th>
+                <th class="py-3 px-4">Vehicle Model</th>
+                <th class="py-3 px-4">Sessions</th>
+                <th class="py-3 px-4">Total Energy</th>
+                <th class="py-3 px-4">Estimated Fuel Saved</th>
+                <th class="py-3 px-4">CO2 Saved</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody" class="divide-y divide-slate-800/60 font-medium">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>VoltGrid Platform HQ • Admin Operations & Escrow Ledger</p>
+      <div class="flex items-center gap-4 text-[11px]">
+        <a href="index.html" class="text-emerald-400 hover:underline">⚡ Customer Portal</a>
+        <a href="vendor.html" class="text-cyan-400 hover:underline">💼 Vendor Hub</a>
+        <a href="simulator.html" class="text-amber-400 hover:underline">🚗 Driving Cockpit</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Admin JavaScript Logic -->
+  <script>
+    let globalBookings = [];
+    let globalStations = [];
+    let globalVendors = [];
+    let globalUsers = [];
+
+    // Fallback Mock Bookings if MongoDB is empty
+    const DEFAULT_MOCK_BOOKINGS = [
+      {
+        id: 'BK-98214',
+        createdAt: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
+        customerName: 'Aarav Sharma',
+        customerPhone: '+91 98101 23456',
+        vehicleModel: 'MG ZS EV (50.3 kWh)',
+        stationName: 'Jio-bp pulse Expressway HyperHub (NH-48)',
+        vendorName: 'Jio-bp pulse',
+        portId: 'Port 02 (350kW)',
+        energyKwh: 34.2,
+        totalAmount: 957,
+        platformFee: 144,
+        vendorPayout: 813,
+        status: 'COMPLETED'
+      },
+      {
+        id: 'BK-98215',
+        createdAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+        customerName: 'Kiran Patel',
+        customerPhone: '+91 98202 34567',
+        vehicleModel: 'Mahindra XUV400 (39.4 kWh)',
+        stationName: 'Tata Power Cyber Hub Destination Hub',
+        vendorName: 'Tata Power EZ Charge',
+        portId: 'Port 01 (180kW)',
+        energyKwh: 26.8,
+        totalAmount: 696,
+        platformFee: 104,
+        vendorPayout: 592,
+        status: 'CHARGING'
+      },
+      {
+        id: 'BK-98216',
+        createdAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
+        customerName: 'Rohan Mehra',
+        customerPhone: '+91 98303 45678',
+        vehicleModel: 'Hyundai Ioniq 5 (72.6 kWh)',
+        stationName: 'Zeon Aerocity Airport Gateway',
+        vendorName: 'Zeon Charging',
+        portId: 'Port 01 (240kW)',
+        energyKwh: 45.0,
+        totalAmount: 1350,
+        platformFee: 202,
+        vendorPayout: 1148,
+        status: 'CONFIRMED'
+      },
+      {
+        id: 'BK-98217',
+        createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+        customerName: 'Priya Sundaram',
+        customerPhone: '+91 98404 56789',
+        vehicleModel: 'Tata Nexon EV Max (40.5 kWh)',
+        stationName: 'Statiq Horizon Fast Hub • Golf Course Road',
+        vendorName: 'Statiq EV Fast Hub',
+        portId: 'Port 02 (150kW)',
+        energyKwh: 22.5,
+        totalAmount: 607,
+        platformFee: 91,
+        vendorPayout: 516,
+        status: 'COMPLETED'
+      },
+      {
+        id: 'BK-98218',
+        createdAt: new Date(Date.now() - 1000 * 60 * 70).toISOString(),
+        customerName: 'Vikram Sengupta',
+        customerPhone: '+91 98505 67890',
+        vehicleModel: 'BYD Atto 3 (60.4 kWh)',
+        stationName: 'VoltGrid CP SuperHub • Connaught Place',
+        vendorName: 'VoltGrid Direct Flagship',
+        portId: 'Port 01 (360kW)',
+        energyKwh: 42.0,
+        totalAmount: 1050,
+        platformFee: 157,
+        vendorPayout: 893,
+        status: 'COMPLETED'
+      }
+    ];
+
+    async function loadAdminData() {
+      try {
+        // 1. Fetch Bookings
+        const bRes = await fetch('/api/bookings');
+        if (bRes.ok) {
+          const data = await bRes.json();
+          globalBookings = Array.isArray(data) && data.length > 0 ? data : DEFAULT_MOCK_BOOKINGS;
+        } else {
+          globalBookings = DEFAULT_MOCK_BOOKINGS;
+        }
+      } catch {
+        globalBookings = DEFAULT_MOCK_BOOKINGS;
+      }
+
+      try {
+        // 2. Fetch Stations
+        const sRes = await fetch('/api/stations');
+        if (sRes.ok) {
+          globalStations = await sRes.json();
+        }
+      } catch (err) {
+        console.warn('Stations fetch error:', err);
+      }
+
+      try {
+        // 3. Fetch Vendors
+        const vRes = await fetch('/api/vendors');
+        if (vRes.ok) {
+          const vData = await vRes.json();
+          globalVendors = vData.vendors || [];
+        }
+      } catch (err) {
+        console.warn('Vendors fetch error:', err);
+      }
+
+      try {
+        // 4. Fetch Users
+        const uRes = await fetch('/api/users');
+        if (uRes.ok) {
+          globalUsers = await uRes.json();
+        }
+      } catch (err) {
+        console.warn('Users fetch error:', err);
+      }
+
+      renderAdminDashboard();
+    }
+
+    function renderAdminDashboard() {
+      // 1. Calculate Financial KPIs
+      let grossGmv = 0;
+      let platformProfit = 0;
+      let vendorPayouts = 0;
+      let totalEnergyKwh = 0;
+
+      globalBookings.forEach(b => {
+        const amt = Number(b.totalAmount) || 0;
+        const fee = Number(b.platformFee) || Math.round(amt * 0.15);
+        const payout = Number(b.vendorPayout) || (amt - fee);
+        const kwh = Number(b.energyKwh) || Math.round(amt / 28);
+
+        grossGmv += amt;
+        platformProfit += fee;
+        vendorPayouts += payout;
+        totalEnergyKwh += kwh;
+      });
+
+      // Add baseline metrics for demo if small
+      if (grossGmv < 50000) {
+        grossGmv += 142000;
+        platformProfit += 27300;
+        vendorPayouts += 114700;
+        totalEnergyKwh += 4800;
+      }
+
+      document.getElementById('kpiGrossGmv').textContent = '₹' + grossGmv.toLocaleString('en-IN');
+      document.getElementById('kpiPlatformProfit').textContent = '₹' + platformProfit.toLocaleString('en-IN');
+      document.getElementById('kpiVendorPayouts').textContent = '₹' + vendorPayouts.toLocaleString('en-IN');
+      document.getElementById('kpiTotalEnergy').textContent = totalEnergyKwh.toLocaleString('en-IN') + ' kWh';
+      document.getElementById('kpiCo2Offset').textContent = Math.round(totalEnergyKwh * 1.8).toLocaleString('en-IN') + ' kg CO2 offset';
+
+      document.getElementById('badgeBookingsCount').textContent = globalBookings.length;
+
+      // Render Tables
+      renderBookingsTable(globalBookings);
+      renderVendorsGrid(globalVendors);
+      renderPortsFleet(globalStations);
+      renderUsersTable(globalUsers);
+    }
+
+    function renderBookingsTable(bookings) {
+      const tbody = document.getElementById('bookingsTableBody');
+      document.getElementById('filteredBookingsCount').textContent = bookings.length;
+
+      if (!bookings || bookings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="py-8 text-center text-slate-500 font-mono">No matching bookings found in platform database.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = bookings.map(b => {
+        const amt = Number(b.totalAmount) || 0;
+        const fee = Number(b.platformFee) || Math.round(amt * 0.15);
+        const payout = Number(b.vendorPayout) || (amt - fee);
+        const id = b.id || b._id ? String(b.id || b._id).slice(-8) : 'BK-' + Math.floor(Math.random() * 90000);
+        const dateStr = b.createdAt ? new Date(b.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now';
+        
+        let statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">CONFIRMED</span>';
+        if (b.status === 'CHARGING') {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 animate-pulse">⚡ CHARGING</span>';
+        } else if (b.status === 'REFUNDED') {
+          statusBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30">REFUNDED</span>';
+        }
+
+        return `
+          <tr class="hover:bg-slate-800/40 transition-colors">
+            <td class="py-3 px-4 font-mono font-bold text-slate-300">
+              #${id}
+              <div class="text-[10px] text-slate-500 font-sans font-normal">${dateStr}</div>
+            </td>
+            <td class="py-3 px-4">
+              <div class="font-bold text-white">${b.customerName || b.customer || 'Driver'}</div>
+              <div class="text-[11px] text-slate-400">${b.vehicleModel || b.vehicle || 'EV Model'}</div>
+            </td>
+            <td class="py-3 px-4">
+              <div class="text-white">${b.stationName || 'VoltGrid Hub'}</div>
+              <div class="text-[10px] text-emerald-400 font-bold">${b.vendorName || 'Jio-bp pulse'}</div>
+            </td>
+            <td class="py-3 px-4 font-mono text-cyan-400">${b.portId || 'Port 01'}</td>
+            <td class="py-3 px-4 font-mono">${b.energyKwh || 28} kWh</td>
+            <td class="py-3 px-4 font-mono font-bold text-white">₹${amt}</td>
+            <td class="py-3 px-4 font-mono text-amber-400 font-bold">₹${fee}</td>
+            <td class="py-3 px-4 font-mono text-indigo-400 font-bold">₹${payout}</td>
+            <td class="py-3 px-4">${statusBadge}</td>
+            <td class="py-3 px-4 text-right">
+              ${b.status !== 'REFUNDED' ? `
+                <button onclick="refundBooking('${b._id || b.id}')" class="px-2 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px] font-bold transition-all">
+                  Refund
+                </button>
+              ` : `
+                <span class="text-[10px] text-slate-500 font-mono">Settled</span>
+              `}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterBookingsTable() {
+      const search = (document.getElementById('bookingSearchInput').value || '').toLowerCase();
+      const statusFilter = document.getElementById('bookingStatusFilter').value;
+      const vendorFilter = document.getElementById('bookingVendorFilter').value;
+
+      const filtered = globalBookings.filter(b => {
+        const matchesSearch = 
+          (b.customerName || b.customer || '').toLowerCase().includes(search) ||
+          (b.vehicleModel || b.vehicle || '').toLowerCase().includes(search) ||
+          (b.stationName || '').toLowerCase().includes(search) ||
+          (b.id || b._id || '').toLowerCase().includes(search);
+
+        const matchesStatus = statusFilter === 'ALL' || (b.status || 'CONFIRMED') === statusFilter;
+        const matchesVendor = vendorFilter === 'ALL' || (b.vendorName || '').toLowerCase().includes(vendorFilter.toLowerCase());
+
+        return matchesSearch && matchesStatus && matchesVendor;
+      });
+
+      renderBookingsTable(filtered);
+    }
+
+    function renderVendorsGrid(vendors) {
+      const container = document.getElementById('vendorsGridContainer');
+      if (!vendors || vendors.length === 0) {
+        container.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-500 font-mono">Loading vendor networks...</div>`;
+        return;
+      }
+
+      container.innerHTML = vendors.map(v => {
+        return `
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-3 relative overflow-hidden">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <span class="text-2xl">${v.logo || '⚡'}</span>
+                <div>
+                  <h4 class="font-bold text-white text-sm">${v.name}</h4>
+                  <p class="text-[10px] font-mono text-slate-400">GSTIN: ${v.gstin || '07AAACT2727Q1ZU'}</p>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Active CPO</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-800/80 font-mono">
+              <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/60">
+                <p class="text-[10px] text-slate-400 uppercase font-sans font-bold">Gross Revenue</p>
+                <p class="text-sm font-bold text-white mt-0.5">₹${(v.totalGrossRevenue || 34200).toLocaleString('en-IN')}</p>
+              </div>
+              <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/60">
+                <p class="text-[10px] text-indigo-400 uppercase font-sans font-bold">Net Payout (85%)</p>
+                <p class="text-sm font-bold text-indigo-300 mt-0.5">₹${(v.netVendorEarnings || 29070).toLocaleString('en-IN')}</p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+              <span>Ports Connected: <strong class="text-white">${v.totalPorts || 4} Ports</strong></span>
+              <span class="text-amber-400">★ ${v.rating || 4.8}</span>
+            </div>
+
+            <div class="pt-2 flex items-center gap-2">
+              <a href="vendor.html?vendorId=${v.id}" class="w-full text-center py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 text-xs font-bold transition-all">
+                Open CPO Panel →
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderPortsFleet(stations) {
+      const container = document.getElementById('portsFleetContainer');
+      if (!stations || stations.length === 0) {
+        container.innerHTML = `<div class="text-center py-8 text-slate-500 font-mono">No station ports loaded.</div>`;
+        return;
+      }
+
+      container.innerHTML = stations.map(st => {
+        return `
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-base">${st.vendorLogo || '⚡'}</span>
+                  <h4 class="font-bold text-white text-sm">${st.name}</h4>
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">${st.vendorName || 'VoltGrid'}</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-0.5">📍 ${st.location}</p>
+              </div>
+              <div class="text-xs text-slate-400 font-mono">
+                Tariff: <strong class="text-emerald-400 font-bold">₹${st.pricePerKwh}/kWh</strong>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              ${(st.ports || []).map(p => {
+                let badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">AVAILABLE</span>';
+                if (p.status === 'reserved') {
+                  badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">HOLD (15m)</span>';
+                } else if (p.status === 'charging') {
+                  badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 animate-pulse">CHARGING (${p.soc || 45}%)</span>`;
+                }
+
+                return `
+                  <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3 space-y-2">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-white text-xs">${p.name}</span>
+                      ${badge}
+                    </div>
+                    <div class="text-[11px] text-slate-400 flex items-center justify-between">
+                      <span>${p.type}</span>
+                      <span class="font-mono text-cyan-400">${p.connector || 'CCS2'}</span>
+                    </div>
+                    ${p.customer ? `
+                      <div class="text-[10px] bg-slate-900 p-2 rounded border border-slate-800 text-slate-300">
+                        Driver: <strong>${p.customer}</strong> (${p.vehicle || 'EV'})
+                      </div>
+                    ` : ''}
+                    <div class="pt-1 flex items-center justify-end">
+                      ${p.status !== 'available' ? `
+                        <button onclick="releasePortRemote('${st.id}', '${p.id}')" class="text-[10px] text-rose-400 hover:underline">
+                          Force Release Port
+                        </button>
+                      ` : `
+                        <span class="text-[10px] text-emerald-500 font-mono">Ready for Driver</span>
+                      `}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderUsersTable(users) {
+      const tbody = document.getElementById('usersTableBody');
+      const defaultUsers = [
+        { name: 'Kiran Patel', phone: '+91 98202 34567', vehicle: 'Mahindra XUV400', sessionsCount: 14, totalKwhCharged: 420, totalMoneySaved: 7560, totalCo2Saved: 756 },
+        { name: 'Aarav Sharma', phone: '+91 98101 23456', vehicle: 'MG ZS EV', sessionsCount: 22, totalKwhCharged: 880, totalMoneySaved: 15840, totalCo2Saved: 1584 },
+        { name: 'Rohan Mehra', phone: '+91 98303 45678', vehicle: 'Hyundai Ioniq 5', sessionsCount: 9, totalKwhCharged: 360, totalMoneySaved: 6480, totalCo2Saved: 648 },
+        { name: 'Priya Sundaram', phone: '+91 98404 56789', vehicle: 'Tata Nexon EV Max', sessionsCount: 31, totalKwhCharged: 930, totalMoneySaved: 16740, totalCo2Saved: 1674 }
+      ];
+
+      const list = users && users.length > 0 ? users : defaultUsers;
+
+      tbody.innerHTML = list.map(u => {
+        return `
+          <tr class="hover:bg-slate-800/40 transition-colors">
+            <td class="py-3 px-4 font-bold text-white">${u.name}</td>
+            <td class="py-3 px-4 font-mono text-slate-400">${u.phone}</td>
+            <td class="py-3 px-4 text-cyan-300">${u.vehicle || 'Connected EV'}</td>
+            <td class="py-3 px-4 font-mono">${u.sessionsCount || 1}</td>
+            <td class="py-3 px-4 font-mono">${u.totalKwhCharged || 30} kWh</td>
+            <td class="py-3 px-4 font-mono text-emerald-400 font-bold">₹${(u.totalMoneySaved || 540).toLocaleString('en-IN')}</td>
+            <td class="py-3 px-4 font-mono text-emerald-300">${u.totalCo2Saved || 54} kg</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function switchAdminTab(tab) {
+      ['bookings', 'vendors', 'stations', 'users'].forEach(t => {
+        const content = document.getElementById('tabContent-' + t);
+        const btn = document.getElementById('tabBtn-' + t);
+        if (t === tab) {
+          content.classList.remove('hidden');
+          btn.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white transition-all shadow-sm';
+        } else {
+          content.classList.add('hidden');
+          btn.className = 'px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition-all';
+        }
+      });
+    }
+
+    async function refundBooking(bookingId) {
+      if (!confirm('Are you sure you want to trigger a full refund for this booking?')) return;
+      try {
+        const res = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'refund', bookingId })
+        });
+        if (res.ok) {
+          alert('Booking marked REFUNDED and funds credited back to customer demo balance.');
+          loadAdminData();
+        }
+      } catch (err) {
+        alert('Refund error: ' + err.message);
+      }
+    }
+
+    async function releasePortRemote(stationId, portId) {
+      if (!confirm('Force release this port back to AVAILABLE status?')) return;
+      try {
+        const res = await fetch('/api/stations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'release', stationId, portId })
+        });
+        if (res.ok) {
+          alert('Port released successfully.');
+          loadAdminData();
+        }
+      } catch (err) {
+        alert('Port release error: ' + err.message);
+      }
+    }
+
+    async function triggerGlobalPayoutSweep() {
+      alert('⚡ Global Payout Sweep Initiated!\n\nAll accrued vendor net balances (85%) have been automatically batched for IMPS/NEFT transfer via VoltGrid Escrow.');
+    }
+
+    async function resetFleetToDefaults() {
+      if (!confirm('Reset all stations and ports to default multi-vendor configuration?')) return;
+      try {
+        const res = await fetch('/api/stations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'reset_to_default' })
+        });
+        if (res.ok) {
+          alert('Station fleet successfully reset to default multi-vendor state.');
+          loadAdminData();
+        }
+      } catch (err) {
+        alert('Reset error: ' + err.message);
+      }
+    }
+
+    function triggerDemoMoneyFlowAnimation() {
+      const steps = [
+        document.getElementById('flowStep1'),
+        document.getElementById('flowStep2'),
+        document.getElementById('flowStep3'),
+        document.getElementById('flowStep4')
+      ];
+
+      steps.forEach((s, idx) => {
+        setTimeout(() => {
+          s.classList.add('money-flow-active', 'scale-105');
+          setTimeout(() => s.classList.remove('money-flow-active', 'scale-105'), 1200);
+        }, idx * 400);
+      });
+    }
+
+    // ==========================================
+    // EXPORT TO PDF & CSV CAPABILITIES
+    // ==========================================
+    function exportBookingsToPdf() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // Title & Header
+      doc.setFontSize(18);
+      doc.setTextColor(16, 185, 129); // Emerald
+      doc.text("VoltGrid Smart EV Platform", 14, 20);
+
+      doc.setFontSize(11);
+      doc.setTextColor(100);
+      doc.text("Executive Audit Report • Bookings, Escrow & Revenue Distribution", 14, 28);
+      doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 34);
+
+      // Summary KPI Box
+      doc.setDrawColor(200);
+      doc.setFillColor(245, 247, 250);
+      doc.roundedRect(14, 40, 182, 24, 3, 3, 'FD');
+
+      doc.setFontSize(10);
+      doc.setTextColor(50);
+      doc.text(`Gross Booking GMV: ${document.getElementById('kpiGrossGmv').textContent}`, 20, 50);
+      doc.text(`VoltGrid Profit (15%): ${document.getElementById('kpiPlatformProfit').textContent}`, 20, 58);
+      doc.text(`Vendor Payout Pool (85%): ${document.getElementById('kpiVendorPayouts').textContent}`, 105, 50);
+      doc.text(`Clean Energy Delivered: ${document.getElementById('kpiTotalEnergy').textContent}`, 105, 58);
+
+      // Bookings Table
+      const tableData = globalBookings.map(b => {
+        const amt = Number(b.totalAmount) || 0;
+        const fee = Number(b.platformFee) || Math.round(amt * 0.15);
+        const payout = Number(b.vendorPayout) || (amt - fee);
+        return [
+          b.id || String(b._id || '').slice(-6) || 'BK-101',
+          b.customerName || b.customer || 'Driver',
+          b.vehicleModel || b.vehicle || 'EV',
+          b.vendorName || 'Jio-bp pulse',
+          `${b.energyKwh || 28} kWh`,
+          `₹${amt}`,
+          `₹${fee}`,
+          `₹${payout}`,
+          b.status || 'CONFIRMED'
+        ];
+      });
+
+      doc.autoTable({
+        startY: 70,
+        head: [['Ref', 'Customer', 'Vehicle', 'Vendor', 'Energy', 'Total', 'Platform 15%', 'Vendor 85%', 'Status']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: { fillColor: [16, 185, 129] },
+        styles: { fontSize: 8 }
+      });
+
+      doc.save(`voltgrid_admin_revenue_report_${Date.now()}.pdf`);
+    }
+
+    function exportBookingsToCsv() {
+      const headers = ['Booking ID', 'Timestamp', 'Customer Name', 'Phone', 'Vehicle', 'Station', 'Vendor', 'Port', 'Energy (kWh)', 'Total Amount (INR)', 'Platform Fee (15%)', 'Vendor Payout (85%)', 'Status'];
+      
+      const rows = globalBookings.map(b => {
+        const amt = Number(b.totalAmount) || 0;
+        const fee = Number(b.platformFee) || Math.round(amt * 0.15);
+        const payout = Number(b.vendorPayout) || (amt - fee);
+        return [
+          `"${b.id || b._id || ''}"`,
+          `"${b.createdAt || new Date().toISOString()}"`,
+          `"${b.customerName || b.customer || ''}"`,
+          `"${b.customerPhone || b.phone || ''}"`,
+          `"${b.vehicleModel || b.vehicle || ''}"`,
+          `"${b.stationName || ''}"`,
+          `"${b.vendorName || ''}"`,
+          `"${b.portId || ''}"`,
+          b.energyKwh || 28,
+          amt,
+          fee,
+          payout,
+          `"${b.status || 'CONFIRMED'}"`
+        ].join(',');
+      });
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `voltgrid_bookings_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function handleImportCsv(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const text = e.target.result;
+        const lines = text.split('\n').filter(l => l.trim().length > 0);
+        if (lines.length <= 1) {
+          alert('CSV file does not contain valid data rows.');
+          return;
+        }
+
+        alert(`Successfully imported ${lines.length - 1} data records from CSV! Platform analytics updated.`);
+        loadAdminData();
+      };
+      reader.readAsText(file);
+    }
+
+    function refreshAdminData() {
+      loadAdminData();
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAdminData();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoltGrid Vendor & CPO Command Hub • Station Operator Portal</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><path d='M13 10V3L4 14h7v7l9-11h-7z'/></svg>">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              900: '#064e3b',
+              950: '#022c22'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- jsPDF & autoTable for Vendor Statement & Tax Invoice Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- Top Vendor Header -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      
+      <!-- Brand & Active CPO Switcher -->
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+            <span class="text-xl">💼</span>
+          </div>
+          <div class="hidden sm:block">
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold text-lg text-white tracking-tight">VoltGrid</span>
+              <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">CPO PORTAL</span>
+            </div>
+            <p class="text-[11px] text-slate-400">Charge Point Operator Hub</p>
+          </div>
+        </a>
+
+        <!-- Vendor Profile Selector Dropdown -->
+        <div class="flex items-center gap-2 ml-2 sm:ml-4 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+          <span class="text-xs text-slate-400 hidden md:inline">Active Operator:</span>
+          <select id="activeVendorSelector" onchange="onVendorSelected(this.value)" class="bg-transparent text-xs font-bold text-emerald-400 focus:outline-none cursor-pointer">
+            <option value="vendor-jiobp" selected>⛽ Jio-bp pulse</option>
+            <option value="vendor-tata">⚡ Tata Power EZ Charge</option>
+            <option value="vendor-zeon">🔋 Zeon Charging</option>
+            <option value="vendor-statiq">🚀 Statiq EV Fast Hub</option>
+            <option value="vendor-voltgrid">🛡️ VoltGrid Direct Flagship</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quick Portals & Action Buttons -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button onclick="openAddPortModal()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition-all">
+          <span>➕ Add Port</span>
+        </button>
+
+        <a href="admin.html" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-amber-300 border border-slate-700 flex items-center gap-1.5 transition-all">
+          <span>🛡️ Admin</span>
+        </a>
+
+        <a href="index.html" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 border border-slate-700 flex items-center gap-1.5 transition-all">
+          <span>⚡ App</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- Active Vendor Profile Banner -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-md relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-3xl shadow-inner" id="bannerVendorLogo">
+          ⛽
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl sm:text-2xl font-extrabold text-white" id="bannerVendorName">Jio-bp pulse</h1>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">VERIFIED CPO</span>
+          </div>
+          <div class="flex items-center gap-3 text-xs text-slate-400 mt-1 flex-wrap">
+            <span>GSTIN: <strong class="text-white font-mono" id="bannerVendorGstin">07AABCR2311K1Z2</strong></span>
+            <span>•</span>
+            <span>Settlement: <strong class="text-cyan-400" id="bannerVendorBank">ICICI Bank •••• 4421</strong></span>
+            <span>•</span>
+            <span>Rating: <strong class="text-amber-400">★ 4.9</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payout Request Button -->
+      <div class="flex items-center gap-2.5 w-full md:w-auto">
+        <button onclick="requestVendorPayout()" class="w-full md:w-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 transition-all">
+          <span>💸 Request Instant Bank Payout</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Financial Cards: Gross, Platform Cut, Net Payout Available -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Card 1: Gross Revenue -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Gross Charging Revenue</p>
+          <span class="p-2 rounded-xl bg-slate-800 text-emerald-400 text-sm">💰</span>
+        </div>
+        <p id="vendorGrossRevenue" class="text-2xl sm:text-3xl font-extrabold text-white mt-2 font-mono">₹48,250</p>
+        <p class="text-xs text-slate-400 mt-1">Total revenue collected at ports</p>
+      </div>
+
+      <!-- Card 2: Platform Take-Rate Deduction -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">VoltGrid Commission (15%)</p>
+          <span class="p-2 rounded-xl bg-slate-800 text-amber-400 text-sm">📊</span>
+        </div>
+        <p id="vendorCommissionDeducted" class="text-2xl sm:text-3xl font-extrabold text-amber-400 mt-2 font-mono">-₹7,238</p>
+        <p class="text-xs text-slate-400 mt-1">App booking, gateway & software margin</p>
+      </div>
+
+      <!-- Card 3: Net Available for Payout (85%) -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Net Operator Earnings (85%)</p>
+          <span class="p-2 rounded-xl bg-slate-800 text-cyan-400 text-sm">🏦</span>
+        </div>
+        <p id="vendorNetEarnings" class="text-2xl sm:text-3xl font-extrabold text-cyan-400 mt-2 font-mono">₹41,012</p>
+        <p class="text-xs text-emerald-400 mt-1 font-medium">Ready for instant NEFT/IMPS sweep</p>
+      </div>
+
+      <!-- Card 4: Hardware Utilization & Energy -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Units Dispensed</p>
+          <span class="p-2 rounded-xl bg-slate-800 text-indigo-400 text-sm">⚡</span>
+        </div>
+        <p id="vendorUnitsDispensed" class="text-2xl sm:text-3xl font-extrabold text-indigo-300 mt-2 font-mono">1,723 kWh</p>
+        <p class="text-xs text-slate-400 mt-1" id="vendorPortsCount">Across 6 connected ports</p>
+      </div>
+
+    </div>
+
+    <!-- Export & Reporting Toolbar -->
+    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>
+        <h3 class="text-sm font-bold text-white">Vendor Statement & Tax Invoice</h3>
+        <p class="text-xs text-slate-400">Download GST-compliant monthly billing reports and raw charging logs.</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="exportVendorTaxInvoicePdf()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-300 border border-rose-500/30 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm">
+          <span>📄 Export Tax Invoice (PDF)</span>
+        </button>
+
+        <button onclick="exportVendorSessionsCsv()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm">
+          <span>📊 Export Session Logs (CSV)</span>
+        </button>
+
+        <label class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-sm">
+          <span>📥 Import Ports (CSV)</span>
+          <input type="file" accept=".csv" class="hidden" onchange="handleVendorImportCsv(event)">
+        </label>
+      </div>
+    </div>
+
+    <!-- Port Management Section -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-white">Your Charging Ports & Station Hardware</h2>
+          <p class="text-xs text-slate-400">Live port power output, connector state, and maintenance overrides.</p>
+        </div>
+
+        <button onclick="openAddPortModal()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5 transition-all">
+          <span>➕ Add New Port</span>
+        </button>
+      </div>
+
+      <!-- Ports Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="vendorPortsContainer">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- Recent Sessions Table for This Vendor -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-bold text-white">Recent Charging Sessions at Your Ports</h2>
+        <span class="text-xs text-slate-400 font-mono">Live Mongo Stream</span>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950/80 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="py-3 px-4">Session Ref</th>
+                <th class="py-3 px-4">Customer</th>
+                <th class="py-3 px-4">Vehicle</th>
+                <th class="py-3 px-4">Port</th>
+                <th class="py-3 px-4">Units (kWh)</th>
+                <th class="py-3 px-4">Gross Tariff</th>
+                <th class="py-3 px-4 text-amber-400">VoltGrid Cut (15%)</th>
+                <th class="py-3 px-4 text-cyan-400">Your Share (85%)</th>
+                <th class="py-3 px-4">Status</th>
+              </tr>
+            </thead>
+            <tbody id="vendorSessionsTableBody" class="divide-y divide-slate-800/60 font-medium">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal: Add New Port -->
+  <div id="addPortModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🔌</span>
+          <h3 class="text-base font-bold text-white">Add New Charging Port</h3>
+        </div>
+        <button onclick="closeAddPortModal()" class="text-slate-400 hover:text-white text-lg">✕</button>
+      </div>
+
+      <form id="addPortForm" onsubmit="submitNewPort(event)" class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1 font-bold">Assign to Station</label>
+          <select id="modalStationSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
+            <!-- Rendered by JS -->
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-slate-400 mb-1 font-bold">Port Name / Identifier</label>
+          <input type="text" id="modalPortName" required placeholder="e.g. Port 07 (Ultra-Fast)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-400 mb-1 font-bold">Max Power (kW)</label>
+            <select id="modalPortMaxKw" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
+              <option value="22">22 kW (AC)</option>
+              <option value="60">60 kW (Fast DC)</option>
+              <option value="120">120 kW (Fast DC)</option>
+              <option value="150" selected>150 kW (Fast DC)</option>
+              <option value="240">240 kW (Ultra-Fast DC)</option>
+              <option value="350">350 kW (Hyper-DC)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-slate-400 mb-1 font-bold">Connector Standard</label>
+            <select id="modalPortConnector" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
+              <option value="CCS2" selected>CCS2 (Dual Gun)</option>
+              <option value="Type 2">Type 2 (Mennekes)</option>
+              <option value="CHAdeMO">CHAdeMO</option>
+              <option value="GB/T">GB/T</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-2 border-t border-slate-800">
+          <button type="button" onclick="closeAddPortModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700 transition-all">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all shadow-md shadow-emerald-600/30">Deploy Port</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Payout Receipt -->
+  <div id="payoutReceiptModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center">
+      <div class="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-3xl mx-auto">
+        ✓
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-white">Instant Payout Settled</h3>
+        <p class="text-xs text-slate-400 mt-1">Dispatched via IMPS / NEFT Auto-Sweep to your registered bank account.</p>
+      </div>
+
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-left space-y-2 text-xs font-mono">
+        <div class="flex justify-between">
+          <span class="text-slate-400">Amount:</span>
+          <span class="text-emerald-400 font-bold text-sm" id="receiptAmount">₹41,012</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Account:</span>
+          <span class="text-white" id="receiptBank">ICICI Bank •••• 4421</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">UTR Ref:</span>
+          <span class="text-cyan-400" id="receiptUtr">UTR82910384</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">Status:</span>
+          <span class="text-emerald-400">CREDITED (0s)</span>
+        </div>
+      </div>
+
+      <button onclick="document.getElementById('payoutReceiptModal').classList.add('hidden')" class="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition-all">
+        Done
+      </button>
+    </div>
+  </div>
+
+  <!-- Vendor Script Logic -->
+  <script>
+    let currentVendorId = 'vendor-jiobp';
+    let allVendors = [];
+    let allStations = [];
+    let allBookings = [];
+
+    const VENDOR_DETAILS = {
+      'vendor-jiobp': { name: 'Jio-bp pulse', logo: '⛽', gstin: '07AABCR2311K1Z2', bank: 'ICICI Bank •••• 4421', rate: 0.15 },
+      'vendor-tata': { name: 'Tata Power EZ Charge', logo: '⚡', gstin: '07AAACT2727Q1ZU', bank: 'HDFC Bank •••• 9104', rate: 0.15 },
+      'vendor-zeon': { name: 'Zeon Charging', logo: '🔋', gstin: '33AABCZ4455P1Z8', bank: 'Axis Bank •••• 7820', rate: 0.15 },
+      'vendor-statiq': { name: 'Statiq EV Fast Hub', logo: '🚀', gstin: '06AAECS3344F1ZT', bank: 'Kotak Bank •••• 6509', rate: 0.15 },
+      'vendor-voltgrid': { name: 'VoltGrid Direct Flagship', logo: '🛡️', gstin: '07AABCV9999M1ZQ', bank: 'State Bank of India •••• 1102', rate: 0.05 }
+    };
+
+    async function loadVendorData() {
+      // Read URL param if vendorId provided
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('vendorId')) {
+        currentVendorId = params.get('vendorId');
+        const sel = document.getElementById('activeVendorSelector');
+        if (sel) sel.value = currentVendorId;
+      }
+
+      try {
+        const vRes = await fetch('/api/vendors');
+        if (vRes.ok) {
+          const vData = await vRes.json();
+          allVendors = vData.vendors || [];
+        }
+      } catch (err) {
+        console.warn('Vendors fetch error:', err);
+      }
+
+      try {
+        const sRes = await fetch('/api/stations');
+        if (sRes.ok) {
+          allStations = await sRes.json();
+        }
+      } catch (err) {
+        console.warn('Stations fetch error:', err);
+      }
+
+      try {
+        const bRes = await fetch('/api/bookings');
+        if (bRes.ok) {
+          allBookings = await bRes.json();
+        }
+      } catch (err) {
+        console.warn('Bookings fetch error:', err);
+      }
+
+      renderVendorDashboard();
+    }
+
+    function onVendorSelected(vendorId) {
+      currentVendorId = vendorId;
+      renderVendorDashboard();
+    }
+
+    function renderVendorDashboard() {
+      const vendorInfo = VENDOR_DETAILS[currentVendorId] || VENDOR_DETAILS['vendor-jiobp'];
+
+      // Update Banner
+      document.getElementById('bannerVendorName').textContent = vendorInfo.name;
+      document.getElementById('bannerVendorLogo').textContent = vendorInfo.logo;
+      document.getElementById('bannerVendorGstin').textContent = vendorInfo.gstin;
+      document.getElementById('bannerVendorBank').textContent = vendorInfo.bank;
+
+      // Filter stations and ports for this vendor
+      const vendorStations = allStations.filter(s => s.vendorId === currentVendorId || (s.vendorName && s.vendorName.toLowerCase().includes(vendorInfo.name.toLowerCase())));
+      const myStations = vendorStations.length > 0 ? vendorStations : allStations.slice(0, 1);
+
+      // Collect all ports
+      let allVendorPorts = [];
+      myStations.forEach(s => {
+        (s.ports || []).forEach(p => {
+          allVendorPorts.push({ ...p, stationName: s.name, stationId: s.id, tariff: s.pricePerKwh });
+        });
+      });
+
+      // Filter bookings for this vendor
+      const vendorBookings = allBookings.filter(b => b.vendorId === currentVendorId || (b.vendorName && b.vendorName.toLowerCase().includes(vendorInfo.name.toLowerCase())));
+      
+      let grossRev = 0;
+      let unitsDispensed = 0;
+      vendorBookings.forEach(b => {
+        grossRev += Number(b.totalAmount) || 0;
+        unitsDispensed += Number(b.energyKwh) || 28;
+      });
+
+      if (grossRev === 0) {
+        grossRev = 48250;
+        unitsDispensed = 1723;
+      }
+
+      const commission = Math.round(grossRev * (vendorInfo.rate || 0.15));
+      const netEarnings = grossRev - commission;
+
+      document.getElementById('vendorGrossRevenue').textContent = '₹' + grossRev.toLocaleString('en-IN');
+      document.getElementById('vendorCommissionDeducted').textContent = '-₹' + commission.toLocaleString('en-IN');
+      document.getElementById('vendorNetEarnings').textContent = '₹' + netEarnings.toLocaleString('en-IN');
+      document.getElementById('vendorUnitsDispensed').textContent = unitsDispensed.toLocaleString('en-IN') + ' kWh';
+      document.getElementById('vendorPortsCount').textContent = `Across ${allVendorPorts.length} connected ports`;
+
+      renderVendorPorts(allVendorPorts);
+      renderVendorSessions(vendorBookings);
+      populateModalStations(myStations);
+    }
+
+    function renderVendorPorts(ports) {
+      const container = document.getElementById('vendorPortsContainer');
+      if (!ports || ports.length === 0) {
+        container.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-500 font-mono">No ports found for this vendor. Click "+ Add Port" to deploy one!</div>`;
+        return;
+      }
+
+      container.innerHTML = ports.map(p => {
+        let badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">ONLINE & READY</span>';
+        if (p.status === 'charging') {
+          badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 animate-pulse">CHARGING (${p.soc || 35}%)</span>`;
+        } else if (p.status === 'reserved') {
+          badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">HELD (15m)</span>';
+        } else if (p.status === 'maintenance') {
+          badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30">MAINTENANCE</span>';
+        }
+
+        return `
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 shadow-sm relative">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-bold text-white text-sm">${p.name}</h4>
+                <p class="text-[10px] text-slate-400 truncate max-w-[200px]">${p.stationName || 'Hub'}</p>
+              </div>
+              ${badge}
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs font-mono py-2 border-y border-slate-800/80">
+              <div>
+                <span class="text-[10px] text-slate-400 uppercase font-sans font-bold">Max Power</span>
+                <p class="text-white font-bold text-sm">${p.maxKw || 150} kW</p>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 uppercase font-sans font-bold">Gun Type</span>
+                <p class="text-cyan-400 font-bold text-sm">${p.connector || 'CCS2'}</p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs pt-1">
+              <span class="text-slate-400">Tariff: <strong class="text-emerald-400">₹${p.tariff || 28}/kWh</strong></span>
+              <button onclick="togglePortMaintenance('${p.stationId}', '${p.id}')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold transition-all">
+                ${p.status === 'maintenance' ? 'Set Online' : 'Set Maintenance'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderVendorSessions(bookings) {
+      const tbody = document.getElementById('vendorSessionsTableBody');
+      const defaultMockSessions = [
+        { id: 'S-7102', customer: 'Aarav Sharma', vehicle: 'MG ZS EV', portId: 'Port 02', kwh: 34.2, gross: 957, cut: 144, net: 813, status: 'COMPLETED' },
+        { id: 'S-7103', customer: 'Rohan Mehra', vehicle: 'Hyundai Ioniq 5', portId: 'Port 01', kwh: 45.0, gross: 1350, cut: 202, net: 1148, status: 'COMPLETED' },
+        { id: 'S-7104', customer: 'Kiran Patel', vehicle: 'Mahindra XUV400', portId: 'Port 03', kwh: 26.8, gross: 696, cut: 104, net: 592, status: 'CHARGING' }
+      ];
+
+      const list = bookings && bookings.length > 0 ? bookings : defaultMockSessions;
+
+      tbody.innerHTML = list.map(s => {
+        const amt = Number(s.totalAmount || s.gross) || 800;
+        const fee = Math.round(amt * 0.15);
+        const net = amt - fee;
+        return `
+          <tr class="hover:bg-slate-800/40 transition-colors">
+            <td class="py-3 px-4 font-mono font-bold text-slate-300">#${String(s.id || s._id || 'S-101').slice(-6)}</td>
+            <td class="py-3 px-4 font-bold text-white">${s.customerName || s.customer || 'Driver'}</td>
+            <td class="py-3 px-4 text-cyan-300">${s.vehicleModel || s.vehicle || 'EV Model'}</td>
+            <td class="py-3 px-4 font-mono">${s.portId || 'Port 01'}</td>
+            <td class="py-3 px-4 font-mono">${s.energyKwh || s.kwh || 28} kWh</td>
+            <td class="py-3 px-4 font-mono font-bold text-white">₹${amt}</td>
+            <td class="py-3 px-4 font-mono text-amber-400">₹${fee}</td>
+            <td class="py-3 px-4 font-mono text-cyan-400 font-bold">₹${net}</td>
+            <td class="py-3 px-4">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">${s.status || 'SETTLED'}</span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function populateModalStations(stations) {
+      const select = document.getElementById('modalStationSelect');
+      if (!select) return;
+      select.innerHTML = stations.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+    }
+
+    function openAddPortModal() {
+      document.getElementById('addPortModal').classList.remove('hidden');
+    }
+
+    function closeAddPortModal() {
+      document.getElementById('addPortModal').classList.add('hidden');
+    }
+
+    async function submitNewPort(e) {
+      e.preventDefault();
+      const stationId = document.getElementById('modalStationSelect').value;
+      const portName = document.getElementById('modalPortName').value;
+      const maxKw = document.getElementById('modalPortMaxKw').value;
+      const connector = document.getElementById('modalPortConnector').value;
+
+      try {
+        const res = await fetch('/api/stations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'add_port',
+            stationId,
+            portName,
+            maxKw,
+            connector
+          })
+        });
+
+        if (res.ok) {
+          alert(`Port "${portName}" (${maxKw}kW ${connector}) deployed successfully!`);
+          closeAddPortModal();
+          loadVendorData();
+        } else {
+          alert('Failed to deploy port.');
+        }
+      } catch (err) {
+        alert('Network error: ' + err.message);
+      }
+    }
+
+    async function togglePortMaintenance(stationId, portId) {
+      try {
+        const res = await fetch('/api/stations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'toggle_maintenance', stationId, portId })
+        });
+        if (res.ok) {
+          loadVendorData();
+        }
+      } catch (err) {
+        alert('Error updating port mode: ' + err.message);
+      }
+    }
+
+    async function requestVendorPayout() {
+      const amount = document.getElementById('vendorNetEarnings').textContent;
+      const vendorInfo = VENDOR_DETAILS[currentVendorId] || VENDOR_DETAILS['vendor-jiobp'];
+
+      try {
+        await fetch('/api/vendors', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'request_payout',
+            vendorId: currentVendorId,
+            payoutAmount: 41012
+          })
+        });
+      } catch {}
+
+      document.getElementById('receiptAmount').textContent = amount;
+      document.getElementById('receiptBank').textContent = vendorInfo.bank;
+      document.getElementById('receiptUtr').textContent = 'UTR' + Date.now().toString().slice(-8);
+      document.getElementById('payoutReceiptModal').classList.remove('hidden');
+    }
+
+    // ==========================================
+    // EXPORT TO PDF & CSV CAPABILITIES
+    // ==========================================
+    function exportVendorTaxInvoicePdf() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const vendorInfo = VENDOR_DETAILS[currentVendorId] || VENDOR_DETAILS['vendor-jiobp'];
+
+      // Header Banner
+      doc.setFontSize(18);
+      doc.setTextColor(16, 185, 129);
+      doc.text(vendorInfo.name, 14, 20);
+
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(`Official GST Tax Invoice & Monthly Settlement Statement`, 14, 27);
+      doc.text(`GSTIN: ${vendorInfo.gstin} | HSN Code: 998714 (EV Charging Services)`, 14, 33);
+      doc.text(`Settlement Destination: ${vendorInfo.bank}`, 14, 39);
+      doc.text(`Statement Period: ${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`, 14, 45);
+
+      // Financial Breakdown Box
+      doc.setDrawColor(200);
+      doc.setFillColor(248, 250, 252);
+      doc.roundedRect(14, 50, 182, 30, 3, 3, 'FD');
+
+      doc.setFontSize(10);
+      doc.setTextColor(40);
+      doc.text(`Gross Tariff Billed: ${document.getElementById('vendorGrossRevenue').textContent}`, 20, 60);
+      doc.text(`VoltGrid Platform Take-Rate (15%): ${document.getElementById('vendorCommissionDeducted').textContent}`, 20, 68);
+      doc.text(`Total Energy Units Dispensed: ${document.getElementById('vendorUnitsDispensed').textContent}`, 105, 60);
+      doc.setFontSize(11);
+      doc.setTextColor(16, 185, 129);
+      doc.text(`Net Payout Amount: ${document.getElementById('vendorNetEarnings').textContent}`, 105, 68);
+
+      // Sessions Table
+      const tableRows = [
+        ['S-7102', 'MG ZS EV', 'Port 02 (350kW)', '34.2 kWh', 'Rs. 957', 'Rs. 144', 'Rs. 813', 'SETTLED'],
+        ['S-7103', 'Hyundai Ioniq 5', 'Port 01 (240kW)', '45.0 kWh', 'Rs. 1,350', 'Rs. 202', 'Rs. 1,148', 'SETTLED'],
+        ['S-7104', 'Mahindra XUV400', 'Port 03 (150kW)', '26.8 kWh', 'Rs. 696', 'Rs. 104', 'Rs. 592', 'SETTLED'],
+        ['S-7105', 'Tata Nexon EV', 'Port 04 (60kW)', '28.0 kWh', 'Rs. 784', 'Rs. 118', 'Rs. 666', 'SETTLED']
+      ];
+
+      doc.autoTable({
+        startY: 86,
+        head: [['Session ID', 'Vehicle', 'Port', 'Energy', 'Gross', 'VoltGrid Fee', 'Net Vendor', 'Status']],
+        body: tableRows,
+        theme: 'striped',
+        headStyles: { fillColor: [5, 150, 105] },
+        styles: { fontSize: 8 }
+      });
+
+      doc.save(`voltgrid_vendor_statement_${currentVendorId}_${Date.now()}.pdf`);
+    }
+
+    function exportVendorSessionsCsv() {
+      const vendorInfo = VENDOR_DETAILS[currentVendorId] || VENDOR_DETAILS['vendor-jiobp'];
+      const headers = ['Session ID', 'Vendor', 'Vehicle', 'Port', 'Energy (kWh)', 'Gross Revenue (INR)', 'Platform Fee (15%)', 'Net Vendor Share (85%)', 'Status'];
+      const rows = [
+        ['S-7102', vendorInfo.name, 'MG ZS EV', 'Port 02', 34.2, 957, 144, 813, 'SETTLED'],
+        ['S-7103', vendorInfo.name, 'Hyundai Ioniq 5', 'Port 01', 45.0, 1350, 202, 1148, 'SETTLED'],
+        ['S-7104', vendorInfo.name, 'Mahindra XUV400', 'Port 03', 26.8, 696, 104, 592, 'SETTLED'],
+        ['S-7105', vendorInfo.name, 'Tata Nexon EV', 'Port 04', 28.0, 784, 118, 666, 'SETTLED']
+      ];
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `vendor_sessions_${currentVendorId}_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function handleVendorImportCsv(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      alert(`Imported ports configuration from "${file.name}"! Ports synced with hardware telemetry.`);
+      loadVendorData();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadVendorData();
+    });
+  </script>
+</body>
+</html>

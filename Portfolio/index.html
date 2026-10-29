@@ -104,24 +104,34 @@
           href="simulator.html" 
           target="_blank"
           id="navCarSimLink" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-cyan-100 text-cyan-900 dark:bg-cyan-950/80 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 hover:scale-105 active:scale-95 transition-all shadow-sm"
+          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 bg-cyan-100 text-cyan-900 dark:bg-cyan-950/80 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 hover:scale-105 active:scale-95 transition-all shadow-sm"
           title="Live Connected Car Telematics & Battery Status (Click to open Simulator in new tab)"
         >
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>🚗</span>
-          <span class="hidden sm:inline">Car:</span>
+          <span class="hidden md:inline">Car:</span>
           <span id="navSimStatusText" class="font-mono text-[11px] font-black text-emerald-600 dark:text-cyan-400">100% SoC</span>
         </a>
 
-        <!-- Admin Console Trigger -->
-        <button 
-          onclick="openAdminModal()" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-800 hover:scale-105 transition-all shadow-sm"
-          title="Open Admin Command Center"
+        <!-- Vendor CPO Hub Link -->
+        <a 
+          href="vendor.html" 
+          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 bg-indigo-100 text-indigo-900 dark:bg-indigo-950/80 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800 hover:scale-105 transition-all shadow-sm"
+          title="Open Vendor & Station Operator Hub"
+        >
+          <span>💼</span>
+          <span class="hidden sm:inline">Vendor</span> Hub
+        </a>
+
+        <!-- Admin Console Link (Standalone Dedicated Admin Page) -->
+        <a 
+          href="admin.html" 
+          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-800 hover:scale-105 transition-all shadow-sm"
+          title="Open Dedicated Admin Command Center"
         >
           <span>🛡️</span>
-          <span class="hidden sm:inline">Admin</span> Portal
-        </button>
+          <span class="hidden sm:inline">Admin</span> HQ
+        </a>
 
         <!-- User Authentication Button / Profile Badge -->
         <div id="navUserSlot">
@@ -426,6 +436,51 @@
           <button id="btnTestSound" onclick="testSoundFx()" title="Verify speaker output & unlock browser Web Audio" class="ml-1 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 dark:border-slate-700 hover:border-emerald-500 text-slate-700 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-cyan-400 bg-white dark:bg-slate-900 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
             <span>🔊</span> Test Sound
           </button>
+        </div>
+      </div>
+
+      <!-- Multi-Vendor Filter & Proximity Location Bar -->
+      <div class="mb-6 p-4 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          
+          <!-- Vendor Network Filter Tabs -->
+          <div class="flex items-center gap-1.5 flex-wrap" id="vendorFilterTabs">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1 hidden sm:inline">CPO Network:</span>
+            <button onclick="setVendorFilter('ALL')" id="vFilter-ALL" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-sm transition-all">
+              🏢 All Networks (5)
+            </button>
+            <button onclick="setVendorFilter('vendor-jiobp')" id="vFilter-vendor-jiobp" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              ⛽ Jio-bp pulse
+            </button>
+            <button onclick="setVendorFilter('vendor-tata')" id="vFilter-vendor-tata" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              ⚡ Tata Power
+            </button>
+            <button onclick="setVendorFilter('vendor-zeon')" id="vFilter-vendor-zeon" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              🔋 Zeon
+            </button>
+            <button onclick="setVendorFilter('vendor-statiq')" id="vFilter-vendor-statiq" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              🚀 Statiq
+            </button>
+            <button onclick="setVendorFilter('vendor-voltgrid')" id="vFilter-vendor-voltgrid" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              🛡️ VoltGrid Direct
+            </button>
+          </div>
+
+          <!-- GPS Location & Distance Selector -->
+          <div class="flex items-center gap-2">
+            <button onclick="detectDeviceGpsLocation()" class="px-3 py-1.5 rounded-xl bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 text-xs font-bold flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all shadow-sm" title="Calculate distance using browser GPS">
+              <span>🎯</span> <span class="hidden sm:inline">Use My Live</span> GPS
+            </button>
+
+            <select id="userLocationSelector" onchange="onUserLocationChanged(this.value)" class="bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:border-emerald-500">
+              <option value="cyberhub">📍 Near Cyber City Gurugram</option>
+              <option value="manesar">📍 Near Manesar Toll NH-48</option>
+              <option value="aerocity">📍 Near Aerocity IGI Airport</option>
+              <option value="golfcourse">📍 Near Golf Course Road</option>
+              <option value="cp">📍 Near Connaught Place Delhi</option>
+            </select>
+          </div>
+
         </div>
       </div>
 
@@ -867,6 +922,20 @@
           <span>Total Payable Amount</span>
           <span class="text-emerald-600 dark:text-cyan-400">₹<span id="billTotal">1,537.30</span></span>
         </div>
+
+        <!-- Transparent Demo Money Flow Split between Vendor and App -->
+        <div class="mt-2 p-2.5 rounded-xl bg-slate-900/60 dark:bg-slate-900 border border-slate-700/60 text-[10px] space-y-1 font-mono">
+          <div class="text-[9px] uppercase tracking-wider text-slate-400 font-bold font-sans">Demo Money Flow Split:</div>
+          <div class="flex items-center justify-between text-slate-300">
+            <span>💼 CPO Vendor Payout (85%):</span>
+            <span class="text-cyan-400 font-bold" id="billVendorShare">₹1,306.70</span>
+          </div>
+          <div class="flex items-center justify-between text-slate-300">
+            <span>🛡️ VoltGrid Margin & Grid Fee (15%):</span>
+            <span class="text-amber-400 font-bold" id="billPlatformShare">₹230.60</span>
+          </div>
+        </div>
+
         <div id="billTripNote" class="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1 pt-1.5 border-t border-slate-200 dark:border-slate-800">
           <span>ℹ️</span> <span>Telematics: Billed to refill battery consumed over <strong id="billTripKm" class="text-cyan-600 dark:text-cyan-400">0.0</strong> km trip back to 100%.</span>
         </div>
@@ -1594,48 +1663,118 @@
     const INITIAL_STATIONS = [
       {
         id: 'st-01',
-        name: 'Expressway HyperHub • Delhi-Jaipur (NH 48, Km 42)',
-        type: 'Highway Ultra-Hub',
-        location: 'NH 48 Highway Corridor, Near Manesar Toll',
-        mapsUrl: 'https://maps.google.com/?q=NH48+Manesar+Gurugram',
+        vendorId: 'vendor-jiobp',
+        vendorName: 'Jio-bp pulse',
+        vendorLogo: '⛽',
+        vendorColor: 'blue',
+        name: 'Jio-bp pulse Expressway HyperHub (NH-48)',
+        type: 'Highway Ultra-Fast Hub',
+        location: 'NH 48 Highway Corridor, Near Manesar Toll, Gurugram',
+        lat: 28.3587,
+        lng: 76.9388,
+        mapsUrl: 'https://maps.google.com/?q=28.3587,76.9388',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.3587,76.9388',
         pricePerKwh: 28,
         solar: true,
+        rating: 4.9,
         ports: [
-          { id: 'p101', name: 'Port 01', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available' },
-          { id: 'p102', name: 'Port 02', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available' },
-          { id: 'p103', name: 'Port 03', type: '150kW Fast DC', maxKw: 150, status: 'available' },
-          { id: 'p104', name: 'Port 04', type: '150kW Fast DC', maxKw: 150, status: 'available' },
-          { id: 'p105', name: 'Port 05', type: '100kW DC', maxKw: 100, status: 'available' },
-          { id: 'p106', name: 'Port 06', type: '22kW AC Destination', maxKw: 22, status: 'available' }
+          { id: 'p101', name: 'Port 01', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available', connector: 'CCS2' },
+          { id: 'p102', name: 'Port 02', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available', connector: 'CCS2' },
+          { id: 'p103', name: 'Port 03', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2' },
+          { id: 'p104', name: 'Port 04', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2' },
+          { id: 'p105', name: 'Port 05', type: '100kW DC', maxKw: 100, status: 'available', connector: 'CHAdeMO' },
+          { id: 'p106', name: 'Port 06', type: '22kW AC Destination', maxKw: 22, status: 'available', connector: 'Type 2' }
         ]
       },
       {
         id: 'st-02',
-        name: 'DLF Cyber Hub • Sector 24 Gurugram',
-        type: 'Corporate Destination Hub',
-        location: 'Cyber City, Basement Parking Bay B4, Gurugram',
-        mapsUrl: 'https://maps.google.com/?q=DLF+Cyber+Hub+Gurugram',
+        vendorId: 'vendor-tata',
+        vendorName: 'Tata Power EZ Charge',
+        vendorLogo: '⚡',
+        vendorColor: 'emerald',
+        name: 'Tata Power Cyber Hub Destination Hub',
+        type: 'Corporate Ultra-Hub',
+        location: 'DLF Cyber City, Basement Bay B4, Sector 24, Gurugram',
+        lat: 28.4952,
+        lng: 77.0891,
+        mapsUrl: 'https://maps.google.com/?q=28.4952,77.0891',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.4952,77.0891',
         pricePerKwh: 26,
         solar: false,
+        rating: 4.8,
         ports: [
-          { id: 'p201', name: 'Port 01', type: '180kW Fast DC', maxKw: 180, status: 'available' },
-          { id: 'p202', name: 'Port 02', type: '180kW Fast DC', maxKw: 180, status: 'available' },
-          { id: 'p203', name: 'Port 03', type: '43kW Fast AC', maxKw: 43, status: 'available' },
-          { id: 'p204', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'available' }
+          { id: 'p201', name: 'Port 01', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2' },
+          { id: 'p202', name: 'Port 02', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2' },
+          { id: 'p203', name: 'Port 03', type: '43kW Fast AC', maxKw: 43, status: 'available', connector: 'Type 2' },
+          { id: 'p204', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'available', connector: 'Type 2' }
         ]
       },
       {
         id: 'st-03',
-        name: 'Aerocity Gateway • IGI Airport T3',
+        vendorId: 'vendor-zeon',
+        vendorName: 'Zeon Charging',
+        vendorLogo: '🔋',
+        vendorColor: 'indigo',
+        name: 'Zeon Aerocity Airport Gateway',
         type: 'Airport Hypergrid',
-        location: 'Hospitality District, Worldmark Aerocity, New Delhi',
-        mapsUrl: 'https://maps.google.com/?q=Aerocity+New+Delhi',
+        location: 'Worldmark Hospitality District, Aerocity, New Delhi',
+        lat: 28.5504,
+        lng: 77.1215,
+        mapsUrl: 'https://maps.google.com/?q=28.5504,77.1215',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.5504,77.1215',
         pricePerKwh: 30,
         solar: true,
+        rating: 4.7,
         ports: [
-          { id: 'p301', name: 'Port 01', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available' },
-          { id: 'p302', name: 'Port 02', type: '120kW Fast DC', maxKw: 120, status: 'available' },
-          { id: 'p303', name: 'Port 03', type: '120kW Fast DC', maxKw: 120, status: 'available' }
+          { id: 'p301', name: 'Port 01', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available', connector: 'CCS2' },
+          { id: 'p302', name: 'Port 02', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2' },
+          { id: 'p303', name: 'Port 03', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'Type 2' }
+        ]
+      },
+      {
+        id: 'st-04',
+        vendorId: 'vendor-statiq',
+        vendorName: 'Statiq EV Fast Hub',
+        vendorLogo: '🚀',
+        vendorColor: 'amber',
+        name: 'Statiq Horizon Fast Hub • Golf Course Road',
+        type: 'Luxury Commercial Hub',
+        location: 'One Horizon Centre, Golf Course Rd, DLF Phase 5, Gurugram',
+        lat: 28.4728,
+        lng: 77.0982,
+        mapsUrl: 'https://maps.google.com/?q=28.4728,77.0982',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.4728,77.0982',
+        pricePerKwh: 27,
+        solar: true,
+        rating: 4.6,
+        ports: [
+          { id: 'p401', name: 'Port 01', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2' },
+          { id: 'p402', name: 'Port 02', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2' },
+          { id: 'p403', name: 'Port 03', type: '60kW DC', maxKw: 60, status: 'available', connector: 'CCS2' },
+          { id: 'p404', name: 'Port 04', type: '22kW AC Destination', maxKw: 22, status: 'available', connector: 'Type 2' }
+        ]
+      },
+      {
+        id: 'st-05',
+        vendorId: 'vendor-voltgrid',
+        vendorName: 'VoltGrid Direct Flagship',
+        vendorLogo: '🛡️',
+        vendorColor: 'cyan',
+        name: 'VoltGrid CP SuperHub • Connaught Place',
+        type: 'Central Metro Hub',
+        location: 'Outer Circle, Near Shivaji Stadium Metro, New Delhi',
+        lat: 28.6328,
+        lng: 77.2197,
+        mapsUrl: 'https://maps.google.com/?q=28.6328,77.2197',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.6328,77.2197',
+        pricePerKwh: 25,
+        solar: true,
+        rating: 5.0,
+        ports: [
+          { id: 'p501', name: 'Port 01', type: '360kW Hyper-DC', maxKw: 360, status: 'available', connector: 'CCS2' },
+          { id: 'p502', name: 'Port 02', type: '200kW Fast DC', maxKw: 200, status: 'available', connector: 'CCS2' },
+          { id: 'p503', name: 'Port 03', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2' },
+          { id: 'p504', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'available', connector: 'Type 2' }
         ]
       }
     ];
@@ -2200,13 +2339,112 @@
       return estMins;
     }
 
+    // ---------------- MULTI-VENDOR & GPS PROXIMITY LOGIC ----------------
+    let activeVendorFilter = 'ALL';
+    let userLocation = { lat: 28.4952, lng: 77.0891, name: 'Cyber City' };
+
+    function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+      if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+      const R = 6371; // km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return +(R * c).toFixed(1);
+    }
+
+    function setVendorFilter(vendorId) {
+      activeVendorFilter = vendorId;
+      const filters = ['ALL', 'vendor-jiobp', 'vendor-tata', 'vendor-zeon', 'vendor-statiq', 'vendor-voltgrid'];
+      filters.forEach(f => {
+        const btn = document.getElementById('vFilter-' + f);
+        if (btn) {
+          if (f === vendorId) {
+            btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-sm transition-all';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all';
+          }
+        }
+      });
+      renderStationSelector();
+    }
+
+    function onUserLocationChanged(val) {
+      const PRESETS = {
+        cyberhub: { lat: 28.4952, lng: 77.0891, name: 'Cyber City' },
+        manesar: { lat: 28.3587, lng: 76.9388, name: 'Manesar Toll NH-48' },
+        aerocity: { lat: 28.5504, lng: 77.1215, name: 'Aerocity IGI Airport' },
+        golfcourse: { lat: 28.4728, lng: 77.0982, name: 'Golf Course Road' },
+        cp: { lat: 28.6328, lng: 77.2197, name: 'Connaught Place' }
+      };
+      if (PRESETS[val]) {
+        userLocation = PRESETS[val];
+        renderStationSelector();
+      }
+    }
+
+    function detectDeviceGpsLocation() {
+      if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser.');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          userLocation = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            name: 'Live GPS'
+          };
+          alert(`📍 Live GPS Detected: (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)})\nStations sorted by closest driving proximity!`);
+          renderStationSelector();
+        },
+        (err) => {
+          alert('GPS location permission denied or timed out. Defaulting to Gurugram Cyber Hub.');
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+
     // ---------------- RENDER STATIONS & PORTS ----------------
     function renderStationSelector() {
       const container = document.getElementById('stationButtons');
-      container.innerHTML = stations.map(st => {
+      if (!container) return;
+
+      let displayStations = stations.slice();
+
+      // Filter by vendor if selected
+      if (activeVendorFilter && activeVendorFilter !== 'ALL') {
+        displayStations = displayStations.filter(s => s.vendorId === activeVendorFilter || (s.vendorName && s.vendorName.toLowerCase().includes(activeVendorFilter.replace('vendor-', ''))));
+      }
+
+      // Compute distance and sort by proximity
+      displayStations.forEach(st => {
+        const d = calculateDistanceKm(userLocation.lat, userLocation.lng, st.lat || 28.4952, st.lng || 77.0891);
+        st.calculatedDistanceKm = d !== null ? d : 2.5;
+      });
+      displayStations.sort((a, b) => a.calculatedDistanceKm - b.calculatedDistanceKm);
+
+      // If currentStationId is not in displayStations, select the first one
+      if (displayStations.length > 0 && !displayStations.some(s => s.id === currentStationId)) {
+        currentStationId = displayStations[0].id;
+      }
+
+      if (displayStations.length === 0) {
+        container.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-500 font-mono">No stations found for this vendor network. Switch to "All Networks" to see all 5 CPO hubs.</div>`;
+        renderPorts();
+        return;
+      }
+
+      container.innerHTML = displayStations.map(st => {
         const isSelected = st.id === currentStationId;
         const total = st.ports.length;
         const avail = st.ports.filter(p => p.status === 'available').length;
+        const dist = st.calculatedDistanceKm;
+        const estDriveMins = Math.max(2, Math.round(dist * 2.2));
+        const directionsLink = st.directionsUrl || `https://www.google.com/maps/dir/?api=1&destination=${st.lat || 28.4952},${st.lng || 77.0891}`;
+
         return `
           <div onclick="selectStation('${st.id}')" class="cursor-pointer rounded-3xl p-5 border transition-all duration-200 ${
             isSelected
@@ -2215,7 +2453,11 @@
           }">
             <div class="flex items-start justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-cyan-400">${st.type}</span>
+                <div class="flex items-center gap-1.5 mb-1">
+                  <span class="text-xs">${st.vendorLogo || '⚡'}</span>
+                  <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-cyan-400 border border-emerald-500/20">${st.vendorName || 'VoltGrid'}</span>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">&bull; ${st.type}</span>
+                </div>
                 <h4 class="text-base font-extrabold text-slate-900 dark:text-white font-heading mt-0.5">${st.name}</h4>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${st.location}</p>
               </div>
@@ -2225,10 +2467,16 @@
                 ${avail}/${total} Free
               </span>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">₹${st.pricePerKwh} / kWh</span>
-              <a href="${st.mapsUrl}" target="_blank" onclick="event.stopPropagation()" class="text-xs font-bold text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1">
-                Directions ↗
+
+            <div class="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-800 dark:text-slate-200">₹${st.pricePerKwh}/kWh</span>
+                <span class="px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-300 text-[10px] font-mono font-bold flex items-center gap-1">
+                  🚗 ${dist} km (${estDriveMins}m)
+                </span>
+              </div>
+              <a href="${directionsLink}" target="_blank" onclick="event.stopPropagation()" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-cyan-400 font-bold flex items-center gap-1 transition-all" title="Open Google Maps Turn-by-Turn Navigation">
+                <span>🗺️ Directions ↗</span>
               </a>
             </div>
           </div>
@@ -2649,6 +2897,11 @@
       if (billBase) billBase.innerText = baseCost;
       if (billGst) billGst.innerText = gst;
       if (billTotal) billTotal.innerText = total;
+
+      const billVendorShare = document.getElementById('billVendorShare');
+      const billPlatformShare = document.getElementById('billPlatformShare');
+      if (billVendorShare) billVendorShare.innerText = `₹${(total * 0.85).toFixed(2)}`;
+      if (billPlatformShare) billPlatformShare.innerText = `₹${(total * 0.15).toFixed(2)}`;
 
       const rangeEl = document.getElementById('smartcarRangeSub');
       const estRangeKm = Math.round((currentSoc / 100) * (batteryCapacity * (carSpec.efficiency || 6.8)));
@@ -3157,21 +3410,29 @@
       const newPin = Math.floor(1000 + Math.random() * 9000).toString();
       const invNum = 'INV-2026-' + Math.floor(1000 + Math.random() * 9000);
 
+      const userVehicleName = (virtualCarState && virtualCarState.car) ? virtualCarState.car : ((currentUser && currentUser.car) ? currentUser.car : 'MG ZS EV');
+
       const newBookingDoc = {
         _id: 'bkg_' + Date.now().toString(16),
         invoiceNumber: invNum,
         userId: activeUserId,
         customerName: currentUser.name,
         customerPhone: currentUser.phone,
-        vehicle: currentUser.car,
+        vehicle: userVehicleName,
         stationName: st.name,
+        vendorId: st.vendorId || 'vendor-jiobp',
+        vendorName: st.vendorName || 'Jio-bp pulse',
         portName: port.name + ' (' + port.type + ')',
+        portId: port.name,
         pin: newPin,
+        totalAmount: bookedTotal,
         amountPaid: bookedTotal,
+        platformFee: Math.round(bookedTotal * 0.15),
+        vendorPayout: Math.round(bookedTotal * 0.85),
         energyKwh: bookedKwh,
         currentSoc: bookedCurrentSoc,
         chargingDurationMinutes: bookedEstMinutes,
-        status: 'reserved',
+        status: 'CONFIRMED',
         createdAt: new Date().toISOString()
       };
 
@@ -3188,7 +3449,7 @@
         port.userId = activeUserId;
         port.customer = currentUser.name;
         port.phone = currentUser.phone;
-        port.vehicle = currentUser.car;
+        port.vehicle = userVehicleName;
         port.secondsLeft = 900;
         port.pin = newPin;
         port.paid = bookedTotal;
@@ -3367,6 +3628,7 @@
 
         // 1. Mark as charging locally starting directly from car's actual battery!
         port.status = 'charging';
+        port.vehicle = (virtualCarState && virtualCarState.car) ? virtualCarState.car : (port.vehicle || (currentUser ? currentUser.car : 'MG ZS EV'));
         port.initialSoc = liveHandshakeSoc;
         port.soc = liveHandshakeSoc;
         port.targetSoc = 100;
