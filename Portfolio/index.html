@@ -104,13 +104,13 @@
           href="simulator.html" 
           target="_blank"
           id="navCarSimLink" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-100 text-cyan-900 dark:bg-cyan-950/80 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 hover:scale-105 active:scale-95 transition-all shadow-sm"
-          title="Open Virtual EV Driving Simulator & 4G eSIM Telematics in New Tab"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-cyan-100 text-cyan-900 dark:bg-cyan-950/80 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 hover:scale-105 active:scale-95 transition-all shadow-sm"
+          title="Live Connected Car Telematics & Battery Status (Click to open Simulator in new tab)"
         >
           <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           <span>🚗</span>
-          <span class="hidden sm:inline">Drive Sim:</span>
-          <span id="navSimStatusText" class="font-mono text-[11px] font-black text-emerald-600 dark:text-cyan-400">Open &rarr;</span>
+          <span class="hidden sm:inline">Car:</span>
+          <span id="navSimStatusText" class="font-mono text-[11px] font-black text-emerald-600 dark:text-cyan-400">100% SoC</span>
         </a>
 
         <!-- Admin Console Trigger -->
@@ -2672,7 +2672,7 @@
       // Update nav link status
       const navStatus = document.getElementById('navSimStatusText');
       if (navStatus) {
-        navStatus.innerText = `${Math.round(data.soc)}% (${Number(data.tripDistance || 0).toFixed(0)} km)`;
+        navStatus.innerText = `${Math.round(data.soc)}% SoC (+${Number(data.tripDistance || 0).toFixed(0)} km)`;
       }
 
       // If checkout modal is open, dynamically update the bill and telemetry breakdown!
