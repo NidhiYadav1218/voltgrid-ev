@@ -83,12 +83,8 @@ export default async function handler(req, res) {
     // 2. Drop/Delete all bookings
     const bookingDel = await db.collection('bookings').deleteMany({});
 
-    // 3. Reset stations collection to fresh available ports
-    await db.collection('stations').updateOne(
-      { _id: 'global_stations' },
-      { $set: { stations: DEFAULT_STATIONS, updatedAt: new Date().toISOString() } },
-      { upsert: true }
-    );
+    // 3. Reset stations collection in MongoDB Atlas so stations.js re-initializes fresh
+    await db.collection('stations').deleteOne({ _id: 'global_stations' });
 
     return res.status(200).json({
       success: true,
