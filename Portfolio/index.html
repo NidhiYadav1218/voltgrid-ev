@@ -271,7 +271,7 @@
               </div>
 
               <a href="#chargers" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-900 hover:bg-slate-800 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white dark:text-slate-950 flex items-center justify-center gap-2 transition-all shadow-sm">
-                <span>View All 3 Real Hubs & Lock Spot</span>
+                <span>View All 7 Gujarat Hubs & Lock Spot</span>
                 <span>&rarr;</span>
               </a>
 
@@ -766,31 +766,31 @@
         <p id="checkoutStationSub" class="text-xs text-slate-500">Delhi-Jaipur Expressway Hub (Km 42)</p>
       </div>
 
-      <!-- Automated Smartcar Connected Telematics & Battery Allocation -->
-      <div class="mt-4 bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl p-4 space-y-3">
+      <!-- Friendly Vehicle Connection & Smart Battery Allocation -->
+      <div class="mt-4 bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-3xl p-4 sm:p-5 space-y-3.5 shadow-sm">
         
-        <!-- Smartcar Connected Telematics Bridge (Automatic) -->
-        <div class="p-3.5 rounded-2xl bg-slate-900 text-white dark:bg-slate-950 border border-emerald-500/30 shadow-sm space-y-2.5">
+        <!-- Vehicle Card -->
+        <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-emerald-200/90 dark:border-slate-700 shadow-sm space-y-2.5">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span class="text-xs font-bold text-white tracking-wide">Smartcar Connected Telematics</span>
-              <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Live IoT</span>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="text-xs font-bold text-slate-800 dark:text-white tracking-wide">Connected EV Vehicle</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Live Auto-Sync</span>
             </div>
             <div class="flex items-center gap-2.5">
               <a 
                 href="simulator.html" 
                 target="_blank"
-                title="Open Standalone Driving Simulator & 4G eSIM Telematics in New Tab"
-                class="text-[10px] text-emerald-400 hover:text-emerald-300 font-mono font-bold flex items-center gap-1 transition-colors underline"
+                title="Open Vehicle Simulator in New Tab to test driving or change battery"
+                class="text-[11px] text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1 transition-colors underline"
               >
-                <span>🚗</span> Sim Page ↗
+                <span>🚗</span> Simulator ↗
               </a>
               <button 
                 type="button" 
                 onclick="syncLiveSmartcarBattery(true)" 
                 title="Re-query vehicle telematics"
-                class="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono font-bold flex items-center gap-1 transition-colors"
+                class="text-[11px] text-slate-600 dark:text-slate-300 hover:text-emerald-600 font-bold flex items-center gap-1 transition-colors"
               >
                 <span id="smartcarSyncIcon">🔄</span>
                 <span id="smartcarSyncText">Re-sync</span>
@@ -800,95 +800,82 @@
 
           <div class="flex items-center justify-between pt-1">
             <div class="flex items-center gap-2.5">
-              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/40 flex items-center justify-center text-base">
+              <div class="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-xl shadow-xs">
                 🚗
               </div>
               <div>
-                <div class="text-xs font-extrabold text-white flex items-center gap-1.5">
+                <div class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
                   <span id="smartcarCarName">MG ZS EV</span>
-                  <span class="text-[10px] font-mono font-normal text-slate-400" id="smartcarVinBadge">&bull; VIN: ...5921</span>
+                  <span class="text-[11px] font-normal text-slate-400" id="smartcarVinBadge">&bull; VIN: ...5921</span>
                 </div>
-                <div id="smartcarStatusSub" class="text-[11px] text-slate-300 mt-0.5">
-                  <span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> Battery auto-detected via Onboard eSIM
+                <div id="smartcarStatusSub" class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                  <span class="text-emerald-600 dark:text-emerald-400 font-bold">✓ Live Battery:</span> Auto-detected from your vehicle
                 </div>
               </div>
             </div>
 
             <div class="text-right">
-              <span id="checkoutBatteryDisplay" class="px-3 py-1 rounded-xl font-mono font-black text-sm bg-emerald-500 text-white shadow-sm inline-block">
+              <span id="checkoutBatteryDisplay" class="px-3 py-1 rounded-xl font-extrabold text-sm bg-emerald-500 text-white shadow-sm inline-block">
                 22% Left
               </span>
-              <span id="smartcarRangeSub" class="block text-[10px] text-slate-400 font-mono mt-0.5">
+              <span id="smartcarRangeSub" class="block text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
                 88 km range
               </span>
             </div>
           </div>
 
-          <!-- 4G eSIM Trip Telematics Bar (Driven vs Consumed) -->
-          <div class="mt-2.5 grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[10px] font-mono">
+          <!-- Soft Friendly Trip Telematics Bar -->
+          <div class="mt-2.5 grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-emerald-50/60 dark:bg-slate-900/60 border border-emerald-100 dark:border-slate-700/60 text-xs text-center">
             <div>
-              <span class="text-slate-400 block text-[9px] uppercase font-bold">Odometer</span>
-              <strong id="checkoutOdometer" class="text-white">14,250.0 km</strong>
+              <span class="text-slate-400 block text-[10px] font-bold uppercase">Total Odo</span>
+              <strong id="checkoutOdometer" class="text-slate-800 dark:text-slate-100 font-bold">14,250.0 km</strong>
             </div>
             <div>
-              <span class="text-slate-400 block text-[9px] uppercase font-bold">Trip Driven</span>
-              <strong id="checkoutTripDistance" class="text-cyan-400">+0.0 km</strong>
+              <span class="text-slate-400 block text-[10px] font-bold uppercase">Driven Today</span>
+              <strong id="checkoutTripDistance" class="text-emerald-600 dark:text-emerald-400 font-bold">+0.0 km</strong>
             </div>
-            <div class="text-right">
-              <span class="text-slate-400 block text-[9px] uppercase font-bold">Trip Consumed</span>
-              <strong id="checkoutTripConsumed" class="text-amber-400">-78% SoC</strong>
+            <div>
+              <span class="text-slate-400 block text-[10px] font-bold uppercase">Battery Used</span>
+              <strong id="checkoutTripConsumed" class="text-amber-600 dark:text-amber-400 font-bold">-78%</strong>
             </div>
           </div>
         </div>
 
         <!-- Visual Two-Tone Battery Graphic (Left = Remaining in Car, Right = To Be Charged) -->
-        <div class="relative p-1.5 bg-slate-200/80 dark:bg-slate-800/80 rounded-2xl border border-slate-300 dark:border-slate-700">
-          <div class="flex h-7 rounded-xl overflow-hidden font-mono font-extrabold text-[10px] leading-7 text-center">
+        <div class="relative p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-emerald-200/70 dark:border-slate-700">
+          <div class="flex h-7 rounded-xl overflow-hidden font-bold text-[11px] leading-7 text-center">
             <!-- Left: Current Battery in Vehicle -->
-            <div id="batteryVisualCurrent" class="bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 transition-all duration-300 flex items-center justify-center truncate px-1 shadow-sm" style="width: 22%;">
+            <div id="batteryVisualCurrent" class="bg-gradient-to-r from-emerald-500 to-teal-400 text-white transition-all duration-300 flex items-center justify-center truncate px-2 shadow-sm" style="width: 22%;">
               <span id="batteryVisualCurrentText">🔋 22% Left</span>
             </div>
             <!-- Right: Needed Charge to 100% -->
-            <div id="batteryVisualNeeded" class="bg-gradient-to-r from-cyan-500 to-emerald-400 text-slate-950 transition-all duration-300 flex items-center justify-center truncate px-1" style="width: 78%;">
-              <span id="batteryVisualNeededText">⚡ +78% to Reach 100% Full</span>
+            <div id="batteryVisualNeeded" class="bg-gradient-to-r from-amber-400 to-orange-400 text-white transition-all duration-300 flex items-center justify-center truncate px-2" style="width: 78%;">
+              <span id="batteryVisualNeededText">⚡ +78% Needed</span>
             </div>
           </div>
         </div>
 
         <!-- Clarifying Breakdown Cards -->
-        <div class="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-emerald-200/60 dark:border-emerald-800/40">
+        <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-emerald-200/60 dark:border-emerald-800/40">
           <div class="text-slate-600 dark:text-slate-400">
             <span class="block text-[10px] uppercase font-bold text-slate-400">Energy Needed to Reach 100%</span>
-            <strong class="text-slate-800 dark:text-slate-200 font-mono"><span id="checkoutPercentNeeded">78</span>% (<span id="checkoutKwhNeeded">39.2</span> kWh)</strong>
+            <strong class="text-slate-800 dark:text-slate-200 text-xs"><span id="checkoutPercentNeeded">78</span>% (<span id="checkoutKwhNeeded">39.2</span> kWh)</strong>
           </div>
           <div class="text-right">
             <span class="block text-[10px] uppercase font-bold text-slate-400">Est. Charging Time Needed</span>
-            <strong class="text-emerald-600 dark:text-cyan-400 font-mono font-bold"><span id="checkoutEstMinutes">16</span> mins</strong>
+            <strong class="text-emerald-600 dark:text-emerald-400 font-bold text-xs"><span id="checkoutEstMinutes">16 mins</span></strong>
           </div>
         </div>
 
-        <!-- Manual Battery Controls & Presets -->
-        <div class="pt-1">
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Test Battery SoC Presets:</span>
-            <div class="flex items-center gap-1 text-[10px] font-bold">
-              <button type="button" onclick="updateBatteryEstimation(15)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">15%</button>
-              <button type="button" onclick="updateBatteryEstimation(22)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">22%</button>
-              <button type="button" onclick="updateBatteryEstimation(45)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">45%</button>
-              <button type="button" onclick="updateBatteryEstimation(65)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">65%</button>
-              <button type="button" onclick="updateBatteryEstimation(80)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">80%</button>
-            </div>
+        <!-- Live Battery Trust Card (No manual override here; simulator controls state) -->
+        <div class="flex items-center justify-between p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-emerald-200/80 dark:border-slate-700 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-base">✨</span>
+            <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium">Battery auto-synced live from your vehicle</span>
           </div>
-          <input 
-            type="range" 
-            id="checkoutBatterySlider" 
-            min="5" 
-            max="95" 
-            value="22" 
-            step="5" 
-            oninput="updateBatteryEstimation(this.value)" 
-            class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500" 
-          />
+          <a href="simulator.html" target="_blank" class="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 underline underline-offset-2 flex items-center gap-1">
+            Change in Simulator ↗
+          </a>
         </div>
 
         <!-- Notice if Car is already 100% Full -->
@@ -958,13 +945,19 @@
           </label>
         </div>
 
-        <!-- Safe Notice -->
-        <p class="text-[11px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
-          ℹ️ <strong>Personal Project Sandbox:</strong> This is a test simulation. No actual credit card or bank money will be deducted.
-        </p>
+        <!-- Reassuring Safety Notice -->
+        <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 rounded-2xl text-xs space-y-1 text-emerald-900 dark:text-emerald-200">
+          <div class="font-bold flex items-center gap-1.5">
+            <span>🛡️ 100% Safe & Guaranteed Reservation</span>
+          </div>
+          <p class="text-[11px] text-emerald-700 dark:text-emerald-300/90 leading-relaxed">
+            Exclusive 15-minute hold • Bay reserved solely for your vehicle • Zero waiting line
+          </p>
+        </div>
 
-        <button onclick="executePayment()" id="btnPayConfirm" class="w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 dark:bg-cyan-400 dark:hover:bg-cyan-300 text-white dark:text-slate-950 shadow-lg shadow-emerald-500/25 transition-all">
-          Authorize Demo Payment & Lock Spot
+        <button onclick="executePayment()" id="btnPayConfirm" class="w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/25 transition-all flex flex-col items-center justify-center cursor-pointer">
+          <span>Confirm & Lock Charging Spot ⚡</span>
+          <span class="text-[10px] font-medium opacity-90">Instant 4-digit PIN generated • Free cancellation</span>
         </button>
       </div>
 
@@ -2594,36 +2587,42 @@
         const directionsLink = st.directionsUrl || `https://www.google.com/maps/dir/?api=1&destination=${st.lat || 23.0416},${st.lng || 72.5074}`;
 
         return `
-          <div onclick="selectStation('${st.id}')" class="cursor-pointer rounded-3xl p-5 border transition-all duration-200 ${
+          <div onclick="selectStation('${st.id}')" class="cursor-pointer rounded-3xl p-5 border transition-all duration-200 flex flex-col justify-between h-full min-h-[200px] ${
             isSelected
-              ? 'bg-emerald-500/10 dark:bg-cyan-500/10 border-emerald-500 dark:border-cyan-400 shadow-md ring-2 ring-emerald-500/20'
-              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+              ? 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500 dark:border-emerald-400 shadow-md ring-2 ring-emerald-500/20'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600/70 shadow-sm'
           }">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-1.5 mb-1">
-                  <span class="text-xs">${st.vendorLogo || '⚡'}</span>
-                  <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-cyan-400 border border-emerald-500/20">${st.vendorName || 'VoltGrid'}</span>
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">&bull; ${st.type}</span>
+            <div>
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex-1">
+                  <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+                    <span class="text-xs">${st.vendorLogo || '⚡'}</span>
+                    <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">${st.vendorName || 'VoltGrid'}</span>
+                    <span class="text-[10px] font-semibold text-slate-400">&bull; ${st.type}</span>
+                  </div>
+                  <h4 class="text-base font-extrabold text-slate-900 dark:text-white font-heading mt-1 min-h-[44px] flex items-center leading-snug">${st.name}</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">${st.location}</p>
                 </div>
-                <h4 class="text-base font-extrabold text-slate-900 dark:text-white font-heading mt-0.5">${st.name}</h4>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${st.location}</p>
+                <span class="px-2.5 py-1 rounded-full text-xs font-bold shrink-0 ${
+                  avail > 0 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-400'
+                }">
+                  ${avail}/${total} Free
+                </span>
               </div>
-              <span class="px-2.5 py-1 rounded-full text-xs font-bold ${
-                avail > 0 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-400'
-              }">
-                ${avail}/${total} Free
-              </span>
+
+              <div class="flex items-center gap-1.5 text-[11px] text-emerald-700 dark:text-emerald-300 font-medium mt-2.5 bg-emerald-50/80 dark:bg-emerald-950/40 px-2.5 py-1 rounded-xl">
+                <span>🛡️</span> Verified Safe Bay • 24x7 Assistance
+              </div>
             </div>
 
-            <div class="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
               <div class="flex items-center gap-2">
-                <span class="font-bold text-slate-800 dark:text-slate-200">₹${st.pricePerKwh}/kWh</span>
-                <span class="px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-300 text-[10px] font-mono font-bold flex items-center gap-1">
+                <span class="font-extrabold text-slate-800 dark:text-slate-200">₹${st.pricePerKwh}/kWh</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-emerald-100/70 dark:bg-slate-800 text-emerald-800 dark:text-emerald-300 text-[11px] font-semibold flex items-center gap-1">
                   🚗 ${dist} km (${estDriveMins}m)
                 </span>
               </div>
-              <a href="${directionsLink}" target="_blank" onclick="event.stopPropagation()" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-cyan-400 font-bold flex items-center gap-1 transition-all" title="Open Google Maps Real Navigation">
+              <a href="${directionsLink}" target="_blank" onclick="event.stopPropagation()" class="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold flex items-center gap-1 transition-all" title="Open Google Maps Real Navigation">
                 <span>🗺️ Directions ↗</span>
               </a>
             </div>
@@ -2722,11 +2721,14 @@
               </div>
               <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">${port.type} &bull; Up to ${port.maxKw} kW (${port.connector || 'CCS2'})</p>
 
-              <div class="mt-4 p-3 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-100 dark:border-slate-800/80 min-h-[72px] flex flex-col justify-center">
+              <div class="mt-4 p-3 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-100 dark:border-slate-800/80 min-h-[82px] flex flex-col justify-center">
                 ${isAvail ? `
-                  <div class="text-xs text-slate-500 flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                    Ready for immediate high-speed hookup
+                  <div class="text-xs text-slate-600 dark:text-slate-300 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span class="font-medium">Ready for immediate hookup &bull; Zero wait</span>
+                  </div>
+                  <div class="text-[11px] text-emerald-700 dark:text-emerald-300 mt-1 flex items-center gap-1 font-medium">
+                    <span>🛡️</span> 15-min arrival hold guaranteed
                   </div>
                 ` : ''}
 
@@ -2786,8 +2788,8 @@
 
             <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
               ${isAvail ? `
-                <button onclick="startBookingFlow('${port.id}')" class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 dark:bg-cyan-400 dark:hover:bg-cyan-300 text-white dark:text-slate-950 shadow-md shadow-emerald-500/20 active:scale-95 transition-all">
-                  Reserve & Checkout
+                <button onclick="startBookingFlow('${port.id}')" class="w-full py-3 rounded-2xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 text-white shadow-md shadow-emerald-500/20 active:scale-95 transition-all">
+                  Reserve & Checkout ⚡
                 </button>
               ` : ''}
 
@@ -3055,9 +3057,19 @@
         if (visualNeededText) visualNeededText.innerText = '';
       } else {
         if (visualCurrent) visualCurrent.style.width = `${currentSoc}%`;
-        if (visualCurrentText) visualCurrentText.innerText = `🔋 ${currentSoc}% Left`;
+        if (visualCurrentText) {
+          visualCurrentText.innerText = currentSoc < 22 ? `${currentSoc}%` : `🔋 ${currentSoc}% Left`;
+        }
         if (visualNeeded) visualNeeded.style.width = `${percentNeeded}%`;
-        if (visualNeededText) visualNeededText.innerText = `⚡ +${percentNeeded}% to Reach 100% Full`;
+        if (visualNeededText) {
+          if (percentNeeded < 20) {
+            visualNeededText.innerText = `+${percentNeeded}%`;
+          } else if (percentNeeded < 38) {
+            visualNeededText.innerText = `+${percentNeeded}% Needed`;
+          } else {
+            visualNeededText.innerText = `⚡ +${percentNeeded}% Needed`;
+          }
+        }
       }
 
       // Update preset buttons styling
@@ -3101,15 +3113,15 @@
         if (fullNoticeEl) fullNoticeEl.classList.remove('hidden');
         if (btnPay) {
           btnPay.disabled = true;
-          btnPay.className = 'w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-300 dark:bg-slate-800 text-slate-500 dark:text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-700 shadow-none transition-all';
+          btnPay.className = 'w-full py-3.5 rounded-2xl font-bold text-xs uppercase tracking-wider bg-slate-200 dark:bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-700 shadow-none transition-all';
           btnPay.innerText = '🚫 Battery 100% Full • Booking Disabled';
         }
       } else {
         if (fullNoticeEl) fullNoticeEl.classList.add('hidden');
         if (btnPay) {
           btnPay.disabled = false;
-          btnPay.className = 'w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 dark:bg-cyan-400 dark:hover:bg-cyan-300 text-white dark:text-slate-950 shadow-lg shadow-emerald-500/25 transition-all cursor-pointer';
-          btnPay.innerText = 'Authorize Demo Payment & Lock Spot';
+          btnPay.className = 'w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/25 transition-all flex flex-col items-center justify-center cursor-pointer';
+          btnPay.innerHTML = '<span>Confirm & Lock Charging Spot ⚡</span><span class="text-[10px] font-medium opacity-90">Instant 4-digit PIN generated • Free cancellation</span>';
         }
       }
 
@@ -3603,8 +3615,10 @@
       const currentSid = getDeviceSessionId();
 
       const btn = document.getElementById('btnPayConfirm');
-      btn.innerText = "Persisting to MongoDB Atlas Cloud...";
-      btn.disabled = true;
+      if (btn) {
+        btn.innerHTML = '<span>Securing Your Bay & Generating PIN...</span><span class="text-[10px] font-medium opacity-90">Locking 15-minute slot guarantee</span>';
+        btn.disabled = true;
+      }
 
       const st = stations.find(s => s.id === bookedStationId);
       const port = st.ports.find(p => p.id === bookedPortId);
