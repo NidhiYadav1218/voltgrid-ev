@@ -188,12 +188,31 @@ export default async function handler(req, res) {
             p.secondsLeft = Math.max(0, Math.floor((900000 - ageMs) / 1000));
           }
         } else if (p.status === 'charging' && p.chargingStartedAt) {
-          const totalSec = p.chargingDurationSeconds || 1080;
+          const totalSec = p.chargingDurationSeconds || (p.chargingDurationMinutes ? p.chargingDurationMinutes * 60 : 1080);
           const elapsedSec = Math.floor((now - p.chargingStartedAt) / 1000);
           if (elapsedSec >= totalSec) {
             p.soc = 100;
             p.kw = 0;
             p.secondsLeft = 0;
+            // If completed over 30 minutes ago, auto-release port back to available
+            if (elapsedSec - totalSec > 1800) {
+              p.status = 'available';
+              p.customer = null;
+              p.phone = null;
+              p.vehicle = null;
+              p.pin = null;
+              p.userId = null;
+              p.sessionId = null;
+              p.chargingStartedAt = null;
+              p.chargingDurationSeconds = null;
+              docChanged = true;
+            }
+          } else {
+            const initial = (p.initialSoc !== undefined && p.initialSoc !== null) ? p.initialSoc : 25;
+            const progressFraction = Math.min(1, elapsedSec / totalSec);
+            p.soc = Math.min(100, Math.round(initial + (100 - initial) * progressFraction));
+            p.secondsLeft = Math.max(0, totalSec - elapsedSec);
+            docChanged = true;
           }
         }
       });

@@ -635,8 +635,12 @@ Loading live telematics stream...
         if (!event.data) return;
         // Listen for recharge events from VoltGrid charging sessions
         if (event.data.action === 'CHARGE_COMPLETE' || event.data.action === 'REFILL_100') {
+          state.isDriving = false;
+          state.speed = 0;
+          state.targetSpeed = 0;
+          state.gear = 'P';
           refillToSoc(100);
-          showToast('⚡ Received Full Charge from VoltGrid Station!');
+          showToast('⚡ Received Full Charge from VoltGrid Station! Car parked at [P].');
         } else if (event.data.action === 'INJECT_SOC' && event.data.soc) {
           refillToSoc(event.data.soc);
         }

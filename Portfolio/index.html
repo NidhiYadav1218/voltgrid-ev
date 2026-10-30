@@ -851,36 +851,28 @@
           </div>
         </div>
 
-        <!-- Collapsible Manual Override (Hidden by default, user doesn't have to do anything!) -->
-        <div class="pt-0.5">
-          <button 
-            type="button" 
-            onclick="toggleManualBatteryControls()" 
-            class="text-[10px] font-semibold text-slate-400 hover:text-emerald-600 dark:hover:text-cyan-400 flex items-center gap-1 transition-colors"
-          >
-            <span>⚙️</span>
-            <span id="manualToggleLabel">Override battery percentage manually (optional)</span>
-          </button>
-
-          <div id="manualBatteryControls" class="hidden mt-2 pt-2 border-t border-emerald-200/50 dark:border-emerald-800/40 space-y-2">
-            <div class="flex flex-wrap items-center gap-1.5 text-[10px] font-bold">
-              <span class="text-slate-400 uppercase mr-1">Presets:</span>
-              <button type="button" onclick="updateBatteryEstimation(15)" id="btnPreset15" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">15%</button>
-              <button type="button" onclick="updateBatteryEstimation(25)" id="btnPreset25" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">25%</button>
-              <button type="button" onclick="updateBatteryEstimation(45)" id="btnPreset45" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">45%</button>
-              <button type="button" onclick="updateBatteryEstimation(65)" id="btnPreset65" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">65%</button>
+        <!-- Manual Battery Controls & Presets -->
+        <div class="pt-1">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Test Battery SoC Presets:</span>
+            <div class="flex items-center gap-1 text-[10px] font-bold">
+              <button type="button" onclick="updateBatteryEstimation(15)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">15%</button>
+              <button type="button" onclick="updateBatteryEstimation(22)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">22%</button>
+              <button type="button" onclick="updateBatteryEstimation(45)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">45%</button>
+              <button type="button" onclick="updateBatteryEstimation(65)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">65%</button>
+              <button type="button" onclick="updateBatteryEstimation(80)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">80%</button>
             </div>
-            <input 
-              type="range" 
-              id="checkoutBatterySlider" 
-              min="5" 
-              max="85" 
-              value="22" 
-              step="5" 
-              oninput="updateBatteryEstimation(this.value)" 
-              class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500" 
-            />
           </div>
+          <input 
+            type="range" 
+            id="checkoutBatterySlider" 
+            min="5" 
+            max="95" 
+            value="22" 
+            step="5" 
+            oninput="updateBatteryEstimation(this.value)" 
+            class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500" 
+          />
         </div>
 
         <!-- Notice if Car is already 100% Full -->
@@ -921,19 +913,6 @@
         <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-between text-sm font-extrabold text-slate-900 dark:text-white">
           <span>Total Payable Amount</span>
           <span class="text-emerald-600 dark:text-cyan-400">₹<span id="billTotal">1,537.30</span></span>
-        </div>
-
-        <!-- Transparent Demo Money Flow Split between Vendor and App -->
-        <div class="mt-2 p-2.5 rounded-xl bg-slate-900/60 dark:bg-slate-900 border border-slate-700/60 text-[10px] space-y-1 font-mono">
-          <div class="text-[9px] uppercase tracking-wider text-slate-400 font-bold font-sans">Demo Money Flow Split:</div>
-          <div class="flex items-center justify-between text-slate-300">
-            <span>💼 CPO Vendor Payout (85%):</span>
-            <span class="text-cyan-400 font-bold" id="billVendorShare">₹1,306.70</span>
-          </div>
-          <div class="flex items-center justify-between text-slate-300">
-            <span>🛡️ VoltGrid Margin & Grid Fee (15%):</span>
-            <span class="text-amber-400 font-bold" id="billPlatformShare">₹230.60</span>
-          </div>
         </div>
 
         <div id="billTripNote" class="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1 pt-1.5 border-t border-slate-200 dark:border-slate-800">
@@ -1814,11 +1793,12 @@
     }
 
     let stations = VoltGridDB.stations;
+    const nowInit = Date.now();
     // Auto-clean any mock demo vehicles or expired ports from previous stale sessions
     stations.forEach(st => {
       st.ports.forEach(p => {
-        // Wipe old mock demo cars that were hardcoded in prior sessions
-        if (p.vehicle === 'Porsche Taycan' || p.vehicle === 'Tata Nexon EV' || p.vehicle === 'Hyundai Ioniq 5' || p.vehicle === 'Mahindra XUV400') {
+        // Wipe old mock demo cars that were hardcoded in prior sessions or mock test users
+        if (p.vehicle === 'Porsche Taycan' || p.vehicle === 'Tata Nexon EV' || p.vehicle === 'Hyundai Ioniq 5' || p.vehicle === 'Mahindra XUV400' || p.customer === 'Kiran Patel') {
           p.status = 'available';
           p.vehicle = null;
           p.customer = null;
@@ -1827,6 +1807,8 @@
           p.soc = null;
           p.kw = null;
           p.secondsLeft = 0;
+          p.chargingStartedAt = null;
+          p.chargingDurationSeconds = null;
         }
         if (p.status === 'reserved' && (!p.secondsLeft || p.secondsLeft <= 0)) {
           p.status = 'available';
@@ -1835,6 +1817,33 @@
           p.vehicle = null;
           p.pin = null;
           p.secondsLeft = 0;
+        }
+        // Timestamp-aware charging resumption:
+        if (p.status === 'charging' && p.chargingStartedAt) {
+          const totalSec = p.chargingDurationSeconds || (p.chargingDurationMinutes ? p.chargingDurationMinutes * 60 : 18 * 60);
+          const elapsedSec = Math.floor((nowInit - p.chargingStartedAt) / 1000);
+          if (elapsedSec >= totalSec) {
+            p.soc = 100;
+            p.kw = 0;
+            p.secondsLeft = 0;
+            // If completed over 30 minutes ago, auto-release port back to available
+            if (elapsedSec - totalSec > 1800) {
+              p.status = 'available';
+              p.customer = null;
+              p.phone = null;
+              p.vehicle = null;
+              p.pin = null;
+              p.userId = null;
+              p.sessionId = null;
+              p.chargingStartedAt = null;
+              p.chargingDurationSeconds = null;
+            }
+          } else {
+            const initial = (p.initialSoc !== undefined && p.initialSoc !== null) ? p.initialSoc : 25;
+            const progressFraction = Math.min(1, elapsedSec / totalSec);
+            p.soc = Math.min(100, Math.round(initial + (100 - initial) * progressFraction));
+            p.secondsLeft = Math.max(0, totalSec - elapsedSec);
+          }
         }
       });
     });
@@ -1856,7 +1865,25 @@
 
     function getMyLocalHolds() {
       try {
-        return JSON.parse(localStorage.getItem('voltgrid_my_local_holds') || '{}');
+        const raw = JSON.parse(localStorage.getItem('voltgrid_my_local_holds') || '{}');
+        const now = Date.now();
+        let changed = false;
+        const valid = {};
+        for (const [k, v] of Object.entries(raw)) {
+          // Keep hold only if less than 2 hours old
+          if (v && v.timestamp && (now - v.timestamp < 7200000)) {
+            valid[k] = v;
+          } else if (v && !v.timestamp) {
+            // Auto-expire legacy hold without timestamp to prevent stale ghost sessions
+            changed = true;
+          } else {
+            changed = true;
+          }
+        }
+        if (changed) {
+          localStorage.setItem('voltgrid_my_local_holds', JSON.stringify(valid));
+        }
+        return valid;
       } catch (e) {
         return {};
       }
@@ -1871,7 +1898,7 @@
     function saveMyLocalHold(portId, data) {
       const holds = getMyLocalHolds();
       if (data) {
-        holds[portId] = data;
+        holds[portId] = { ...data, timestamp: Date.now() };
       } else {
         delete holds[portId];
       }
@@ -2844,6 +2871,13 @@
       pendingCheckout.gst = gst;
       pendingCheckout.total = total;
 
+      virtualCarState.soc = currentSoc;
+      saveVirtualCarState();
+      const navStatus = document.getElementById('navSimStatusText');
+      if (navStatus) {
+        navStatus.innerText = `${currentSoc}% SoC`;
+      }
+
       const dispEl = document.getElementById('checkoutBatteryDisplay');
       const sliderEl = document.getElementById('checkoutBatterySlider');
       const neededEl = document.getElementById('checkoutPercentNeeded');
@@ -3113,6 +3147,13 @@
       onSimBatterySliderChange(socVal);
       const slider = document.getElementById('simBatterySlider');
       if (slider) slider.value = socVal;
+      const navStatus = document.getElementById('navSimStatusText');
+      if (navStatus) {
+        navStatus.innerText = `${socVal}% SoC`;
+      }
+      if (telematicsChannel) {
+        telematicsChannel.postMessage({ action: 'INJECT_SOC', soc: socVal });
+      }
       showToast(`📡 Injected Telematics: Battery SoC set to ${socVal}%!`);
       playNotificationSound('chime');
     }
@@ -3688,8 +3729,16 @@
     }
 
     async function releasePort(portId) {
-      const st = stations.find(s => s.id === currentStationId);
-      const port = st ? st.ports.find(p => p.id === portId) : null;
+      let st = null;
+      let port = null;
+      for (const s of stations) {
+        const found = s.ports.find(p => p.id === portId);
+        if (found) {
+          st = s;
+          port = found;
+          break;
+        }
+      }
       if (port) {
         if (!isPortOwner(port)) {
           alert("🔒 ACCESS DENIED! You cannot disconnect another driver's charging cable.");
@@ -3707,7 +3756,16 @@
         port.soc = null;
         port.kw = null;
         port.paid = 0;
+        port.chargingStartedAt = null;
+        port.chargingDurationSeconds = null;
         port.hasAlertedFull = false;
+        
+        // Update vehicle state to 100% full
+        virtualCarState.soc = 100;
+        virtualCarState.isDriving = false;
+        virtualCarState.speed = 0;
+        saveVirtualCarState();
+        
         saveVoltGridDB();
         renderPorts();
         updateLiveSessionHero();
@@ -3719,13 +3777,13 @@
           await fetch(`${API_BASE}/api/stations`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'release', stationId: currentStationId, portId })
+            body: JSON.stringify({ action: 'release', stationId: st ? st.id : currentStationId, portId })
           });
         } catch (e) {
           console.warn('Could not sync release to cloud stations:', e);
         }
 
-        alert("✅ Cable disconnected. Charging session ended and bay is now available for other drivers.");
+        showToast("✅ Charging cable disconnected. Bay is now available for waiting drivers.");
       }
     }
 
@@ -3805,40 +3863,45 @@
                 cSt.ports.forEach(cP => {
                   const localP = localSt.ports.find(p => p.id === cP.id);
                   if (localP) {
-                    localP.status = cP.status;
-                    localP.customer = cP.customer;
-                    localP.phone = cP.phone;
-                    localP.vehicle = cP.vehicle;
-                    localP.pin = cP.pin;
-                    localP.paid = cP.paid;
-                    localP.sessionId = cP.sessionId;
+                    const isMine = isPortOwner(localP);
+                    if (!isMine) {
+                      localP.customer = cP.customer;
+                      localP.phone = cP.phone;
+                      localP.vehicle = cP.vehicle;
+                      localP.pin = cP.pin;
+                      localP.paid = cP.paid;
+                      localP.sessionId = cP.sessionId;
+                      localP.status = cP.status;
+                    }
                     if (cP.status === 'available') {
-                      localP.status = 'available';
-                      localP.secondsLeft = 0;
-                      localP.soc = null;
-                      localP.kw = null;
-                      localP.hasAlertedFull = false;
-                      saveMyLocalHold(cP.id, null);
+                      if (!isMine || localP.status === 'available') {
+                        localP.status = 'available';
+                        localP.secondsLeft = 0;
+                        localP.soc = null;
+                        localP.kw = null;
+                        localP.hasAlertedFull = false;
+                        saveMyLocalHold(cP.id, null);
+                      }
                     } else if (cP.status === 'reserved') {
-                      localP.status = 'reserved';
-                      if (cP.secondsLeft) localP.secondsLeft = cP.secondsLeft;
-                      localP.initialSoc = cP.initialSoc || 25;
-                      localP.soc = cP.initialSoc || 25;
-                      localP.chargingDurationMinutes = cP.chargingDurationMinutes || 18;
-                      if (isPortOwner(localP)) {
-                        saveMyLocalHold(localP.id, { active: true, pin: localP.pin, invNum: localP.invoiceNumber });
+                      if (!isMine) {
+                        localP.status = 'reserved';
+                        if (cP.secondsLeft) localP.secondsLeft = cP.secondsLeft;
+                        localP.initialSoc = cP.initialSoc || 25;
+                        localP.soc = cP.initialSoc || 25;
+                        localP.chargingDurationMinutes = cP.chargingDurationMinutes || 18;
                       }
                     } else if (cP.status === 'charging') {
-                      localP.status = 'charging';
-                      if (isPortOwner(localP)) {
+                      if (isMine) {
+                        localP.status = 'charging';
                         // The vehicle owner's device controls and advances their own battery %!
-                        // Do NOT let background Atlas polling overwrite local advancing progress!
+                        // Do NOT let background Atlas polling overwrite or regress local advancing progress!
                         if (localP.soc === undefined || localP.soc === null) {
                           localP.soc = (cP.soc !== undefined && cP.soc !== null) ? cP.soc : (localP.initialSoc || 25);
                         }
                         if (cP.soc >= 100) localP.soc = 100;
                         saveMyLocalHold(localP.id, { active: true, pin: localP.pin, invNum: localP.invoiceNumber });
                       } else {
+                        localP.status = 'charging';
                         // Other viewing drivers sync live telemetry directly from Atlas:
                         localP.soc = (cP.soc !== undefined && cP.soc !== null) ? cP.soc : (localP.soc || 25);
                         localP.kw = (cP.kw !== undefined && cP.kw !== null) ? cP.kw : (localP.kw || 120);
@@ -4215,15 +4278,18 @@
                 p.hasAlertedFull = true;
 
                 if (isPortOwner(p)) {
+                  virtualCarState.soc = 100;
+                  virtualCarState.isDriving = false;
+                  virtualCarState.speed = 0;
+                  saveVirtualCarState();
+
                   playNotificationSound('batteryFull');
                   showToast(`🎉 CHARGING COMPLETE: Your ${p.vehicle || 'EV'} has reached 100% full capacity! 0 kW draw. Ready to unplug.`);
                   // Signal simulator.html over BroadcastChannel to refill virtual vehicle!
                   if (telematicsChannel) {
                     telematicsChannel.postMessage({ action: 'CHARGE_COMPLETE', targetSoc: 100 });
                   }
-                  setTimeout(() => {
-                    alert(`⚡ CHARGING COMPLETE (100% FULL)!\n\nVehicle: ${p.vehicle || 'Your EV'}\nCharging Bay: ${st.name} • ${p.name}\n\n🎉 Your battery has reached 100% full capacity! Power draw is now 0 kW.\n\nPlease disconnect your charging cable to free the bay for waiting drivers.`);
-                  }, 120);
+                  needsRerender = true;
                 }
               }
             }
