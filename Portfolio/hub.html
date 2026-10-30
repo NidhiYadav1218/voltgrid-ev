@@ -87,6 +87,13 @@
 
       <!-- Quick Portals & Action Buttons -->
       <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Live Car Status -->
+        <a href="simulator.html" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-cyan-100 text-cyan-900 dark:bg-cyan-950/80 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 hover:scale-105 transition-all shadow-xs" title="Connected EV Telematics (Click to open Simulator)">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>🚗</span>
+          <span id="navHubSimStatusText" class="font-mono font-black text-emerald-600 dark:text-cyan-400">22% SoC</span>
+        </a>
+
         <a href="vendor.html" class="px-2.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 dark:bg-purple-950 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-xs font-bold transition-all flex items-center gap-1" title="Open Vendor CPO Portal">
           <span>💼</span> <span class="hidden md:inline">Vendor</span>
         </a>
@@ -278,6 +285,48 @@
               <span id="batteryVisualNeededText">⚡ +78% Needed</span>
             </div>
           </div>
+        </div>
+
+        <!-- Full Battery Notice with 1-Click Simulation Buttons -->
+        <div id="checkoutFullBatteryNotice" class="hidden p-3 rounded-2xl bg-amber-500/10 border border-amber-500/40 text-amber-900 dark:text-amber-300 text-xs space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="text-base">🎉</span>
+            <div>
+              <strong class="block text-xs font-bold text-amber-800 dark:text-amber-200">Vehicle Battery is 100% Full!</strong>
+              <span class="text-[11px] text-amber-700/90 dark:text-amber-300/80">No charging energy needed. Booking is blocked to keep bays free for drivers needing power.</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 pt-1 border-t border-amber-500/20">
+            <button type="button" onclick="simulateHubCarDrive(15)" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[10px] shadow-xs flex items-center gap-1 active:scale-95 transition-all">
+              <span>🛣️</span> Drive 30 km (-15% SoC)
+            </button>
+            <button type="button" onclick="resetHubBattery(22)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-[10px] shadow-xs flex items-center gap-1 active:scale-95 transition-all">
+              <span>🚗</span> Reset to 22% Arrival
+            </button>
+          </div>
+        </div>
+
+        <!-- Manual Battery Controls & Presets -->
+        <div class="pt-1 border-t border-purple-100 dark:border-slate-800 space-y-2">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-slate-400 uppercase font-bold text-[10px]">Test Battery SoC:</span>
+            <div class="flex items-center gap-1.5 font-mono">
+              <button type="button" onclick="updateHubBatteryEstimation(15)" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold hover:bg-emerald-500 hover:text-white transition-all">15%</button>
+              <button type="button" onclick="updateHubBatteryEstimation(25)" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold hover:bg-emerald-500 hover:text-white transition-all">25%</button>
+              <button type="button" onclick="updateHubBatteryEstimation(45)" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold hover:bg-emerald-500 hover:text-white transition-all">45%</button>
+              <button type="button" onclick="updateHubBatteryEstimation(65)" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold hover:bg-emerald-500 hover:text-white transition-all">65%</button>
+            </div>
+          </div>
+          <input 
+            type="range" 
+            id="checkoutBatterySlider" 
+            min="5" 
+            max="95" 
+            value="22" 
+            step="5" 
+            oninput="updateHubBatteryEstimation(this.value)" 
+            class="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500" 
+          />
         </div>
 
         <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-purple-100 dark:border-slate-800">
@@ -640,18 +689,26 @@
       } catch(e) {}
 
       let currentSoc = Math.round(Number(virtualCarState.soc) || 22);
-      if (currentSoc >= 98) currentSoc = 100;
-      const isFull = currentSoc >= 100;
+      updateHubBatteryEstimation(currentSoc);
+      document.getElementById('checkoutModal').classList.remove('hidden');
+    }
 
+    function updateHubBatteryEstimation(socVal) {
+      if (!pendingPort || !currentStation) return;
+
+      let currentSoc = Math.max(5, Math.min(100, Math.round(Number(socVal) || 22)));
+      virtualCarState.soc = currentSoc;
+
+      const isFull = currentSoc >= 100;
       const batteryCap = 50.3; // kWh MG ZS EV default
       const percentNeeded = isFull ? 0 : (100 - currentSoc);
       const neededKwh = isFull ? 0 : +((percentNeeded / 100) * batteryCap).toFixed(1);
       const baseCost = isFull ? 0 : +(neededKwh * currentStation.pricePerKwh).toFixed(2);
-      const gridFee = isFull ? 0 : (port.vehicleType === '2W' ? 15.00 : 40.00);
+      const gridFee = isFull ? 0 : (pendingPort.vehicleType === '2W' ? 15.00 : 40.00);
       const gst = isFull ? 0 : +((baseCost + gridFee) * 0.18).toFixed(2);
       const total = isFull ? 0 : +(baseCost + gridFee + gst).toFixed(2);
 
-      document.getElementById('checkoutPortTitle').innerText = port.name + ' • ' + port.type;
+      document.getElementById('checkoutPortTitle').innerText = pendingPort.name + ' • ' + pendingPort.type;
       document.getElementById('checkoutStationSub').innerText = currentStation.name;
       document.getElementById('billRate').innerText = currentStation.pricePerKwh;
 
@@ -661,7 +718,10 @@
       document.getElementById('checkoutBatteryDisplay').innerText = isFull ? '100% Charged' : (currentSoc + '% Left');
       document.getElementById('checkoutPercentNeeded').innerText = percentNeeded;
       document.getElementById('checkoutKwhNeeded').innerText = neededKwh.toFixed(1);
-      document.getElementById('checkoutEstMinutes').innerText = isFull ? '0 mins (Full)' : '16 mins';
+      document.getElementById('checkoutEstMinutes').innerText = isFull ? '0 mins (Full)' : Math.max(8, Math.round((neededKwh / 120) * 60)) + ' mins';
+
+      const slider = document.getElementById('checkoutBatterySlider');
+      if (slider && slider.value != currentSoc) slider.value = currentSoc;
 
       const visualCurrent = document.getElementById('batteryVisualCurrent');
       const visualCurrentText = document.getElementById('batteryVisualCurrentText');
@@ -690,18 +750,50 @@
       document.getElementById('billGst').innerText = gst.toFixed(2);
       document.getElementById('billTotal').innerText = total.toFixed(2);
 
+      const noticeEl = document.getElementById('checkoutFullBatteryNotice');
       const btnPay = document.getElementById('btnPayConfirm');
+
       if (isFull) {
+        if (noticeEl) noticeEl.classList.remove('hidden');
         btnPay.disabled = true;
         btnPay.className = 'w-full py-3.5 rounded-2xl font-bold text-xs uppercase tracking-wider bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-700 shadow-none';
         btnPay.innerHTML = '<span>🚫 Vehicle 100% Charged</span><span class="text-[10px] font-medium opacity-80">Booking disabled • Charging not needed</span>';
       } else {
+        if (noticeEl) noticeEl.classList.add('hidden');
         btnPay.disabled = false;
         btnPay.className = 'w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/25 transition-all flex flex-col items-center justify-center cursor-pointer active:scale-95';
         btnPay.innerHTML = '<span>Confirm & Lock Charging Spot ⚡</span><span class="text-[10px] font-medium opacity-90">Instant 4-digit PIN generated</span>';
       }
 
-      document.getElementById('checkoutModal').classList.remove('hidden');
+      updateNavbarCarPill(currentSoc);
+    }
+
+    function simulateHubCarDrive(dropPercent) {
+      let currentSoc = Math.round(Number(virtualCarState.soc) || 100);
+      let newSoc = Math.max(10, currentSoc - (dropPercent || 15));
+      virtualCarState.soc = newSoc;
+      try {
+        localStorage.setItem('voltgrid_virtual_car', JSON.stringify(virtualCarState));
+      } catch(e) {}
+      updateHubBatteryEstimation(newSoc);
+      showToast('🛣️ Simulated 30 km Highway Drive: Battery reduced to ' + newSoc + '%!');
+    }
+
+    function resetHubBattery(targetSoc) {
+      let newSoc = targetSoc || 22;
+      virtualCarState.soc = newSoc;
+      try {
+        localStorage.setItem('voltgrid_virtual_car', JSON.stringify(virtualCarState));
+      } catch(e) {}
+      updateHubBatteryEstimation(newSoc);
+      showToast('🚗 Battery reset to ' + newSoc + '% arrival level!');
+    }
+
+    function updateNavbarCarPill(soc) {
+      const pillText = document.getElementById('navHubSimStatusText');
+      if (pillText) {
+        pillText.innerText = (soc !== undefined ? soc : (virtualCarState.soc || 22)) + '% SoC';
+      }
     }
 
     function closeCheckoutModal() {
@@ -799,6 +891,23 @@
         }
       });
     }
+
+    // Real-time IoT Virtual Vehicle Telematics Listener (Cross-tab Smartcar simulator sync)
+    try {
+      const simChannel = new BroadcastChannel('voltgrid_telematics');
+      simChannel.onmessage = (event) => {
+        if (event.data && event.data.type === 'TELEMATICS_UPDATE' && event.data.data) {
+          const d = event.data.data;
+          virtualCarState = { ...virtualCarState, ...d };
+          const navText = document.getElementById('navHubSimStatusText');
+          if (navText) navText.innerText = Math.round(d.soc) + '% SoC';
+          const modal = document.getElementById('checkoutModal');
+          if (modal && !modal.classList.contains('hidden')) {
+            updateHubBatteryEstimation(d.soc);
+          }
+        }
+      };
+    } catch (e) {}
 
     window.addEventListener('DOMContentLoaded', initHubPage);
   </script>

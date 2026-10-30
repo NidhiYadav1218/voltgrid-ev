@@ -7,6 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><path d='M13 10V3L4 14h7v7l9-11h-7z'/></svg>">
 
   <!-- Tailwind CSS CDN -->
+  <script src="voltgrid_db.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -355,7 +356,6 @@
     };
 
     async function loadVendorData() {
-      // Read URL param if vendorId provided
       const params = new URLSearchParams(window.location.search);
       if (params.get('vendorId')) {
         currentVendorId = params.get('vendorId');
@@ -363,35 +363,53 @@
         if (sel) sel.value = currentVendorId;
       }
 
-      try {
-        const vRes = await fetch('/api/vendors');
-        if (vRes.ok) {
-          const vData = await vRes.json();
-          allVendors = vData.vendors || [];
-        }
-      } catch (err) {
-        console.warn('Vendors fetch error:', err);
+      if (window.VoltGridDB) {
+        allStations = VoltGridDB.getStations();
+        allBookings = VoltGridDB.getBookings();
+        allVendors = VoltGridDB.getVendors();
       }
 
-      try {
-        const sRes = await fetch('/api/stations');
-        if (sRes.ok) {
-          allStations = await sRes.json();
-        }
-      } catch (err) {
-        console.warn('Stations fetch error:', err);
+      // Also ensure fresh stations directly from /api/stations if local cache is empty or legacy
+      if (!allStations || allStations.length === 0 || !allStations.some(s => s.id === 'st-01')) {
+        try {
+          const res = await fetch('/api/stations');
+          if (res.ok) {
+            const data = await res.json();
+            const list = Array.isArray(data) ? data : (data.stations || []);
+            if (list.length > 0) {
+              allStations = list;
+              if (window.VoltGridDB && typeof VoltGridDB.saveStations === 'function') {
+                VoltGridDB.saveStations(list);
+              }
+            }
+          }
+        } catch (e) {}
       }
 
+      // Also sync bookings from /api/bookings
       try {
         const bRes = await fetch('/api/bookings');
         if (bRes.ok) {
-          allBookings = await bRes.json();
+          const bData = await bRes.json();
+          const bList = Array.isArray(bData) ? bData : (bData.bookings || []);
+          if (bList.length > 0) {
+            allBookings = bList;
+          }
         }
-      } catch (err) {
-        console.warn('Bookings fetch error:', err);
-      }
+      } catch (e) {}
 
       renderVendorDashboard();
+    }
+
+    function updateVendorTariff(stationId) {
+      const st = allStations.find(s => s.id === stationId);
+      if (!st) return;
+      const newPrice = prompt('Set new per-kWh charging tariff for ' + st.name + ' (₹):', st.pricePerKwh);
+      if (newPrice !== null && !isNaN(newPrice) && Number(newPrice) > 0) {
+        VoltGridDB.updateStationTariff(stationId, Number(newPrice));
+        loadVendorData();
+        alert('✅ Charging tariff updated to ₹' + newPrice + '/kWh! Synced immediately across Driver checkout & Admin dashboard.');
+      }
     }
 
     function onVendorSelected(vendorId) {
@@ -447,6 +465,30 @@
       renderVendorPorts(allVendorPorts);
       renderVendorSessions(vendorBookings);
       populateModalStations(myStations);
+      renderVendorStationsSummary(myStations);
+    }
+
+    function renderVendorStationsSummary(stations) {
+      const container = document.getElementById('vendorStationsList');
+      if (!container) return;
+      container.innerHTML = stations.map(st => `
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-sm">${st.name}</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-800">📍 ${st.city || 'Gujarat'}</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">${st.location}</p>
+            <span class="text-[11px] text-slate-500 font-mono">${st.ports ? st.ports.length : 0} Total Charging Bays Configured</span>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="text-xs text-slate-400 font-mono">Rate: <strong class="text-emerald-400 font-bold">₹${st.pricePerKwh}/kWh</strong></span>
+            <button onclick="updateVendorTariff('${st.id}')" class="px-2.5 py-1 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold transition-all">
+              ✏️ Change Rate
+            </button>
+          </div>
+        </div>
+      `).join('');
     }
 
     function renderVendorPorts(ports) {
@@ -550,29 +592,20 @@
       const portName = document.getElementById('modalPortName').value;
       const maxKw = document.getElementById('modalPortMaxKw').value;
       const connector = document.getElementById('modalPortConnector').value;
+      const vehicleType = Number(maxKw) <= 22 ? (connector.includes('Ather') || connector.includes('Socket') ? '2W' : 'BOTH') : '4W';
 
-      try {
-        const res = await fetch('/api/stations', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'add_port',
-            stationId,
-            portName,
-            maxKw,
-            connector
-          })
-        });
+      const newPort = VoltGridDB.addPortToStation(stationId, {
+        name: portName,
+        maxKw: maxKw,
+        connector: connector,
+        vehicleType: vehicleType,
+        type: maxKw + 'kW ' + (Number(maxKw) > 22 ? 'Fast DC' : 'AC Point')
+      });
 
-        if (res.ok) {
-          alert(`Port "${portName}" (${maxKw}kW ${connector}) deployed successfully!`);
-          closeAddPortModal();
-          loadVendorData();
-        } else {
-          alert('Failed to deploy port.');
-        }
-      } catch (err) {
-        alert('Network error: ' + err.message);
+      if (newPort) {
+        alert('✅ New bay "' + portName + '" (' + maxKw + 'kW ' + connector + ') deployed live to station! Driver App now shows this port immediately.');
+        closeAddPortModal();
+        loadVendorData();
       }
     }
 
@@ -696,6 +729,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       loadVendorData();
+      if (window.VoltGridDB) VoltGridDB.onSync(() => loadVendorData());
     });
   </script>
 </body>

@@ -98,7 +98,8 @@
 
       <!-- Desktop Nav Links -->
       <nav class="hidden lg:flex items-center gap-6 text-sm font-semibold text-slate-600 dark:text-slate-300">
-        <a href="#chargers" class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Stations & Ports</a>
+        <a href="hubs.html" class="text-purple-600 dark:text-purple-400 hover:text-purple-700 font-bold transition-colors flex items-center gap-1"><span>🏛️</span> <span>All Gujarat Hubs (34)</span></a>
+        <a href="#chargers" class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Nearest Hubs (6)</a>
         <a href="#customer-savings" class="hover:text-sky-600 dark:hover:text-sky-400 transition-colors">Your Savings & ROI</a>
         <a href="#how-it-works" class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">How It Works</a>
         <a href="#live-session" class="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Live Charger</a>
@@ -5037,7 +5038,7 @@
         if (activeCityFilter !== 'ALL') {
           countEl.innerText = displayStations.length + ' Hubs in ' + activeCityFilter + ' (' + stations.length + ' Total in Gujarat)';
         } else {
-          countEl.innerText = displayStations.length + ' Hubs Found (' + stations.length + ' Total in Gujarat)';
+          countEl.innerText = 'Showing 6 of ' + displayStations.length + ' Hubs (' + stations.length + ' Total in Gujarat)';
         }
       }
 
@@ -5052,7 +5053,9 @@
         return;
       }
 
-      container.innerHTML = displayStations.map(st => {
+      const stationsToShow = displayStations.slice(0, 6);
+      
+      let cardsHtml = stationsToShow.map(st => {
         const isSelected = st.id === currentStationId;
         const total = st.ports.length;
         const avail = st.ports.filter(p => p.status === 'available').length;
@@ -5109,6 +5112,35 @@
           </div>
         `;
       }).join('');
+
+      cardsHtml += `
+        <div class="col-span-full mt-4 p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-purple-100/90 via-sky-50/80 to-pink-50/70 dark:from-slate-900 dark:via-purple-950/40 dark:to-slate-900 border border-purple-200/80 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-2xl shadow-md shadow-purple-500/25 shrink-0">
+              🏛️
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h4 class="text-base font-extrabold text-slate-900 dark:text-white font-heading">
+                  All ${stations.length} Gujarat EV Charging SuperHubs
+                </h4>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-200 text-purple-900 dark:bg-purple-900 dark:text-purple-200">
+                  Statewide Directory
+                </span>
+              </div>
+              <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                Showing top 6 featured stations here. Access all 34 verified SuperHubs across Ahmedabad, Surat, Vadodara, Rajkot, Bhavnagar, Jamnagar, Junagadh, Somnath, Dwarka & Kutch on the Hubs Directory.
+              </p>
+            </div>
+          </div>
+          <a href="hubs.html" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-purple-500/25 transition-all flex items-center gap-2 hover:scale-105 active:scale-95 shrink-0 whitespace-nowrap">
+            <span>⚡ View All ${stations.length} Hubs Directory</span>
+            <span>&rarr;</span>
+          </a>
+        </div>
+      `;
+
+      container.innerHTML = cardsHtml;
       renderPorts();
     }
 
@@ -6213,7 +6245,7 @@
               userId: activeUserId,
               customer: currentUser.name,
               phone: currentUser.phone,
-              vehicle: currentUser.car,
+              vehicle: userVehicleName,
               pin: newPin,
               paid: bookedTotal,
               sessionId: currentSid,
@@ -6239,7 +6271,7 @@
 
         document.getElementById('invNumber').innerText = invNum;
         document.getElementById('invCustomer').innerText = currentUser.name + ' (' + currentUser.phone + ')';
-        document.getElementById('invVehicle').innerText = currentUser.car;
+        document.getElementById('invVehicle').innerText = userVehicleName;
         document.getElementById('invPort').innerText = port.name + ' • ' + st.name;
         document.getElementById('invTotal').innerText = '₹' + bookedTotal;
         document.getElementById('invPin').innerText = newPin;
