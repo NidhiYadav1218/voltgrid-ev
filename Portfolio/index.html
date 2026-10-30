@@ -43,6 +43,15 @@
     }
   </script>
   <style>
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+      width: 100% !important;
+      box-sizing: border-box;
+    }
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       transition: background-color 0.25s ease, color 0.25s ease;
@@ -51,90 +60,87 @@
     .font-mono { font-family: 'JetBrains Mono', monospace; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-[#090d16] dark:text-slate-100 antialiased selection:bg-brand-500 selection:text-white">
+<body class="bg-gradient-to-b from-rose-50/30 via-slate-50 to-purple-50/20 text-slate-800 dark:from-[#090d16] dark:via-[#090d16] dark:to-[#090d16] dark:text-slate-100 antialiased selection:bg-purple-300 selection:text-purple-900 overflow-x-hidden w-full max-w-full">
 
   <!-- ================= TOP NOTICE BANNER ================= -->
-  <div class="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-slate-950 font-bold text-xs py-2 px-4 text-center flex items-center justify-between sm:justify-center gap-3 shadow-sm">
-    <span>⚡ Zero waiting in line! 15-minute guaranteed spot hold on all highway chargers.</span>
-    <span class="text-[10px] bg-slate-950/20 px-2 py-0.5 rounded-full font-mono uppercase tracking-wider hidden md:inline">
-      Sandbox Mode &bull; No Real Money Deductions
-    </span>
+  <div class="bg-gradient-to-r from-rose-100 via-purple-100 to-sky-100 dark:from-purple-950/70 dark:via-indigo-950/70 dark:to-sky-950/70 text-purple-950 dark:text-purple-200 font-semibold text-xs py-2 px-3 sm:px-4 text-center border-b border-purple-200/50 dark:border-purple-800/40 shadow-xs">
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap">
+      <span>✨ <strong>15-Minute Guaranteed Hold:</strong> Reserve your charger with zero queue & pay ₹0 upfront.</span>
+      <span class="text-[10px] bg-white/70 dark:bg-purple-900/60 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider hidden md:inline">
+        Safe Demo Sandbox
+      </span>
+    </div>
   </div>
 
   <!-- ================= NAVIGATION BAR ================= -->
-  <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#090d16]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#090d16]/95 backdrop-blur-md border-b border-purple-100/80 dark:border-slate-800 transition-colors w-full overflow-hidden">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2">
       
       <!-- Brand Logo -->
-      <a href="#" class="flex items-center gap-3 group">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5 shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+      <a href="#" class="flex items-center gap-2 sm:gap-2.5 group shrink-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-rose-400 via-purple-400 to-sky-400 p-0.5 shadow-md shadow-purple-500/15 group-hover:scale-105 transition-transform">
           <div class="w-full h-full bg-white dark:bg-[#090d16] rounded-[14px] flex items-center justify-center">
-            <svg class="w-6 h-6 text-emerald-500 dark:text-cyan-400" viewBox="0 0 24 24" fill="currentColor">
+            <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" fill="currentColor">
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
             </svg>
           </div>
         </div>
-        <div>
-          <span class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white font-heading">
-            Volt<span class="text-emerald-500 dark:text-cyan-400">Grid</span>
+        <div class="flex items-baseline">
+          <span class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white font-heading">
+            Volt<span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-sky-500">Grid</span>
           </span>
-          <span class="hidden sm:inline-block ml-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400 dark:border dark:border-emerald-800">
-            Live EV Platform
-          </span>
-          <span class="ml-1 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-cyan-400 border border-emerald-500/30" title="Security & Session Lock Active">
-            v2.4
+          <span class="hidden md:inline-block ml-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+            Gujarat EV Hub
           </span>
         </div>
       </a>
 
       <!-- Desktop Nav Links -->
-      <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-600 dark:text-slate-300">
-        <a href="#chargers" class="hover:text-emerald-600 dark:hover:text-cyan-400 transition-colors">Stations & Ports</a>
-        <a href="#customer-savings" class="hover:text-emerald-600 dark:hover:text-cyan-400 transition-colors">Your Savings & ROI</a>
-        <a href="#how-it-works" class="hover:text-emerald-600 dark:hover:text-cyan-400 transition-colors">How It Works</a>
-        <a href="#live-session" class="hover:text-emerald-600 dark:hover:text-cyan-400 transition-colors">Live Charger</a>
-        <a href="#pricing" class="hover:text-emerald-600 dark:hover:text-cyan-400 transition-colors">Tariff Plans</a>
+      <nav class="hidden lg:flex items-center gap-6 text-sm font-semibold text-slate-600 dark:text-slate-300">
+        <a href="#chargers" class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Stations & Ports</a>
+        <a href="#customer-savings" class="hover:text-sky-600 dark:hover:text-sky-400 transition-colors">Your Savings & ROI</a>
+        <a href="#how-it-works" class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">How It Works</a>
+        <a href="#live-session" class="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Live Charger</a>
       </nav>
 
-      <!-- Right Controls: Admin Portal, Auth, Theme Toggle -->
-      <div class="flex items-center gap-2.5 sm:gap-3">
+      <!-- Right Controls: Simulator, Hubs, Auth, Theme -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
         
         <!-- Virtual Vehicle Simulator Trigger (Opens Standalone Driving Simulator Page) -->
         <a 
           href="simulator.html" 
           target="_blank"
           id="navCarSimLink" 
-          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 bg-cyan-100 text-cyan-900 dark:bg-cyan-950/80 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 hover:scale-105 active:scale-95 transition-all shadow-sm"
+          class="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-sky-100/90 text-sky-900 dark:bg-sky-950/80 dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:scale-105 active:scale-95 transition-all shadow-xs"
           title="Live Connected Car Telematics & Battery Status (Click to open Simulator in new tab)"
         >
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
           <span>🚗</span>
-          <span class="hidden md:inline">Car:</span>
-          <span id="navSimStatusText" class="font-mono text-[11px] font-black text-emerald-600 dark:text-cyan-400">100% SoC</span>
+          <span id="navSimStatusText" class="font-mono text-[10px] sm:text-[11px] font-extrabold text-sky-700 dark:text-sky-300">100%</span>
         </a>
 
-        <!-- Vendor CPO Hub Link -->
+        <!-- Vendor CPO Hub Link (visible sm+) -->
         <a 
           href="vendor.html" 
-          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 bg-indigo-100 text-indigo-900 dark:bg-indigo-950/80 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800 hover:scale-105 transition-all shadow-sm"
+          class="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-purple-100/90 text-purple-900 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-200 dark:border-purple-800 hover:scale-105 transition-all shadow-xs"
           title="Open Vendor & Station Operator Hub"
         >
           <span>💼</span>
-          <span class="hidden sm:inline">Vendor</span> Hub
+          <span>Vendor</span>
         </a>
 
-        <!-- Admin Console Link (Standalone Dedicated Admin Page) -->
+        <!-- Admin Console Link (visible md+) -->
         <a 
           href="admin.html" 
-          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-800 hover:scale-105 transition-all shadow-sm"
+          class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-rose-100/90 text-rose-900 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:scale-105 transition-all shadow-xs"
           title="Open Dedicated Admin Command Center"
         >
           <span>🛡️</span>
-          <span class="hidden sm:inline">Admin</span> HQ
+          <span>Admin</span>
         </a>
 
         <!-- User Authentication Button / Profile Badge -->
-        <div id="navUserSlot">
+        <div id="navUserSlot" class="shrink-0">
           <!-- Rendered by JS -->
         </div>
 
@@ -143,7 +149,7 @@
           id="themeToggleBtn"
           onclick="toggleTheme()" 
           title="Switch Dark / Light Mode"
-          class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-300 border border-slate-200 dark:border-slate-700 transition-all shadow-sm"
+          class="p-2 rounded-xl bg-purple-50 hover:bg-purple-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-purple-700 dark:text-amber-300 border border-purple-200 dark:border-slate-700 transition-all shadow-xs shrink-0"
         >
           <!-- Sun Icon -->
           <svg id="sunIcon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -169,14 +175,14 @@
         <!-- Left Hero Content -->
         <div class="lg:col-span-7 space-y-5">
           
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-xs font-bold border border-emerald-200 dark:border-emerald-800">
-            <span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
-            <span>Real Locations &bull; Guaranteed Port Locking &bull; Zero Waiting</span>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-rose-100 via-purple-100 to-sky-100 text-purple-900 dark:from-purple-950/60 dark:to-sky-950/60 dark:text-purple-200 text-xs font-bold border border-purple-200/60 shadow-xs">
+            <span class="flex h-2 w-2 rounded-full bg-purple-500 animate-ping"></span>
+            <span>Real Gujarat Locations &bull; Guaranteed Spot Hold &bull; Zero Waiting</span>
           </div>
 
-          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.12] font-heading">
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.14] font-heading">
             Reserve Your EV Charger. <br/>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-sky-500 dark:from-purple-400 dark:via-pink-300 dark:to-sky-300">
               Never Wait in Line Again.
             </span>
           </h1>
@@ -185,33 +191,33 @@
             Driving across the Ahmedabad-Vadodara Expressway (NE-1), visiting GIFT City Gandhinagar, or commuting in Surat and Rajkot? Lock in verified fast chargers for <strong>2-wheelers & 4-wheelers</strong> 15 minutes before arrival. Guaranteed available upon hookup.
           </p>
 
-          <!-- Key Metrics Badges -->
-          <div class="grid grid-cols-3 gap-3 pt-2">
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-center shadow-sm">
-              <span class="text-xl mb-0.5 block">⚡</span>
-              <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">360 kW Hyper</strong>
-              <span class="text-[10px] text-slate-500">10% &rarr; 80% in 18 Mins</span>
+          <!-- Key Metrics Badges (Lavender, Peach & Light Blue) -->
+          <div class="grid grid-cols-3 gap-2 sm:gap-3 pt-2">
+            <div class="bg-purple-50/90 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/60 rounded-2xl p-2.5 sm:p-3.5 text-center shadow-xs">
+              <span class="text-lg sm:text-xl mb-0.5 block">⚡</span>
+              <strong class="text-xs sm:text-sm font-bold text-purple-950 dark:text-purple-200 block">360 kW Hyper</strong>
+              <span class="text-[10px] text-purple-700/80 dark:text-purple-300/80">10% &rarr; 80% (18m)</span>
             </div>
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-center shadow-sm">
-              <span class="text-xl mb-0.5 block">🔒</span>
-              <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">15-Min Lock</strong>
-              <span class="text-[10px] text-slate-500">Zero Slot Theft</span>
+            <div class="bg-orange-50/90 dark:bg-orange-950/40 border border-orange-200/80 dark:border-orange-800/60 rounded-2xl p-2.5 sm:p-3.5 text-center shadow-xs">
+              <span class="text-lg sm:text-xl mb-0.5 block">🔒</span>
+              <strong class="text-xs sm:text-sm font-bold text-orange-950 dark:text-orange-200 block">15-Min Lock</strong>
+              <span class="text-[10px] text-orange-700/80 dark:text-orange-300/80">Zero Slot Theft</span>
             </div>
-            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-center shadow-sm">
-              <span class="text-xl mb-0.5 block">🛵🚗</span>
-              <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">2W & 4W Ready</strong>
-              <span class="text-[10px] text-slate-500">Ather, Ola, Tata, MG</span>
+            <div class="bg-sky-50/90 dark:bg-sky-950/40 border border-sky-200/80 dark:border-sky-800/60 rounded-2xl p-2.5 sm:p-3.5 text-center shadow-xs">
+              <span class="text-lg sm:text-xl mb-0.5 block">🛵🚗</span>
+              <strong class="text-xs sm:text-sm font-bold text-sky-950 dark:text-sky-200 block">2W & 4W Ready</strong>
+              <span class="text-[10px] text-sky-700/80 dark:text-sky-300/80">Ather, Ola, Tata, MG</span>
             </div>
           </div>
 
           <!-- CTAs -->
           <div class="pt-2 flex flex-wrap items-center gap-3">
-            <a href="#chargers" class="px-6 py-3 rounded-xl font-bold text-xs sm:text-sm bg-emerald-500 hover:bg-emerald-600 dark:bg-cyan-400 dark:hover:bg-cyan-300 text-white dark:text-slate-950 shadow-md shadow-emerald-500/20 transition-all flex items-center gap-2">
+            <a href="#chargers" class="px-6 py-3.5 rounded-2xl font-bold text-xs sm:text-sm bg-gradient-to-r from-purple-600 via-pink-500 to-sky-500 hover:from-purple-700 hover:to-sky-600 text-white shadow-md shadow-purple-500/20 transition-all flex items-center gap-2">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
               <span>Explore Real Gujarat Stations</span>
             </a>
-            <button onclick="openAdminModal()" class="px-5 py-3 rounded-xl font-bold text-xs sm:text-sm bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-1.5 shadow-sm">
-              <span>Admin Live Monitor &rarr;</span>
+            <button onclick="openAdminModal()" class="px-5 py-3.5 rounded-2xl font-bold text-xs sm:text-sm bg-white dark:bg-slate-900 hover:bg-purple-50 dark:hover:bg-slate-800 border border-purple-200/80 dark:border-slate-700 text-purple-900 dark:text-slate-200 transition-all flex items-center gap-1.5 shadow-xs">
+              <span>Admin Monitor &rarr;</span>
             </button>
           </div>
 
@@ -219,14 +225,14 @@
 
         <!-- Right Hero Live Interactive Hub Preview -->
         <div class="lg:col-span-5">
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl relative">
+          <div class="bg-gradient-to-br from-white via-purple-50/30 to-sky-50/30 dark:bg-slate-900 border border-purple-100 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl relative">
             
-            <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-slate-800">
+            <div class="flex items-center justify-between pb-3.5 border-b border-purple-100/80 dark:border-slate-800">
               <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-cyan-400">Live Station Hub • Gujarat</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-sky-400">Live Station Hub • Gujarat</span>
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">SG Highway HyperHub • Bodakdev</h3>
               </div>
-              <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300">
                 🟢 5 Bays Free
               </span>
             </div>
@@ -236,41 +242,41 @@
                 <span>📍 Ahmedabad, Gujarat &bull; Off Sindhu Bhavan Road</span>
               </p>
 
-              <!-- Quick Status Cards -->
+              <!-- Quick Status Cards: Peach & Light Blue -->
               <div class="grid grid-cols-2 gap-2.5 pt-1">
-                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-emerald-300 dark:border-emerald-800/80">
-                  <div class="flex items-center justify-between text-xs font-bold text-slate-900 dark:text-white mb-0.5">
+                <div class="bg-orange-50/90 dark:bg-slate-950 p-3 rounded-2xl border border-orange-200 dark:border-orange-800/80">
+                  <div class="flex items-center justify-between text-xs font-bold text-orange-950 dark:text-white mb-0.5">
                     <span>Port 01 (180kW)</span>
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                   </div>
-                  <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold block">Available &bull; ₹26/kWh</span>
+                  <span class="text-[11px] text-orange-700 dark:text-orange-400 font-bold block">Available &bull; ₹26/kWh</span>
                 </div>
 
-                <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-cyan-300 dark:border-cyan-800/80">
-                  <div class="flex items-center justify-between text-xs font-bold text-slate-900 dark:text-white mb-0.5">
+                <div class="bg-sky-50/90 dark:bg-slate-950 p-3 rounded-2xl border border-sky-200 dark:border-sky-800/80">
+                  <div class="flex items-center justify-between text-xs font-bold text-sky-950 dark:text-white mb-0.5">
                     <span>Port 02 (180kW)</span>
-                    <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+                    <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
                   </div>
-                  <span class="text-[11px] text-cyan-600 dark:text-cyan-400 font-bold block">Charging &bull; 74%</span>
+                  <span class="text-[11px] text-sky-700 dark:text-sky-400 font-bold block">Charging &bull; 74%</span>
                 </div>
               </div>
 
               <!-- Interactive Simulator bar -->
-              <div class="bg-slate-50 dark:bg-slate-950 p-3.5 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2">
+              <div class="bg-white/80 dark:bg-slate-950 p-3.5 rounded-2xl border border-purple-100 dark:border-slate-800 space-y-2">
                 <div class="flex justify-between text-xs font-medium">
                   <span class="text-slate-500">Battery Goal:</span>
-                  <span class="text-emerald-600 dark:text-cyan-400 font-bold">25% &rarr; 80% (~18 mins)</span>
+                  <span class="text-purple-600 dark:text-sky-400 font-bold">25% &rarr; 80% (~18 mins)</span>
                 </div>
-                <div class="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                  <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full w-[78%]"></div>
+                <div class="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-sky-400 via-purple-400 to-rose-400 h-full w-[78%] rounded-full"></div>
                 </div>
                 <div class="flex justify-between text-[11px] text-slate-500">
                   <span>Est. Highway Range: <strong>+220 km</strong></span>
-                  <span>Est. Cost: <strong class="text-emerald-600 dark:text-emerald-400">₹1,140</strong></span>
+                  <span>Est. Cost: <strong class="text-purple-600 dark:text-sky-400">₹1,140</strong></span>
                 </div>
               </div>
 
-              <a href="#chargers" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-900 hover:bg-slate-800 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white dark:text-slate-950 flex items-center justify-center gap-2 transition-all shadow-sm">
+              <a href="#chargers" class="w-full py-3 rounded-2xl font-bold text-xs uppercase tracking-wider bg-gradient-to-r from-purple-600 via-pink-500 to-sky-500 hover:from-purple-700 hover:to-sky-600 text-white flex items-center justify-center gap-2 transition-all shadow-md shadow-purple-500/20">
                 <span>View All 7 Gujarat Hubs & Lock Spot</span>
                 <span>&rarr;</span>
               </a>
@@ -350,52 +356,52 @@
             </div>
           </div>
 
-          <!-- Right: Visual Impact Metrics (7 cols) -->
+          <!-- Right: Visual Impact Metrics (7 cols) with Peach, Light Blue & Lavender -->
           <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
             
-            <!-- Metric 1: Monthly Fuel Savings -->
-            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
-              <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
-              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Net Monthly Savings</span>
-              <span id="calcMonthlySave" class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-heading block">
+            <!-- Metric 1: Monthly Fuel Savings (Soft Peach) -->
+            <div class="bg-gradient-to-br from-orange-50/90 to-rose-50/70 dark:bg-slate-900 p-5 rounded-3xl border border-orange-200/80 dark:border-rose-900/40 shadow-xs relative overflow-hidden group">
+              <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-rose-400/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-rose-800/70 dark:text-rose-400 block mb-1">Net Monthly Savings</span>
+              <span id="calcMonthlySave" class="text-3xl font-extrabold text-rose-600 dark:text-rose-400 font-heading block">
                 ₹6,543
               </span>
-              <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
-                Petrol: <span id="calcPetrolCost" class="line-through text-rose-500 font-semibold">₹8,742</span> • EV: <span id="calcEvCost" class="text-emerald-500 font-semibold">₹2,199</span>
+              <span class="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
+                Petrol: <span id="calcPetrolCost" class="line-through text-rose-400 font-semibold">₹8,742</span> • EV: <span id="calcEvCost" class="text-emerald-600 font-bold">₹2,199</span>
               </span>
             </div>
 
-            <!-- Metric 2: Annual Projected Savings -->
-            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
-              <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-cyan-500/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
-              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Annual Money in Your Pocket</span>
-              <span id="calcAnnualSave" class="text-3xl font-extrabold text-cyan-600 dark:text-cyan-400 font-heading block">
+            <!-- Metric 2: Annual Projected Savings (Soft Light Blue) -->
+            <div class="bg-gradient-to-br from-sky-50/90 to-blue-50/70 dark:bg-slate-900 p-5 rounded-3xl border border-sky-200/80 dark:border-sky-900/40 shadow-xs relative overflow-hidden group">
+              <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-sky-400/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-sky-800/70 dark:text-sky-400 block mb-1">Annual Money in Your Pocket</span>
+              <span id="calcAnnualSave" class="text-3xl font-extrabold text-sky-600 dark:text-sky-400 font-heading block">
                 ₹78,516
               </span>
-              <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
-                Cash saved per year by charging on VoltGrid
+              <span class="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
+                Extra cash kept in your wallet by charging on VoltGrid
               </span>
             </div>
 
-            <!-- Metric 3: Carbon Prevented -->
-            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">CO₂ Emissions Prevented</span>
+            <!-- Metric 3: Carbon Prevented (Soft Mint) -->
+            <div class="bg-gradient-to-br from-emerald-50/90 to-teal-50/70 dark:bg-slate-900 p-5 rounded-3xl border border-emerald-200/80 dark:border-emerald-900/40 shadow-xs">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800/70 dark:text-emerald-400 block mb-1">CO₂ Emissions Prevented</span>
               <span id="calcCo2" class="text-2xl font-extrabold text-teal-600 dark:text-teal-400 font-heading block">
                 186 kg / mo
               </span>
-              <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
-                Equivalent to planting <strong id="calcTrees" class="text-slate-800 dark:text-slate-200">9 trees</strong> every month
+              <span class="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
+                Equivalent to planting <strong id="calcTrees" class="text-slate-800 dark:text-slate-200 font-bold">9 trees</strong> every month
               </span>
             </div>
 
-            <!-- Metric 4: Queue Time Saved -->
-            <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Guaranteed Slot Queue Saved</span>
+            <!-- Metric 4: Queue Time Saved (Soft Lavender) -->
+            <div class="bg-gradient-to-br from-purple-50/90 to-violet-50/70 dark:bg-slate-900 p-5 rounded-3xl border border-purple-200/80 dark:border-purple-900/40 shadow-xs">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-purple-800/70 dark:text-purple-400 block mb-1">Guaranteed Slot Queue Saved</span>
               <span class="text-2xl font-extrabold text-purple-600 dark:text-purple-400 font-heading block">
                 45 Mins
               </span>
-              <span class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
-                Anti-steal lock guarantees charger upon highway arrival
+              <span class="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
+                Anti-steal lock guarantees reserved bay upon arrival
               </span>
             </div>
 
@@ -749,40 +755,40 @@
   </div>
 
   <!-- ================= CHECKOUT & BILLING MODAL (SANDBOX - NO REAL MONEY) ================= -->
-  <div id="checkoutModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-    <div class="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl">
-      <button onclick="closeCheckoutModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white">✕</button>
+  <div id="checkoutModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+    <div class="relative w-full max-w-lg max-h-[92vh] overflow-y-auto bg-white dark:bg-slate-900 border border-purple-200/80 dark:border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
+      <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white font-bold text-lg">✕</button>
 
       <div>
         <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-emerald-600 dark:text-cyan-400 uppercase tracking-wider">Itemized Checkout</span>
-          <span class="text-[10px] bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 px-2 py-0.5 rounded-full font-bold">
+          <span class="text-xs font-bold text-purple-600 dark:text-sky-400 uppercase tracking-wider">Itemized Checkout</span>
+          <span class="text-[10px] bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300 px-2.5 py-0.5 rounded-full font-bold border border-orange-200">
             Demo Sandbox
           </span>
         </div>
-        <h3 id="checkoutPortTitle" class="text-xl font-extrabold text-slate-900 dark:text-white font-heading mt-0.5">
+        <h3 id="checkoutPortTitle" class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white font-heading mt-0.5">
           Port 01 &bull; 350kW Ultra-Fast
         </h3>
         <p id="checkoutStationSub" class="text-xs text-slate-500">Delhi-Jaipur Expressway Hub (Km 42)</p>
       </div>
 
-      <!-- Friendly Vehicle Connection & Smart Battery Allocation -->
-      <div class="mt-4 bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-3xl p-4 sm:p-5 space-y-3.5 shadow-sm">
+      <!-- Friendly Vehicle Connection & Smart Battery Allocation (Lavender, Peach & Sky) -->
+      <div class="mt-4 bg-gradient-to-br from-purple-50/60 via-white to-orange-50/50 dark:bg-slate-900/60 border border-purple-200/80 dark:border-slate-800 rounded-3xl p-3.5 sm:p-5 space-y-3 shadow-xs">
         
         <!-- Vehicle Card -->
-        <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-emerald-200/90 dark:border-slate-700 shadow-sm space-y-2.5">
+        <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-purple-100 dark:border-slate-700 shadow-xs space-y-2.5">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse"></span>
               <span class="text-xs font-bold text-slate-800 dark:text-white tracking-wide">Connected EV Vehicle</span>
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">Live Auto-Sync</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-200">Live Auto-Sync</span>
             </div>
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2">
               <a 
                 href="simulator.html" 
                 target="_blank"
                 title="Open Vehicle Simulator in New Tab to test driving or change battery"
-                class="text-[11px] text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1 transition-colors underline"
+                class="text-[11px] text-purple-600 hover:text-purple-700 dark:text-purple-400 font-bold flex items-center gap-1 transition-colors underline"
               >
                 <span>🚗</span> Simulator ↗
               </a>
@@ -790,7 +796,7 @@
                 type="button" 
                 onclick="syncLiveSmartcarBattery(true)" 
                 title="Re-query vehicle telematics"
-                class="text-[11px] text-slate-600 dark:text-slate-300 hover:text-emerald-600 font-bold flex items-center gap-1 transition-colors"
+                class="text-[11px] text-slate-600 dark:text-slate-300 hover:text-purple-600 font-bold flex items-center gap-1 transition-colors"
               >
                 <span id="smartcarSyncIcon">🔄</span>
                 <span id="smartcarSyncText">Re-sync</span>
@@ -800,22 +806,22 @@
 
           <div class="flex items-center justify-between pt-1">
             <div class="flex items-center gap-2.5">
-              <div class="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-xl shadow-xs">
+              <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-100 to-sky-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 flex items-center justify-center text-xl shadow-xs shrink-0">
                 🚗
               </div>
               <div>
-                <div class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <div class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5 flex-wrap">
                   <span id="smartcarCarName">MG ZS EV</span>
                   <span class="text-[11px] font-normal text-slate-400" id="smartcarVinBadge">&bull; VIN: ...5921</span>
                 </div>
-                <div id="smartcarStatusSub" class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-                  <span class="text-emerald-600 dark:text-emerald-400 font-bold">✓ Live Battery:</span> Auto-detected from your vehicle
+                <div id="smartcarStatusSub" class="text-xs text-purple-800 dark:text-purple-300 mt-0.5">
+                  <span class="font-bold">✓ Live Battery:</span> Auto-detected from your vehicle
                 </div>
               </div>
             </div>
 
-            <div class="text-right">
-              <span id="checkoutBatteryDisplay" class="px-3 py-1 rounded-xl font-extrabold text-sm bg-emerald-500 text-white shadow-sm inline-block">
+            <div class="text-right shrink-0">
+              <span id="checkoutBatteryDisplay" class="px-3 py-1 rounded-xl font-extrabold text-sm bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-xs inline-block">
                 22% Left
               </span>
               <span id="smartcarRangeSub" class="block text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
@@ -824,74 +830,74 @@
             </div>
           </div>
 
-          <!-- Soft Friendly Trip Telematics Bar -->
-          <div class="mt-2.5 grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-emerald-50/60 dark:bg-slate-900/60 border border-emerald-100 dark:border-slate-700/60 text-xs text-center">
+          <!-- Soft Friendly Trip Telematics Bar (Peach, Lavender, Sky) -->
+          <div class="mt-2.5 grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-gradient-to-r from-orange-50/80 via-purple-50/70 to-sky-50/80 dark:bg-slate-900/60 border border-purple-100 dark:border-slate-700/60 text-xs text-center">
             <div>
-              <span class="text-slate-400 block text-[10px] font-bold uppercase">Total Odo</span>
+              <span class="text-slate-500 block text-[10px] font-bold uppercase">Total Odo</span>
               <strong id="checkoutOdometer" class="text-slate-800 dark:text-slate-100 font-bold">14,250.0 km</strong>
             </div>
             <div>
-              <span class="text-slate-400 block text-[10px] font-bold uppercase">Driven Today</span>
-              <strong id="checkoutTripDistance" class="text-emerald-600 dark:text-emerald-400 font-bold">+0.0 km</strong>
+              <span class="text-slate-500 block text-[10px] font-bold uppercase">Driven Today</span>
+              <strong id="checkoutTripDistance" class="text-sky-700 dark:text-sky-400 font-bold">+0.0 km</strong>
             </div>
             <div>
-              <span class="text-slate-400 block text-[10px] font-bold uppercase">Battery Used</span>
-              <strong id="checkoutTripConsumed" class="text-amber-600 dark:text-amber-400 font-bold">-78%</strong>
+              <span class="text-slate-500 block text-[10px] font-bold uppercase">Battery Used</span>
+              <strong id="checkoutTripConsumed" class="text-orange-700 dark:text-orange-400 font-bold">-78%</strong>
             </div>
           </div>
         </div>
 
-        <!-- Visual Two-Tone Battery Graphic (Left = Remaining in Car, Right = To Be Charged) -->
-        <div class="relative p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-emerald-200/70 dark:border-slate-700">
+        <!-- Visual Two-Tone Battery Graphic (Sky Blue & Peach/Lavender) -->
+        <div class="relative p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-purple-200/70 dark:border-slate-700">
           <div class="flex h-7 rounded-xl overflow-hidden font-bold text-[11px] leading-7 text-center">
-            <!-- Left: Current Battery in Vehicle -->
-            <div id="batteryVisualCurrent" class="bg-gradient-to-r from-emerald-500 to-teal-400 text-white transition-all duration-300 flex items-center justify-center truncate px-2 shadow-sm" style="width: 22%;">
+            <!-- Left: Current Battery in Vehicle (Soft Sky Blue) -->
+            <div id="batteryVisualCurrent" class="bg-gradient-to-r from-sky-400 to-blue-500 text-white transition-all duration-300 flex items-center justify-center truncate px-2 shadow-xs" style="width: 22%;">
               <span id="batteryVisualCurrentText">🔋 22% Left</span>
             </div>
-            <!-- Right: Needed Charge to 100% -->
-            <div id="batteryVisualNeeded" class="bg-gradient-to-r from-amber-400 to-orange-400 text-white transition-all duration-300 flex items-center justify-center truncate px-2" style="width: 78%;">
+            <!-- Right: Needed Charge to 100% (Soft Peach / Lavender) -->
+            <div id="batteryVisualNeeded" class="bg-gradient-to-r from-orange-300 via-rose-300 to-purple-400 text-slate-900 transition-all duration-300 flex items-center justify-center truncate px-2" style="width: 78%;">
               <span id="batteryVisualNeededText">⚡ +78% Needed</span>
             </div>
           </div>
         </div>
 
         <!-- Clarifying Breakdown Cards -->
-        <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-emerald-200/60 dark:border-emerald-800/40">
+        <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-purple-100 dark:border-slate-800">
           <div class="text-slate-600 dark:text-slate-400">
             <span class="block text-[10px] uppercase font-bold text-slate-400">Energy Needed to Reach 100%</span>
             <strong class="text-slate-800 dark:text-slate-200 text-xs"><span id="checkoutPercentNeeded">78</span>% (<span id="checkoutKwhNeeded">39.2</span> kWh)</strong>
           </div>
           <div class="text-right">
             <span class="block text-[10px] uppercase font-bold text-slate-400">Est. Charging Time Needed</span>
-            <strong class="text-emerald-600 dark:text-emerald-400 font-bold text-xs"><span id="checkoutEstMinutes">16 mins</span></strong>
+            <strong class="text-purple-600 dark:text-sky-400 font-bold text-xs"><span id="checkoutEstMinutes">16 mins</span></strong>
           </div>
         </div>
 
-        <!-- Live Battery Trust Card (No manual override here; simulator controls state) -->
-        <div class="flex items-center justify-between p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-emerald-200/80 dark:border-slate-700 text-xs">
+        <!-- Live Battery Trust Card (No manual override; simulator controls state) -->
+        <div class="flex items-center justify-between p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-purple-100 dark:border-slate-700 text-xs">
           <div class="flex items-center gap-2">
             <span class="text-base">✨</span>
-            <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium">Battery auto-synced live from your vehicle</span>
+            <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium">Battery auto-synced live from vehicle</span>
           </div>
-          <a href="simulator.html" target="_blank" class="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 underline underline-offset-2 flex items-center gap-1">
+          <a href="simulator.html" target="_blank" class="text-[11px] font-bold text-purple-600 hover:text-purple-700 dark:text-purple-400 underline underline-offset-2 flex items-center gap-1">
             Change in Simulator ↗
           </a>
         </div>
 
         <!-- Notice if Car is already 100% Full -->
-        <div id="checkoutFullBatteryNotice" class="hidden p-3 rounded-2xl bg-amber-500/10 border border-amber-500/40 text-amber-900 dark:text-amber-300 text-xs space-y-2">
+        <div id="checkoutFullBatteryNotice" class="hidden p-3 rounded-2xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 text-orange-900 dark:text-orange-300 text-xs space-y-2">
           <div class="flex items-center gap-2">
             <span class="text-base">🎉</span>
             <div>
-              <strong class="block text-xs font-bold text-amber-800 dark:text-amber-200">Vehicle Battery is Already 100% Full!</strong>
-              <span class="text-[11px] text-amber-700/90 dark:text-amber-300/80">No charging energy needed. Booking is blocked to prevent occupying charging bays unnecessarily.</span>
+              <strong class="block text-xs font-bold text-orange-800 dark:text-orange-200">Vehicle Battery is Already 100% Full!</strong>
+              <span class="text-[11px] text-orange-700/90 dark:text-orange-300/80">No charging energy needed. Booking is blocked to prevent occupying charging bays unnecessarily.</span>
             </div>
           </div>
-          <div class="flex items-center gap-2 pt-1 border-t border-amber-500/20">
-            <button type="button" onclick="simulateCarDrive(15)" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[10px] shadow-sm flex items-center gap-1">
+          <div class="flex items-center gap-2 pt-1 border-t border-orange-200/50">
+            <button type="button" onclick="simulateCarDrive(15)" class="px-2.5 py-1 rounded-lg bg-orange-400 hover:bg-orange-500 text-slate-950 font-bold text-[10px] shadow-xs flex items-center gap-1">
               <span>🛣️</span> Drive 30 km (-15% Battery) to Test
             </button>
-            <button type="button" onclick="injectSimScenario(22)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-[10px] shadow-sm flex items-center gap-1">
+            <button type="button" onclick="injectSimScenario(22)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-[10px] shadow-xs flex items-center gap-1">
               <span>🚗</span> Reset to 22% Arrival
             </button>
           </div>
@@ -900,7 +906,7 @@
       </div>
 
       <!-- Itemized Bill Table -->
-      <div class="mt-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 space-y-2 text-xs">
+      <div class="mt-4 bg-slate-50 dark:bg-slate-950 border border-purple-100/90 dark:border-slate-800 rounded-2xl p-4 space-y-2 text-xs">
         <div class="flex justify-between text-slate-600 dark:text-slate-300">
           <span>Est. Energy (<span id="billKwh">45.1</span> kWh &times; ₹<span id="billRate">28</span>)</span>
           <span class="font-bold text-slate-900 dark:text-white">₹<span id="billBase">1,262.80</span></span>
@@ -913,13 +919,13 @@
           <span>GST (18%)</span>
           <span class="font-bold text-slate-900 dark:text-white">₹<span id="billGst">234.50</span></span>
         </div>
-        <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-between text-sm font-extrabold text-slate-900 dark:text-white">
+        <div class="pt-2 border-t border-purple-100 dark:border-slate-800 flex justify-between text-sm font-extrabold text-slate-900 dark:text-white">
           <span>Total Payable Amount</span>
-          <span class="text-emerald-600 dark:text-cyan-400">₹<span id="billTotal">1,537.30</span></span>
+          <span class="text-purple-600 dark:text-sky-400">₹<span id="billTotal">1,537.30</span></span>
         </div>
 
-        <div id="billTripNote" class="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1 pt-1.5 border-t border-slate-200 dark:border-slate-800">
-          <span>ℹ️</span> <span>Telematics: Billed to refill battery consumed over <strong id="billTripKm" class="text-cyan-600 dark:text-cyan-400">0.0</strong> km trip back to 100%.</span>
+        <div id="billTripNote" class="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1 pt-1.5 border-t border-purple-100/60 dark:border-slate-800">
+          <span>ℹ️</span> <span>Telematics: Billed to refill battery consumed over <strong id="billTripKm" class="text-sky-600 dark:text-sky-400">0.0</strong> km trip back to 100%.</span>
         </div>
       </div>
 
@@ -928,16 +934,16 @@
         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">Select Demo Payment Method</label>
         
         <div class="grid grid-cols-2 gap-2 text-xs">
-          <label id="payOptionCard" onclick="selectPayMethod('card')" class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition-all">
-            <input type="radio" name="payMethod" value="card" class="accent-emerald-500" />
+          <label id="payOptionCard" onclick="selectPayMethod('card')" class="flex items-center gap-2 p-3 rounded-2xl border border-purple-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-purple-300 dark:hover:border-slate-600 cursor-pointer transition-all">
+            <input type="radio" name="payMethod" value="card" class="accent-purple-500" />
             <div>
               <strong class="block text-slate-900 dark:text-white">Demo Card</strong>
               <span class="text-[10px] text-slate-500">&bull;&bull;&bull;&bull; 4242</span>
             </div>
           </label>
 
-          <label id="payOptionUpi" onclick="selectPayMethod('upi')" class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-slate-300 dark:hover:border-slate-600 cursor-pointer transition-all">
-            <input type="radio" name="payMethod" value="upi" class="accent-emerald-500" />
+          <label id="payOptionUpi" onclick="selectPayMethod('upi')" class="flex items-center gap-2 p-3 rounded-2xl border border-purple-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-purple-300 dark:hover:border-slate-600 cursor-pointer transition-all">
+            <input type="radio" name="payMethod" value="upi" class="accent-purple-500" />
             <div>
               <strong class="block text-slate-900 dark:text-white">Demo UPI</strong>
               <span class="text-[10px] text-slate-500">Fast Pay</span>
@@ -945,17 +951,17 @@
           </label>
         </div>
 
-        <!-- Reassuring Safety Notice -->
-        <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 rounded-2xl text-xs space-y-1 text-emerald-900 dark:text-emerald-200">
+        <!-- Reassuring Safety Notice (Peach, Lavender, Sky) -->
+        <div class="p-3 bg-gradient-to-r from-orange-50/90 via-purple-50/80 to-sky-50/90 dark:bg-slate-900/80 border border-purple-200/80 dark:border-slate-800 rounded-2xl text-xs space-y-1 text-purple-950 dark:text-purple-200">
           <div class="font-bold flex items-center gap-1.5">
             <span>🛡️ 100% Safe & Guaranteed Reservation</span>
           </div>
-          <p class="text-[11px] text-emerald-700 dark:text-emerald-300/90 leading-relaxed">
-            Exclusive 15-minute hold • Bay reserved solely for your vehicle • Zero waiting line
+          <p class="text-[11px] text-purple-800/90 dark:text-purple-300/90 leading-relaxed">
+            Exclusive 15-minute hold • Bay reserved solely for your vehicle PIN • Zero waiting line
           </p>
         </div>
 
-        <button onclick="executePayment()" id="btnPayConfirm" class="w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/25 transition-all flex flex-col items-center justify-center cursor-pointer">
+        <button onclick="executePayment()" id="btnPayConfirm" class="w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-violet-600 via-indigo-600 to-sky-500 hover:from-violet-700 hover:to-sky-600 text-white shadow-lg shadow-purple-500/25 transition-all flex flex-col items-center justify-center cursor-pointer">
           <span>Confirm & Lock Charging Spot ⚡</span>
           <span class="text-[10px] font-medium opacity-90">Instant 4-digit PIN generated • Free cancellation</span>
         </button>
@@ -2190,30 +2196,31 @@
         const uid = currentUser.userId || currentUser.id || 'USR-1';
         const numId = String(uid).replace(/\D/g, '') || '1';
         slot.innerHTML = `
-          <div class="flex items-center gap-2 pl-2 sm:pl-3 border-l border-slate-200 dark:border-slate-800">
-            <button onclick="openProfileModal()" title="View Your Driver Profile & 15m Arrival Log" class="flex items-center gap-2 hover:opacity-85 transition-opacity text-left">
-              <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5 flex items-center justify-center text-slate-950 font-bold text-xs shadow-sm">
-                <span class="w-full h-full bg-white dark:bg-slate-900 rounded-full flex items-center justify-center text-emerald-600 dark:text-cyan-400 font-extrabold">
+          <div class="flex items-center gap-1.5 sm:gap-2 pl-1.5 sm:pl-3 border-l border-purple-100 dark:border-slate-800">
+            <button onclick="openProfileModal()" title="View Your Driver Profile & 15m Arrival Log" class="flex items-center gap-1.5 sm:gap-2 hover:opacity-85 transition-opacity text-left">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-rose-400 via-purple-400 to-sky-400 p-0.5 flex items-center justify-center text-slate-950 font-bold text-xs shadow-xs shrink-0">
+                <span class="w-full h-full bg-white dark:bg-slate-900 rounded-full flex items-center justify-center text-purple-700 dark:text-purple-300 font-extrabold">
                   ${currentUser.name.charAt(0).toUpperCase()}
                 </span>
               </div>
               <div class="hidden sm:block leading-tight">
-                <div class="font-bold text-slate-900 dark:text-white truncate max-w-[120px] text-xs">
-                  ${currentUser.name} <span class="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-black">#${numId}</span>
+                <div class="font-bold text-slate-900 dark:text-white truncate max-w-[100px] text-xs">
+                  ${currentUser.name} <span class="text-[10px] font-mono text-purple-600 dark:text-purple-400 font-black">#${numId}</span>
                 </div>
-                <div class="text-[10px] text-emerald-600 dark:text-cyan-400 font-medium truncate max-w-[120px]">${currentUser.car}</div>
+                <div class="text-[10px] text-purple-600 dark:text-sky-400 font-medium truncate max-w-[100px]">${currentUser.car}</div>
               </div>
             </button>
-            <button onclick="openProfileModal()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-cyan-400 border border-emerald-500/20 hover:scale-105 transition-all">
+            <button onclick="openProfileModal()" class="hidden sm:inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300 border border-purple-200 dark:border-purple-800 hover:scale-105 transition-all">
               Profile
             </button>
-            <button onclick="logoutUser()" title="Logout" class="text-slate-400 hover:text-rose-500 text-xs ml-1 font-bold">✕</button>
+            <button onclick="logoutUser()" title="Logout" class="text-slate-400 hover:text-rose-500 text-xs ml-0.5 font-bold">✕</button>
           </div>
         `;
       } else {
         slot.innerHTML = `
-          <button onclick="openAuthModal()" class="px-3.5 py-1.5 rounded-xl text-xs font-bold border border-slate-300 dark:border-slate-700 hover:border-emerald-500 text-slate-700 dark:text-slate-200 transition-all">
-            Sign In / Register
+          <button onclick="openAuthModal()" class="px-2.5 sm:px-3.5 py-1.5 rounded-xl text-xs font-bold border border-purple-200 dark:border-slate-700 bg-purple-50 hover:bg-purple-100 dark:bg-slate-800 text-purple-900 dark:text-purple-200 transition-all shrink-0">
+            <span class="sm:hidden">Sign In</span>
+            <span class="hidden sm:inline">Sign In / Register</span>
           </button>
         `;
       }
@@ -2589,40 +2596,40 @@
         return `
           <div onclick="selectStation('${st.id}')" class="cursor-pointer rounded-3xl p-5 border transition-all duration-200 flex flex-col justify-between h-full min-h-[200px] ${
             isSelected
-              ? 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500 dark:border-emerald-400 shadow-md ring-2 ring-emerald-500/20'
-              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600/70 shadow-sm'
+              ? 'bg-gradient-to-br from-purple-50/90 via-sky-50/40 to-orange-50/50 dark:bg-slate-900 border-purple-400 dark:border-purple-500 shadow-md ring-2 ring-purple-300/40'
+              : 'bg-white dark:bg-slate-900 border-purple-100/90 dark:border-slate-800 hover:border-purple-300 dark:hover:border-purple-600/70 shadow-xs'
           }">
             <div>
               <div class="flex items-start justify-between gap-2">
                 <div class="flex-1">
                   <div class="flex items-center gap-1.5 mb-1 flex-wrap">
                     <span class="text-xs">${st.vendorLogo || '⚡'}</span>
-                    <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">${st.vendorName || 'VoltGrid'}</span>
+                    <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 border border-purple-200">${st.vendorName || 'VoltGrid'}</span>
                     <span class="text-[10px] font-semibold text-slate-400">&bull; ${st.type}</span>
                   </div>
                   <h4 class="text-base font-extrabold text-slate-900 dark:text-white font-heading mt-1 min-h-[44px] flex items-center leading-snug">${st.name}</h4>
                   <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">${st.location}</p>
                 </div>
                 <span class="px-2.5 py-1 rounded-full text-xs font-bold shrink-0 ${
-                  avail > 0 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-400'
+                  avail > 0 ? 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-200' : 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-400'
                 }">
                   ${avail}/${total} Free
                 </span>
               </div>
 
-              <div class="flex items-center gap-1.5 text-[11px] text-emerald-700 dark:text-emerald-300 font-medium mt-2.5 bg-emerald-50/80 dark:bg-emerald-950/40 px-2.5 py-1 rounded-xl">
+              <div class="flex items-center gap-1.5 text-[11px] text-purple-900 dark:text-purple-300 font-medium mt-2.5 bg-gradient-to-r from-orange-50 to-purple-50/70 dark:bg-purple-950/40 px-2.5 py-1 rounded-xl border border-purple-100/80">
                 <span>🛡️</span> Verified Safe Bay • 24x7 Assistance
               </div>
             </div>
 
-            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+            <div class="mt-4 pt-3 border-t border-purple-100/70 dark:border-slate-800/80 flex items-center justify-between text-xs">
               <div class="flex items-center gap-2">
                 <span class="font-extrabold text-slate-800 dark:text-slate-200">₹${st.pricePerKwh}/kWh</span>
-                <span class="px-2.5 py-0.5 rounded-full bg-emerald-100/70 dark:bg-slate-800 text-emerald-800 dark:text-emerald-300 text-[11px] font-semibold flex items-center gap-1">
+                <span class="px-2.5 py-0.5 rounded-full bg-orange-100/90 text-orange-900 dark:bg-slate-800 dark:text-orange-300 text-[11px] font-semibold flex items-center gap-1 border border-orange-200/60">
                   🚗 ${dist} km (${estDriveMins}m)
                 </span>
               </div>
-              <a href="${directionsLink}" target="_blank" onclick="event.stopPropagation()" class="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold flex items-center gap-1 transition-all" title="Open Google Maps Real Navigation">
+              <a href="${directionsLink}" target="_blank" onclick="event.stopPropagation()" class="px-3 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-800 dark:bg-purple-950 dark:text-purple-300 font-bold flex items-center gap-1 transition-all border border-purple-200/60" title="Open Google Maps Real Navigation">
                 <span>🗺️ Directions ↗</span>
               </a>
             </div>
@@ -2666,44 +2673,44 @@
         // All other users/devices see a clean Reserved badge with disabled buttons and hidden PIN.
         const isMySession = (isRes || isChg) && isPortOwner(port);
 
-        let badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-400';
+        let badgeClass = 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-200';
         let badgeText = 'AVAILABLE';
-        let borderClass = 'border-slate-200 dark:border-slate-800';
+        let borderClass = 'border-purple-100/90 dark:border-slate-800';
 
         if (isRes) {
           if (isMySession) {
-            badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-cyan-400 font-extrabold animate-pulse';
+            badgeClass = 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 font-extrabold animate-pulse border border-purple-300';
             badgeText = 'YOUR HOLD • ' + formatTime(port.secondsLeft || 900);
-            borderClass = 'border-emerald-500/60 dark:border-cyan-400/60 ring-2 ring-emerald-500/20';
+            borderClass = 'border-purple-400 dark:border-purple-500 ring-2 ring-purple-300/30';
           } else {
-            badgeClass = 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-400 font-bold';
+            badgeClass = 'bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300 font-bold border border-orange-200';
             badgeText = 'RESERVED';
-            borderClass = 'border-amber-400/40 dark:border-amber-500/40';
+            borderClass = 'border-orange-300/50 dark:border-orange-500/40';
           }
         } else if (isChg) {
           const isFull = (port.soc || 0) >= 100;
           if (isMySession) {
             if (isFull) {
-              badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-extrabold animate-pulse';
+              badgeClass = 'bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 font-extrabold animate-pulse border border-purple-300';
               badgeText = 'FULLY CHARGED (100%)';
-              borderClass = 'border-emerald-500/60 dark:border-emerald-400/60 ring-2 ring-emerald-500/20';
+              borderClass = 'border-purple-400 dark:border-purple-500 ring-2 ring-purple-300/30';
             } else {
-              badgeClass = 'bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-400 font-bold';
+              badgeClass = 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 font-bold border border-sky-200';
               badgeText = 'CHARGING (' + (port.soc || 25) + '%)';
-              borderClass = 'border-cyan-400/40 dark:border-cyan-500/40 ring-2 ring-cyan-500/20';
+              borderClass = 'border-sky-300/60 dark:border-sky-500/40 ring-2 ring-sky-300/20';
             }
           } else {
             badgeClass = 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold';
             badgeText = isFull ? 'CHARGED' : 'IN USE';
-            borderClass = 'border-slate-300 dark:border-slate-700';
+            borderClass = 'border-slate-200 dark:border-slate-700';
           }
         }
 
         const vTag = port.vehicleType === '2W'
-          ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-500 dark:text-amber-300 border border-amber-500/30">🛵 2W Smart Socket</span>'
+          ? '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300 border border-orange-200">🛵 2W Smart Socket</span>'
           : port.vehicleType === '4W'
-          ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-500 dark:text-cyan-300 border border-cyan-500/30">🚗 4W Fast DC</span>'
-          : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-500 dark:text-emerald-300 border border-emerald-500/30">🚗🛵 Dual 2W & 4W AC</span>';
+          ? '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-200">🚗 4W Fast DC</span>'
+          : '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 border border-purple-200">🚗🛵 Dual 2W & 4W AC</span>';
 
         return `
           <div class="bg-white dark:bg-slate-900 border ${borderClass} rounded-3xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
@@ -2788,7 +2795,7 @@
 
             <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
               ${isAvail ? `
-                <button onclick="startBookingFlow('${port.id}')" class="w-full py-3 rounded-2xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 text-white shadow-md shadow-emerald-500/20 active:scale-95 transition-all">
+                <button onclick="startBookingFlow('${port.id}')" class="w-full py-3 rounded-2xl font-bold text-xs uppercase tracking-wider bg-gradient-to-r from-violet-500 via-indigo-500 to-sky-500 hover:from-violet-600 hover:to-sky-600 text-white shadow-md shadow-violet-500/20 active:scale-95 transition-all cursor-pointer">
                   Reserve & Checkout ⚡
                 </button>
               ` : ''}
@@ -2995,7 +3002,10 @@
     // ---------------- CHECKOUT & BILLING FLOW ----------------
     function updateBatteryEstimation(currentSocVal) {
       if (!pendingCheckout) return;
-      const currentSoc = parseInt(currentSocVal) || 22;
+      let currentSoc = Math.round(parseFloat(currentSocVal) || 22);
+      if (currentSoc >= 98) {
+        currentSoc = 100;
+      }
       const userCarName = (virtualCarState && virtualCarState.car) ? virtualCarState.car : ((currentUser && currentUser.car) ? currentUser.car : 'MG ZS EV');
       const carSpec = vehicles[userCarName] || { battery: 50.3, speed: 80, efficiency: 6.8 };
       const batteryCapacity = carSpec.battery || 50.3;
@@ -3037,12 +3047,12 @@
       const estMinsEl = document.getElementById('checkoutEstMinutes');
       const badgeEl = document.getElementById('checkoutAllocatedTimeBadge');
 
-      if (dispEl) dispEl.innerText = `${currentSoc}% Left`;
+      if (dispEl) dispEl.innerText = isFull ? '100% Charged' : `${currentSoc}% Left`;
       if (sliderEl && sliderEl.value != currentSoc) sliderEl.value = currentSoc;
       if (neededEl) neededEl.innerText = `${percentNeeded}`;
-      if (kwhNeededEl) kwhNeededEl.innerText = `${neededKwh}`;
-      if (estMinsEl) estMinsEl.innerText = isFull ? '0 mins (Full)' : formatMinutes(estMinutes);
-      if (badgeEl) badgeEl.innerText = isFull ? '0 mins (Full)' : formatMinutes(estMinutes);
+      if (kwhNeededEl) kwhNeededEl.innerText = `${neededKwh.toFixed(1)}`;
+      if (estMinsEl) estMinsEl.innerText = isFull ? '0 mins (Charged)' : formatMinutes(estMinutes);
+      if (badgeEl) badgeEl.innerText = isFull ? '0 mins (Charged)' : formatMinutes(estMinutes);
 
       // Update interactive visual two-tone battery diagram
       const visualCurrent = document.getElementById('batteryVisualCurrent');
@@ -3051,16 +3061,28 @@
       const visualNeededText = document.getElementById('batteryVisualNeededText');
 
       if (isFull) {
-        if (visualCurrent) visualCurrent.style.width = '100%';
-        if (visualCurrentText) visualCurrentText.innerText = '🔋 100% Fully Charged';
-        if (visualNeeded) visualNeeded.style.width = '0%';
+        if (visualCurrent) {
+          visualCurrent.style.width = '100%';
+          visualCurrent.className = 'bg-gradient-to-r from-emerald-400 to-teal-500 text-white transition-all duration-300 flex items-center justify-center truncate px-2 shadow-xs';
+        }
+        if (visualCurrentText) visualCurrentText.innerText = '🔋 100% Charged';
+        if (visualNeeded) {
+          visualNeeded.style.width = '0%';
+          visualNeeded.style.display = 'none';
+        }
         if (visualNeededText) visualNeededText.innerText = '';
       } else {
-        if (visualCurrent) visualCurrent.style.width = `${currentSoc}%`;
+        if (visualCurrent) {
+          visualCurrent.style.width = `${currentSoc}%`;
+          visualCurrent.className = 'bg-gradient-to-r from-sky-400 to-blue-500 text-white transition-all duration-300 flex items-center justify-center truncate px-2 shadow-xs';
+        }
         if (visualCurrentText) {
           visualCurrentText.innerText = currentSoc < 22 ? `${currentSoc}%` : `🔋 ${currentSoc}% Left`;
         }
-        if (visualNeeded) visualNeeded.style.width = `${percentNeeded}%`;
+        if (visualNeeded) {
+          visualNeeded.style.width = `${percentNeeded}%`;
+          visualNeeded.style.display = 'flex';
+        }
         if (visualNeededText) {
           if (percentNeeded < 20) {
             visualNeededText.innerText = `+${percentNeeded}%`;
@@ -3089,10 +3111,10 @@
       const billGst = document.getElementById('billGst');
       const billTotal = document.getElementById('billTotal');
 
-      if (billKwh) billKwh.innerText = neededKwh;
-      if (billBase) billBase.innerText = baseCost;
-      if (billGst) billGst.innerText = gst;
-      if (billTotal) billTotal.innerText = total;
+      if (billKwh) billKwh.innerText = neededKwh.toFixed(1);
+      if (billBase) billBase.innerText = baseCost.toFixed(2);
+      if (billGst) billGst.innerText = gst.toFixed(2);
+      if (billTotal) billTotal.innerText = total.toFixed(2);
       const gridFeeEl = document.getElementById('billGridFee');
       if (gridFeeEl) gridFeeEl.innerText = `₹${gridFee.toFixed(2)}`;
 
@@ -3105,22 +3127,21 @@
       const estRangeKm = Math.round((currentSoc / 100) * (batteryCapacity * (carSpec.efficiency || 6.8)));
       if (rangeEl) rangeEl.innerText = `${estRangeKm} km range`;
 
-      // Full Battery Notice & Payment Button State
+      // Full Battery Notice & Payment Button State (Keep extra banners hidden per user request: "don't need to do anything else")
       const fullNoticeEl = document.getElementById('checkoutFullBatteryNotice');
-      const btnPay = document.getElementById('btnPayConfirm');
+      if (fullNoticeEl) fullNoticeEl.classList.add('hidden');
 
+      const btnPay = document.getElementById('btnPayConfirm');
       if (isFull) {
-        if (fullNoticeEl) fullNoticeEl.classList.remove('hidden');
         if (btnPay) {
           btnPay.disabled = true;
-          btnPay.className = 'w-full py-3.5 rounded-2xl font-bold text-xs uppercase tracking-wider bg-slate-200 dark:bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-700 shadow-none transition-all';
-          btnPay.innerText = '🚫 Battery 100% Full • Booking Disabled';
+          btnPay.className = 'w-full py-3.5 rounded-2xl font-bold text-xs uppercase tracking-wider bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-700 shadow-none transition-all flex flex-col items-center justify-center';
+          btnPay.innerHTML = '<span>🚫 Vehicle 100% Charged</span><span class="text-[10px] font-medium opacity-80">Booking disabled • Charging not needed</span>';
         }
       } else {
-        if (fullNoticeEl) fullNoticeEl.classList.add('hidden');
         if (btnPay) {
           btnPay.disabled = false;
-          btnPay.className = 'w-full py-3.5 rounded-2xl font-bold text-sm bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/25 transition-all flex flex-col items-center justify-center cursor-pointer';
+          btnPay.className = 'w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/25 transition-all flex flex-col items-center justify-center cursor-pointer';
           btnPay.innerHTML = '<span>Confirm & Lock Charging Spot ⚡</span><span class="text-[10px] font-medium opacity-90">Instant 4-digit PIN generated • Free cancellation</span>';
         }
       }
@@ -3170,6 +3191,12 @@
 
     function handleLiveTelematicsPacket(data) {
       if (!data) return;
+      if (data.soc !== undefined && data.soc >= 98) {
+        data.soc = 100;
+        data.isDriving = false;
+        data.speed = 0;
+        data.gear = 'P';
+      }
       virtualCarState = data;
       if (currentUser) {
         currentUser.car = data.car;
@@ -3225,13 +3252,18 @@
       const tripNoteKm = document.getElementById('billTripKm');
 
       const odo = data.odometer !== undefined ? Number(data.odometer).toFixed(1) : '14,250.0';
-      const tripKm = data.tripDistance !== undefined ? Number(data.tripDistance).toFixed(1) : '0.0';
-      const soc = data.soc !== undefined ? Math.round(data.soc) : 22;
-      const dropped = Math.max(0, 100 - soc);
+      let tripKm = data.tripDistance !== undefined ? Number(data.tripDistance).toFixed(1) : '0.0';
+      let soc = data.soc !== undefined ? Math.round(data.soc) : 22;
+      if (soc >= 98) soc = 100;
+      let dropped = Math.max(0, 100 - soc);
+      if (soc >= 100) {
+        tripKm = '0.0';
+        dropped = 0;
+      }
 
       if (odoEl) odoEl.innerText = `${odo} km`;
       if (tripDistEl) tripDistEl.innerText = `+${tripKm} km`;
-      if (tripConsEl) tripConsEl.innerText = `-${dropped}% SoC`;
+      if (tripConsEl) tripConsEl.innerText = soc >= 100 ? '0% (Full)' : `-${dropped}% SoC`;
       if (tripNoteKm) tripNoteKm.innerText = tripKm;
     }
 
@@ -3511,7 +3543,8 @@
       } catch (e) {}
 
       // Read directly from the Virtual Vehicle Simulator!
-      const liveSoc = (virtualCarState && virtualCarState.soc !== undefined) ? virtualCarState.soc : ((currentUser && currentUser.lastKnownBmsSoc) ? currentUser.lastKnownBmsSoc : 22);
+      let liveSoc = (virtualCarState && virtualCarState.soc !== undefined) ? virtualCarState.soc : ((currentUser && currentUser.lastKnownBmsSoc) ? currentUser.lastKnownBmsSoc : 22);
+      if (liveSoc >= 98) liveSoc = 100;
 
       const carSpec = vehicles[carName] || { battery: 50.3, efficiency: 6.8 };
       const estRangeKm = Math.round((liveSoc / 100) * (carSpec.battery * (carSpec.efficiency || 6.8)));
@@ -3523,7 +3556,7 @@
       if (text) text.innerText = 'Re-sync';
       if (sub) {
         if (liveSoc >= 100) {
-          sub.innerHTML = `<span class="text-amber-400 font-bold">✓ Live BMS Synced:</span> ${carName} at <strong class="text-white">100% Full</strong> (No charge needed)`;
+          sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${carName} at <strong class="text-white">100% Full</strong> (No charge needed)`;
         } else {
           sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${carName} at <strong class="text-white">${liveSoc}%</strong> (Needs charge to 100%)`;
         }
@@ -3554,9 +3587,10 @@
         if (fresh) virtualCarState = JSON.parse(fresh);
       } catch (e) {}
 
-      const currentLiveSoc = (virtualCarState && virtualCarState.soc !== undefined)
+      let currentLiveSoc = (virtualCarState && virtualCarState.soc !== undefined)
         ? virtualCarState.soc
         : ((currentUser && currentUser.lastKnownBmsSoc) ? currentUser.lastKnownBmsSoc : 22);
+      if (currentLiveSoc >= 98) currentLiveSoc = 100;
 
       pendingCheckout = {
         stationId: st.id,

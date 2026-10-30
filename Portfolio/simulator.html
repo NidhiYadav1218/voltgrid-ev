@@ -592,16 +592,19 @@ Loading live telematics stream...
       'Porsche Taycan 4S': { battery: 93.4, speed: 170, efficiency: 5.4, vin: 'WP0AB2Y120269344', range: 505 }
     };
 
-    // Load or initialize state (Auto-starts driving so page is dynamic immediately!)
+    // Load or initialize state
     function loadSavedState() {
       try {
         const raw = localStorage.getItem('voltgrid_virtual_car');
         if (raw) {
           const parsed = JSON.parse(raw);
-          // Always ensure auto-drive is running when viewing simulator!
-          parsed.isDriving = true;
-          if (!parsed.speed || parsed.speed <= 0) parsed.speed = 85;
-          parsed.gear = 'D';
+          if (parsed.soc >= 98) {
+            parsed.soc = 100;
+            parsed.isDriving = false;
+            parsed.speed = 0;
+            parsed.targetSpeed = 0;
+            parsed.gear = 'P';
+          }
           return parsed;
         }
       } catch (e) {}
@@ -612,10 +615,10 @@ Loading live telematics stream...
         odometer: 14250.0,
         tripDistance: 0.0,
         energyConsumedKwh: 0.0,
-        speed: 85,
-        targetSpeed: 85,
-        gear: 'D',
-        isDriving: true,
+        speed: 0,
+        targetSpeed: 0,
+        gear: 'P',
+        isDriving: false,
         vin: '1MGZS48EV20265921',
         voltage: 398.5,
         temp: 28.4,
@@ -624,7 +627,7 @@ Loading live telematics stream...
     }
 
     let state = loadSavedState();
-    let simMultiplier = 5; // Default to 5x so distance and battery tick live before user's eyes!
+    let simMultiplier = 1; // Default to realistic 1x speed
     let driveInterval = null;
 
     // BroadcastChannel for cross-tab communication
@@ -736,26 +739,43 @@ Loading live telematics stream...
       state.initialDaySoc = 100;
       state.tripDistance = 0.0;
       state.energyConsumedKwh = 0.0;
+      state.speed = 0;
+      state.targetSpeed = 0;
+      state.gear = 'P';
+      state.isDriving = false;
       state.voltage = 398.5;
       state.temp = 28.4;
       saveState();
       renderUI();
-      showToast('🔄 Battery reset to 100% Day 1 full charge & Trip cleared!');
+      showToast('🔄 Battery reset to 100% full charge & car parked at [P]');
       playAudioTone(880, 'triangle', 0.3);
     }
 
     function plugFastCharge() {
       state.soc = 100;
       state.energyConsumedKwh = 0.0;
+      state.tripDistance = 0.0;
+      state.speed = 0;
+      state.targetSpeed = 0;
+      state.gear = 'P';
+      state.isDriving = false;
       state.voltage = 402.1;
       saveState();
       renderUI();
-      showToast('⚡ Fast charged to 100% capacity!');
+      showToast('⚡ Fast charged to 100% capacity! Parked at [P].');
       playAudioTone(740, 'triangle', 0.25);
     }
 
     function refillToSoc(targetSoc) {
-      state.soc = Math.min(100, Math.max(5, targetSoc));
+      const clamped = Math.min(100, Math.max(5, targetSoc));
+      state.soc = clamped;
+      if (clamped >= 98) {
+        state.soc = 100;
+        state.isDriving = false;
+        state.speed = 0;
+        state.targetSpeed = 0;
+        state.gear = 'P';
+      }
       saveState();
       renderUI();
     }
@@ -780,7 +800,7 @@ Loading live telematics stream...
 
     // Main 1-Second Physics Simulation Tick
     function tickPhysics() {
-      if (!state.isDriving || state.speed <= 0) return;
+      if (!state.isDriving || state.speed <= 0 || state.gear === 'P' || state.soc >= 100) return;
 
       const spec = VEHICLE_SPECS[state.car] || VEHICLE_SPECS['MG ZS EV'];
       // Distance covered in this 1 second tick:
