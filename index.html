@@ -99,15 +99,39 @@
       <!-- Right Controls: Admin Portal, Auth, Theme Toggle -->
       <div class="flex items-center gap-2.5 sm:gap-3">
         
-        <!-- Admin Console Trigger -->
-        <button 
-          onclick="openAdminModal()" 
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-800 hover:scale-105 transition-all shadow-sm"
-          title="Open Admin Command Center"
+        <!-- Virtual Vehicle Simulator Trigger (Opens Standalone Driving Simulator Page) -->
+        <a 
+          href="simulator.html" 
+          target="_blank"
+          id="navCarSimLink" 
+          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 bg-cyan-100 text-cyan-900 dark:bg-cyan-950/80 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 hover:scale-105 active:scale-95 transition-all shadow-sm"
+          title="Live Connected Car Telematics & Battery Status (Click to open Simulator in new tab)"
+        >
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>🚗</span>
+          <span class="hidden md:inline">Car:</span>
+          <span id="navSimStatusText" class="font-mono text-[11px] font-black text-emerald-600 dark:text-cyan-400">100% SoC</span>
+        </a>
+
+        <!-- Vendor CPO Hub Link -->
+        <a 
+          href="vendor.html" 
+          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 bg-indigo-100 text-indigo-900 dark:bg-indigo-950/80 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800 hover:scale-105 transition-all shadow-sm"
+          title="Open Vendor & Station Operator Hub"
+        >
+          <span>💼</span>
+          <span class="hidden sm:inline">Vendor</span> Hub
+        </a>
+
+        <!-- Admin Console Link (Standalone Dedicated Admin Page) -->
+        <a 
+          href="admin.html" 
+          class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex-shrink-0 bg-amber-100 text-amber-900 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-300 dark:border-amber-800 hover:scale-105 transition-all shadow-sm"
+          title="Open Dedicated Admin Command Center"
         >
           <span>🛡️</span>
-          <span class="hidden sm:inline">Admin</span> Portal
-        </button>
+          <span class="hidden sm:inline">Admin</span> HQ
+        </a>
 
         <!-- User Authentication Button / Profile Badge -->
         <div id="navUserSlot">
@@ -158,25 +182,25 @@
           </h1>
 
           <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
-            Planning a trip on the Delhi-Jaipur Expressway or heading to DLF Cyber Hub? Lock in a verified fast charger 15 minutes before arrival. Guaranteed available upon your arrival.
+            Driving across the Ahmedabad-Vadodara Expressway (NE-1), visiting GIFT City Gandhinagar, or commuting in Surat and Rajkot? Lock in verified fast chargers for <strong>2-wheelers & 4-wheelers</strong> 15 minutes before arrival. Guaranteed available upon hookup.
           </p>
 
           <!-- Key Metrics Badges -->
           <div class="grid grid-cols-3 gap-3 pt-2">
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-center shadow-sm">
               <span class="text-xl mb-0.5 block">⚡</span>
-              <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">350 kW Ultra</strong>
+              <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">360 kW Hyper</strong>
               <span class="text-[10px] text-slate-500">10% &rarr; 80% in 18 Mins</span>
             </div>
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-center shadow-sm">
               <span class="text-xl mb-0.5 block">🔒</span>
               <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">15-Min Lock</strong>
-              <span class="text-[10px] text-slate-500">Nobody Can Steal It</span>
+              <span class="text-[10px] text-slate-500">Zero Slot Theft</span>
             </div>
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-center shadow-sm">
-              <span class="text-xl mb-0.5 block">🚗</span>
-              <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">All EV Models</strong>
-              <span class="text-[10px] text-slate-500">Tata, Tesla, Hyundai, MG</span>
+              <span class="text-xl mb-0.5 block">🛵🚗</span>
+              <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">2W & 4W Ready</strong>
+              <span class="text-[10px] text-slate-500">Ather, Ola, Tata, MG</span>
             </div>
           </div>
 
@@ -184,7 +208,7 @@
           <div class="pt-2 flex flex-wrap items-center gap-3">
             <a href="#chargers" class="px-6 py-3 rounded-xl font-bold text-xs sm:text-sm bg-emerald-500 hover:bg-emerald-600 dark:bg-cyan-400 dark:hover:bg-cyan-300 text-white dark:text-slate-950 shadow-md shadow-emerald-500/20 transition-all flex items-center gap-2">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              <span>Explore Real Stations & Reserve</span>
+              <span>Explore Real Gujarat Stations</span>
             </a>
             <button onclick="openAdminModal()" class="px-5 py-3 rounded-xl font-bold text-xs sm:text-sm bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-1.5 shadow-sm">
               <span>Admin Live Monitor &rarr;</span>
@@ -199,17 +223,17 @@
             
             <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-slate-800">
               <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-cyan-400">Live Station Hub</span>
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">DLF Cyber Hub &bull; Sector 24</h3>
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-cyan-400">Live Station Hub • Gujarat</span>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">SG Highway HyperHub • Bodakdev</h3>
               </div>
               <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-                🟢 3 Ports Free
+                🟢 5 Bays Free
               </span>
             </div>
 
             <div class="mt-4 space-y-3">
               <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                <span>📍 Gurugram, Haryana &bull; Opposite Cyber City Metro</span>
+                <span>📍 Ahmedabad, Gujarat &bull; Off Sindhu Bhavan Road</span>
               </p>
 
               <!-- Quick Status Cards -->
@@ -412,6 +436,67 @@
           <button id="btnTestSound" onclick="testSoundFx()" title="Verify speaker output & unlock browser Web Audio" class="ml-1 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 dark:border-slate-700 hover:border-emerald-500 text-slate-700 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-cyan-400 bg-white dark:bg-slate-900 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
             <span>🔊</span> Test Sound
           </button>
+        </div>
+      </div>
+
+      <!-- Multi-Vendor Filter & Proximity Location Bar -->
+      <div class="mb-6 p-4 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          
+          <!-- Vendor Network Filter Tabs -->
+          <div class="flex items-center gap-1.5 flex-wrap" id="vendorFilterTabs">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1 hidden sm:inline">CPO Network:</span>
+            <button onclick="setVendorFilter('ALL')" id="vFilter-ALL" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-sm transition-all">
+              🏢 All Networks (5)
+            </button>
+            <button onclick="setVendorFilter('vendor-jiobp')" id="vFilter-vendor-jiobp" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              ⛽ Jio-bp pulse
+            </button>
+            <button onclick="setVendorFilter('vendor-tata')" id="vFilter-vendor-tata" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              ⚡ Tata Power
+            </button>
+            <button onclick="setVendorFilter('vendor-zeon')" id="vFilter-vendor-zeon" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              🔋 Zeon
+            </button>
+            <button onclick="setVendorFilter('vendor-statiq')" id="vFilter-vendor-statiq" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              🚀 Statiq
+            </button>
+            <button onclick="setVendorFilter('vendor-voltgrid')" id="vFilter-vendor-voltgrid" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              🛡️ VoltGrid Direct
+            </button>
+          </div>
+
+          <!-- Vehicle Compatibility Filter (2W vs 4W) -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1 hidden sm:inline">EV Category:</span>
+            <button onclick="setVehicleTypeFilter('ALL')" id="vhFilter-ALL" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-500 text-white shadow-sm transition-all">
+              ⚡ All Ports (2W & 4W)
+            </button>
+            <button onclick="setVehicleTypeFilter('4W')" id="vhFilter-4W" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all">
+              🚗 4-Wheelers (Cars/SUVs)
+            </button>
+            <button onclick="setVehicleTypeFilter('2W')" id="vhFilter-2W" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all">
+              🛵 2-Wheelers (Scooters/Bikes)
+            </button>
+          </div>
+
+          <!-- GPS Location & Distance Selector (Gujarat Regional Grid) -->
+          <div class="flex items-center gap-2">
+            <button onclick="detectDeviceGpsLocation()" class="px-3 py-1.5 rounded-xl bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 text-xs font-bold flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all shadow-sm" title="Calculate distance using browser GPS">
+              <span>🎯</span> <span class="hidden sm:inline">Use My Live</span> GPS
+            </button>
+
+            <select id="userLocationSelector" onchange="onUserLocationChanged(this.value)" class="bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:border-emerald-500">
+              <option value="ahmedabad">📍 Ahmedabad (SG Highway & Bodakdev)</option>
+              <option value="gandhinagar">📍 Gandhinagar (GIFT City)</option>
+              <option value="airport">📍 Ahmedabad Airport T2 (Hansol)</option>
+              <option value="vadodara">📍 Vadodara (Expressway Entry NE-1)</option>
+              <option value="surat">📍 Surat (VR Mall & Dumas Road)</option>
+              <option value="rajkot">📍 Rajkot (150ft Ring Road)</option>
+              <option value="kevadia">📍 Statue of Unity (Ekta Nagar)</option>
+            </select>
+          </div>
+
         </div>
       </div>
 
@@ -665,7 +750,7 @@
 
   <!-- ================= CHECKOUT & BILLING MODAL (SANDBOX - NO REAL MONEY) ================= -->
   <div id="checkoutModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-    <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+    <div class="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl">
       <button onclick="closeCheckoutModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white">✕</button>
 
       <div>
@@ -681,45 +766,150 @@
         <p id="checkoutStationSub" class="text-xs text-slate-500">Delhi-Jaipur Expressway Hub (Km 42)</p>
       </div>
 
-      <!-- Vehicle Battery Level & Smart Charging Slot Allocator -->
+      <!-- Automated Smartcar Connected Telematics & Battery Allocation -->
       <div class="mt-4 bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl p-4 space-y-3">
-        <div class="flex items-center justify-between">
-          <label class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-            <span>🔋</span> Your Vehicle Current Battery
-          </label>
-          <span id="checkoutBatteryDisplay" class="px-2.5 py-0.5 rounded-full font-mono font-black text-xs bg-emerald-500 text-white shadow-sm">
-            25%
-          </span>
+        
+        <!-- Smartcar Connected Telematics Bridge (Automatic) -->
+        <div class="p-3.5 rounded-2xl bg-slate-900 text-white dark:bg-slate-950 border border-emerald-500/30 shadow-sm space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-xs font-bold text-white tracking-wide">Smartcar Connected Telematics</span>
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Live IoT</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <a 
+                href="simulator.html" 
+                target="_blank"
+                title="Open Standalone Driving Simulator & 4G eSIM Telematics in New Tab"
+                class="text-[10px] text-emerald-400 hover:text-emerald-300 font-mono font-bold flex items-center gap-1 transition-colors underline"
+              >
+                <span>🚗</span> Sim Page ↗
+              </a>
+              <button 
+                type="button" 
+                onclick="syncLiveSmartcarBattery(true)" 
+                title="Re-query vehicle telematics"
+                class="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono font-bold flex items-center gap-1 transition-colors"
+              >
+                <span id="smartcarSyncIcon">🔄</span>
+                <span id="smartcarSyncText">Re-sync</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/40 flex items-center justify-center text-base">
+                🚗
+              </div>
+              <div>
+                <div class="text-xs font-extrabold text-white flex items-center gap-1.5">
+                  <span id="smartcarCarName">MG ZS EV</span>
+                  <span class="text-[10px] font-mono font-normal text-slate-400" id="smartcarVinBadge">&bull; VIN: ...5921</span>
+                </div>
+                <div id="smartcarStatusSub" class="text-[11px] text-slate-300 mt-0.5">
+                  <span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> Battery auto-detected via Onboard eSIM
+                </div>
+              </div>
+            </div>
+
+            <div class="text-right">
+              <span id="checkoutBatteryDisplay" class="px-3 py-1 rounded-xl font-mono font-black text-sm bg-emerald-500 text-white shadow-sm inline-block">
+                22% Left
+              </span>
+              <span id="smartcarRangeSub" class="block text-[10px] text-slate-400 font-mono mt-0.5">
+                88 km range
+              </span>
+            </div>
+          </div>
+
+          <!-- 4G eSIM Trip Telematics Bar (Driven vs Consumed) -->
+          <div class="mt-2.5 grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[10px] font-mono">
+            <div>
+              <span class="text-slate-400 block text-[9px] uppercase font-bold">Odometer</span>
+              <strong id="checkoutOdometer" class="text-white">14,250.0 km</strong>
+            </div>
+            <div>
+              <span class="text-slate-400 block text-[9px] uppercase font-bold">Trip Driven</span>
+              <strong id="checkoutTripDistance" class="text-cyan-400">+0.0 km</strong>
+            </div>
+            <div class="text-right">
+              <span class="text-slate-400 block text-[9px] uppercase font-bold">Trip Consumed</span>
+              <strong id="checkoutTripConsumed" class="text-amber-400">-78% SoC</strong>
+            </div>
+          </div>
         </div>
 
-        <input 
-          type="range" 
-          id="checkoutBatterySlider" 
-          min="5" 
-          max="85" 
-          value="25" 
-          step="5" 
-          oninput="updateBatteryEstimation(this.value)" 
-          class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500" 
-        />
+        <!-- Visual Two-Tone Battery Graphic (Left = Remaining in Car, Right = To Be Charged) -->
+        <div class="relative p-1.5 bg-slate-200/80 dark:bg-slate-800/80 rounded-2xl border border-slate-300 dark:border-slate-700">
+          <div class="flex h-7 rounded-xl overflow-hidden font-mono font-extrabold text-[10px] leading-7 text-center">
+            <!-- Left: Current Battery in Vehicle -->
+            <div id="batteryVisualCurrent" class="bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 transition-all duration-300 flex items-center justify-center truncate px-1 shadow-sm" style="width: 22%;">
+              <span id="batteryVisualCurrentText">🔋 22% Left</span>
+            </div>
+            <!-- Right: Needed Charge to 100% -->
+            <div id="batteryVisualNeeded" class="bg-gradient-to-r from-cyan-500 to-emerald-400 text-slate-950 transition-all duration-300 flex items-center justify-center truncate px-1" style="width: 78%;">
+              <span id="batteryVisualNeededText">⚡ +78% to Reach 100% Full</span>
+            </div>
+          </div>
+        </div>
 
+        <!-- Clarifying Breakdown Cards -->
         <div class="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-emerald-200/60 dark:border-emerald-800/40">
           <div class="text-slate-600 dark:text-slate-400">
-            <span class="block text-[10px] uppercase font-bold text-slate-400">Target Full Charge</span>
-            <strong class="text-slate-800 dark:text-slate-200 font-mono">100% (+<span id="checkoutPercentNeeded">75</span>%)</strong>
+            <span class="block text-[10px] uppercase font-bold text-slate-400">Energy Needed to Reach 100%</span>
+            <strong class="text-slate-800 dark:text-slate-200 font-mono"><span id="checkoutPercentNeeded">78</span>% (<span id="checkoutKwhNeeded">39.2</span> kWh)</strong>
           </div>
           <div class="text-right">
             <span class="block text-[10px] uppercase font-bold text-slate-400">Est. Charging Time Needed</span>
-            <strong class="text-emerald-600 dark:text-cyan-400 font-mono font-bold"><span id="checkoutEstMinutes">18</span> mins</strong>
+            <strong class="text-emerald-600 dark:text-cyan-400 font-mono font-bold"><span id="checkoutEstMinutes">16</span> mins</strong>
           </div>
         </div>
 
-        <div class="text-[10px] text-slate-600 dark:text-slate-400 bg-white/80 dark:bg-slate-900/80 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-2">
-          <span>⏱️</span>
-          <div>
-            <strong>15-Min Arrival Window:</strong> Reserved now to reach charger. Once you arrive & enter PIN, your <strong><span id="checkoutAllocatedTimeBadge">18</span>-min charging slot</strong> starts!
+        <!-- Manual Battery Controls & Presets -->
+        <div class="pt-1">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Test Battery SoC Presets:</span>
+            <div class="flex items-center gap-1 text-[10px] font-bold">
+              <button type="button" onclick="updateBatteryEstimation(15)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">15%</button>
+              <button type="button" onclick="updateBatteryEstimation(22)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">22%</button>
+              <button type="button" onclick="updateBatteryEstimation(45)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">45%</button>
+              <button type="button" onclick="updateBatteryEstimation(65)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">65%</button>
+              <button type="button" onclick="updateBatteryEstimation(80)" class="px-2 py-0.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all">80%</button>
+            </div>
+          </div>
+          <input 
+            type="range" 
+            id="checkoutBatterySlider" 
+            min="5" 
+            max="95" 
+            value="22" 
+            step="5" 
+            oninput="updateBatteryEstimation(this.value)" 
+            class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500" 
+          />
+        </div>
+
+        <!-- Notice if Car is already 100% Full -->
+        <div id="checkoutFullBatteryNotice" class="hidden p-3 rounded-2xl bg-amber-500/10 border border-amber-500/40 text-amber-900 dark:text-amber-300 text-xs space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="text-base">🎉</span>
+            <div>
+              <strong class="block text-xs font-bold text-amber-800 dark:text-amber-200">Vehicle Battery is Already 100% Full!</strong>
+              <span class="text-[11px] text-amber-700/90 dark:text-amber-300/80">No charging energy needed. Booking is blocked to prevent occupying charging bays unnecessarily.</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 pt-1 border-t border-amber-500/20">
+            <button type="button" onclick="simulateCarDrive(15)" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[10px] shadow-sm flex items-center gap-1">
+              <span>🛣️</span> Drive 30 km (-15% Battery) to Test
+            </button>
+            <button type="button" onclick="injectSimScenario(22)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-[10px] shadow-sm flex items-center gap-1">
+              <span>🚗</span> Reset to 22% Arrival
+            </button>
           </div>
         </div>
+
       </div>
 
       <!-- Itemized Bill Table -->
@@ -729,8 +919,8 @@
           <span class="font-bold text-slate-900 dark:text-white">₹<span id="billBase">1,262.80</span></span>
         </div>
         <div class="flex justify-between text-slate-600 dark:text-slate-300">
-          <span>High-Power Grid Access Fee</span>
-          <span class="font-bold text-slate-900 dark:text-white">₹40.00</span>
+          <span>Grid Access / Plug-in Fee</span>
+          <span class="font-bold text-slate-900 dark:text-white" id="billGridFee">₹40.00</span>
         </div>
         <div class="flex justify-between text-slate-600 dark:text-slate-300">
           <span>GST (18%)</span>
@@ -739,6 +929,10 @@
         <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-between text-sm font-extrabold text-slate-900 dark:text-white">
           <span>Total Payable Amount</span>
           <span class="text-emerald-600 dark:text-cyan-400">₹<span id="billTotal">1,537.30</span></span>
+        </div>
+
+        <div id="billTripNote" class="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-1 pt-1.5 border-t border-slate-200 dark:border-slate-800">
+          <span>ℹ️</span> <span>Telematics: Billed to refill battery consumed over <strong id="billTripKm" class="text-cyan-600 dark:text-cyan-400">0.0</strong> km trip back to 100%.</span>
         </div>
       </div>
 
@@ -919,6 +1113,235 @@
           <span>⚡</span> Unlock Cable & Charge
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- ================= SMARTCAR VIRTUAL VEHICLE SIMULATOR MODAL ================= -->
+  <div id="vehicleSimulatorModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+    <div class="relative w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl max-h-[92vh] overflow-y-auto">
+      
+      <button onclick="closeVehicleSimulatorModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white font-bold text-lg">✕</button>
+
+      <!-- Header with Live IoT Telemetry Indicators -->
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-emerald-400 p-0.5 shadow-lg shadow-cyan-500/20 shrink-0">
+          <div class="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center text-xl text-white">
+            🚗
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-xl font-extrabold text-slate-900 dark:text-white font-heading">
+              Smartcar Virtual Vehicle Simulator
+            </h3>
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-500/30">
+              ● Live eSIM Connected
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Simulate real-time vehicle BMS telemetry, battery consumption, and cellular IoT payloads for VoltGrid.
+          </p>
+        </div>
+      </div>
+
+      <!-- Network & Hardware Diagnostics Pill Bar -->
+      <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono">
+        <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-slate-400 block uppercase font-bold text-[9px]">eSIM Network</span>
+          <strong class="text-slate-800 dark:text-slate-200">Jio-IoT 4G LTE</strong>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-slate-400 block uppercase font-bold text-[9px]">Cell Signal</span>
+          <strong class="text-emerald-500 font-bold">-68 dBm (Strong)</strong>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-slate-400 block uppercase font-bold text-[9px]">BMS Bus Protocol</span>
+          <strong class="text-cyan-500">CAN 2.0B / ISO 15118</strong>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-slate-400 block uppercase font-bold text-[9px]">API Latency</span>
+          <strong class="text-amber-500" id="simLatency">134 ms</strong>
+        </div>
+      </div>
+
+      <!-- Vehicle Model Selector -->
+      <div class="mt-5 space-y-2">
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+          Select Simulated EV Model (4W & 2W)
+        </label>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+          <!-- 4-Wheelers -->
+          <button type="button" onclick="setSimulatedVehicle('Tata Nexon EV Max')" id="simCarBtn_Tata_Nexon_EV_Max" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">🚗 Tata Nexon EV</span>
+            <span class="text-[10px] text-slate-400 font-mono">40.5 kWh • 60 kW DC</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('MG ZS EV')" id="simCarBtn_MG_ZS_EV" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">🚗 MG ZS EV</span>
+            <span class="text-[10px] text-slate-400 font-mono">50.3 kWh • 80 kW DC</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Hyundai Ioniq 5')" id="simCarBtn_Hyundai_Ioniq_5" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">🚗 Hyundai Ioniq 5</span>
+            <span class="text-[10px] text-slate-400 font-mono">77.4 kWh • 350 kW 800V</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Mahindra XUV400')" id="simCarBtn_Mahindra_XUV400" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">🚗 Mahindra XUV400</span>
+            <span class="text-[10px] text-slate-400 font-mono">39.4 kWh • 50 kW DC</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Tesla Model 3 Long Range')" id="simCarBtn_Tesla_Model_3_Long_Range" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">🚗 Tesla Model 3</span>
+            <span class="text-[10px] text-slate-400 font-mono">82.0 kWh • 250 kW DC</span>
+          </button>
+          <!-- 2-Wheelers -->
+          <button type="button" onclick="setSimulatedVehicle('Ather 450X Gen 3')" id="simCarBtn_Ather_450X_Gen_3" class="p-2.5 rounded-xl border font-bold text-left transition-all bg-amber-500/5 hover:border-amber-500">
+            <span class="block text-sm text-amber-500 dark:text-amber-300">🛵 Ather 450X Gen 3</span>
+            <span class="text-[10px] text-slate-400 font-mono">3.7 kWh • Ather Fast Grid</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Ola S1 Pro Gen 2')" id="simCarBtn_Ola_S1_Pro_Gen_2" class="p-2.5 rounded-xl border font-bold text-left transition-all bg-amber-500/5 hover:border-amber-500">
+            <span class="block text-sm text-amber-500 dark:text-amber-300">🛵 Ola S1 Pro</span>
+            <span class="text-[10px] text-slate-400 font-mono">4.0 kWh • 16A Smart Socket</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('TVS iQube ST')" id="simCarBtn_TVS_iQube_ST" class="p-2.5 rounded-xl border font-bold text-left transition-all bg-amber-500/5 hover:border-amber-500">
+            <span class="block text-sm text-amber-500 dark:text-amber-300">🛵 TVS iQube ST</span>
+            <span class="text-[10px] text-slate-400 font-mono">3.4 kWh • 16A AC Plug</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Virtual BMS Cockpit -->
+      <div class="mt-5 p-4 rounded-2xl bg-slate-900 text-white border border-slate-700/80 shadow-inner space-y-4">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-extrabold text-white" id="simVehicleTitle">MG ZS EV</span>
+              <span class="text-[10px] font-mono text-slate-400" id="simVinDisplay">VIN: 1MGZS48EV20265921</span>
+            </div>
+            <p class="text-[11px] text-slate-400" id="simVehicleSub">
+              50.3 kWh Lithium-ion Pack • 6.8 km/kWh efficiency
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="text-right">
+              <span class="text-2xl font-black font-mono text-emerald-400" id="simSocDisplay">22%</span>
+              <span class="block text-[10px] text-slate-400 font-mono" id="simRangeDisplay">88 km remaining</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-lg">
+              🔋
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Battery Bar -->
+        <div class="space-y-1">
+          <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 border border-slate-700">
+            <div id="simProgressBar" class="h-full rounded-full bg-gradient-to-r from-amber-500 via-emerald-400 to-cyan-400 transition-all duration-300" style="width: 22%"></div>
+          </div>
+          <div class="flex justify-between text-[9px] font-mono text-slate-400">
+            <span>0% Empty</span>
+            <span>Usable Energy: <span id="simKwhRemaining" class="text-white font-bold">11.1 kWh</span> / <span id="simTotalKwh">50.3 kWh</span></span>
+            <span>100% Full</span>
+          </div>
+        </div>
+
+        <!-- Real-Time Interactive Slider -->
+        <div class="space-y-1.5 pt-1">
+          <div class="flex justify-between text-xs font-bold">
+            <span class="text-slate-300">Live Battery State-of-Charge (SoC) Slider:</span>
+            <span class="text-cyan-400 font-mono" id="simSliderVal">22%</span>
+          </div>
+          <input 
+            type="range" 
+            id="simBatterySlider" 
+            min="5" 
+            max="100" 
+            value="22" 
+            step="1" 
+            oninput="onSimBatterySliderChange(this.value)"
+            class="w-full h-2.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-400" 
+          />
+        </div>
+
+        <!-- Quick Scenario Injection Buttons -->
+        <div class="space-y-1.5">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Inject Real-World Road Scenarios:</span>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11px] font-bold">
+            <button type="button" onclick="injectSimScenario(12)" class="px-2.5 py-1.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 transition-all text-center">
+              🚨 Critical Low (12%)
+            </button>
+            <button type="button" onclick="injectSimScenario(22)" class="px-2.5 py-1.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 transition-all text-center">
+              🚗 Highway Stop (22%)
+            </button>
+            <button type="button" onclick="injectSimScenario(45)" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 transition-all text-center">
+              🔋 Half Charge (45%)
+            </button>
+            <button type="button" onclick="injectSimScenario(100)" class="px-2.5 py-1.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border border-cyan-800 transition-all text-center">
+              ⚡ 100% Full Tank
+            </button>
+          </div>
+        </div>
+
+        <!-- Live BMS Hardware Sensor Feeds -->
+        <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800 text-[10px] font-mono">
+          <div class="text-center">
+            <span class="text-slate-400 block">Pack Voltage</span>
+            <span class="text-white font-bold" id="simVoltageDisplay">394.2 V DC</span>
+          </div>
+          <div class="text-center">
+            <span class="text-slate-400 block">Cell Temp</span>
+            <span class="text-emerald-400 font-bold" id="simTempDisplay">28.4 °C (Normal)</span>
+          </div>
+          <div class="text-center">
+            <span class="text-slate-400 block">Plug Port Status</span>
+            <span class="text-cyan-400 font-bold" id="simPlugStateDisplay">Ready to Connect</span>
+          </div>
+        </div>
+
+        <!-- Simulate Drive Button -->
+        <div class="pt-1 flex gap-2">
+          <button 
+            type="button" 
+            onclick="simulateCarDrive(5)" 
+            class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
+          >
+            <span>🛣️</span> Drive 20 km (-5% Battery)
+          </button>
+          <button 
+            type="button" 
+            onclick="applySimulatorToVoltGrid()" 
+            class="flex-1 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow-md shadow-emerald-500/20 transition-all flex items-center justify-center gap-1.5"
+          >
+            <span>⚡</span> Sync to VoltGrid Bay
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Developer REST JSON Inspector (Smartcar API v2.0 Payload) -->
+      <div class="mt-4 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+        <div class="bg-slate-100 dark:bg-slate-950 px-3.5 py-2 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 text-xs font-mono">
+          <div class="flex items-center gap-2">
+            <span class="px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 font-bold text-[10px]">GET</span>
+            <span class="text-slate-600 dark:text-slate-300">/v2.0/vehicles/<span id="simPayloadCarId">veh_mg_zs_ev</span>/battery</span>
+          </div>
+          <span class="text-[10px] text-slate-400">Response 200 OK</span>
+        </div>
+        <pre id="simJsonPayload" class="p-3 bg-slate-950 text-emerald-400 font-mono text-[11px] overflow-x-auto max-h-40 leading-relaxed"></pre>
+      </div>
+
+      <div class="mt-4 flex justify-between items-center text-xs">
+        <span class="text-slate-400 text-[11px]">
+          💡 Changes here instantly broadcast to VoltGrid Checkout & Stations.
+        </span>
+        <button 
+          type="button" 
+          onclick="closeVehicleSimulatorModal()" 
+          class="px-5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-slate-200 transition-colors"
+        >
+          Done / Close
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -1208,6 +1631,26 @@
       }
     }
 
+    function showToast(msg) {
+      const existing = document.getElementById('voltgridToast');
+      if (existing) existing.remove();
+
+      const toast = document.createElement('div');
+      toast.id = 'voltgridToast';
+      toast.className = 'fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-5 py-3 rounded-2xl bg-slate-900/95 dark:bg-slate-800/95 text-white shadow-2xl border border-emerald-500/60 backdrop-blur-md flex items-center gap-3 animate-fadeIn text-xs sm:text-sm font-bold tracking-wide transition-all';
+      toast.innerHTML = `
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>${msg}</span>
+      `;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translate(-50%, -15px)';
+        setTimeout(() => toast.remove(), 400);
+      }, 4000);
+    }
+
     function testSoundFx() {
       playNotificationSound('test');
       const btn = document.getElementById('btnTestSound');
@@ -1225,48 +1668,178 @@
     const INITIAL_STATIONS = [
       {
         id: 'st-01',
-        name: 'Expressway HyperHub • Delhi-Jaipur (NH 48, Km 42)',
-        type: 'Highway Ultra-Hub',
-        location: 'NH 48 Highway Corridor, Near Manesar Toll',
-        mapsUrl: 'https://maps.google.com/?q=NH48+Manesar+Gurugram',
-        pricePerKwh: 28,
+        vendorId: 'vendor-jiobp',
+        vendorName: 'Jio-bp pulse',
+        vendorLogo: '⛽',
+        vendorColor: 'blue',
+        name: 'Jio-bp pulse SG Highway HyperHub • Ahmedabad',
+        type: 'Highway Ultra-Fast Hub (2W & 4W)',
+        location: 'Sindhu Bhavan Marg, Off S.G. Highway, Bodakdev, Ahmedabad, Gujarat 380054',
+        lat: 23.0416,
+        lng: 72.5074,
+        mapsUrl: 'https://maps.google.com/?q=23.0416,72.5074',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=23.0416,72.5074',
+        pricePerKwh: 26,
         solar: true,
+        rating: 4.9,
+        amenities: ['24x7 Wild Bean Cafe', 'Restrooms', 'Free Wi-Fi', 'EV Lounge', '2W Dedicated Bay'],
         ports: [
-          { id: 'p101', name: 'Port 01', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available' },
-          { id: 'p102', name: 'Port 02', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available' },
-          { id: 'p103', name: 'Port 03', type: '150kW Fast DC', maxKw: 150, status: 'available' },
-          { id: 'p104', name: 'Port 04', type: '150kW Fast DC', maxKw: 150, status: 'available' },
-          { id: 'p105', name: 'Port 05', type: '100kW DC', maxKw: 100, status: 'available' },
-          { id: 'p106', name: 'Port 06', type: '22kW AC Destination', maxKw: 22, status: 'available' }
+          { id: 'p101', name: 'Bay 01 (4W)', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p102', name: 'Bay 02 (4W)', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p103', name: 'Bay 03 (4W)', type: '60kW Fast DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p104', name: 'Bay 04 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p105', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' },
+          { id: 'p106', name: 'Bay 06 (2W)', type: '3.3kW 16A Universal Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' }
         ]
       },
       {
         id: 'st-02',
-        name: 'DLF Cyber Hub • Sector 24 Gurugram',
-        type: 'Corporate Destination Hub',
-        location: 'Cyber City, Basement Parking Bay B4, Gurugram',
-        mapsUrl: 'https://maps.google.com/?q=DLF+Cyber+Hub+Gurugram',
-        pricePerKwh: 26,
-        solar: false,
+        vendorId: 'vendor-tata',
+        vendorName: 'Tata Power EZ Charge',
+        vendorLogo: '⚡',
+        vendorColor: 'emerald',
+        name: 'Tata Power GIFT City FinTech SuperHub • Gandhinagar',
+        type: 'FinTech Corridor Smart Grid (2W & 4W)',
+        location: 'Block 12, Road 1D, GIFT SEZ Tower 1, GIFT City, Gandhinagar, Gujarat 382355',
+        lat: 23.1610,
+        lng: 72.6841,
+        mapsUrl: 'https://maps.google.com/?q=23.1610,72.6841',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=23.1610,72.6841',
+        pricePerKwh: 24,
+        solar: true,
+        rating: 4.9,
+        amenities: ['GIFT Club Access', 'Coffee Lounge', 'Automated Parking', '24x7 Security'],
         ports: [
-          { id: 'p201', name: 'Port 01', type: '180kW Fast DC', maxKw: 180, status: 'available' },
-          { id: 'p202', name: 'Port 02', type: '180kW Fast DC', maxKw: 180, status: 'available' },
-          { id: 'p203', name: 'Port 03', type: '43kW Fast AC', maxKw: 43, status: 'available' },
-          { id: 'p204', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'available' }
+          { id: 'p201', name: 'Bay 01 (4W)', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p202', name: 'Bay 02 (4W)', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p203', name: 'Bay 03 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p204', name: 'Bay 04 (2W)', type: '3.3kW 16A Smart Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' },
+          { id: 'p205', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' }
         ]
       },
       {
         id: 'st-03',
-        name: 'Aerocity Gateway • IGI Airport T3',
-        type: 'Airport Hypergrid',
-        location: 'Hospitality District, Worldmark Aerocity, New Delhi',
-        mapsUrl: 'https://maps.google.com/?q=Aerocity+New+Delhi',
-        pricePerKwh: 30,
+        vendorId: 'vendor-zeon',
+        vendorName: 'Zeon Charging',
+        vendorLogo: '🔋',
+        vendorColor: 'indigo',
+        name: 'Zeon Ahmedabad Airport T2 Gateway Hub',
+        type: 'Airport Hypergrid (2W & 4W)',
+        location: 'Terminal 2 Commercial Forecourt, SVPI Airport, Hansol, Ahmedabad, Gujarat 380003',
+        lat: 23.0734,
+        lng: 72.6266,
+        mapsUrl: 'https://maps.google.com/?q=23.0734,72.6266',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=23.0734,72.6266',
+        pricePerKwh: 28,
         solar: true,
+        rating: 4.8,
+        amenities: ['Airport Shuttle', '24x7 Airport Security', 'Luggage Assistance', 'Costa Coffee'],
         ports: [
-          { id: 'p301', name: 'Port 01', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available' },
-          { id: 'p302', name: 'Port 02', type: '120kW Fast DC', maxKw: 120, status: 'available' },
-          { id: 'p303', name: 'Port 03', type: '120kW Fast DC', maxKw: 120, status: 'available' }
+          { id: 'p301', name: 'Bay 01 (4W)', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p302', name: 'Bay 02 (4W)', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p303', name: 'Bay 03 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p304', name: 'Bay 04 (2W)', type: '3.3kW 16A Universal 2W Point', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' }
+        ]
+      },
+      {
+        id: 'st-04',
+        vendorId: 'vendor-statiq',
+        vendorName: 'Statiq EV Fast Hub',
+        vendorLogo: '🚀',
+        vendorColor: 'amber',
+        name: 'Statiq NE-1 Expressway Gateway • Vadodara',
+        type: 'Intercity Expressway Gateway (NE-1)',
+        location: 'National Expressway 1 Entry Plaza, Golden Chokdi, Vadodara, Gujarat 390022',
+        lat: 22.3615,
+        lng: 73.2104,
+        mapsUrl: 'https://maps.google.com/?q=22.3615,73.2104',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=22.3615,73.2104',
+        pricePerKwh: 25,
+        solar: true,
+        rating: 4.7,
+        amenities: ['Expressway Food Court', 'EV Lounge', 'Clean Restrooms', 'Tyre Pressure Check'],
+        ports: [
+          { id: 'p401', name: 'Bay 01 (4W)', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p402', name: 'Bay 02 (4W)', type: '60kW Fast DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p403', name: 'Bay 03 (Dual)', type: '22kW AC Destination', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p404', name: 'Bay 04 (2W)', type: 'Ather Grid 3.3kW Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' },
+          { id: 'p405', name: 'Bay 05 (2W)', type: '3.3kW 16A Smart Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' }
+        ]
+      },
+      {
+        id: 'st-05',
+        vendorId: 'vendor-voltgrid',
+        vendorName: 'VoltGrid Direct Flagship',
+        vendorLogo: '🛡️',
+        vendorColor: 'cyan',
+        name: 'VoltGrid VR Surat & Dumas Mega-Hub',
+        type: 'Diamond City Central Metro Hub',
+        location: 'VR Surat Mall, Dumas Road, Near Magdalla Port Junction, Surat, Gujarat 395007',
+        lat: 21.1442,
+        lng: 72.7562,
+        mapsUrl: 'https://maps.google.com/?q=21.1442,72.7562',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=21.1442,72.7562',
+        pricePerKwh: 24,
+        solar: true,
+        rating: 5.0,
+        amenities: ['Mall Access', 'Solar Canopy Power', 'Food Court', 'Dedicated 2W Fleet Bay'],
+        ports: [
+          { id: 'p501', name: 'Bay 01 (4W)', type: '360kW Hyper-DC', maxKw: 360, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p502', name: 'Bay 02 (4W)', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p503', name: 'Bay 03 (4W)', type: '60kW DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p504', name: 'Bay 04 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p505', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' },
+          { id: 'p506', name: 'Bay 06 (2W)', type: '3.3kW 16A Smart Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' }
+        ]
+      },
+      {
+        id: 'st-06',
+        vendorId: 'vendor-tata',
+        vendorName: 'Tata Power EZ Charge',
+        vendorLogo: '⚡',
+        vendorColor: 'emerald',
+        name: 'Tata Power 150ft Ring Road Hub • Rajkot',
+        type: 'Saurashtra Highway & City Ultra-Hub',
+        location: 'KKV Hall Circle, 150 Feet Ring Road, Kalawad Road, Rajkot, Gujarat 360005',
+        lat: 22.2837,
+        lng: 70.7686,
+        mapsUrl: 'https://maps.google.com/?q=22.2837,70.7686',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=22.2837,70.7686',
+        pricePerKwh: 25,
+        solar: true,
+        rating: 4.8,
+        amenities: ['Dining', 'Restrooms', '24x7 Security', 'Convenience Store'],
+        ports: [
+          { id: 'p601', name: 'Bay 01 (4W)', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p602', name: 'Bay 02 (4W)', type: '60kW Fast DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p603', name: 'Bay 03 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p604', name: 'Bay 04 (2W)', type: '3.3kW 16A Universal Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' },
+          { id: 'p605', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Charger', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' }
+        ]
+      },
+      {
+        id: 'st-07',
+        vendorId: 'vendor-jiobp',
+        vendorName: 'Jio-bp pulse',
+        vendorLogo: '⛽',
+        vendorColor: 'blue',
+        name: 'Jio-bp Statue of Unity Green Zone • Kevadia',
+        type: '100% Green Tourism Hub (2W & 4W)',
+        location: 'Ekta Mall & Shrestha Bharat Bhavan, Ekta Nagar, Kevadia, Gujarat 393151',
+        lat: 21.8380,
+        lng: 73.7191,
+        mapsUrl: 'https://maps.google.com/?q=21.8380,73.7191',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=21.8380,73.7191',
+        pricePerKwh: 23,
+        solar: true,
+        rating: 5.0,
+        amenities: ['Tourist Information', 'Solar Canopy', 'EV Buggy Transfer', 'Restrooms'],
+        ports: [
+          { id: 'p701', name: 'Bay 01 (4W)', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p702', name: 'Bay 02 (4W)', type: '60kW Fast DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p703', name: 'Bay 03 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p704', name: 'Bay 04 (2W)', type: '3.3kW 16A E-Scooter Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' },
+          { id: 'p705', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' }
         ]
       }
     ];
@@ -1290,6 +1863,12 @@
       stations: loadSaved('voltgrid_stations', JSON.parse(JSON.stringify(INITIAL_STATIONS)))
     };
 
+    // Auto-migrate cached database to Gujarat stations if still holding older Delhi data
+    if (!VoltGridDB.stations || !Array.isArray(VoltGridDB.stations) || !VoltGridDB.stations.some(s => s.location && s.location.includes('Gujarat'))) {
+      VoltGridDB.stations = JSON.parse(JSON.stringify(INITIAL_STATIONS));
+      localStorage.setItem('voltgrid_stations', JSON.stringify(VoltGridDB.stations));
+    }
+
     function saveVoltGridDB() {
       try {
         localStorage.setItem('voltgrid_users', JSON.stringify(VoltGridDB.users));
@@ -1306,11 +1885,12 @@
     }
 
     let stations = VoltGridDB.stations;
+    const nowInit = Date.now();
     // Auto-clean any mock demo vehicles or expired ports from previous stale sessions
     stations.forEach(st => {
       st.ports.forEach(p => {
-        // Wipe old mock demo cars that were hardcoded in prior sessions
-        if (p.vehicle === 'Porsche Taycan' || p.vehicle === 'Tata Nexon EV' || p.vehicle === 'Hyundai Ioniq 5' || p.vehicle === 'Mahindra XUV400') {
+        // Wipe old mock demo cars that were hardcoded in prior sessions or mock test users
+        if (p.vehicle === 'Porsche Taycan' || p.vehicle === 'Tata Nexon EV' || p.vehicle === 'Hyundai Ioniq 5' || p.vehicle === 'Mahindra XUV400' || p.customer === 'Kiran Patel') {
           p.status = 'available';
           p.vehicle = null;
           p.customer = null;
@@ -1319,6 +1899,8 @@
           p.soc = null;
           p.kw = null;
           p.secondsLeft = 0;
+          p.chargingStartedAt = null;
+          p.chargingDurationSeconds = null;
         }
         if (p.status === 'reserved' && (!p.secondsLeft || p.secondsLeft <= 0)) {
           p.status = 'available';
@@ -1327,6 +1909,33 @@
           p.vehicle = null;
           p.pin = null;
           p.secondsLeft = 0;
+        }
+        // Timestamp-aware charging resumption:
+        if (p.status === 'charging' && p.chargingStartedAt) {
+          const totalSec = p.chargingDurationSeconds || (p.chargingDurationMinutes ? p.chargingDurationMinutes * 60 : 18 * 60);
+          const elapsedSec = Math.floor((nowInit - p.chargingStartedAt) / 1000);
+          if (elapsedSec >= totalSec) {
+            p.soc = 100;
+            p.kw = 0;
+            p.secondsLeft = 0;
+            // If completed over 30 minutes ago, auto-release port back to available
+            if (elapsedSec - totalSec > 1800) {
+              p.status = 'available';
+              p.customer = null;
+              p.phone = null;
+              p.vehicle = null;
+              p.pin = null;
+              p.userId = null;
+              p.sessionId = null;
+              p.chargingStartedAt = null;
+              p.chargingDurationSeconds = null;
+            }
+          } else {
+            const initial = (p.initialSoc !== undefined && p.initialSoc !== null) ? p.initialSoc : 25;
+            const progressFraction = Math.min(1, elapsedSec / totalSec);
+            p.soc = Math.min(100, Math.round(initial + (100 - initial) * progressFraction));
+            p.secondsLeft = Math.max(0, totalSec - elapsedSec);
+          }
         }
       });
     });
@@ -1348,16 +1957,40 @@
 
     function getMyLocalHolds() {
       try {
-        return JSON.parse(localStorage.getItem('voltgrid_my_local_holds') || '{}');
+        const raw = JSON.parse(localStorage.getItem('voltgrid_my_local_holds') || '{}');
+        const now = Date.now();
+        let changed = false;
+        const valid = {};
+        for (const [k, v] of Object.entries(raw)) {
+          // Keep hold only if less than 2 hours old
+          if (v && v.timestamp && (now - v.timestamp < 7200000)) {
+            valid[k] = v;
+          } else if (v && !v.timestamp) {
+            // Auto-expire legacy hold without timestamp to prevent stale ghost sessions
+            changed = true;
+          } else {
+            changed = true;
+          }
+        }
+        if (changed) {
+          localStorage.setItem('voltgrid_my_local_holds', JSON.stringify(valid));
+        }
+        return valid;
       } catch (e) {
         return {};
       }
     }
 
+    function getMyLocalHold(portId) {
+      if (!portId) return null;
+      const holds = getMyLocalHolds();
+      return holds[portId] || null;
+    }
+
     function saveMyLocalHold(portId, data) {
       const holds = getMyLocalHolds();
       if (data) {
-        holds[portId] = data;
+        holds[portId] = { ...data, timestamp: Date.now() };
       } else {
         delete holds[portId];
       }
@@ -1392,6 +2025,14 @@
           return true;
         }
       }
+
+      // 4. Match by Device Session ID (same browser testing!):
+      const currentSid = getDeviceSessionId();
+      if (currentSid && port.sessionId && port.sessionId === currentSid) return true;
+
+      // 5. Match by local active hold:
+      const localHold = getMyLocalHold(port.id);
+      if (localHold && localHold.active) return true;
 
       return false;
     }
@@ -1445,12 +2086,22 @@
     }
 
     const vehicles = {
-      'Tata Nexon EV Max': { battery: 40.5, speed: 60, efficiency: 7.2 },
-      'Tesla Model 3 Long Range': { battery: 82, speed: 250, efficiency: 6.5 },
-      'Hyundai Ioniq 5': { battery: 77.4, speed: 350, efficiency: 6.2 },
-      'MG ZS EV': { battery: 50.3, speed: 80, efficiency: 6.8 },
-      'Mahindra XUV400': { battery: 39.4, speed: 50, efficiency: 6.9 },
-      'Porsche Taycan 4S': { battery: 93.4, speed: 270, efficiency: 5.5 }
+      // 4-Wheelers (Cars & SUVs)
+      'Tata Nexon EV Max': { battery: 40.5, speed: 60, efficiency: 7.2, type: '4W', connector: 'CCS2' },
+      'Tata Punch EV': { battery: 35.0, speed: 50, efficiency: 7.8, type: '4W', connector: 'CCS2' },
+      'MG ZS EV': { battery: 50.3, speed: 80, efficiency: 6.8, type: '4W', connector: 'CCS2' },
+      'Mahindra XUV400': { battery: 39.4, speed: 50, efficiency: 6.9, type: '4W', connector: 'CCS2' },
+      'Hyundai Ioniq 5': { battery: 77.4, speed: 350, efficiency: 6.2, type: '4W', connector: 'CCS2' },
+      'BYD Atto 3': { battery: 60.5, speed: 80, efficiency: 6.5, type: '4W', connector: 'CCS2' },
+      'Tesla Model 3 Long Range': { battery: 82, speed: 250, efficiency: 6.5, type: '4W', connector: 'CCS2' },
+      'Porsche Taycan 4S': { battery: 93.4, speed: 270, efficiency: 5.5, type: '4W', connector: 'CCS2' },
+
+      // 2-Wheelers (E-Scooters & E-Motorcycles)
+      'Ather 450X Gen 3': { battery: 3.7, speed: 3.3, efficiency: 30.0, type: '2W', connector: 'Ather Type 6' },
+      'Ola S1 Pro Gen 2': { battery: 4.0, speed: 3.0, efficiency: 35.0, type: '2W', connector: '16A Smart Socket' },
+      'TVS iQube ST': { battery: 3.4, speed: 1.5, efficiency: 30.0, type: '2W', connector: '16A Smart Socket' },
+      'Bajaj Chetak EV': { battery: 3.2, speed: 1.5, efficiency: 28.0, type: '2W', connector: '16A Smart Socket' },
+      'Ultraviolette F77': { battery: 10.3, speed: 3.3, efficiency: 20.0, type: '2W', connector: 'Type 2' }
     };
 
     function resetDemoData() {
@@ -1778,20 +2429,170 @@
       playNotificationSound('chime');
     }
 
-    // ---------------- FORMAT SECONDS TO MM:SS ----------------
+    // ---------------- FORMAT SECONDS & TIME CALCULATIONS ----------------
+    function formatMinutes(mins) {
+      if (!mins || mins <= 0) return '0 mins';
+      if (mins >= 60) {
+        const h = Math.floor(mins / 60);
+        const rem = mins % 60;
+        return rem > 0 ? `${h}h ${rem}m` : `${h}h`;
+      }
+      return `${mins} mins`;
+    }
+
     function formatTime(sec) {
+      if (!sec || sec <= 0) return '0:00';
+      if (sec >= 3600) {
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        return `${h}h ${m}m`;
+      }
       const m = Math.floor(sec / 60);
       const s = sec % 60;
       return `${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
+    function getRealisticChargingDurationMinutes(port, carName, currentSoc) {
+      const car = carName || (currentUser ? currentUser.car : 'MG ZS EV');
+      const carSpec = vehicles[car] || { battery: 50.3, speed: 80 };
+      const batteryCap = carSpec.battery || 50.3;
+      const startSoc = (currentSoc !== undefined && currentSoc !== null) ? Number(currentSoc) : 22;
+      const neededKwh = Math.max(0.5, +(((100 - startSoc) / 100) * batteryCap).toFixed(2));
+
+      const portMaxKw = port ? (port.maxKw || 60) : 60;
+      // AC destination / 2W chargers (e.g. 3.3kW, 22kW) vs DC fast chargers (50kW - 350kW)
+      const isAcPort = portMaxKw <= 22 || (port && port.type && (port.type.includes('AC') || port.type.includes('Socket') || port.type.includes('Point')));
+      const effectiveKw = isAcPort ? Math.min(portMaxKw, carSpec.speed || 3.3) : Math.min(portMaxKw, carSpec.speed || 80);
+
+      const estMins = Math.max(5, Math.round((neededKwh / Math.max(1, effectiveKw)) * 60));
+      return estMins;
+    }
+
+    // ---------------- MULTI-VENDOR & GPS PROXIMITY LOGIC (GUJARAT REGIONAL GRID) ----------------
+    let activeVendorFilter = 'ALL';
+    let activeVehicleTypeFilter = 'ALL';
+    let userLocation = { lat: 23.0416, lng: 72.5074, name: 'Ahmedabad (SG Highway)' };
+
+    function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+      if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+      const R = 6371; // km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return +(R * c).toFixed(1);
+    }
+
+    function setVendorFilter(vendorId) {
+      activeVendorFilter = vendorId;
+      const filters = ['ALL', 'vendor-jiobp', 'vendor-tata', 'vendor-zeon', 'vendor-statiq', 'vendor-voltgrid'];
+      filters.forEach(f => {
+        const btn = document.getElementById('vFilter-' + f);
+        if (btn) {
+          if (f === vendorId) {
+            btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-sm transition-all';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all';
+          }
+        }
+      });
+      renderStationSelector();
+    }
+
+    function setVehicleTypeFilter(vType) {
+      activeVehicleTypeFilter = vType;
+      const filters = ['ALL', '4W', '2W'];
+      filters.forEach(f => {
+        const btn = document.getElementById('vhFilter-' + f);
+        if (btn) {
+          if (f === vType) {
+            btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-500 text-white shadow-sm transition-all';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all';
+          }
+        }
+      });
+      renderPorts();
+    }
+
+    function onUserLocationChanged(val) {
+      const PRESETS = {
+        ahmedabad: { lat: 23.0416, lng: 72.5074, name: 'Ahmedabad (SG Highway)' },
+        gandhinagar: { lat: 23.1610, lng: 72.6841, name: 'Gandhinagar (GIFT City)' },
+        airport: { lat: 23.0734, lng: 72.6266, name: 'Ahmedabad Airport T2' },
+        vadodara: { lat: 22.3615, lng: 73.2104, name: 'Vadodara (Expressway Entry NE-1)' },
+        surat: { lat: 21.1442, lng: 72.7562, name: 'Surat (VR Mall & Dumas Rd)' },
+        rajkot: { lat: 22.2837, lng: 70.7686, name: 'Rajkot (150ft Ring Road)' },
+        kevadia: { lat: 21.8380, lng: 73.7191, name: 'Statue of Unity (Ekta Nagar)' }
+      };
+      if (PRESETS[val]) {
+        userLocation = PRESETS[val];
+        renderStationSelector();
+      }
+    }
+
+    function detectDeviceGpsLocation() {
+      if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser.');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          userLocation = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            name: 'Live GPS'
+          };
+          alert(`📍 Live GPS Detected: (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)})\nGujarat stations sorted by closest driving proximity!`);
+          renderStationSelector();
+        },
+        (err) => {
+          alert('GPS location permission denied or timed out. Defaulting to Ahmedabad SG Highway.');
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+
     // ---------------- RENDER STATIONS & PORTS ----------------
     function renderStationSelector() {
       const container = document.getElementById('stationButtons');
-      container.innerHTML = stations.map(st => {
+      if (!container) return;
+
+      let displayStations = stations.slice();
+
+      // Filter by vendor if selected
+      if (activeVendorFilter && activeVendorFilter !== 'ALL') {
+        displayStations = displayStations.filter(s => s.vendorId === activeVendorFilter || (s.vendorName && s.vendorName.toLowerCase().includes(activeVendorFilter.replace('vendor-', ''))));
+      }
+
+      // Compute distance and sort by proximity
+      displayStations.forEach(st => {
+        const d = calculateDistanceKm(userLocation.lat, userLocation.lng, st.lat || 23.0416, st.lng || 72.5074);
+        st.calculatedDistanceKm = d !== null ? d : 2.5;
+      });
+      displayStations.sort((a, b) => a.calculatedDistanceKm - b.calculatedDistanceKm);
+
+      // If currentStationId is not in displayStations, select the first one
+      if (displayStations.length > 0 && !displayStations.some(s => s.id === currentStationId)) {
+        currentStationId = displayStations[0].id;
+      }
+
+      if (displayStations.length === 0) {
+        container.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-500 font-mono">No stations found for this vendor network. Switch to "All Networks" to see all Gujarat CPO hubs.</div>`;
+        renderPorts();
+        return;
+      }
+
+      container.innerHTML = displayStations.map(st => {
         const isSelected = st.id === currentStationId;
         const total = st.ports.length;
         const avail = st.ports.filter(p => p.status === 'available').length;
+        const dist = st.calculatedDistanceKm;
+        const estDriveMins = Math.max(2, Math.round(dist * 2.2));
+        const directionsLink = st.directionsUrl || `https://www.google.com/maps/dir/?api=1&destination=${st.lat || 23.0416},${st.lng || 72.5074}`;
+
         return `
           <div onclick="selectStation('${st.id}')" class="cursor-pointer rounded-3xl p-5 border transition-all duration-200 ${
             isSelected
@@ -1800,7 +2601,11 @@
           }">
             <div class="flex items-start justify-between">
               <div>
-                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-cyan-400">${st.type}</span>
+                <div class="flex items-center gap-1.5 mb-1">
+                  <span class="text-xs">${st.vendorLogo || '⚡'}</span>
+                  <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-cyan-400 border border-emerald-500/20">${st.vendorName || 'VoltGrid'}</span>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">&bull; ${st.type}</span>
+                </div>
                 <h4 class="text-base font-extrabold text-slate-900 dark:text-white font-heading mt-0.5">${st.name}</h4>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${st.location}</p>
               </div>
@@ -1810,10 +2615,16 @@
                 ${avail}/${total} Free
               </span>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">₹${st.pricePerKwh} / kWh</span>
-              <a href="${st.mapsUrl}" target="_blank" onclick="event.stopPropagation()" class="text-xs font-bold text-cyan-600 dark:text-cyan-400 hover:underline flex items-center gap-1">
-                Directions ↗
+
+            <div class="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-800 dark:text-slate-200">₹${st.pricePerKwh}/kWh</span>
+                <span class="px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-300 text-[10px] font-mono font-bold flex items-center gap-1">
+                  🚗 ${dist} km (${estDriveMins}m)
+                </span>
+              </div>
+              <a href="${directionsLink}" target="_blank" onclick="event.stopPropagation()" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-cyan-400 font-bold flex items-center gap-1 transition-all" title="Open Google Maps Real Navigation">
+                <span>🗺️ Directions ↗</span>
               </a>
             </div>
           </div>
@@ -1827,7 +2638,26 @@
       const station = stations.find(s => s.id === currentStationId);
       if (!station) return;
 
-      container.innerHTML = station.ports.map(port => {
+      let portsToDisplay = station.ports;
+      if (activeVehicleTypeFilter === '4W') {
+        portsToDisplay = portsToDisplay.filter(p => p.vehicleType === '4W' || p.vehicleType === 'BOTH');
+      } else if (activeVehicleTypeFilter === '2W') {
+        portsToDisplay = portsToDisplay.filter(p => p.vehicleType === '2W' || p.vehicleType === 'BOTH');
+      }
+
+      if (portsToDisplay.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6">
+            <span class="text-3xl mb-2 block">🔌</span>
+            <h4 class="text-base font-bold text-slate-800 dark:text-white">No ${activeVehicleTypeFilter === '2W' ? '2-Wheeler' : '4-Wheeler'} ports at this station</h4>
+            <p class="text-xs text-slate-500 mt-1">Switch filter back to "All Ports" or choose another Gujarat charging hub above.</p>
+            <button onclick="setVehicleTypeFilter('ALL')" class="mt-4 px-4 py-2 rounded-xl bg-cyan-500 text-white font-bold text-xs">Show All Ports</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = portsToDisplay.map(port => {
         const isAvail = port.status === 'available';
         const isRes = port.status === 'reserved';
         const isChg = port.status === 'charging';
@@ -1852,16 +2682,29 @@
             borderClass = 'border-amber-400/40 dark:border-amber-500/40';
           }
         } else if (isChg) {
+          const isFull = (port.soc || 0) >= 100;
           if (isMySession) {
-            badgeClass = 'bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-400 font-bold';
-            badgeText = 'CHARGING (' + (port.soc || 65) + '%)';
-            borderClass = 'border-cyan-400/40 dark:border-cyan-500/40 ring-2 ring-cyan-500/20';
+            if (isFull) {
+              badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-extrabold animate-pulse';
+              badgeText = 'FULLY CHARGED (100%)';
+              borderClass = 'border-emerald-500/60 dark:border-emerald-400/60 ring-2 ring-emerald-500/20';
+            } else {
+              badgeClass = 'bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-400 font-bold';
+              badgeText = 'CHARGING (' + (port.soc || 25) + '%)';
+              borderClass = 'border-cyan-400/40 dark:border-cyan-500/40 ring-2 ring-cyan-500/20';
+            }
           } else {
             badgeClass = 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold';
-            badgeText = 'IN USE';
+            badgeText = isFull ? 'CHARGED' : 'IN USE';
             borderClass = 'border-slate-300 dark:border-slate-700';
           }
         }
+
+        const vTag = port.vehicleType === '2W'
+          ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-500 dark:text-amber-300 border border-amber-500/30">🛵 2W Smart Socket</span>'
+          : port.vehicleType === '4W'
+          ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-500 dark:text-cyan-300 border border-cyan-500/30">🚗 4W Fast DC</span>'
+          : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-500 dark:text-emerald-300 border border-emerald-500/30">🚗🛵 Dual 2W & 4W AC</span>';
 
         return `
           <div class="bg-white dark:bg-slate-900 border ${borderClass} rounded-3xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
@@ -1873,8 +2716,11 @@
                 </span>
               </div>
 
-              <h4 class="text-lg font-extrabold text-slate-900 dark:text-white font-heading">${port.name}</h4>
-              <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">${port.type} &bull; Up to ${port.maxKw} kW</p>
+              <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                <h4 class="text-lg font-extrabold text-slate-900 dark:text-white font-heading">${port.name}</h4>
+                ${vTag}
+              </div>
+              <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">${port.type} &bull; Up to ${port.maxKw} kW (${port.connector || 'CCS2'})</p>
 
               <div class="mt-4 p-3 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-100 dark:border-slate-800/80 min-h-[72px] flex flex-col justify-center">
                 ${isAvail ? `
@@ -1908,17 +2754,20 @@
                   <div class="space-y-1.5">
                     <div class="flex justify-between items-center text-xs">
                       <span class="text-slate-800 dark:text-white font-extrabold flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                        <span class="w-2 h-2 rounded-full ${(port.soc || 0) >= 100 ? 'bg-emerald-400' : 'bg-cyan-400 animate-pulse'}"></span>
                         ${port.vehicle || (currentUser ? currentUser.car : 'Your EV')}
                       </span>
-                      <span class="text-cyan-600 dark:text-cyan-400 font-mono font-black text-sm">${port.soc || 25}%</span>
+                      <span class="${(port.soc || 0) >= 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-cyan-600 dark:text-cyan-400'} font-mono font-black text-sm">${port.soc || 25}%</span>
                     </div>
                     <div class="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden p-0.5">
-                      <div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full transition-all duration-300" style="width: ${port.soc || 25}%"></div>
+                      <div class="${(port.soc || 0) >= 100 ? 'bg-emerald-500' : 'bg-gradient-to-r from-emerald-500 to-cyan-400'} h-full rounded-full transition-all duration-300" style="width: ${port.soc || 25}%"></div>
                     </div>
                     <div class="flex justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                      <span>⚡ ${port.kw || 120} kW active draw</span>
-                      <span class="text-amber-500 font-bold">⏳ ${formatTime(port.secondsLeft || 600)} to 100%</span>
+                      <span>⚡ ${(port.soc || 0) >= 100 ? 0 : (port.kw !== undefined ? port.kw : 120)} kW active draw</span>
+                      ${(port.soc || 0) >= 100 
+                        ? `<span class="text-emerald-500 dark:text-emerald-400 font-extrabold">🎉 Battery 100% Full</span>`
+                        : `<span class="text-amber-500 font-bold">⏳ ${formatTime(port.secondsLeft || 600)} to 100%</span>`
+                      }
                     </div>
                   </div>
                 ` : ''}
@@ -1955,20 +2804,59 @@
               ` : ''}
 
               ${isChg && isMySession ? `
-                <button onclick="releasePort('${port.id}')" class="w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/70 dark:hover:bg-rose-900/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 transition-all flex items-center justify-center gap-1.5 shadow-sm">
-                  <span>⏹️</span> Stop / Disconnect Cable
-                </button>
+                ${(port.soc || 0) >= 100 ? `
+                  <button onclick="releasePort('${port.id}')" class="w-full py-2.5 rounded-xl text-xs font-extrabold uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-1.5 animate-pulse">
+                    <span>🔌</span> Unplug Cable & Finish (100% Full)
+                  </button>
+                ` : `
+                  <button onclick="releasePort('${port.id}')" class="w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/70 dark:hover:bg-rose-900/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 transition-all flex items-center justify-center gap-1.5 shadow-sm">
+                    <span>⏹️</span> Stop / Disconnect Cable
+                  </button>
+                `}
               ` : ''}
 
               ${isChg && !isMySession ? `
-                <button disabled class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700/60 flex items-center justify-center gap-1.5">
-                  <span>🔒</span> In Use &bull; Cable Locked
-                </button>
+                <div class="space-y-1">
+                  <button disabled class="w-full py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-200 dark:border-slate-700/60 flex items-center justify-center gap-1.5">
+                    <span>🔒</span> In Use &bull; Cable Locked
+                  </button>
+                  <button type="button" onclick="forceReleasePortForTesting('${port.id}')" class="w-full text-center text-[10px] text-slate-400 hover:text-rose-500 font-mono transition-colors underline py-0.5">
+                    [Free up this port for testing]
+                  </button>
+                </div>
               ` : ''}
             </div>
           </div>
         `;
       }).join('');
+    }
+
+    async function forceReleasePortForTesting(portId) {
+      const st = stations.find(s => s.id === currentStationId);
+      const port = st ? st.ports.find(p => p.id === portId) : null;
+      if (port) {
+        saveMyLocalHold(portId, null);
+        port.status = 'available';
+        port.customer = null;
+        port.phone = null;
+        port.vehicle = null;
+        port.pin = null;
+        port.soc = null;
+        port.kw = null;
+        port.secondsLeft = 0;
+        port.paid = 0;
+        saveVoltGridDB();
+        renderPorts();
+        updateLiveSessionHero();
+        showToast('🔓 Port released and made available for testing!');
+        try {
+          await fetch(`${API_BASE}/api/stations`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'release', stationId: currentStationId, portId: portId })
+          });
+        } catch (e) {}
+      }
     }
 
     function updateLiveSessionHero() {
@@ -2022,23 +2910,24 @@
       }
 
       // Active charging session for currentUser:
-      const soc = activePort.soc || 50;
-      const kw = activePort.kw || (activePort.maxKw ? Math.round(activePort.maxKw * 0.75) : 120);
+      const isFull = (activePort.soc || 0) >= 100;
+      const soc = isFull ? 100 : (activePort.soc || 50);
+      const kw = isFull ? 0 : (activePort.kw !== undefined ? activePort.kw : (activePort.maxKw ? Math.round(activePort.maxKw * 0.75) : 120));
       const kwhAdded = ((soc / 100) * 60).toFixed(1);
       const cost = Math.round(kwhAdded * (activeStation.pricePerKwh || 28));
       const offset = 264 - (264 * soc) / 100;
 
       container.innerHTML = `
-        <div class="bg-white dark:bg-slate-900 border border-cyan-500/40 dark:border-cyan-400/40 rounded-3xl p-6 sm:p-8 shadow-lg ring-2 ring-cyan-500/10">
+        <div class="bg-white dark:bg-slate-900 border ${isFull ? 'border-emerald-500/50' : 'border-cyan-500/40 dark:border-cyan-400/40'} rounded-3xl p-6 sm:p-8 shadow-lg ring-2 ${isFull ? 'ring-emerald-500/20' : 'ring-cyan-500/10'}">
           <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
             <div class="w-full lg:w-1/2 space-y-3">
               <div class="flex items-center gap-2">
                 <span class="flex h-3 w-3 relative">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full ${isFull ? 'bg-emerald-400' : 'bg-cyan-400'} opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 ${isFull ? 'bg-emerald-500' : 'bg-cyan-500'}"></span>
                 </span>
-                <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
-                  Live Real-Time Telemetry Monitor
+                <span class="text-xs font-bold uppercase tracking-wider ${isFull ? 'text-emerald-600 dark:text-emerald-400' : 'text-cyan-600 dark:text-cyan-400'}">
+                  ${isFull ? 'Charging Complete • 100% Full' : 'Live Real-Time Telemetry Monitor'}
                 </span>
                 <span class="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2.5 py-0.5 rounded-full">
                   ${activePort.name} &bull; ${activePort.type}
@@ -2046,23 +2935,23 @@
               </div>
 
               <h3 class="text-2xl font-bold text-slate-900 dark:text-white font-heading">
-                ${activePort.vehicle || (currentUser ? currentUser.car : 'Your Vehicle')} &bull; Connected
+                ${activePort.vehicle || (currentUser ? currentUser.car : 'Your Vehicle')} &bull; ${isFull ? 'Fully Charged' : 'Connected'}
               </h3>
               <p class="text-xs text-slate-500 dark:text-slate-400">
-                ${activeStation.name} &bull; Active Charging Session
+                ${activeStation.name} &bull; ${isFull ? 'Session Complete (0 kW Draw)' : 'Active Charging Session'}
               </p>
 
               <div class="grid grid-cols-3 gap-3 pt-2">
                 <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
                   <span class="text-[10px] font-bold uppercase text-slate-400 block">Current Draw</span>
-                  <span class="text-lg font-extrabold text-cyan-600 dark:text-cyan-400">${kw} kW</span>
+                  <span class="text-lg font-extrabold ${isFull ? 'text-emerald-500' : 'text-cyan-600 dark:text-cyan-400'}">${kw} kW ${isFull ? '(Idle)' : ''}</span>
                 </div>
                 <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
                   <span class="text-[10px] font-bold uppercase text-slate-400 block">Energy Added</span>
                   <span class="text-lg font-extrabold text-slate-900 dark:text-white">${kwhAdded} kWh</span>
                 </div>
                 <div class="bg-slate-50 dark:bg-slate-950 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
-                  <span class="text-[10px] font-bold uppercase text-slate-400 block">Running Cost</span>
+                  <span class="text-[10px] font-bold uppercase text-slate-400 block">Total Cost</span>
                   <span class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">₹${cost.toLocaleString()}</span>
                 </div>
               </div>
@@ -2073,21 +2962,21 @@
               <div class="relative w-40 h-40 flex items-center justify-center">
                 <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                   <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-100 dark:text-slate-800" />
-                  <circle cx="50" cy="50" r="42" stroke="#06b6d4" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="${offset}" stroke-linecap="round" fill="transparent" class="transition-all duration-700" />
+                  <circle cx="50" cy="50" r="42" stroke="${isFull ? '#10b981' : '#06b6d4'}" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="${offset}" stroke-linecap="round" fill="transparent" class="transition-all duration-700" />
                 </svg>
                 <div class="absolute flex flex-col items-center justify-center text-center">
                   <span class="text-xl">🔋</span>
                   <span class="text-2xl font-extrabold text-slate-900 dark:text-white font-heading mt-0.5">${soc}%</span>
-                  <span class="text-[10px] font-bold text-slate-400">${soc >= 100 ? 'Fully Charged' : 'Target: 80%'}</span>
+                  <span class="text-[10px] font-bold ${isFull ? 'text-emerald-500 font-extrabold' : 'text-slate-400'}">${isFull ? '🎉 Fully Charged' : 'Target: 100%'}</span>
                 </div>
               </div>
 
               <div class="flex flex-col gap-2 text-center sm:text-left">
-                <button onclick="releasePort('${activePort.id}')" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-200 border border-rose-200 dark:border-rose-800 transition-all shadow-sm">
-                  Stop & Unlock Cable
+                <button onclick="releasePort('${activePort.id}')" class="px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider ${isFull ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/25 animate-pulse' : 'bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-200 border border-rose-200 dark:border-rose-800'} transition-all shadow-sm">
+                  ${isFull ? '🔌 Unplug Cable & Finish' : 'Stop & Unlock Cable'}
                 </button>
                 <span class="text-[10px] text-slate-400">
-                  Safe uncouple available anytime
+                  ${isFull ? 'Ready to unplug & release bay' : 'Safe uncouple available anytime'}
                 </span>
               </div>
             </div>
@@ -2104,20 +2993,25 @@
     // ---------------- CHECKOUT & BILLING FLOW ----------------
     function updateBatteryEstimation(currentSocVal) {
       if (!pendingCheckout) return;
-      const currentSoc = parseInt(currentSocVal) || 25;
-      const userCarName = currentUser ? currentUser.car : 'Tata Nexon EV Max';
-      const carSpec = vehicles[userCarName] || { battery: 50, speed: 100 };
-      const batteryCapacity = carSpec.battery || 50;
-      const percentNeeded = Math.max(15, 100 - currentSoc);
-      const neededKwh = +((percentNeeded / 100) * batteryCapacity).toFixed(1);
+      const currentSoc = parseInt(currentSocVal) || 22;
+      const userCarName = (virtualCarState && virtualCarState.car) ? virtualCarState.car : ((currentUser && currentUser.car) ? currentUser.car : 'MG ZS EV');
+      const carSpec = vehicles[userCarName] || { battery: 50.3, speed: 80, efficiency: 6.8 };
+      const batteryCapacity = carSpec.battery || 50.3;
 
-      const effectiveKw = Math.min(pendingCheckout.maxKw || 150, carSpec.speed || 150);
-      const estMinutes = Math.max(10, Math.round((neededKwh / effectiveKw) * 60));
+      const isFull = currentSoc >= 100;
+      const percentNeeded = isFull ? 0 : Math.max(1, 100 - currentSoc);
+      const neededKwh = isFull ? 0 : +((percentNeeded / 100) * batteryCapacity).toFixed(1);
 
-      const baseCost = +(neededKwh * pendingCheckout.pricePerKwh).toFixed(2);
-      const gridFee = 40.00;
-      const gst = +((baseCost + gridFee) * 0.18).toFixed(2);
-      const total = +(baseCost + gridFee + gst).toFixed(2);
+      const chargerKw = pendingCheckout.maxKw || 60;
+      const isAcPort = chargerKw <= 22;
+      const effectiveKw = isAcPort ? Math.min(chargerKw, carSpec.speed || 3.3) : Math.min(chargerKw, carSpec.speed || 80);
+      const estMinutes = isFull ? 0 : Math.max(3, Math.round((neededKwh / Math.max(0.5, effectiveKw)) * 60));
+
+      const is2W = carSpec.type === '2W';
+      const baseCost = isFull ? 0 : +(neededKwh * pendingCheckout.pricePerKwh).toFixed(2);
+      const gridFee = isFull ? 0 : (is2W ? 15.00 : 40.00);
+      const gst = isFull ? 0 : +((baseCost + gridFee) * 0.18).toFixed(2);
+      const total = isFull ? 0 : +(baseCost + gridFee + gst).toFixed(2);
 
       pendingCheckout.currentSoc = currentSoc;
       pendingCheckout.targetSoc = 100;
@@ -2127,17 +3021,56 @@
       pendingCheckout.gst = gst;
       pendingCheckout.total = total;
 
+      virtualCarState.soc = currentSoc;
+      saveVirtualCarState();
+      const navStatus = document.getElementById('navSimStatusText');
+      if (navStatus) {
+        navStatus.innerText = `${currentSoc}% SoC`;
+      }
+
       const dispEl = document.getElementById('checkoutBatteryDisplay');
       const sliderEl = document.getElementById('checkoutBatterySlider');
       const neededEl = document.getElementById('checkoutPercentNeeded');
+      const kwhNeededEl = document.getElementById('checkoutKwhNeeded');
       const estMinsEl = document.getElementById('checkoutEstMinutes');
       const badgeEl = document.getElementById('checkoutAllocatedTimeBadge');
 
-      if (dispEl) dispEl.innerText = `${currentSoc}%`;
+      if (dispEl) dispEl.innerText = `${currentSoc}% Left`;
       if (sliderEl && sliderEl.value != currentSoc) sliderEl.value = currentSoc;
       if (neededEl) neededEl.innerText = `${percentNeeded}`;
-      if (estMinsEl) estMinsEl.innerText = `${estMinutes}`;
-      if (badgeEl) badgeEl.innerText = `${estMinutes}`;
+      if (kwhNeededEl) kwhNeededEl.innerText = `${neededKwh}`;
+      if (estMinsEl) estMinsEl.innerText = isFull ? '0 mins (Full)' : formatMinutes(estMinutes);
+      if (badgeEl) badgeEl.innerText = isFull ? '0 mins (Full)' : formatMinutes(estMinutes);
+
+      // Update interactive visual two-tone battery diagram
+      const visualCurrent = document.getElementById('batteryVisualCurrent');
+      const visualCurrentText = document.getElementById('batteryVisualCurrentText');
+      const visualNeeded = document.getElementById('batteryVisualNeeded');
+      const visualNeededText = document.getElementById('batteryVisualNeededText');
+
+      if (isFull) {
+        if (visualCurrent) visualCurrent.style.width = '100%';
+        if (visualCurrentText) visualCurrentText.innerText = '🔋 100% Fully Charged';
+        if (visualNeeded) visualNeeded.style.width = '0%';
+        if (visualNeededText) visualNeededText.innerText = '';
+      } else {
+        if (visualCurrent) visualCurrent.style.width = `${currentSoc}%`;
+        if (visualCurrentText) visualCurrentText.innerText = `🔋 ${currentSoc}% Left`;
+        if (visualNeeded) visualNeeded.style.width = `${percentNeeded}%`;
+        if (visualNeededText) visualNeededText.innerText = `⚡ +${percentNeeded}% to Reach 100% Full`;
+      }
+
+      // Update preset buttons styling
+      [15, 25, 45, 65].forEach(val => {
+        const btn = document.getElementById(`btnPreset${val}`);
+        if (btn) {
+          if (val === currentSoc) {
+            btn.className = 'px-2.5 py-1 rounded-lg bg-emerald-500 text-white font-black shadow-sm transition-all';
+          } else {
+            btn.className = 'px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-all';
+          }
+        }
+      });
 
       const billKwh = document.getElementById('billKwh');
       const billBase = document.getElementById('billBase');
@@ -2148,6 +3081,449 @@
       if (billBase) billBase.innerText = baseCost;
       if (billGst) billGst.innerText = gst;
       if (billTotal) billTotal.innerText = total;
+      const gridFeeEl = document.getElementById('billGridFee');
+      if (gridFeeEl) gridFeeEl.innerText = `₹${gridFee.toFixed(2)}`;
+
+      const billVendorShare = document.getElementById('billVendorShare');
+      const billPlatformShare = document.getElementById('billPlatformShare');
+      if (billVendorShare) billVendorShare.innerText = `₹${(total * 0.85).toFixed(2)}`;
+      if (billPlatformShare) billPlatformShare.innerText = `₹${(total * 0.15).toFixed(2)}`;
+
+      const rangeEl = document.getElementById('smartcarRangeSub');
+      const estRangeKm = Math.round((currentSoc / 100) * (batteryCapacity * (carSpec.efficiency || 6.8)));
+      if (rangeEl) rangeEl.innerText = `${estRangeKm} km range`;
+
+      // Full Battery Notice & Payment Button State
+      const fullNoticeEl = document.getElementById('checkoutFullBatteryNotice');
+      const btnPay = document.getElementById('btnPayConfirm');
+
+      if (isFull) {
+        if (fullNoticeEl) fullNoticeEl.classList.remove('hidden');
+        if (btnPay) {
+          btnPay.disabled = true;
+          btnPay.className = 'w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-300 dark:bg-slate-800 text-slate-500 dark:text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-700 shadow-none transition-all';
+          btnPay.innerText = '🚫 Battery 100% Full • Booking Disabled';
+        }
+      } else {
+        if (fullNoticeEl) fullNoticeEl.classList.add('hidden');
+        if (btnPay) {
+          btnPay.disabled = false;
+          btnPay.className = 'w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 dark:bg-cyan-400 dark:hover:bg-cyan-300 text-white dark:text-slate-950 shadow-lg shadow-emerald-500/25 transition-all cursor-pointer';
+          btnPay.innerText = 'Authorize Demo Payment & Lock Spot';
+        }
+      }
+
+      if (currentUser) {
+        currentUser.lastKnownBmsSoc = currentSoc;
+      }
+      updateCheckoutTripTelematics(virtualCarState);
+    }
+
+    // ================= SMARTCAR VIRTUAL VEHICLE SIMULATOR ENGINE =================
+    const VIRTUAL_VIN_MAP = {
+      // 4-Wheelers
+      'MG ZS EV': '1MGZS48EV20265921',
+      'Tata Nexon EV Max': 'MAT621NEXON202688',
+      'Tata Punch EV': 'MAT518PUNCH202635',
+      'Hyundai Ioniq 5': 'KMH88IONIQ5202677',
+      'Tesla Model 3 Long Range': '5YJ3E1EB20269941',
+      'Mahindra XUV400': 'MAH400XUV2026392',
+      'BYD Atto 3': 'BYD604ATTO3202660',
+      'Porsche Taycan 4S': 'WP0AB2Y120269344',
+      // 2-Wheelers
+      'Ather 450X Gen 3': 'ME4ATH450X2026037',
+      'Ola S1 Pro Gen 2': 'MD2OLA400S1202604',
+      'TVS iQube ST': 'MD6TVS340IQ202603',
+      'Bajaj Chetak EV': 'MD2BAJ320CH202603',
+      'Ultraviolette F77': 'ME2UVF77X2026103'
+    };
+
+    let virtualCarState = loadSaved('voltgrid_virtual_car', {
+      car: (currentUser && currentUser.car) ? currentUser.car : 'MG ZS EV',
+      soc: 22,
+      initialDaySoc: 100,
+      odometer: 14272.8,
+      tripDistance: 22.8,
+      energyConsumedKwh: 3.35,
+      speed: 0,
+      isDriving: false,
+      gear: 'P',
+      vin: '1MGZS48EV20265921',
+      voltage: 364.2,
+      temp: 28.4
+    });
+
+    // Cross-tab Telematics Bridge (Syncs with simulator.html in real-time!)
+    const telematicsChannel = typeof BroadcastChannel !== 'undefined' ? new BroadcastChannel('voltgrid_telematics') : null;
+
+    function handleLiveTelematicsPacket(data) {
+      if (!data) return;
+      virtualCarState = data;
+      if (currentUser) {
+        currentUser.car = data.car;
+        currentUser.lastKnownBmsSoc = data.soc;
+      }
+
+      // Update nav link status
+      const navStatus = document.getElementById('navSimStatusText');
+      if (navStatus) {
+        navStatus.innerText = `${Math.round(data.soc)}% SoC (+${Number(data.tripDistance || 0).toFixed(0)} km)`;
+      }
+
+      // If checkout modal is open, dynamically update the bill and telemetry breakdown!
+      const checkoutModal = document.getElementById('checkoutModal');
+      if (checkoutModal && !checkoutModal.classList.contains('hidden')) {
+        const smartcarCarName = document.getElementById('smartcarCarName');
+        const smartcarVinBadge = document.getElementById('smartcarVinBadge');
+        if (smartcarCarName) smartcarCarName.innerText = data.car || 'MG ZS EV';
+        if (smartcarVinBadge && data.vin) smartcarVinBadge.innerText = `• VIN: ...${data.vin.slice(-4)}`;
+        updateBatteryEstimation(data.soc);
+        updateCheckoutTripTelematics(data);
+      }
+    }
+
+    if (telematicsChannel) {
+      telematicsChannel.onmessage = (event) => {
+        if (event.data) handleLiveTelematicsPacket(event.data);
+      };
+    }
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'voltgrid_virtual_car' && e.newValue) {
+        try {
+          handleLiveTelematicsPacket(JSON.parse(e.newValue));
+        } catch (err) {}
+      }
+    });
+
+    // Auto-refresh telematics whenever the user switches back to this tab!
+    window.addEventListener('focus', () => {
+      try {
+        const fresh = localStorage.getItem('voltgrid_virtual_car');
+        if (fresh) handleLiveTelematicsPacket(JSON.parse(fresh));
+      } catch (err) {}
+    });
+
+    function updateCheckoutTripTelematics(carData) {
+      const data = carData || virtualCarState;
+      if (!data) return;
+      const odoEl = document.getElementById('checkoutOdometer');
+      const tripDistEl = document.getElementById('checkoutTripDistance');
+      const tripConsEl = document.getElementById('checkoutTripConsumed');
+      const tripNoteKm = document.getElementById('billTripKm');
+
+      const odo = data.odometer !== undefined ? Number(data.odometer).toFixed(1) : '14,250.0';
+      const tripKm = data.tripDistance !== undefined ? Number(data.tripDistance).toFixed(1) : '0.0';
+      const soc = data.soc !== undefined ? Math.round(data.soc) : 22;
+      const dropped = Math.max(0, 100 - soc);
+
+      if (odoEl) odoEl.innerText = `${odo} km`;
+      if (tripDistEl) tripDistEl.innerText = `+${tripKm} km`;
+      if (tripConsEl) tripConsEl.innerText = `-${dropped}% SoC`;
+      if (tripNoteKm) tripNoteKm.innerText = tripKm;
+    }
+
+    function saveVirtualCarState() {
+      try {
+        localStorage.setItem('voltgrid_virtual_car', JSON.stringify(virtualCarState));
+      } catch (e) {}
+    }
+
+    function openVehicleSimulatorModal() {
+      const modal = document.getElementById('vehicleSimulatorModal');
+      if (!modal) return;
+      if (currentUser && currentUser.car) {
+        virtualCarState.car = currentUser.car;
+      }
+      renderSimulatorUI();
+      modal.classList.remove('hidden');
+    }
+
+    function closeVehicleSimulatorModal() {
+      const modal = document.getElementById('vehicleSimulatorModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function setSimulatedVehicle(carName) {
+      if (!vehicles[carName]) return;
+      virtualCarState.car = carName;
+      virtualCarState.vin = VIRTUAL_VIN_MAP[carName] || ('VIN_' + Date.now().toString(16));
+      
+      // Update logged-in user profile vehicle as well so whole app syncs!
+      if (currentUser) {
+        currentUser.car = carName;
+        currentUser.lastKnownBmsSoc = virtualCarState.soc;
+        saveVoltGridDB();
+        renderUserNav();
+        renderPorts();
+        updateLiveSessionHero();
+      }
+
+      saveVirtualCarState();
+      renderSimulatorUI();
+
+      // If checkout modal is open, sync vehicle title and estimation immediately!
+      const checkoutModal = document.getElementById('checkoutModal');
+      if (checkoutModal && !checkoutModal.classList.contains('hidden')) {
+        const smartcarCarName = document.getElementById('smartcarCarName');
+        const smartcarVinBadge = document.getElementById('smartcarVinBadge');
+        if (smartcarCarName) smartcarCarName.innerText = carName;
+        if (smartcarVinBadge) smartcarVinBadge.innerText = `• VIN: ...${virtualCarState.vin.slice(-4)}`;
+        updateBatteryEstimation(virtualCarState.soc);
+      }
+
+      showToast(`🚗 Virtual Vehicle switched to ${carName}!`);
+      playNotificationSound('chime');
+    }
+
+    function onSimBatterySliderChange(val) {
+      const soc = Math.max(5, Math.min(100, parseInt(val) || 22));
+      virtualCarState.soc = soc;
+      virtualCarState.voltage = +(350 + (soc / 100) * 55).toFixed(1);
+      virtualCarState.temp = +(27 + (soc > 80 ? 3.5 : 1.2)).toFixed(1);
+
+      if (currentUser) {
+        currentUser.lastKnownBmsSoc = soc;
+        saveVoltGridDB();
+      }
+      saveVirtualCarState();
+      renderSimulatorUI();
+
+      // Live update checkout if open!
+      const checkoutModal = document.getElementById('checkoutModal');
+      if (checkoutModal && !checkoutModal.classList.contains('hidden')) {
+        updateBatteryEstimation(soc);
+        const sub = document.getElementById('smartcarStatusSub');
+        if (sub) {
+          if (soc >= 100) {
+            sub.innerHTML = `<span class="text-amber-400 font-bold">✓ Live BMS Synced:</span> ${virtualCarState.car} at <strong class="text-white">100% Full</strong> (No charge needed)`;
+          } else {
+            sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${virtualCarState.car} at <strong class="text-white">${soc}%</strong> (Needs charge to 100%)`;
+          }
+        }
+      }
+    }
+
+    function injectSimScenario(socVal) {
+      onSimBatterySliderChange(socVal);
+      const slider = document.getElementById('simBatterySlider');
+      if (slider) slider.value = socVal;
+      const navStatus = document.getElementById('navSimStatusText');
+      if (navStatus) {
+        navStatus.innerText = `${socVal}% SoC`;
+      }
+      if (telematicsChannel) {
+        telematicsChannel.postMessage({ action: 'INJECT_SOC', soc: socVal });
+      }
+      showToast(`📡 Injected Telematics: Battery SoC set to ${socVal}%!`);
+      playNotificationSound('chime');
+    }
+
+    function simulateCarDrive(dropPercent = 5) {
+      const newSoc = Math.max(6, virtualCarState.soc - dropPercent);
+      onSimBatterySliderChange(newSoc);
+      const slider = document.getElementById('simBatterySlider');
+      if (slider) slider.value = newSoc;
+      showToast(`🛣️ Simulated 20 km drive! Battery consumed ${dropPercent}% (now at ${newSoc}%).`);
+      playNotificationSound('chime');
+    }
+
+    function applySimulatorToVoltGrid() {
+      // Broadcast this virtual car's battery state to VoltGrid
+      if (currentUser) {
+        currentUser.car = virtualCarState.car;
+        currentUser.lastKnownBmsSoc = virtualCarState.soc;
+        saveVoltGridDB();
+      }
+
+      const checkoutModal = document.getElementById('checkoutModal');
+      if (checkoutModal && !checkoutModal.classList.contains('hidden')) {
+        syncLiveSmartcarBattery(true);
+      }
+
+      closeVehicleSimulatorModal();
+      showToast(`⚡ Virtual BMS Telemetry successfully pushed to VoltGrid!`);
+      playNotificationSound('bookingSuccess');
+    }
+
+    function renderSimulatorUI() {
+      const carName = virtualCarState.car || 'MG ZS EV';
+      const soc = virtualCarState.soc || 22;
+      const vin = virtualCarState.vin || VIRTUAL_VIN_MAP[carName] || '1MGZS48EV20265921';
+      const spec = vehicles[carName] || { battery: 50.3, speed: 80, efficiency: 6.8 };
+      
+      const totalKwh = spec.battery || 50.3;
+      const usableKwh = +((soc / 100) * totalKwh).toFixed(1);
+      const rangeKm = Math.round((soc / 100) * (totalKwh * (spec.efficiency || 6.8)));
+      const voltage = virtualCarState.voltage || +(350 + (soc / 100) * 55).toFixed(1);
+      const temp = virtualCarState.temp || 28.4;
+
+      // Update Car selector buttons
+      ['MG_ZS_EV', 'Tata_Nexon_EV_Max', 'Hyundai_Ioniq_5', 'Tesla_Model_3_Long_Range', 'Mahindra_XUV400', 'Ather_450X_Gen_3', 'Ola_S1_Pro_Gen_2', 'TVS_iQube_ST'].forEach(key => {
+        const btn = document.getElementById(`simCarBtn_${key}`);
+        if (!btn) return;
+        const matches = key.replace(/_/g, ' ') === carName;
+        if (matches) {
+          btn.className = 'p-2.5 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-white font-bold text-left shadow-sm ring-1 ring-emerald-500/30';
+        } else {
+          btn.className = 'p-2.5 rounded-xl border border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-slate-300 font-bold text-left transition-all';
+        }
+      });
+
+      // Update header & gauges
+      const titleEl = document.getElementById('simVehicleTitle');
+      const subEl = document.getElementById('simVehicleSub');
+      const vinEl = document.getElementById('simVinDisplay');
+      const socEl = document.getElementById('simSocDisplay');
+      const rangeEl = document.getElementById('simRangeDisplay');
+      const barEl = document.getElementById('simProgressBar');
+      const kwhRemEl = document.getElementById('simKwhRemaining');
+      const totalKwhEl = document.getElementById('simTotalKwh');
+      const sliderEl = document.getElementById('simBatterySlider');
+      const sliderValEl = document.getElementById('simSliderVal');
+      const voltEl = document.getElementById('simVoltageDisplay');
+      const tempEl = document.getElementById('simTempDisplay');
+      const plugEl = document.getElementById('simPlugStateDisplay');
+      const jsonEl = document.getElementById('simJsonPayload');
+      const payloadCarId = document.getElementById('simPayloadCarId');
+
+      if (titleEl) titleEl.innerText = carName;
+      if (subEl) subEl.innerText = `${totalKwh} kWh Lithium-ion Pack • ${spec.speed || 80} kW DC acceptance`;
+      if (vinEl) vinEl.innerText = `VIN: ${vin}`;
+      if (socEl) socEl.innerText = `${soc}%`;
+      if (rangeEl) rangeEl.innerText = `${rangeKm} km remaining`;
+      if (barEl) barEl.style.width = `${soc}%`;
+      if (kwhRemEl) kwhRemEl.innerText = `${usableKwh} kWh`;
+      if (totalKwhEl) totalKwhEl.innerText = `${totalKwh} kWh`;
+      if (sliderEl && sliderEl.value != soc) sliderEl.value = soc;
+      if (sliderValEl) sliderValEl.innerText = `${soc}%`;
+      if (voltEl) voltEl.innerText = `${voltage} V DC`;
+      if (tempEl) tempEl.innerText = `${temp} °C (Normal)`;
+
+      // Check if this vehicle is currently charging in VoltGrid:
+      let isCharging = false;
+      let chargingPortName = '';
+      stations.forEach(st => {
+        st.ports.forEach(p => {
+          if (p.status === 'charging' && isPortOwner(p)) {
+            isCharging = true;
+            chargingPortName = `${st.name} • ${p.name}`;
+          }
+        });
+      });
+
+      if (plugEl) {
+        if (isCharging) {
+          plugEl.innerText = `⚡ Fast Charging (${chargingPortName})`;
+          plugEl.className = 'text-emerald-400 font-bold animate-pulse';
+        } else {
+          plugEl.innerText = 'Ready to Connect (Unplugged)';
+          plugEl.className = 'text-cyan-400 font-bold';
+        }
+      }
+
+      const slugCarId = 'veh_' + carName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      if (payloadCarId) payloadCarId.innerText = slugCarId;
+
+      // Realistic Smartcar API v2.0 JSON format
+      const smartcarPayload = {
+        id: slugCarId,
+        make: carName.split(' ')[0],
+        model: carName.split(' ').slice(1).join(' '),
+        year: 2026,
+        battery: {
+          percentRemaining: +(soc / 100).toFixed(2),
+          rangeKm: rangeKm,
+          capacityKwh: totalKwh,
+          usableKwhRemaining: usableKwh
+        },
+        diagnostics: {
+          packVoltageDC: voltage,
+          cellTempCelsius: temp,
+          stateOfHealthPercent: 99.4
+        },
+        telematics: {
+          status: "ONLINE",
+          vin: vin,
+          eSIM: "89910045812930219",
+          cellularCarrier: "Jio-IoT 4G LTE",
+          bmsProtocol: "CAN 2.0B / ISO 15118",
+          lastPing: new Date().toISOString()
+        }
+      };
+
+      if (jsonEl) {
+        jsonEl.innerText = JSON.stringify(smartcarPayload, null, 2);
+      }
+    }
+
+    function toggleManualBatteryControls() {
+      const el = document.getElementById('manualBatteryControls');
+      const lbl = document.getElementById('manualToggleLabel');
+      if (!el) return;
+      if (el.classList.contains('hidden')) {
+        el.classList.remove('hidden');
+        if (lbl) lbl.innerText = 'Hide manual override';
+      } else {
+        el.classList.add('hidden');
+        if (lbl) lbl.innerText = 'Override battery percentage manually (optional)';
+      }
+    }
+
+    async function syncLiveSmartcarBattery(manualTrigger = false) {
+      const icon = document.getElementById('smartcarSyncIcon');
+      const text = document.getElementById('smartcarSyncText');
+      const sub = document.getElementById('smartcarStatusSub');
+      const carEl = document.getElementById('smartcarCarName');
+      const rangeEl = document.getElementById('smartcarRangeSub');
+      const vinEl = document.getElementById('smartcarVinBadge');
+
+      const carName = (virtualCarState && virtualCarState.car) ? virtualCarState.car : (currentUser ? currentUser.car : 'MG ZS EV');
+      if (carEl) carEl.innerText = carName;
+      if (vinEl && virtualCarState && virtualCarState.vin) {
+        vinEl.innerText = `• VIN: ...${virtualCarState.vin.slice(-4)}`;
+      }
+
+      if (icon) icon.className = 'inline-block animate-spin';
+      if (text) text.innerText = 'Syncing...';
+      if (sub) sub.innerText = `Establishing cellular telematics bridge to ${carName}...`;
+
+      if (manualTrigger) {
+        await new Promise(r => setTimeout(r, 600));
+      }
+
+      // Always reload the freshest state from localStorage!
+      try {
+        const fresh = localStorage.getItem('voltgrid_virtual_car');
+        if (fresh) virtualCarState = JSON.parse(fresh);
+      } catch (e) {}
+
+      // Read directly from the Virtual Vehicle Simulator!
+      const liveSoc = (virtualCarState && virtualCarState.soc !== undefined) ? virtualCarState.soc : ((currentUser && currentUser.lastKnownBmsSoc) ? currentUser.lastKnownBmsSoc : 22);
+
+      const carSpec = vehicles[carName] || { battery: 50.3, efficiency: 6.8 };
+      const estRangeKm = Math.round((liveSoc / 100) * (carSpec.battery * (carSpec.efficiency || 6.8)));
+
+      updateBatteryEstimation(liveSoc);
+      updateCheckoutTripTelematics(virtualCarState);
+
+      if (icon) icon.className = '';
+      if (text) text.innerText = 'Re-sync';
+      if (sub) {
+        if (liveSoc >= 100) {
+          sub.innerHTML = `<span class="text-amber-400 font-bold">✓ Live BMS Synced:</span> ${carName} at <strong class="text-white">100% Full</strong> (No charge needed)`;
+        } else {
+          sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${carName} at <strong class="text-white">${liveSoc}%</strong> (Needs charge to 100%)`;
+        }
+      }
+      if (rangeEl) {
+        rangeEl.innerText = `${estRangeKm} km range`;
+      }
+
+      if (manualTrigger) {
+        showToast(`📡 Smartcar Connected: Verified stable ${liveSoc}% battery from ${carName}!`);
+        playNotificationSound('chime');
+      }
     }
 
     function startBookingFlow(portId) {
@@ -2160,6 +3536,16 @@
       const st = stations.find(s => s.id === currentStationId);
       const port = st.ports.find(p => p.id === portId);
 
+      // Always reload freshest vehicle telematics from simulator
+      try {
+        const fresh = localStorage.getItem('voltgrid_virtual_car');
+        if (fresh) virtualCarState = JSON.parse(fresh);
+      } catch (e) {}
+
+      const currentLiveSoc = (virtualCarState && virtualCarState.soc !== undefined)
+        ? virtualCarState.soc
+        : ((currentUser && currentUser.lastKnownBmsSoc) ? currentUser.lastKnownBmsSoc : 22);
+
       pendingCheckout = {
         stationId: st.id,
         stationName: st.name,
@@ -2167,7 +3553,7 @@
         portName: port.name,
         maxKw: port.maxKw,
         pricePerKwh: st.pricePerKwh,
-        currentSoc: 25,
+        currentSoc: currentLiveSoc,
         targetSoc: 100
       };
 
@@ -2175,7 +3561,9 @@
       document.getElementById('checkoutStationSub').innerText = st.name;
       document.getElementById('billRate').innerText = st.pricePerKwh;
 
-      updateBatteryEstimation(25);
+      // Automatically sync car battery from Smartcar on modal open!
+      syncLiveSmartcarBattery(false);
+
       resetPaymentSelection();
       document.getElementById('checkoutModal').classList.remove('hidden');
     }
@@ -2192,6 +3580,11 @@
       if (!currentUser) {
         alert("🔒 Please Sign In or Register to complete your reservation.");
         openAuthModal();
+        return;
+      }
+
+      if (pendingCheckout.currentSoc >= 100) {
+        alert("🚫 Battery is already 100% full!\n\nYour electric vehicle is fully charged and does not require energy.\nSpot reservation is disabled to keep the charging bay available for drivers needing power.\n\nTip: Click 'Drive 30 km' in the notice or use the Virtual Car Simulator to lower your battery to test charging.");
         return;
       }
 
@@ -2219,21 +3612,29 @@
       const newPin = Math.floor(1000 + Math.random() * 9000).toString();
       const invNum = 'INV-2026-' + Math.floor(1000 + Math.random() * 9000);
 
+      const userVehicleName = (virtualCarState && virtualCarState.car) ? virtualCarState.car : ((currentUser && currentUser.car) ? currentUser.car : 'MG ZS EV');
+
       const newBookingDoc = {
         _id: 'bkg_' + Date.now().toString(16),
         invoiceNumber: invNum,
         userId: activeUserId,
         customerName: currentUser.name,
         customerPhone: currentUser.phone,
-        vehicle: currentUser.car,
+        vehicle: userVehicleName,
         stationName: st.name,
+        vendorId: st.vendorId || 'vendor-jiobp',
+        vendorName: st.vendorName || 'Jio-bp pulse',
         portName: port.name + ' (' + port.type + ')',
+        portId: port.name,
         pin: newPin,
+        totalAmount: bookedTotal,
         amountPaid: bookedTotal,
+        platformFee: Math.round(bookedTotal * 0.15),
+        vendorPayout: Math.round(bookedTotal * 0.85),
         energyKwh: bookedKwh,
         currentSoc: bookedCurrentSoc,
         chargingDurationMinutes: bookedEstMinutes,
-        status: 'reserved',
+        status: 'CONFIRMED',
         createdAt: new Date().toISOString()
       };
 
@@ -2250,7 +3651,7 @@
         port.userId = activeUserId;
         port.customer = currentUser.name;
         port.phone = currentUser.phone;
-        port.vehicle = currentUser.car;
+        port.vehicle = userVehicleName;
         port.secondsLeft = 900;
         port.pin = newPin;
         port.paid = bookedTotal;
@@ -2365,9 +3766,9 @@
       if (customerEl) customerEl.innerText = port.customer || (currentUser ? currentUser.name : 'Driver');
       if (displayPinEl) displayPinEl.innerText = port.pin ? String(port.pin) : '1234';
       if (planEl) {
-        const startSoc = port.initialSoc || 25;
-        const mins = port.chargingDurationMinutes || 18;
-        planEl.innerText = `${startSoc}% ➔ 100% (~${mins} mins)`;
+        const startSoc = (port.initialSoc !== undefined && port.initialSoc !== null) ? port.initialSoc : 22;
+        const mins = port.chargingDurationMinutes || getRealisticChargingDurationMinutes(port, port.vehicle, startSoc);
+        planEl.innerText = `${startSoc}% ➔ 100% (~${formatMinutes(mins)})`;
       }
       
       // Auto-prefill the PIN so the driver can tap 1 button to unlock immediately
@@ -2417,16 +3818,28 @@
       if (enteredPin === actualPin) {
         closePinModal();
 
-        // 1. Mark as charging locally with custom battery plan
+        // Query the vehicle's live BMS battery upon physical cable handshake
+        try {
+          const fresh = localStorage.getItem('voltgrid_virtual_car');
+          if (fresh) virtualCarState = JSON.parse(fresh);
+        } catch (e) {}
+
+        const liveHandshakeSoc = (virtualCarState && virtualCarState.soc !== undefined)
+          ? virtualCarState.soc
+          : ((port.initialSoc !== undefined && port.initialSoc !== null) ? port.initialSoc : 22);
+
+        // 1. Mark as charging locally starting directly from car's actual battery!
         port.status = 'charging';
-        port.initialSoc = port.initialSoc || 25;
-        port.soc = port.initialSoc;
+        port.vehicle = (virtualCarState && virtualCarState.car) ? virtualCarState.car : (port.vehicle || (currentUser ? currentUser.car : 'MG ZS EV'));
+        port.initialSoc = liveHandshakeSoc;
+        port.soc = liveHandshakeSoc;
         port.targetSoc = 100;
-        const durationMinutes = port.chargingDurationMinutes || 18;
+        const durationMinutes = port.chargingDurationMinutes || getRealisticChargingDurationMinutes(port, port.vehicle, port.initialSoc);
         port.chargingDurationMinutes = durationMinutes;
         port.secondsLeft = durationMinutes * 60;
         port.totalChargingSeconds = durationMinutes * 60;
         port.chargingStartedAt = Date.now();
+        port.lastAdvanceTime = Date.now();
         port.kw = port.maxKw ? Math.round(port.maxKw * 0.75) : 120;
         port.hasAlertedFull = false;
 
@@ -2444,6 +3857,9 @@
         updateLiveSessionHero();
         updateAdminDashboard();
         playNotificationSound('bookingSuccess');
+
+        // Non-blocking sleek toast notification so DOM painting is immediate
+        showToast(`⚡ Cable Connected! High-speed charging active from ${port.soc}% to 100%.`);
 
         // Broadcast charging session to MongoDB Atlas immediately
         try {
@@ -2464,8 +3880,6 @@
         } catch (e) {
           console.warn('Could not sync startCharging to cloud stations:', e);
         }
-
-        alert(`⚡ Cable Connected & Charging Started!\n\nVehicle: ${port.vehicle || 'Your EV'}\nStarting Battery: ${port.soc}%\nAllocated Slot: ~${durationMinutes} minutes to reach 100% full capacity.\n\nReal-time telemetry and battery progress is live!`);
       } else {
         if (errorEl) {
           errorEl.classList.remove('hidden');
@@ -2476,8 +3890,16 @@
     }
 
     async function releasePort(portId) {
-      const st = stations.find(s => s.id === currentStationId);
-      const port = st ? st.ports.find(p => p.id === portId) : null;
+      let st = null;
+      let port = null;
+      for (const s of stations) {
+        const found = s.ports.find(p => p.id === portId);
+        if (found) {
+          st = s;
+          port = found;
+          break;
+        }
+      }
       if (port) {
         if (!isPortOwner(port)) {
           alert("🔒 ACCESS DENIED! You cannot disconnect another driver's charging cable.");
@@ -2495,7 +3917,16 @@
         port.soc = null;
         port.kw = null;
         port.paid = 0;
+        port.chargingStartedAt = null;
+        port.chargingDurationSeconds = null;
         port.hasAlertedFull = false;
+        
+        // Update vehicle state to 100% full
+        virtualCarState.soc = 100;
+        virtualCarState.isDriving = false;
+        virtualCarState.speed = 0;
+        saveVirtualCarState();
+        
         saveVoltGridDB();
         renderPorts();
         updateLiveSessionHero();
@@ -2507,13 +3938,13 @@
           await fetch(`${API_BASE}/api/stations`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'release', stationId: currentStationId, portId })
+            body: JSON.stringify({ action: 'release', stationId: st ? st.id : currentStationId, portId })
           });
         } catch (e) {
           console.warn('Could not sync release to cloud stations:', e);
         }
 
-        alert("✅ Cable disconnected. Charging session ended and bay is now available for other drivers.");
+        showToast("✅ Charging cable disconnected. Bay is now available for waiting drivers.");
       }
     }
 
@@ -2593,38 +4024,51 @@
                 cSt.ports.forEach(cP => {
                   const localP = localSt.ports.find(p => p.id === cP.id);
                   if (localP) {
-                    localP.status = cP.status;
-                    localP.customer = cP.customer;
-                    localP.phone = cP.phone;
-                    localP.vehicle = cP.vehicle;
-                    localP.pin = cP.pin;
-                    localP.paid = cP.paid;
-                    localP.sessionId = cP.sessionId;
+                    const isMine = isPortOwner(localP);
+                    if (!isMine) {
+                      localP.customer = cP.customer;
+                      localP.phone = cP.phone;
+                      localP.vehicle = cP.vehicle;
+                      localP.pin = cP.pin;
+                      localP.paid = cP.paid;
+                      localP.sessionId = cP.sessionId;
+                      localP.status = cP.status;
+                    }
                     if (cP.status === 'available') {
-                      localP.status = 'available';
-                      localP.secondsLeft = 0;
-                      localP.soc = null;
-                      localP.kw = null;
-                      localP.hasAlertedFull = false;
-                      saveMyLocalHold(cP.id, null);
+                      if (!isMine || localP.status === 'available') {
+                        localP.status = 'available';
+                        localP.secondsLeft = 0;
+                        localP.soc = null;
+                        localP.kw = null;
+                        localP.hasAlertedFull = false;
+                        saveMyLocalHold(cP.id, null);
+                      }
                     } else if (cP.status === 'reserved') {
-                      localP.status = 'reserved';
-                      if (cP.secondsLeft) localP.secondsLeft = cP.secondsLeft;
-                      localP.initialSoc = cP.initialSoc || 25;
-                      localP.soc = cP.initialSoc || 25;
-                      localP.chargingDurationMinutes = cP.chargingDurationMinutes || 18;
-                      if (isPortOwner(localP)) {
-                        saveMyLocalHold(localP.id, { active: true, pin: localP.pin, invNum: localP.invoiceNumber });
+                      if (!isMine) {
+                        localP.status = 'reserved';
+                        if (cP.secondsLeft) localP.secondsLeft = cP.secondsLeft;
+                        localP.initialSoc = cP.initialSoc || 25;
+                        localP.soc = cP.initialSoc || 25;
+                        localP.chargingDurationMinutes = cP.chargingDurationMinutes || 18;
                       }
                     } else if (cP.status === 'charging') {
-                      localP.status = 'charging';
-                      localP.soc = (cP.soc !== undefined && cP.soc !== null) ? cP.soc : (localP.soc || 25);
-                      localP.kw = (cP.kw !== undefined && cP.kw !== null) ? cP.kw : (localP.kw || 120);
-                      if (cP.secondsLeft !== undefined) localP.secondsLeft = cP.secondsLeft;
-                      if (cP.chargingDurationMinutes) localP.chargingDurationMinutes = cP.chargingDurationMinutes;
-                      if (isPortOwner(localP)) {
+                      if (isMine) {
+                        localP.status = 'charging';
+                        // The vehicle owner's device controls and advances their own battery %!
+                        // Do NOT let background Atlas polling overwrite or regress local advancing progress!
+                        if (localP.soc === undefined || localP.soc === null) {
+                          localP.soc = (cP.soc !== undefined && cP.soc !== null) ? cP.soc : (localP.initialSoc || 25);
+                        }
+                        if (cP.soc >= 100) localP.soc = 100;
                         saveMyLocalHold(localP.id, { active: true, pin: localP.pin, invNum: localP.invoiceNumber });
+                      } else {
+                        localP.status = 'charging';
+                        // Other viewing drivers sync live telemetry directly from Atlas:
+                        localP.soc = (cP.soc !== undefined && cP.soc !== null) ? cP.soc : (localP.soc || 25);
+                        localP.kw = (cP.kw !== undefined && cP.kw !== null) ? cP.kw : (localP.kw || 120);
+                        if (cP.secondsLeft !== undefined) localP.secondsLeft = cP.secondsLeft;
                       }
+                      if (cP.chargingDurationMinutes) localP.chargingDurationMinutes = cP.chargingDurationMinutes;
                     }
                   }
                 });
@@ -2919,23 +4363,75 @@
               if (p.secondsLeft > 0) {
                 p.secondsLeft -= 1;
               }
-              const totalSec = p.totalChargingSeconds || (p.chargingDurationMinutes ? p.chargingDurationMinutes * 60 : 1080);
-              const startSoc = p.initialSoc || 25;
-              const elapsedSec = Math.max(0, totalSec - p.secondsLeft);
-              const progress = Math.min(1, elapsedSec / totalSec);
-              const calculatedSoc = Math.min(100, Math.round(startSoc + (100 - startSoc) * progress));
+              const now = Date.now();
+              if (!p.lastAdvanceTime) p.lastAdvanceTime = now;
 
-              if (calculatedSoc !== p.soc) {
-                p.soc = calculatedSoc;
+              // Smoothly and visibly increment battery % by 1% every 1.5 seconds!
+              // e.g. 25% -> 26% -> 27% -> 28% -> 29% -> 30% ...
+              if (now - p.lastAdvanceTime >= 1500) {
+                const current = (p.soc !== undefined && p.soc !== null) ? p.soc : (p.initialSoc || 25);
+                p.soc = Math.min(100, current + 1);
+                p.lastAdvanceTime = now;
                 needsRerender = true;
-              } else if (p.secondsLeft % 4 === 0) {
+
+                if (isPortOwner(p)) {
+                  virtualCarState.soc = p.soc;
+                  saveVirtualCarState();
+                  // Broadcast charging progress to simulator.html!
+                  if (telematicsChannel) {
+                    telematicsChannel.postMessage({ action: 'INJECT_SOC', soc: p.soc });
+                  }
+                  // Update navbar pill live
+                  const navStatus = document.getElementById('navSimStatusText');
+                  if (navStatus) {
+                    navStatus.innerText = `${p.soc}% SoC (Charging)`;
+                  }
+                  const simModal = document.getElementById('vehicleSimulatorModal');
+                  if (simModal && !simModal.classList.contains('hidden')) {
+                    renderSimulatorUI();
+                  }
+                }
+
+                // Sync progressive soc to Atlas periodically
+                if (p.soc % 5 === 0 && isPortOwner(p)) {
+                  fetch(`${API_BASE}/api/stations`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      action: 'updateTelemetry',
+                      stationId: st.id,
+                      portId: p.id,
+                      soc: p.soc,
+                      secondsLeft: p.secondsLeft,
+                      kw: p.kw
+                    })
+                  }).catch(() => {});
+                }
+              } else if (p.secondsLeft % 2 === 0) {
                 needsRerender = true;
               }
             } else if ((p.soc || 0) >= 100) {
-              // Port reached 100%! Drop draw to 0 kW
-              if (p.kw !== 0) {
+              p.soc = 100;
+              // Port reached 100%! Drop draw to 0 kW and remaining timer to 0
+              if (p.kw !== 0 || p.secondsLeft !== 0) {
                 p.kw = 0;
+                p.secondsLeft = 0;
                 needsRerender = true;
+
+                if (isPortOwner(p)) {
+                  fetch(`${API_BASE}/api/stations`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      action: 'updateTelemetry',
+                      stationId: st.id,
+                      portId: p.id,
+                      soc: 100,
+                      secondsLeft: 0,
+                      kw: 0
+                    })
+                  }).catch(() => {});
+                }
               }
 
               // Alert once when battery hits 100% - ONLY to the vehicle owner!
@@ -2943,10 +4439,18 @@
                 p.hasAlertedFull = true;
 
                 if (isPortOwner(p)) {
+                  virtualCarState.soc = 100;
+                  virtualCarState.isDriving = false;
+                  virtualCarState.speed = 0;
+                  saveVirtualCarState();
+
                   playNotificationSound('batteryFull');
-                  setTimeout(() => {
-                    alert(`⚡ CHARGING COMPLETE (100% FULL)!\n\nVehicle: ${p.vehicle || 'Your EV'}\nCharging Bay: ${st.name} • ${p.name}\n\n🎉 Your battery has reached 100% full capacity! Power draw is now 0 kW.\n\nPlease disconnect your charging cable to free the bay for waiting drivers.`);
-                  }, 120);
+                  showToast(`🎉 CHARGING COMPLETE: Your ${p.vehicle || 'EV'} has reached 100% full capacity! 0 kW draw. Ready to unplug.`);
+                  // Signal simulator.html over BroadcastChannel to refill virtual vehicle!
+                  if (telematicsChannel) {
+                    telematicsChannel.postMessage({ action: 'CHARGE_COMPLETE', targetSoc: 100 });
+                  }
+                  needsRerender = true;
                 }
               }
             }
@@ -2973,6 +4477,7 @@
       renderStationSelector();
       updateLiveSessionHero();
       recalculateSavings();
+      handleLiveTelematicsPacket(virtualCarState);
       syncWithMongoDBAtlas();
 
       // Continuous multi-device synchronization via MongoDB Atlas every 3.5s
