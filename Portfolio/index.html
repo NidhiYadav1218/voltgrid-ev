@@ -15,6 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS CDN -->
+  <script src="voltgrid_db.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -165,6 +166,30 @@
 
     </div>
   </header>
+  <!-- ================= MULTI-PAGE NETWORK ROLE SWITCHER BANNER ================= -->
+  <div class="bg-gradient-to-r from-emerald-500/10 via-sky-500/10 to-purple-500/10 border-b border-emerald-500/20 py-2.5 px-4 text-xs">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5">
+      <div class="flex items-center gap-2 flex-wrap justify-center sm:justify-start">
+        <span class="px-2.5 py-0.5 rounded-full bg-emerald-500 text-white font-extrabold text-[10px] tracking-wide uppercase shadow-xs">Driver App</span>
+        <span class="text-slate-700 dark:text-slate-300 font-medium text-center sm:text-left">
+          ⚡ <strong>VoltGrid Multi-Page Network:</strong> Station data & pricing are live-synced directly from the <strong>CPO Vendor Portal</strong> & <strong>Admin HQ</strong>.
+        </span>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap justify-center">
+        <span class="text-slate-400 text-[11px] hidden lg:inline">Switch Portal:</span>
+        <a href="vendor.html" class="px-3 py-1 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 dark:bg-purple-950 dark:text-purple-300 font-bold border border-purple-200 dark:border-purple-800 transition-all flex items-center gap-1 shadow-xs hover:scale-105 active:scale-95" title="Open Vendor Portal to manage station tariffs and deploy new ports">
+          <span>💼</span> Vendor CPO Portal &rarr;
+        </a>
+        <a href="admin.html" class="px-3 py-1 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-900 dark:bg-rose-950 dark:text-rose-300 font-bold border border-rose-200 dark:border-rose-800 transition-all flex items-center gap-1 shadow-xs hover:scale-105 active:scale-95" title="Open Admin HQ to audit settlements, platform margin, and refund bookings">
+          <span>🛡️</span> Admin HQ &rarr;
+        </a>
+        <a href="simulator.html" target="_blank" class="px-3 py-1 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-900 dark:bg-sky-950 dark:text-sky-300 font-bold border border-sky-200 dark:border-sky-800 transition-all flex items-center gap-1 shadow-xs hover:scale-105 active:scale-95" title="Open Smartcar Virtual Car Simulator in a new tab">
+          <span>🚗</span> Simulator ↗
+        </a>
+      </div>
+    </div>
+  </div>
+
 
   <!-- ================= HERO SECTION ================= -->
   <section class="relative pt-10 pb-16 lg:pt-16 lg:pb-24 overflow-hidden border-b border-slate-200 dark:border-slate-800">
@@ -446,14 +471,75 @@
       </div>
 
       <!-- Multi-Vendor Filter & Proximity Location Bar -->
-      <div class="mb-6 p-4 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+      <div class="mb-6 space-y-3">
+
+        <!-- Tier 1: Dedicated Structured City / Location Explorer -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-white via-slate-50 to-emerald-50/30 dark:bg-slate-900 border-2 border-emerald-500/20 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          
+          <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="text-xl">📍</span>
+              <div>
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">Choose Gujarat Location</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-white">Filter Stations by City:</span>
+              </div>
+            </div>
+
+            <!-- Structured City Dropdown -->
+            <div class="flex-1 max-w-md">
+              <select id="cityFilterSelect" onchange="onCityFilterChanged(this.value)" class="w-full bg-white dark:bg-slate-950 border-2 border-emerald-400/60 dark:border-emerald-500/40 text-slate-900 dark:text-white text-xs sm:text-sm font-bold rounded-2xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-xs cursor-pointer transition-all">
+                <option value="ALL" selected>🏙️ All Gujarat (34 SuperHubs Statewide)</option>
+                <optgroup label="── Major Urban Hubs ──">
+                  <option value="Surat">📍 Surat (VR Mall Dumas, Diamond Bourse & Adajan • 3 Hubs)</option>
+                  <option value="Ahmedabad">📍 Ahmedabad (SG Highway, Riverfront, Bopal, Motera • 6 Hubs)</option>
+                  <option value="Vadodara">📍 Vadodara (Expressway Golden Chokdi & Alkapuri • 2 Hubs)</option>
+                  <option value="Rajkot">📍 Rajkot (150ft Ring Road & Madhapar • 2 Hubs)</option>
+                  <option value="Gandhinagar">📍 Gandhinagar (GIFT City FinTech SuperHub)</option>
+                  <option value="Bhavnagar">📍 Bhavnagar (Victoria Park SuperHub)</option>
+                  <option value="Jamnagar">📍 Jamnagar (Reliance Greens Refinery Gateway)</option>
+                  <option value="Junagadh">📍 Junagadh (Girnar Eco-Hub)</option>
+                </optgroup>
+                <optgroup label="── Highway & Industrial Corridors ──">
+                  <option value="Anand">📍 Anand & Nadiad (Amul Dairy & NE-1 Oasis • 2 Hubs)</option>
+                  <option value="Bharuch">📍 Bharuch & Ankleshwar (Narmada Golden Bridge & GIDC • 2 Hubs)</option>
+                  <option value="Vapi">📍 Vapi & Valsad (Gunjan NH-48 & Tithal Beach • 2 Hubs)</option>
+                  <option value="Morbi">📍 Morbi (Ceramic Expressway NH-27)</option>
+                  <option value="Mehsana">📍 Mehsana (Sun Temple Highway Corridor)</option>
+                </optgroup>
+                <optgroup label="── Pilgrimage & Tourism Corridors ──">
+                  <option value="Dwarka">📍 Dwarka (Dwarkadhish & Shivrajpur Beach)</option>
+                  <option value="Somnath">📍 Somnath (Oceanfront Jyotirlinga Heritage)</option>
+                  <option value="Sasan Gir">📍 Sasan Gir (Lion Safari National Reserve)</option>
+                  <option value="Kevadia">📍 Statue of Unity (Ekta Nagar Green Zone)</option>
+                  <option value="Porbandar">📍 Porbandar (Coastal Chowpati Beach)</option>
+                </optgroup>
+                <optgroup label="── Kutch Region ──">
+                  <option value="Kutch">📍 Kutch (Bhuj Heritage, White Rann Dhordo & Kandla • 3 Hubs)</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <!-- GPS Proximity Button & Location Indicator -->
+          <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+            <button onclick="detectDeviceGpsLocation()" id="btnLiveGps" class="px-3.5 py-2.5 rounded-2xl bg-cyan-100 hover:bg-cyan-200 text-cyan-900 dark:bg-cyan-950 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 text-xs font-bold flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all shadow-xs" title="Calculate real-time driving distances from your live device GPS">
+              <span>🎯</span> <span>Current Location (GPS)</span>
+            </button>
+            <span id="activeLocationPill" class="text-xs font-bold px-3 py-2 rounded-2xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 shadow-xs">
+              📍 All Gujarat
+            </span>
+          </div>
+
+        </div>
+
+        <!-- Tier 2: Refined Filters (CPO Network + EV Category) -->
+        <div class="p-3.5 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           
           <!-- Vendor Network Filter Tabs -->
           <div class="flex items-center gap-1.5 flex-wrap" id="vendorFilterTabs">
             <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1 hidden sm:inline">CPO Network:</span>
             <button onclick="setVendorFilter('ALL')" id="vFilter-ALL" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-sm transition-all">
-              🏢 All Networks (5)
+              🏢 All Networks (34 Hubs)
             </button>
             <button onclick="setVendorFilter('vendor-jiobp')" id="vFilter-vendor-jiobp" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
               ⛽ Jio-bp pulse
@@ -479,31 +565,28 @@
               ⚡ All Ports (2W & 4W)
             </button>
             <button onclick="setVehicleTypeFilter('4W')" id="vhFilter-4W" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all">
-              🚗 4-Wheelers (Cars/SUVs)
+              🚗 4-Wheelers
             </button>
             <button onclick="setVehicleTypeFilter('2W')" id="vhFilter-2W" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all">
-              🛵 2-Wheelers (Scooters/Bikes)
+              🛵 2-Wheelers
             </button>
-          </div>
-
-          <!-- GPS Location & Distance Selector (Gujarat Regional Grid) -->
-          <div class="flex items-center gap-2">
-            <button onclick="detectDeviceGpsLocation()" class="px-3 py-1.5 rounded-xl bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 text-xs font-bold flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all shadow-sm" title="Calculate distance using browser GPS">
-              <span>🎯</span> <span class="hidden sm:inline">Use My Live</span> GPS
-            </button>
-
-            <select id="userLocationSelector" onchange="onUserLocationChanged(this.value)" class="bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:border-emerald-500">
-              <option value="ahmedabad">📍 Ahmedabad (SG Highway & Bodakdev)</option>
-              <option value="gandhinagar">📍 Gandhinagar (GIFT City)</option>
-              <option value="airport">📍 Ahmedabad Airport T2 (Hansol)</option>
-              <option value="vadodara">📍 Vadodara (Expressway Entry NE-1)</option>
-              <option value="surat">📍 Surat (VR Mall & Dumas Road)</option>
-              <option value="rajkot">📍 Rajkot (150ft Ring Road)</option>
-              <option value="kevadia">📍 Statue of Unity (Ekta Nagar)</option>
-            </select>
           </div>
 
         </div>
+
+      </div>
+
+      <!-- Active Station Counter & Region Indicator -->
+      <div class="flex items-center justify-between mb-4 px-1 text-xs">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-slate-700 dark:text-slate-300">Available Gujarat Hubs:</span>
+          <span id="stationCountDisplay" class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-extrabold font-mono text-[11px] border border-emerald-200">
+            34 Hubs Across Gujarat
+          </span>
+        </div>
+        <span class="text-slate-500 text-[11px] hidden sm:inline" id="stationProximityNote">
+          📍 Sorted by distance from your chosen location
+        </span>
       </div>
 
       <!-- Station Hub Selector Buttons -->
@@ -1665,183 +1748,2476 @@
     }
 
     const INITIAL_STATIONS = [
+  {
+    "id": "st-01",
+    "vendorId": "vendor-jiobp",
+    "vendorName": "Jio-bp pulse",
+    "vendorLogo": "⛽",
+    "vendorColor": "blue",
+    "city": "Ahmedabad",
+    "name": "Jio-bp pulse SG Highway HyperHub • Ahmedabad",
+    "type": "Highway Ultra-Fast Hub (2W & 4W)",
+    "location": "Sindhu Bhavan Marg, Off S.G. Highway, Bodakdev, Ahmedabad, Gujarat 380054",
+    "lat": 23.0416,
+    "lng": 72.5074,
+    "mapsUrl": "https://maps.google.com/?q=23.0416,72.5074",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=23.0416,72.5074",
+    "pricePerKwh": 26,
+    "solar": true,
+    "rating": 4.9,
+    "amenities": [
+      "24x7 Wild Bean Cafe",
+      "Restrooms",
+      "Free Wi-Fi",
+      "EV Lounge",
+      "2W Dedicated Bay"
+    ],
+    "ports": [
       {
-        id: 'st-01',
-        vendorId: 'vendor-jiobp',
-        vendorName: 'Jio-bp pulse',
-        vendorLogo: '⛽',
-        vendorColor: 'blue',
-        name: 'Jio-bp pulse SG Highway HyperHub • Ahmedabad',
-        type: 'Highway Ultra-Fast Hub (2W & 4W)',
-        location: 'Sindhu Bhavan Marg, Off S.G. Highway, Bodakdev, Ahmedabad, Gujarat 380054',
-        lat: 23.0416,
-        lng: 72.5074,
-        mapsUrl: 'https://maps.google.com/?q=23.0416,72.5074',
-        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=23.0416,72.5074',
-        pricePerKwh: 26,
-        solar: true,
-        rating: 4.9,
-        amenities: ['24x7 Wild Bean Cafe', 'Restrooms', 'Free Wi-Fi', 'EV Lounge', '2W Dedicated Bay'],
-        ports: [
-          { id: 'p101', name: 'Bay 01 (4W)', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p102', name: 'Bay 02 (4W)', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p103', name: 'Bay 03 (4W)', type: '60kW Fast DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p104', name: 'Bay 04 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
-          { id: 'p105', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' },
-          { id: 'p106', name: 'Bay 06 (2W)', type: '3.3kW 16A Universal Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' }
-        ]
+        "id": "p101",
+        "name": "Bay 01 (4W)",
+        "type": "240kW Ultra-Fast DC",
+        "maxKw": 240,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
       },
       {
-        id: 'st-02',
-        vendorId: 'vendor-tata',
-        vendorName: 'Tata Power EZ Charge',
-        vendorLogo: '⚡',
-        vendorColor: 'emerald',
-        name: 'Tata Power GIFT City FinTech SuperHub • Gandhinagar',
-        type: 'FinTech Corridor Smart Grid (2W & 4W)',
-        location: 'Block 12, Road 1D, GIFT SEZ Tower 1, GIFT City, Gandhinagar, Gujarat 382355',
-        lat: 23.1610,
-        lng: 72.6841,
-        mapsUrl: 'https://maps.google.com/?q=23.1610,72.6841',
-        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=23.1610,72.6841',
-        pricePerKwh: 24,
-        solar: true,
-        rating: 4.9,
-        amenities: ['GIFT Club Access', 'Coffee Lounge', 'Automated Parking', '24x7 Security'],
-        ports: [
-          { id: 'p201', name: 'Bay 01 (4W)', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p202', name: 'Bay 02 (4W)', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p203', name: 'Bay 03 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
-          { id: 'p204', name: 'Bay 04 (2W)', type: '3.3kW 16A Smart Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' },
-          { id: 'p205', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' }
-        ]
+        "id": "p102",
+        "name": "Bay 02 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
       },
       {
-        id: 'st-03',
-        vendorId: 'vendor-zeon',
-        vendorName: 'Zeon Charging',
-        vendorLogo: '🔋',
-        vendorColor: 'indigo',
-        name: 'Zeon Ahmedabad Airport T2 Gateway Hub',
-        type: 'Airport Hypergrid (2W & 4W)',
-        location: 'Terminal 2 Commercial Forecourt, SVPI Airport, Hansol, Ahmedabad, Gujarat 380003',
-        lat: 23.0734,
-        lng: 72.6266,
-        mapsUrl: 'https://maps.google.com/?q=23.0734,72.6266',
-        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=23.0734,72.6266',
-        pricePerKwh: 28,
-        solar: true,
-        rating: 4.8,
-        amenities: ['Airport Shuttle', '24x7 Airport Security', 'Luggage Assistance', 'Costa Coffee'],
-        ports: [
-          { id: 'p301', name: 'Bay 01 (4W)', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p302', name: 'Bay 02 (4W)', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p303', name: 'Bay 03 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
-          { id: 'p304', name: 'Bay 04 (2W)', type: '3.3kW 16A Universal 2W Point', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' }
-        ]
+        "id": "p103",
+        "name": "Bay 03 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
       },
       {
-        id: 'st-04',
-        vendorId: 'vendor-statiq',
-        vendorName: 'Statiq EV Fast Hub',
-        vendorLogo: '🚀',
-        vendorColor: 'amber',
-        name: 'Statiq NE-1 Expressway Gateway • Vadodara',
-        type: 'Intercity Expressway Gateway (NE-1)',
-        location: 'National Expressway 1 Entry Plaza, Golden Chokdi, Vadodara, Gujarat 390022',
-        lat: 22.3615,
-        lng: 73.2104,
-        mapsUrl: 'https://maps.google.com/?q=22.3615,73.2104',
-        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=22.3615,73.2104',
-        pricePerKwh: 25,
-        solar: true,
-        rating: 4.7,
-        amenities: ['Expressway Food Court', 'EV Lounge', 'Clean Restrooms', 'Tyre Pressure Check'],
-        ports: [
-          { id: 'p401', name: 'Bay 01 (4W)', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p402', name: 'Bay 02 (4W)', type: '60kW Fast DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p403', name: 'Bay 03 (Dual)', type: '22kW AC Destination', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
-          { id: 'p404', name: 'Bay 04 (2W)', type: 'Ather Grid 3.3kW Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' },
-          { id: 'p405', name: 'Bay 05 (2W)', type: '3.3kW 16A Smart Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' }
-        ]
+        "id": "p104",
+        "name": "Bay 04 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
       },
       {
-        id: 'st-05',
-        vendorId: 'vendor-voltgrid',
-        vendorName: 'VoltGrid Direct Flagship',
-        vendorLogo: '🛡️',
-        vendorColor: 'cyan',
-        name: 'VoltGrid VR Surat & Dumas Mega-Hub',
-        type: 'Diamond City Central Metro Hub',
-        location: 'VR Surat Mall, Dumas Road, Near Magdalla Port Junction, Surat, Gujarat 395007',
-        lat: 21.1442,
-        lng: 72.7562,
-        mapsUrl: 'https://maps.google.com/?q=21.1442,72.7562',
-        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=21.1442,72.7562',
-        pricePerKwh: 24,
-        solar: true,
-        rating: 5.0,
-        amenities: ['Mall Access', 'Solar Canopy Power', 'Food Court', 'Dedicated 2W Fleet Bay'],
-        ports: [
-          { id: 'p501', name: 'Bay 01 (4W)', type: '360kW Hyper-DC', maxKw: 360, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p502', name: 'Bay 02 (4W)', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p503', name: 'Bay 03 (4W)', type: '60kW DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p504', name: 'Bay 04 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
-          { id: 'p505', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' },
-          { id: 'p506', name: 'Bay 06 (2W)', type: '3.3kW 16A Smart Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' }
-        ]
+        "id": "p105",
+        "name": "Bay 05 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
       },
       {
-        id: 'st-06',
-        vendorId: 'vendor-tata',
-        vendorName: 'Tata Power EZ Charge',
-        vendorLogo: '⚡',
-        vendorColor: 'emerald',
-        name: 'Tata Power 150ft Ring Road Hub • Rajkot',
-        type: 'Saurashtra Highway & City Ultra-Hub',
-        location: 'KKV Hall Circle, 150 Feet Ring Road, Kalawad Road, Rajkot, Gujarat 360005',
-        lat: 22.2837,
-        lng: 70.7686,
-        mapsUrl: 'https://maps.google.com/?q=22.2837,70.7686',
-        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=22.2837,70.7686',
-        pricePerKwh: 25,
-        solar: true,
-        rating: 4.8,
-        amenities: ['Dining', 'Restrooms', '24x7 Security', 'Convenience Store'],
-        ports: [
-          { id: 'p601', name: 'Bay 01 (4W)', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p602', name: 'Bay 02 (4W)', type: '60kW Fast DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p603', name: 'Bay 03 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
-          { id: 'p604', name: 'Bay 04 (2W)', type: '3.3kW 16A Universal Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' },
-          { id: 'p605', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Charger', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' }
-        ]
-      },
-      {
-        id: 'st-07',
-        vendorId: 'vendor-jiobp',
-        vendorName: 'Jio-bp pulse',
-        vendorLogo: '⛽',
-        vendorColor: 'blue',
-        name: 'Jio-bp Statue of Unity Green Zone • Kevadia',
-        type: '100% Green Tourism Hub (2W & 4W)',
-        location: 'Ekta Mall & Shrestha Bharat Bhavan, Ekta Nagar, Kevadia, Gujarat 393151',
-        lat: 21.8380,
-        lng: 73.7191,
-        mapsUrl: 'https://maps.google.com/?q=21.8380,73.7191',
-        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=21.8380,73.7191',
-        pricePerKwh: 23,
-        solar: true,
-        rating: 5.0,
-        amenities: ['Tourist Information', 'Solar Canopy', 'EV Buggy Transfer', 'Restrooms'],
-        ports: [
-          { id: 'p701', name: 'Bay 01 (4W)', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p702', name: 'Bay 02 (4W)', type: '60kW Fast DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
-          { id: 'p703', name: 'Bay 03 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
-          { id: 'p704', name: 'Bay 04 (2W)', type: '3.3kW 16A E-Scooter Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' },
-          { id: 'p705', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' }
-        ]
+        "id": "p106",
+        "name": "Bay 06 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
       }
-    ];
+    ]
+  },
+  {
+    "id": "st-02",
+    "vendorId": "vendor-tata",
+    "vendorName": "Tata Power EZ Charge",
+    "vendorLogo": "⚡",
+    "vendorColor": "emerald",
+    "city": "Gandhinagar",
+    "name": "Tata Power GIFT City FinTech SuperHub • Gandhinagar",
+    "type": "FinTech Corridor Smart Grid (2W & 4W)",
+    "location": "Block 12, Road 1D, GIFT SEZ Tower 1, GIFT City, Gandhinagar, Gujarat 382355",
+    "lat": 23.161,
+    "lng": 72.6841,
+    "mapsUrl": "https://maps.google.com/?q=23.1610,72.6841",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=23.1610,72.6841",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 4.9,
+    "amenities": [
+      "GIFT Club Access",
+      "Coffee Lounge",
+      "Automated Parking",
+      "24x7 Security"
+    ],
+    "ports": [
+      {
+        "id": "p201",
+        "name": "Bay 01 (4W)",
+        "type": "180kW Fast DC",
+        "maxKw": 180,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p202",
+        "name": "Bay 02 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p203",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p204",
+        "name": "Bay 04 (2W)",
+        "type": "3.3kW 16A Smart Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p205",
+        "name": "Bay 05 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-03",
+    "vendorId": "vendor-zeon",
+    "vendorName": "Zeon Charging",
+    "vendorLogo": "🔋",
+    "vendorColor": "indigo",
+    "city": "Ahmedabad",
+    "name": "Zeon Ahmedabad Airport T2 Gateway Hub",
+    "type": "Airport Hypergrid (2W & 4W)",
+    "location": "Terminal 2 Commercial Forecourt, SVPI Airport, Hansol, Ahmedabad, Gujarat 380003",
+    "lat": 23.0734,
+    "lng": 72.6266,
+    "mapsUrl": "https://maps.google.com/?q=23.0734,72.6266",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=23.0734,72.6266",
+    "pricePerKwh": 28,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Airport Shuttle",
+      "24x7 Airport Security",
+      "Luggage Assistance",
+      "Costa Coffee"
+    ],
+    "ports": [
+      {
+        "id": "p301",
+        "name": "Bay 01 (4W)",
+        "type": "240kW Ultra-Fast DC",
+        "maxKw": 240,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p302",
+        "name": "Bay 02 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p303",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p304",
+        "name": "Bay 04 (2W)",
+        "type": "3.3kW 16A Universal 2W Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p305",
+        "name": "Bay 05 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-04",
+    "vendorId": "vendor-statiq",
+    "vendorName": "Statiq EV Fast Hub",
+    "vendorLogo": "🚀",
+    "vendorColor": "amber",
+    "city": "Ahmedabad",
+    "name": "Statiq SP Ring Road South Bopal Hub • Ahmedabad",
+    "type": "Ring Road Commercial Hub (2W & 4W)",
+    "location": "Gala Gymkhana Road, Near SP Ring Road Junction, South Bopal, Ahmedabad, Gujarat 380058",
+    "lat": 23.0189,
+    "lng": 72.4682,
+    "mapsUrl": "https://maps.google.com/?q=23.0189,72.4682",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=23.0189,72.4682",
+    "pricePerKwh": 25,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Shopping Complex",
+      "Fast Food",
+      "Automated Bay Sensors",
+      "EV Waiting Lounge"
+    ],
+    "ports": [
+      {
+        "id": "p401",
+        "name": "Bay 01 (4W)",
+        "type": "150kW Fast DC",
+        "maxKw": 150,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p402",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p403",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW AC Destination",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p404",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid 3.3kW Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p405",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Smart Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-05",
+    "vendorId": "vendor-voltgrid",
+    "vendorName": "VoltGrid Direct Flagship",
+    "vendorLogo": "🛡️",
+    "vendorColor": "cyan",
+    "city": "Ahmedabad",
+    "name": "VoltGrid Sabarmati Riverfront Promenade Hub • Ahmedabad",
+    "type": "Scenic Urban Solar Promenade (2W & 4W)",
+    "location": "Riverfront West Promenade, Near Atal Pedestrian Bridge, Ashram Road, Ahmedabad, Gujarat 380009",
+    "lat": 23.0365,
+    "lng": 72.5714,
+    "mapsUrl": "https://maps.google.com/?q=23.0365,72.5714",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=23.0365,72.5714",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 5,
+    "amenities": [
+      "Riverfront Walkway",
+      "Solar Tree Canopy",
+      "Food Kiosks",
+      "Atal Bridge Access"
+    ],
+    "ports": [
+      {
+        "id": "p501",
+        "name": "Bay 01 (4W)",
+        "type": "180kW Ultra-Fast DC",
+        "maxKw": 180,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p502",
+        "name": "Bay 02 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p503",
+        "name": "Bay 03 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p504",
+        "name": "Bay 04 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p505",
+        "name": "Bay 05 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p506",
+        "name": "Bay 06 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-06",
+    "vendorId": "vendor-jiobp",
+    "vendorName": "Jio-bp pulse",
+    "vendorLogo": "⛽",
+    "vendorColor": "blue",
+    "city": "Ahmedabad",
+    "name": "Jio-bp pulse Motera Stadium MegaHub • Ahmedabad",
+    "type": "Cricket Stadium Sports Complex Grid (2W & 4W)",
+    "location": "Stadium Cross Road, Near Gate 1 Narendra Modi Stadium, Motera, Ahmedabad, Gujarat 380005",
+    "lat": 23.0919,
+    "lng": 72.5974,
+    "mapsUrl": "https://maps.google.com/?q=23.0919,72.5974",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=23.0919,72.5974",
+    "pricePerKwh": 26,
+    "solar": true,
+    "rating": 4.9,
+    "amenities": [
+      "Sports Complex Parking",
+      "Metro Station 200m",
+      "Cafe",
+      "Restrooms"
+    ],
+    "ports": [
+      {
+        "id": "p601",
+        "name": "Bay 01 (4W)",
+        "type": "240kW Ultra-Fast DC",
+        "maxKw": 240,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p602",
+        "name": "Bay 02 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p603",
+        "name": "Bay 03 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p604",
+        "name": "Bay 04 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p605",
+        "name": "Bay 05 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p606",
+        "name": "Bay 06 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-07",
+    "vendorId": "vendor-tata",
+    "vendorName": "Tata Power EZ Charge",
+    "vendorLogo": "⚡",
+    "vendorColor": "emerald",
+    "city": "Sanand",
+    "name": "Tata Power Sanand GIDC Industrial Corridor • Ahmedabad",
+    "type": "Auto EV Manufacturing Industrial Hub",
+    "location": "Sanand GIDC Gate 2, Sanand-Viramgam State Highway, Ahmedabad, Gujarat 382170",
+    "lat": 22.9868,
+    "lng": 72.3785,
+    "mapsUrl": "https://maps.google.com/?q=22.9868,72.3785",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=22.9868,72.3785",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Heavy Vehicle Bay",
+      "Driver Rest Area",
+      "Canteen",
+      "24x7 Security"
+    ],
+    "ports": [
+      {
+        "id": "p701",
+        "name": "Bay 01 (4W)",
+        "type": "150kW Fast DC",
+        "maxKw": 150,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p702",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p703",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p704",
+        "name": "Bay 04 (2W)",
+        "type": "3.3kW 16A Smart Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p705",
+        "name": "Bay 05 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-08",
+    "vendorId": "vendor-statiq",
+    "vendorName": "Statiq EV Fast Hub",
+    "vendorLogo": "🚀",
+    "vendorColor": "amber",
+    "city": "Vadodara",
+    "name": "Statiq NE-1 Expressway Gateway • Vadodara",
+    "type": "Intercity Expressway Gateway (NE-1)",
+    "location": "National Expressway 1 Entry Plaza, Golden Chokdi, Vadodara, Gujarat 390022",
+    "lat": 22.3615,
+    "lng": 73.2104,
+    "mapsUrl": "https://maps.google.com/?q=22.3615,73.2104",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=22.3615,73.2104",
+    "pricePerKwh": 25,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Expressway Food Court",
+      "EV Lounge",
+      "Clean Restrooms",
+      "Tyre Pressure Check"
+    ],
+    "ports": [
+      {
+        "id": "p801",
+        "name": "Bay 01 (4W)",
+        "type": "180kW Fast DC",
+        "maxKw": 180,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p802",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p803",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW AC Destination",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p804",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid 3.3kW Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p805",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Smart Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-09",
+    "vendorId": "vendor-tata",
+    "vendorName": "Tata Power EZ Charge",
+    "vendorLogo": "⚡",
+    "vendorColor": "emerald",
+    "city": "Vadodara",
+    "name": "Tata Power Alkapuri Commercial SuperHub • Vadodara",
+    "type": "City Centre Corporate Hub (2W & 4W)",
+    "location": "RC Dutt Road, Opp Express Hotel, Alkapuri, Vadodara, Gujarat 390007",
+    "lat": 22.3107,
+    "lng": 73.1812,
+    "mapsUrl": "https://maps.google.com/?q=22.3107,73.1812",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=22.3107,73.1812",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 4.9,
+    "amenities": [
+      "Hotel Access",
+      "Central Station 500m",
+      "Coffee Day",
+      "Valet EV Parking"
+    ],
+    "ports": [
+      {
+        "id": "p901",
+        "name": "Bay 01 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p902",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p903",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p904",
+        "name": "Bay 04 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p905",
+        "name": "Bay 05 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-10",
+    "vendorId": "vendor-voltgrid",
+    "vendorName": "VoltGrid Direct Flagship",
+    "vendorLogo": "🛡️",
+    "vendorColor": "cyan",
+    "city": "Anand",
+    "name": "VoltGrid Anand Amul Dairy Corridor Hub",
+    "type": "Milk Capital Express Solar Oasis",
+    "location": "Amul Dairy Road, Near Anand Railway Junction, Anand, Gujarat 388001",
+    "lat": 22.5645,
+    "lng": 72.9289,
+    "mapsUrl": "https://maps.google.com/?q=22.5645,72.9289",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=22.5645,72.9289",
+    "pricePerKwh": 23,
+    "solar": true,
+    "rating": 4.9,
+    "amenities": [
+      "Amul Parlour",
+      "Green Park Waiting Zone",
+      "24x7 Security",
+      "Clean Restrooms"
+    ],
+    "ports": [
+      {
+        "id": "p1001",
+        "name": "Bay 01 (4W)",
+        "type": "150kW Fast DC",
+        "maxKw": 150,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1002",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1003",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p1004",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p1005",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-11",
+    "vendorId": "vendor-zeon",
+    "vendorName": "Zeon Charging",
+    "vendorLogo": "🔋",
+    "vendorColor": "indigo",
+    "city": "Nadiad",
+    "name": "Zeon Nadiad NH-48 Expressway Oasis",
+    "type": "Highway Express Pitstop (2W & 4W)",
+    "location": "NH 48 Service Road, Near Nadiad Expressway Exit, Kheda District, Gujarat 387002",
+    "lat": 22.6916,
+    "lng": 72.8634,
+    "mapsUrl": "https://maps.google.com/?q=22.6916,72.8634",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=22.6916,72.8634",
+    "pricePerKwh": 25,
+    "solar": true,
+    "rating": 4.7,
+    "amenities": [
+      "Subway & Highway Dhaba",
+      "Restrooms",
+      "Free Wi-Fi",
+      "EV Shaded Bays"
+    ],
+    "ports": [
+      {
+        "id": "p1101",
+        "name": "Bay 01 (4W)",
+        "type": "150kW Fast DC",
+        "maxKw": 150,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1102",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1103",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p1104",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p1105",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-12",
+    "vendorId": "vendor-voltgrid",
+    "vendorName": "VoltGrid Direct Flagship",
+    "vendorLogo": "🛡️",
+    "vendorColor": "cyan",
+    "city": "Surat",
+    "name": "VoltGrid VR Surat & Dumas Mega-Hub",
+    "type": "Diamond City Central Metro Hub",
+    "location": "VR Surat Mall, Dumas Road, Near Magdalla Port Junction, Surat, Gujarat 395007",
+    "lat": 21.1442,
+    "lng": 72.7562,
+    "mapsUrl": "https://maps.google.com/?q=21.1442,72.7562",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=21.1442,72.7562",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 5,
+    "amenities": [
+      "Mall Access",
+      "Solar Canopy Power",
+      "Food Court",
+      "Dedicated 2W Fleet Bay"
+    ],
+    "ports": [
+      {
+        "id": "p1201",
+        "name": "Bay 01 (4W)",
+        "type": "360kW Hyper-DC",
+        "maxKw": 360,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1202",
+        "name": "Bay 02 (4W)",
+        "type": "180kW Fast DC",
+        "maxKw": 180,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1203",
+        "name": "Bay 03 (4W)",
+        "type": "60kW DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1204",
+        "name": "Bay 04 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p1205",
+        "name": "Bay 05 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p1206",
+        "name": "Bay 06 (2W)",
+        "type": "3.3kW 16A Smart Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-13",
+    "vendorId": "vendor-tata",
+    "vendorName": "Tata Power EZ Charge",
+    "vendorLogo": "⚡",
+    "vendorColor": "emerald",
+    "city": "Surat",
+    "name": "Tata Power Surat Diamond Bourse HyperGrid",
+    "type": "World Largest Office Building Smart Grid",
+    "location": "Core Boulevard, Surat Diamond Bourse, DREAM City, Khajod, Surat, Gujarat 395007",
+    "lat": 21.1097,
+    "lng": 72.7933,
+    "mapsUrl": "https://maps.google.com/?q=21.1097,72.7933",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=21.1097,72.7933",
+    "pricePerKwh": 25,
+    "solar": true,
+    "rating": 4.9,
+    "amenities": [
+      "Bourse Business Lounge",
+      "High-speed Wi-Fi",
+      "24x7 Security",
+      "Executive Cafe"
+    ],
+    "ports": [
+      {
+        "id": "p1301",
+        "name": "Bay 01 (4W)",
+        "type": "240kW Ultra-Fast DC",
+        "maxKw": 240,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1302",
+        "name": "Bay 02 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1303",
+        "name": "Bay 03 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1304",
+        "name": "Bay 04 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p1305",
+        "name": "Bay 05 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p1306",
+        "name": "Bay 06 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-14",
+    "vendorId": "vendor-jiobp",
+    "vendorName": "Jio-bp pulse",
+    "vendorLogo": "⛽",
+    "vendorColor": "blue",
+    "city": "Surat",
+    "name": "Jio-bp pulse Adajan-Pal Riverbank Hub • Surat",
+    "type": "Urban River Corridor Rapid Hub",
+    "location": "Gaurav Path Road, Pal, Adajan, Surat, Gujarat 395009",
+    "lat": 21.1963,
+    "lng": 72.7845,
+    "mapsUrl": "https://maps.google.com/?q=21.1963,72.7845",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=21.1963,72.7845",
+    "pricePerKwh": 26,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Wild Bean Cafe",
+      "Drive-thru Snacks",
+      "2W Fast Charging",
+      "Restrooms"
+    ],
+    "ports": [
+      {
+        "id": "p1401",
+        "name": "Bay 01 (4W)",
+        "type": "150kW Fast DC",
+        "maxKw": 150,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1402",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1403",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p1404",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p1405",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-15",
+    "vendorId": "vendor-statiq",
+    "vendorName": "Statiq EV Fast Hub",
+    "vendorLogo": "🚀",
+    "vendorColor": "amber",
+    "city": "Bharuch",
+    "name": "Statiq Narmada Express Gateway • Bharuch",
+    "type": "NH-48 Narmada Bridge Super-Junction",
+    "location": "Zadeshwar Cross Road, NH 48, Near Narmada Golden Bridge, Bharuch, Gujarat 392011",
+    "lat": 21.7241,
+    "lng": 73.0189,
+    "mapsUrl": "https://maps.google.com/?q=21.7241,73.0189",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=21.7241,73.0189",
+    "pricePerKwh": 25,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Highway Plaza",
+      "Food Court",
+      "Clean Restrooms",
+      "Tyre Pressure Assist"
+    ],
+    "ports": [
+      {
+        "id": "p1501",
+        "name": "Bay 01 (4W)",
+        "type": "180kW Fast DC",
+        "maxKw": 180,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1502",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1503",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p1504",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p1505",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-16",
+    "vendorId": "vendor-tata",
+    "vendorName": "Tata Power EZ Charge",
+    "vendorLogo": "⚡",
+    "vendorColor": "emerald",
+    "city": "Ankleshwar",
+    "name": "Tata Power Ankleshwar GIDC NH-48 Oasis",
+    "type": "Chemical & Industrial Transit Supercharger",
+    "location": "Station Road & NH 48, Ankleshwar GIDC, Bharuch District, Gujarat 393002",
+    "lat": 21.6267,
+    "lng": 73.0034,
+    "mapsUrl": "https://maps.google.com/?q=21.6267,73.0034",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=21.6267,73.0034",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 4.7,
+    "amenities": [
+      "24x7 Security",
+      "Industrial Fleet Bay",
+      "Clean Toilets",
+      "Tea & Coffee"
+    ],
+    "ports": [
+      {
+        "id": "p1601",
+        "name": "Bay 01 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1602",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1603",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p1604",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p1605",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-17",
+    "vendorId": "vendor-zeon",
+    "vendorName": "Zeon Charging",
+    "vendorLogo": "🔋",
+    "vendorColor": "indigo",
+    "city": "Navsari",
+    "name": "Zeon Navsari NH-48 Transit Hub",
+    "type": "Coastal South Gujarat Transit Point",
+    "location": "Junathana & NH 48 Bypass, Near Central Grid, Navsari, Gujarat 396445",
+    "lat": 20.9467,
+    "lng": 72.952,
+    "mapsUrl": "https://maps.google.com/?q=20.9467,72.9520",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=20.9467,72.9520",
+    "pricePerKwh": 25,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Rest Stop",
+      "Refreshments",
+      "Free Wi-Fi",
+      "2W Fleet Bay"
+    ],
+    "ports": [
+      {
+        "id": "p1701",
+        "name": "Bay 01 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1702",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1703",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p1704",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p1705",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-18",
+    "vendorId": "vendor-voltgrid",
+    "vendorName": "VoltGrid Direct Flagship",
+    "vendorLogo": "🛡️",
+    "vendorColor": "cyan",
+    "city": "Valsad",
+    "name": "VoltGrid Valsad Tithal Coastal Oasis",
+    "type": "Arabian Sea Coastal Tourist Hub",
+    "location": "Dharampur Cross Road, NH 48 & Tithal Beach Rd, Valsad, Gujarat 396001",
+    "lat": 20.612,
+    "lng": 72.93,
+    "mapsUrl": "https://maps.google.com/?q=20.6120,72.9300",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=20.6120,72.9300",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 4.9,
+    "amenities": [
+      "Beach Access 2 km",
+      "Solar Roof",
+      "Cafe",
+      "Air Conditioned Waiting Lounge"
+    ],
+    "ports": [
+      {
+        "id": "p1801",
+        "name": "Bay 01 (4W)",
+        "type": "180kW Fast DC",
+        "maxKw": 180,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1802",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1803",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p1804",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p1805",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-19",
+    "vendorId": "vendor-jiobp",
+    "vendorName": "Jio-bp pulse",
+    "vendorLogo": "⛽",
+    "vendorColor": "blue",
+    "city": "Vapi",
+    "name": "Jio-bp pulse Vapi Gunjan Mega-Junction",
+    "type": "Gujarat-Maharashtra Border NH-48 Hub",
+    "location": "Gunjan Char Rasta, NH 48 Corridor, Vapi, Gujarat 396195",
+    "lat": 20.3725,
+    "lng": 72.909,
+    "mapsUrl": "https://maps.google.com/?q=20.3725,72.9090",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=20.3725,72.9090",
+    "pricePerKwh": 26,
+    "solar": true,
+    "rating": 4.9,
+    "amenities": [
+      "24x7 Wild Bean Cafe",
+      "Interstate Lounge",
+      "Restrooms",
+      "2W Dedicated Charging"
+    ],
+    "ports": [
+      {
+        "id": "p1901",
+        "name": "Bay 01 (4W)",
+        "type": "240kW Ultra-Fast DC",
+        "maxKw": 240,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1902",
+        "name": "Bay 02 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1903",
+        "name": "Bay 03 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p1904",
+        "name": "Bay 04 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p1905",
+        "name": "Bay 05 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p1906",
+        "name": "Bay 06 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-20",
+    "vendorId": "vendor-tata",
+    "vendorName": "Tata Power EZ Charge",
+    "vendorLogo": "⚡",
+    "vendorColor": "emerald",
+    "city": "Rajkot",
+    "name": "Tata Power 150ft Ring Road Hub • Rajkot",
+    "type": "Saurashtra Highway & City Ultra-Hub",
+    "location": "KKV Hall Circle, 150 Feet Ring Road, Kalawad Road, Rajkot, Gujarat 360005",
+    "lat": 22.2837,
+    "lng": 70.7686,
+    "mapsUrl": "https://maps.google.com/?q=22.2837,70.7686",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=22.2837,70.7686",
+    "pricePerKwh": 25,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Dining",
+      "Restrooms",
+      "24x7 Security",
+      "Convenience Store"
+    ],
+    "ports": [
+      {
+        "id": "p2001",
+        "name": "Bay 01 (4W)",
+        "type": "150kW Fast DC",
+        "maxKw": 150,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2002",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2003",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p2004",
+        "name": "Bay 04 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p2005",
+        "name": "Bay 05 (2W)",
+        "type": "Ather Grid Fast Charger",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-21",
+    "vendorId": "vendor-jiobp",
+    "vendorName": "Jio-bp pulse",
+    "vendorLogo": "⛽",
+    "vendorColor": "blue",
+    "city": "Rajkot",
+    "name": "Jio-bp pulse Madhapar Highway SuperHub • Rajkot",
+    "type": "Jamnagar-Dwarka Highway Gateway NH-27",
+    "location": "Madhapar Chowk, Jamnagar Highway NH 27, Rajkot, Gujarat 360006",
+    "lat": 22.3168,
+    "lng": 70.782,
+    "mapsUrl": "https://maps.google.com/?q=22.3168,70.7820",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=22.3168,70.7820",
+    "pricePerKwh": 26,
+    "solar": true,
+    "rating": 4.9,
+    "amenities": [
+      "Wild Bean Cafe",
+      "Clean Highway Restrooms",
+      "Free Air",
+      "2W Dedicated Charging"
+    ],
+    "ports": [
+      {
+        "id": "p2101",
+        "name": "Bay 01 (4W)",
+        "type": "180kW Fast DC",
+        "maxKw": 180,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2102",
+        "name": "Bay 02 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2103",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p2104",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p2105",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-22",
+    "vendorId": "vendor-statiq",
+    "vendorName": "Statiq EV Fast Hub",
+    "vendorLogo": "🚀",
+    "vendorColor": "amber",
+    "city": "Jamnagar",
+    "name": "Statiq Jamnagar Reliance Greens Gateway",
+    "type": "Refinery Mega Complex Highway Hub",
+    "location": "Moti Khavdi, Jamnagar-Khambhalia Highway, Near Reliance Greens Gate, Jamnagar, Gujarat 361140",
+    "lat": 22.4278,
+    "lng": 69.871,
+    "mapsUrl": "https://maps.google.com/?q=22.4278,69.8710",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=22.4278,69.8710",
+    "pricePerKwh": 25,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Highway Diner",
+      "Executive Lounge",
+      "Restrooms",
+      "Security Patrol"
+    ],
+    "ports": [
+      {
+        "id": "p2201",
+        "name": "Bay 01 (4W)",
+        "type": "180kW Fast DC",
+        "maxKw": 180,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2202",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2203",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p2204",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p2205",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-23",
+    "vendorId": "vendor-zeon",
+    "vendorName": "Zeon Charging",
+    "vendorLogo": "🔋",
+    "vendorColor": "indigo",
+    "city": "Bhavnagar",
+    "name": "Zeon Bhavnagar Victoria Park SuperHub",
+    "type": "Gulf of Khambhat Urban Hub",
+    "location": "Waghawadi Road, Near Victoria Park Circle, Bhavnagar, Gujarat 364002",
+    "lat": 21.7455,
+    "lng": 72.1384,
+    "mapsUrl": "https://maps.google.com/?q=21.7455,72.1384",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=21.7455,72.1384",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Park Green Area",
+      "Restrooms",
+      "Coffee Kiosk",
+      "2W Dedicated Charging"
+    ],
+    "ports": [
+      {
+        "id": "p2301",
+        "name": "Bay 01 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2302",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2303",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p2304",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p2305",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-24",
+    "vendorId": "vendor-tata",
+    "vendorName": "Tata Power EZ Charge",
+    "vendorLogo": "⚡",
+    "vendorColor": "emerald",
+    "city": "Junagadh",
+    "name": "Tata Power Junagadh Girnar Eco-Hub",
+    "type": "Sacred Mount Girnar Foothill Sanctuary",
+    "location": "Bhavnath Taleti Road, Foothills of Mount Girnar, Junagadh, Gujarat 362001",
+    "lat": 21.5222,
+    "lng": 70.4789,
+    "mapsUrl": "https://maps.google.com/?q=21.5222,70.4789",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=21.5222,70.4789",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 4.9,
+    "amenities": [
+      "Ropeway Access",
+      "Pilgrim Amenities",
+      "Mountain View Cafe",
+      "Clean Restrooms"
+    ],
+    "ports": [
+      {
+        "id": "p2401",
+        "name": "Bay 01 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2402",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2403",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p2404",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p2405",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-25",
+    "vendorId": "vendor-voltgrid",
+    "vendorName": "VoltGrid Direct Flagship",
+    "vendorLogo": "🛡️",
+    "vendorColor": "cyan",
+    "city": "Morbi",
+    "name": "VoltGrid Morbi Ceramic Expressway Hub",
+    "type": "Ceramic Capital NH-27 Industrial Grid",
+    "location": "NH 27 Bypass, Near Makansar Ceramic Zone, Morbi, Gujarat 363642",
+    "lat": 22.812,
+    "lng": 70.8385,
+    "mapsUrl": "https://maps.google.com/?q=22.8120,70.8385",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=22.8120,70.8385",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Industrial Plaza",
+      "Highway Restaurant",
+      "EV Battery Health Check",
+      "Security"
+    ],
+    "ports": [
+      {
+        "id": "p2501",
+        "name": "Bay 01 (4W)",
+        "type": "180kW Fast DC",
+        "maxKw": 180,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2502",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2503",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p2504",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p2505",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-26",
+    "vendorId": "vendor-jiobp",
+    "vendorName": "Jio-bp pulse",
+    "vendorLogo": "⛽",
+    "vendorColor": "blue",
+    "city": "Porbandar",
+    "name": "Jio-bp pulse Porbandar Coastal Gateway",
+    "type": "Birthplace of Mahatma Gandhi Coastal Hub",
+    "location": "Chowpati Beach Promenade, NH 51 Coastal Highway, Porbandar, Gujarat 360575",
+    "lat": 21.6417,
+    "lng": 69.6093,
+    "mapsUrl": "https://maps.google.com/?q=21.6417,69.6093",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=21.6417,69.6093",
+    "pricePerKwh": 25,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Beachside Walk",
+      "Wild Bean Cafe",
+      "Free Wi-Fi",
+      "Restrooms"
+    ],
+    "ports": [
+      {
+        "id": "p2601",
+        "name": "Bay 01 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2602",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2603",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p2604",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p2605",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-27",
+    "vendorId": "vendor-tata",
+    "vendorName": "Tata Power EZ Charge",
+    "vendorLogo": "⚡",
+    "vendorColor": "emerald",
+    "city": "Dwarka",
+    "name": "Tata Power Dwarka Holy Shrine & Shivrajpur Hub",
+    "type": "Sacred Western Coastal Pilgrimage Grid",
+    "location": "Dwarkadhish Temple Access Rd & Okha Highway, Dwarka, Gujarat 361335",
+    "lat": 22.2442,
+    "lng": 68.9685,
+    "mapsUrl": "https://maps.google.com/?q=22.2442,68.9685",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=22.2442,68.9685",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 4.9,
+    "amenities": [
+      "Temple Shuttle 500m",
+      "Shivrajpur Beach 10 km",
+      "Pilgrim Rest Area",
+      "Prasadam Kiosk"
+    ],
+    "ports": [
+      {
+        "id": "p2701",
+        "name": "Bay 01 (4W)",
+        "type": "150kW Fast DC",
+        "maxKw": 150,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2702",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2703",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p2704",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p2705",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-28",
+    "vendorId": "vendor-jiobp",
+    "vendorName": "Jio-bp pulse",
+    "vendorLogo": "⛽",
+    "vendorColor": "blue",
+    "city": "Somnath",
+    "name": "Jio-bp pulse Somnath Temple Heritage Hub",
+    "type": "First Jyotirlinga Oceanfront Sanctuary",
+    "location": "Somnath Temple Bypass, Prabhas Patan, Veraval, Gujarat 362268",
+    "lat": 20.888,
+    "lng": 70.4012,
+    "mapsUrl": "https://maps.google.com/?q=20.8880,70.4012",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=20.8880,70.4012",
+    "pricePerKwh": 25,
+    "solar": true,
+    "rating": 5,
+    "amenities": [
+      "Ocean Promenade",
+      "Temple Access",
+      "Restrooms",
+      "Wild Bean Cafe"
+    ],
+    "ports": [
+      {
+        "id": "p2801",
+        "name": "Bay 01 (4W)",
+        "type": "150kW Fast DC",
+        "maxKw": 150,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2802",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2803",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p2804",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p2805",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-29",
+    "vendorId": "vendor-voltgrid",
+    "vendorName": "VoltGrid Direct Flagship",
+    "vendorLogo": "🛡️",
+    "vendorColor": "cyan",
+    "city": "Sasan Gir",
+    "name": "VoltGrid Sasan Gir Eco Wildlife Sanctuary Hub",
+    "type": "Asiatic Lion National Reserve Eco Grid",
+    "location": "Sinh Sadan Safari Gate Road, Sasan Gir Forest Reserve, Junagadh District, Gujarat 362135",
+    "lat": 21.134,
+    "lng": 70.5985,
+    "mapsUrl": "https://maps.google.com/?q=21.1340,70.5985",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=21.1340,70.5985",
+    "pricePerKwh": 23,
+    "solar": true,
+    "rating": 5,
+    "amenities": [
+      "100% Solar Canopy",
+      "Forest Interpretation Center",
+      "Quiet EV Charging",
+      "Clean Restrooms"
+    ],
+    "ports": [
+      {
+        "id": "p2901",
+        "name": "Bay 01 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2902",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p2903",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p2904",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p2905",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-30",
+    "vendorId": "vendor-jiobp",
+    "vendorName": "Jio-bp pulse",
+    "vendorLogo": "⛽",
+    "vendorColor": "blue",
+    "city": "Kevadia",
+    "name": "Jio-bp Statue of Unity Green Zone • Kevadia",
+    "type": "100% Green Tourism Hub (2W & 4W)",
+    "location": "Ekta Mall & Shrestha Bharat Bhavan, Ekta Nagar, Kevadia, Gujarat 393151",
+    "lat": 21.838,
+    "lng": 73.7191,
+    "mapsUrl": "https://maps.google.com/?q=21.8380,73.7191",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=21.8380,73.7191",
+    "pricePerKwh": 23,
+    "solar": true,
+    "rating": 5,
+    "amenities": [
+      "Tourist Information",
+      "Solar Canopy",
+      "EV Buggy Transfer",
+      "Restrooms"
+    ],
+    "ports": [
+      {
+        "id": "p3001",
+        "name": "Bay 01 (4W)",
+        "type": "180kW Fast DC",
+        "maxKw": 180,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p3002",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p3003",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p3004",
+        "name": "Bay 04 (2W)",
+        "type": "3.3kW 16A E-Scooter Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p3005",
+        "name": "Bay 05 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-31",
+    "vendorId": "vendor-tata",
+    "vendorName": "Tata Power EZ Charge",
+    "vendorLogo": "⚡",
+    "vendorColor": "emerald",
+    "city": "Bhuj",
+    "name": "Tata Power Bhuj Kutch Heritage Hub",
+    "type": "Kutch Capital & Desert Tourism Gateway",
+    "location": "Airport Road, Near Jubilee Ground & Prag Mahal, Bhuj, Kutch, Gujarat 370001",
+    "lat": 23.2589,
+    "lng": 69.6692,
+    "mapsUrl": "https://maps.google.com/?q=23.2589,69.6692",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=23.2589,69.6692",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Handicraft Center",
+      "Kutch Tourism Desk",
+      "Free Wi-Fi",
+      "Restrooms"
+    ],
+    "ports": [
+      {
+        "id": "p3101",
+        "name": "Bay 01 (4W)",
+        "type": "120kW Fast DC",
+        "maxKw": 120,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p3102",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p3103",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p3104",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p3105",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-32",
+    "vendorId": "vendor-voltgrid",
+    "vendorName": "VoltGrid Direct Flagship",
+    "vendorLogo": "🛡️",
+    "vendorColor": "cyan",
+    "city": "Dhordo (White Rann)",
+    "name": "VoltGrid White Rann Desert Supercharger • Dhordo",
+    "type": "Rann Utsav Great Salt Desert Solar Grid",
+    "location": "Tent City Entry Plaza, Dhordo, Great Rann of Kutch, Gujarat 370510",
+    "lat": 23.829,
+    "lng": 69.5135,
+    "mapsUrl": "https://maps.google.com/?q=23.8290,69.5135",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=23.8290,69.5135",
+    "pricePerKwh": 25,
+    "solar": true,
+    "rating": 5,
+    "amenities": [
+      "Tent City Entrance",
+      "100% Desert Solar Power",
+      "Rann Cultural Lounge",
+      "Restrooms"
+    ],
+    "ports": [
+      {
+        "id": "p3201",
+        "name": "Bay 01 (4W)",
+        "type": "150kW Desert Ultra-DC",
+        "maxKw": 150,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p3202",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p3203",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p3204",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p3205",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-33",
+    "vendorId": "vendor-zeon",
+    "vendorName": "Zeon Charging",
+    "vendorLogo": "🔋",
+    "vendorColor": "indigo",
+    "city": "Gandhidham",
+    "name": "Zeon Gandhidham Kandla Port Transit Oasis",
+    "type": "Major Maritime Trade & Heavy Transit Hub",
+    "location": "Oslo Circle, Tagore Road & NH 41, Gandhidham, Kutch, Gujarat 370201",
+    "lat": 23.0753,
+    "lng": 70.1337,
+    "mapsUrl": "https://maps.google.com/?q=23.0753,70.1337",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=23.0753,70.1337",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Port Logistics Rest Stop",
+      "24x7 Security",
+      "Diner",
+      "Restrooms"
+    ],
+    "ports": [
+      {
+        "id": "p3301",
+        "name": "Bay 01 (4W)",
+        "type": "150kW Fast DC",
+        "maxKw": 150,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p3302",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p3303",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p3304",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p3305",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  },
+  {
+    "id": "st-34",
+    "vendorId": "vendor-statiq",
+    "vendorName": "Statiq EV Fast Hub",
+    "vendorLogo": "🚀",
+    "vendorColor": "amber",
+    "city": "Mehsana",
+    "name": "Statiq Mehsana Sun Temple Expressway Hub",
+    "type": "North Gujarat Highway & Heritage Super-Corridor",
+    "location": "Radhanpur Cross Road, Ahmedabad-Palanpur Highway, Mehsana, Gujarat 384002",
+    "lat": 23.588,
+    "lng": 72.3693,
+    "mapsUrl": "https://maps.google.com/?q=23.5880,72.3693",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=23.5880,72.3693",
+    "pricePerKwh": 24,
+    "solar": true,
+    "rating": 4.8,
+    "amenities": [
+      "Highway Food Court",
+      "Clean Restrooms",
+      "Modhera Temple Access",
+      "EV Shaded Bays"
+    ],
+    "ports": [
+      {
+        "id": "p3401",
+        "name": "Bay 01 (4W)",
+        "type": "150kW Fast DC",
+        "maxKw": 150,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p3402",
+        "name": "Bay 02 (4W)",
+        "type": "60kW Fast DC",
+        "maxKw": 60,
+        "status": "available",
+        "connector": "CCS2",
+        "vehicleType": "4W"
+      },
+      {
+        "id": "p3403",
+        "name": "Bay 03 (Dual)",
+        "type": "22kW Type 2 AC",
+        "maxKw": 22,
+        "status": "available",
+        "connector": "Type 2",
+        "vehicleType": "BOTH"
+      },
+      {
+        "id": "p3404",
+        "name": "Bay 04 (2W)",
+        "type": "Ather Grid Fast Point",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "Ather Type 6",
+        "vehicleType": "2W"
+      },
+      {
+        "id": "p3405",
+        "name": "Bay 05 (2W)",
+        "type": "3.3kW 16A Universal Socket",
+        "maxKw": 3.3,
+        "status": "available",
+        "connector": "16A Smart Socket",
+        "vehicleType": "2W"
+      }
+    ]
+  }
+];
 
     const INITIAL_USERS = [];
     const INITIAL_BOOKINGS = [];
@@ -1858,8 +4234,8 @@
 
     const VoltGridDB = {
       users: loadSaved('voltgrid_users', JSON.parse(JSON.stringify(INITIAL_USERS))),
-      bookings: loadSaved('voltgrid_bookings', JSON.parse(JSON.stringify(INITIAL_BOOKINGS))),
-      stations: loadSaved('voltgrid_stations', JSON.parse(JSON.stringify(INITIAL_STATIONS)))
+      bookings: (window.VoltGridDB && window.VoltGridDB.getBookings) ? window.VoltGridDB.getBookings() : loadSaved('voltgrid_bookings', JSON.parse(JSON.stringify(INITIAL_BOOKINGS))),
+      stations: (window.VoltGridDB && window.VoltGridDB.getStations) ? window.VoltGridDB.getStations() : loadSaved('voltgrid_stations', JSON.parse(JSON.stringify(INITIAL_STATIONS)))
     };
 
     // Auto-migrate cached database to Gujarat stations if still holding older Delhi data
@@ -1877,6 +4253,10 @@
           localStorage.setItem('voltgrid_currentUser', JSON.stringify(currentUser));
         } else {
           localStorage.removeItem('voltgrid_currentUser');
+        }
+        if (window.VoltGridDB && typeof window.VoltGridDB.broadcast === 'function') {
+          window.VoltGridDB.broadcast('STATIONS_UPDATED', VoltGridDB.stations);
+          window.VoltGridDB.broadcast('BOOKINGS_UPDATED', VoltGridDB.bookings);
         }
       } catch (e) {
         console.warn('Storage quota or private mode active:', e);
@@ -2468,10 +4848,45 @@
       return estMins;
     }
 
-    // ---------------- MULTI-VENDOR & GPS PROXIMITY LOGIC (GUJARAT REGIONAL GRID) ----------------
+    
+    // Real-time synchronization: listen for changes made in Vendor or Admin portals
+    if (window.VoltGridDB) {
+      VoltGridDB.onSync((type, data) => {
+        console.log('⚡ User App received real-time sync event:', type);
+        stations = VoltGridDB.getStations();
+        renderStationSelector();
+        renderPorts();
+      });
+    }
+  
+    // ---------------- MULTI-VENDOR, STRUCTURED CITY & GPS PROXIMITY LOGIC (GUJARAT REGIONAL GRID) ----------------
+    let activeCityFilter = 'ALL';
     let activeVendorFilter = 'ALL';
     let activeVehicleTypeFilter = 'ALL';
     let userLocation = { lat: 23.0416, lng: 72.5074, name: 'Ahmedabad (SG Highway)' };
+
+    // City GPS Centers for Proximity Calculation
+    const CITY_COORDS = {
+      Surat: { lat: 21.1702, lng: 72.8311, name: 'Surat' },
+      Ahmedabad: { lat: 23.0225, lng: 72.5714, name: 'Ahmedabad' },
+      Vadodara: { lat: 22.3072, lng: 73.1812, name: 'Vadodara' },
+      Rajkot: { lat: 22.3039, lng: 70.8022, name: 'Rajkot' },
+      Gandhinagar: { lat: 23.2156, lng: 72.6369, name: 'Gandhinagar' },
+      Bhavnagar: { lat: 21.7645, lng: 72.1519, name: 'Bhavnagar' },
+      Jamnagar: { lat: 22.4707, lng: 70.0577, name: 'Jamnagar' },
+      Junagadh: { lat: 21.5222, lng: 70.4579, name: 'Junagadh' },
+      Anand: { lat: 22.5645, lng: 72.9289, name: 'Anand' },
+      Bharuch: { lat: 21.7051, lng: 72.9959, name: 'Bharuch' },
+      Vapi: { lat: 20.3725, lng: 72.9090, name: 'Vapi' },
+      Morbi: { lat: 22.8120, lng: 70.8385, name: 'Morbi' },
+      Mehsana: { lat: 23.5880, lng: 72.3693, name: 'Mehsana' },
+      Dwarka: { lat: 22.2442, lng: 68.9685, name: 'Dwarka' },
+      Somnath: { lat: 20.8880, lng: 70.4012, name: 'Somnath' },
+      'Sasan Gir': { lat: 21.1340, lng: 70.5985, name: 'Sasan Gir' },
+      Kevadia: { lat: 21.8380, lng: 73.7191, name: 'Kevadia' },
+      Porbandar: { lat: 21.6417, lng: 69.6093, name: 'Porbandar' },
+      Kutch: { lat: 23.2589, lng: 69.6692, name: 'Kutch / Bhuj' }
+    };
 
     function calculateDistanceKm(lat1, lon1, lat2, lon2) {
       if (!lat1 || !lon1 || !lat2 || !lon2) return null;
@@ -2483,6 +4898,22 @@
                 Math.sin(dLon/2) * Math.sin(dLon/2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
       return +(R * c).toFixed(1);
+    }
+
+    // Structured Location Filter: Filters stations and displays ports immediately
+    function onCityFilterChanged(cityVal) {
+      activeCityFilter = cityVal;
+
+      if (cityVal !== 'ALL' && CITY_COORDS[cityVal]) {
+        userLocation = CITY_COORDS[cityVal];
+      }
+
+      const pill = document.getElementById('activeLocationPill');
+      if (pill) {
+        pill.innerText = cityVal === 'ALL' ? '📍 All Gujarat' : ('📍 ' + cityVal);
+      }
+
+      renderStationSelector();
     }
 
     function setVendorFilter(vendorId) {
@@ -2517,22 +4948,6 @@
       renderPorts();
     }
 
-    function onUserLocationChanged(val) {
-      const PRESETS = {
-        ahmedabad: { lat: 23.0416, lng: 72.5074, name: 'Ahmedabad (SG Highway)' },
-        gandhinagar: { lat: 23.1610, lng: 72.6841, name: 'Gandhinagar (GIFT City)' },
-        airport: { lat: 23.0734, lng: 72.6266, name: 'Ahmedabad Airport T2' },
-        vadodara: { lat: 22.3615, lng: 73.2104, name: 'Vadodara (Expressway Entry NE-1)' },
-        surat: { lat: 21.1442, lng: 72.7562, name: 'Surat (VR Mall & Dumas Rd)' },
-        rajkot: { lat: 22.2837, lng: 70.7686, name: 'Rajkot (150ft Ring Road)' },
-        kevadia: { lat: 21.8380, lng: 73.7191, name: 'Statue of Unity (Ekta Nagar)' }
-      };
-      if (PRESETS[val]) {
-        userLocation = PRESETS[val];
-        renderStationSelector();
-      }
-    }
-
     function detectDeviceGpsLocation() {
       if (!navigator.geolocation) {
         alert('Geolocation is not supported by your browser.');
@@ -2545,11 +4960,18 @@
             lng: pos.coords.longitude,
             name: 'Live GPS'
           };
-          alert(`📍 Live GPS Detected: (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)})\nGujarat stations sorted by closest driving proximity!`);
+          activeCityFilter = 'ALL';
+          const sel = document.getElementById('cityFilterSelect');
+          if (sel) sel.value = 'ALL';
+
+          const pill = document.getElementById('activeLocationPill');
+          if (pill) pill.innerText = '🎯 Live GPS Proximity';
+
+          showToast('🎯 GPS Detected (' + userLocation.lat.toFixed(3) + ', ' + userLocation.lng.toFixed(3) + ') • Stations sorted by closest distance');
           renderStationSelector();
         },
         (err) => {
-          alert('GPS location permission denied or timed out. Defaulting to Ahmedabad SG Highway.');
+          alert('GPS location permission denied or timed out. Defaulting to Ahmedabad.');
         },
         { enableHighAccuracy: true, timeout: 8000 }
       );
@@ -2562,25 +4984,65 @@
 
       let displayStations = stations.slice();
 
-      // Filter by vendor if selected
+      // 1. Filter by Selected City / Location
+      if (activeCityFilter && activeCityFilter !== 'ALL') {
+        const q = activeCityFilter.toLowerCase();
+        displayStations = displayStations.filter(s => {
+          const c = (s.city || '').toLowerCase();
+          const loc = (s.location || '').toLowerCase();
+          const name = (s.name || '').toLowerCase();
+          if (q === 'kutch') {
+            return c.includes('kutch') || c.includes('bhuj') || c.includes('dhordo') || c.includes('gandhidham') || loc.includes('kutch');
+          }
+          if (q === 'anand') {
+            return c.includes('anand') || c.includes('nadiad') || loc.includes('anand') || loc.includes('nadiad');
+          }
+          if (q === 'bharuch') {
+            return c.includes('bharuch') || c.includes('ankleshwar') || loc.includes('bharuch') || loc.includes('ankleshwar');
+          }
+          if (q === 'vapi') {
+            return c.includes('vapi') || c.includes('valsad') || loc.includes('vapi') || loc.includes('valsad');
+          }
+          if (q === 'mehsana') {
+            return c.includes('mehsana') || c.includes('morbi') || loc.includes('mehsana') || loc.includes('morbi');
+          }
+          return c.includes(q) || loc.includes(q) || name.includes(q);
+        });
+      }
+
+      // 2. Filter by CPO Vendor Network if selected
       if (activeVendorFilter && activeVendorFilter !== 'ALL') {
         displayStations = displayStations.filter(s => s.vendorId === activeVendorFilter || (s.vendorName && s.vendorName.toLowerCase().includes(activeVendorFilter.replace('vendor-', ''))));
       }
 
-      // Compute distance and sort by proximity
+      // 3. Compute distance and sort by proximity
       displayStations.forEach(st => {
         const d = calculateDistanceKm(userLocation.lat, userLocation.lng, st.lat || 23.0416, st.lng || 72.5074);
         st.calculatedDistanceKm = d !== null ? d : 2.5;
       });
       displayStations.sort((a, b) => a.calculatedDistanceKm - b.calculatedDistanceKm);
 
-      // If currentStationId is not in displayStations, select the first one
+      // Select first station of the filtered city immediately
       if (displayStations.length > 0 && !displayStations.some(s => s.id === currentStationId)) {
         currentStationId = displayStations[0].id;
       }
 
+      const countEl = document.getElementById('stationCountDisplay');
+      if (countEl) {
+        if (activeCityFilter !== 'ALL') {
+          countEl.innerText = displayStations.length + ' Hubs in ' + activeCityFilter + ' (' + stations.length + ' Total in Gujarat)';
+        } else {
+          countEl.innerText = displayStations.length + ' Hubs Found (' + stations.length + ' Total in Gujarat)';
+        }
+      }
+
+      const proxEl = document.getElementById('stationProximityNote');
+      if (proxEl) {
+        proxEl.innerText = '📍 Showing ports for chosen city • Distance from ' + (userLocation.name || 'Gujarat');
+      }
+
       if (displayStations.length === 0) {
-        container.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-500 font-mono">No stations found for this vendor network. Switch to "All Networks" to see all Gujarat CPO hubs.</div>`;
+        container.innerHTML = '<div class="col-span-3 text-center py-8 text-slate-500 font-mono">No stations found for ' + activeCityFilter + ' with the active vendor filter. Switch vendor to "All Networks" to see available hubs.</div>';
         renderPorts();
         return;
       }
@@ -2605,6 +5067,7 @@
                   <div class="flex items-center gap-1.5 mb-1 flex-wrap">
                     <span class="text-xs">${st.vendorLogo || '⚡'}</span>
                     <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 border border-purple-200">${st.vendorName || 'VoltGrid'}</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-200">📍 ${st.city || 'Gujarat'}</span>
                     <span class="text-[10px] font-semibold text-slate-400">&bull; ${st.type}</span>
                   </div>
                   <h4 class="text-base font-extrabold text-slate-900 dark:text-white font-heading mt-1 min-h-[44px] flex items-center leading-snug">${st.name}</h4>

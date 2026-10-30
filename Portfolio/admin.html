@@ -7,6 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
   
   <!-- Tailwind CSS CDN -->
+  <script src="voltgrid_db.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -490,50 +491,20 @@
     ];
 
     async function loadAdminData() {
-      try {
-        // 1. Fetch Bookings
-        const bRes = await fetch('/api/bookings');
-        if (bRes.ok) {
-          const data = await bRes.json();
-          globalBookings = Array.isArray(data) && data.length > 0 ? data : DEFAULT_MOCK_BOOKINGS;
-        } else {
-          globalBookings = DEFAULT_MOCK_BOOKINGS;
-        }
-      } catch {
-        globalBookings = DEFAULT_MOCK_BOOKINGS;
+      if (window.VoltGridDB) {
+        globalStations = VoltGridDB.getStations();
+        globalBookings = VoltGridDB.getBookings();
+        globalVendors = VoltGridDB.getVendors();
       }
-
-      try {
-        // 2. Fetch Stations
-        const sRes = await fetch('/api/stations');
-        if (sRes.ok) {
-          globalStations = await sRes.json();
-        }
-      } catch (err) {
-        console.warn('Stations fetch error:', err);
+      if (!globalUsers || globalUsers.length === 0) {
+        globalUsers = [
+          { name: 'Nidhi Yadav', email: 'nidhiyadav1218@gmail.com', phone: '9328703345', vehicle: 'MG ZS EV', bookingsCount: 14, spent: 4820 },
+          { name: 'Aarav Sharma', email: 'aarav.sharma@gmail.com', phone: '+91 98250 12345', vehicle: 'MG ZS EV', bookingsCount: 9, spent: 3450 },
+          { name: 'Rohan Mehra', email: 'rohan.mehra@gmail.com', phone: '+91 98980 54321', vehicle: 'Hyundai Ioniq 5', bookingsCount: 6, spent: 2890 },
+          { name: 'Kiran Patel', email: 'kiran.patel@gmail.com', phone: '+91 97240 98765', vehicle: 'Tata Punch EV', bookingsCount: 4, spent: 1420 },
+          { name: 'Priya Joshi', email: 'priya.j@gmail.com', phone: '+91 94260 11223', vehicle: 'Ather 450X', bookingsCount: 12, spent: 960 }
+        ];
       }
-
-      try {
-        // 3. Fetch Vendors
-        const vRes = await fetch('/api/vendors');
-        if (vRes.ok) {
-          const vData = await vRes.json();
-          globalVendors = vData.vendors || [];
-        }
-      } catch (err) {
-        console.warn('Vendors fetch error:', err);
-      }
-
-      try {
-        // 4. Fetch Users
-        const uRes = await fetch('/api/users');
-        if (uRes.ok) {
-          globalUsers = await uRes.json();
-        }
-      } catch (err) {
-        console.warn('Users fetch error:', err);
-      }
-
       renderAdminDashboard();
     }
 
@@ -716,15 +687,21 @@
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
               <div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                   <span class="text-base">${st.vendorLogo || '⚡'}</span>
                   <h4 class="font-bold text-white text-sm">${st.name}</h4>
                   <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">${st.vendorName || 'VoltGrid'}</span>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-950 text-sky-300 border border-sky-800">📍 ${st.city || 'Gujarat'}</span>
                 </div>
                 <p class="text-xs text-slate-400 mt-0.5">📍 ${st.location}</p>
               </div>
-              <div class="text-xs text-slate-400 font-mono">
-                Tariff: <strong class="text-emerald-400 font-bold">₹${st.pricePerKwh}/kWh</strong>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-400 font-mono">
+                  Tariff: <strong class="text-emerald-400 font-bold">₹${st.pricePerKwh}/kWh</strong>
+                </span>
+                <button onclick="editStationTariff('${st.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[11px] font-bold transition-all flex items-center gap-1">
+                  <span>✏️ Edit Tariff</span>
+                </button>
               </div>
             </div>
 
@@ -732,9 +709,11 @@
               ${(st.ports || []).map(p => {
                 let badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">AVAILABLE</span>';
                 if (p.status === 'reserved') {
-                  badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">HOLD (15m)</span>';
+                  badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">RESERVED (15m)</span>';
                 } else if (p.status === 'charging') {
                   badge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 animate-pulse">CHARGING (${p.soc || 45}%)</span>`;
+                } else if (p.status === 'maintenance') {
+                  badge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30">MAINTENANCE</span>';
                 }
 
                 return `
@@ -747,18 +726,14 @@
                       <span>${p.type}</span>
                       <span class="font-mono text-cyan-400">${p.connector || 'CCS2'}</span>
                     </div>
-                    ${p.customer ? `
-                      <div class="text-[10px] bg-slate-900 p-2 rounded border border-slate-800 text-slate-300">
-                        Driver: <strong>${p.customer}</strong> (${p.vehicle || 'EV'})
-                      </div>
-                    ` : ''}
-                    <div class="pt-1 flex items-center justify-end">
+                    <div class="flex items-center justify-between pt-1 border-t border-slate-900 text-[11px]">
+                      <span class="text-slate-500">${p.vehicleType === '2W' ? '🛵 2-Wheeler' : '🚗 4-Wheeler'}</span>
                       ${p.status !== 'available' ? `
-                        <button onclick="releasePortRemote('${st.id}', '${p.id}')" class="text-[10px] text-rose-400 hover:underline">
-                          Force Release Port
+                        <button onclick="releasePortRemote('${st.id}', '${p.id}')" class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 font-bold text-[10px] transition-all">
+                          Force Release
                         </button>
                       ` : `
-                        <span class="text-[10px] text-emerald-500 font-mono">Ready for Driver</span>
+                        <span class="text-emerald-500 font-mono text-[10px]">Ready</span>
                       `}
                     </div>
                   </div>
@@ -766,32 +741,6 @@
               }).join('')}
             </div>
           </div>
-        `;
-      }).join('');
-    }
-
-    function renderUsersTable(users) {
-      const tbody = document.getElementById('usersTableBody');
-      const defaultUsers = [
-        { name: 'Kiran Patel', phone: '+91 98202 34567', vehicle: 'Mahindra XUV400', sessionsCount: 14, totalKwhCharged: 420, totalMoneySaved: 7560, totalCo2Saved: 756 },
-        { name: 'Aarav Sharma', phone: '+91 98101 23456', vehicle: 'MG ZS EV', sessionsCount: 22, totalKwhCharged: 880, totalMoneySaved: 15840, totalCo2Saved: 1584 },
-        { name: 'Rohan Mehra', phone: '+91 98303 45678', vehicle: 'Hyundai Ioniq 5', sessionsCount: 9, totalKwhCharged: 360, totalMoneySaved: 6480, totalCo2Saved: 648 },
-        { name: 'Priya Sundaram', phone: '+91 98404 56789', vehicle: 'Tata Nexon EV Max', sessionsCount: 31, totalKwhCharged: 930, totalMoneySaved: 16740, totalCo2Saved: 1674 }
-      ];
-
-      const list = users && users.length > 0 ? users : defaultUsers;
-
-      tbody.innerHTML = list.map(u => {
-        return `
-          <tr class="hover:bg-slate-800/40 transition-colors">
-            <td class="py-3 px-4 font-bold text-white">${u.name}</td>
-            <td class="py-3 px-4 font-mono text-slate-400">${u.phone}</td>
-            <td class="py-3 px-4 text-cyan-300">${u.vehicle || 'Connected EV'}</td>
-            <td class="py-3 px-4 font-mono">${u.sessionsCount || 1}</td>
-            <td class="py-3 px-4 font-mono">${u.totalKwhCharged || 30} kWh</td>
-            <td class="py-3 px-4 font-mono text-emerald-400 font-bold">₹${(u.totalMoneySaved || 540).toLocaleString('en-IN')}</td>
-            <td class="py-3 px-4 font-mono text-emerald-300">${u.totalCo2Saved || 54} kg</td>
-          </tr>
         `;
       }).join('');
     }
@@ -810,59 +759,45 @@
       });
     }
 
-    async function refundBooking(bookingId) {
-      if (!confirm('Are you sure you want to trigger a full refund for this booking?')) return;
-      try {
-        const res = await fetch('/api/bookings', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'refund', bookingId })
-        });
-        if (res.ok) {
-          alert('Booking marked REFUNDED and funds credited back to customer demo balance.');
-          loadAdminData();
-        }
-      } catch (err) {
-        alert('Refund error: ' + err.message);
+    function editStationTariff(stId) {
+      const st = globalStations.find(s => s.id === stId);
+      if (!st) return;
+      const newPrice = prompt('Enter new tariff (₹/kWh) for ' + st.name + ':', st.pricePerKwh);
+      if (newPrice !== null && !isNaN(newPrice) && Number(newPrice) > 0) {
+        VoltGridDB.updateStationTariff(stId, Number(newPrice));
+        loadAdminData();
+        alert('✅ Tariff updated to ₹' + newPrice + '/kWh for ' + st.name + '! Live Driver and Vendor portals updated immediately.');
       }
     }
 
-    async function releasePortRemote(stationId, portId) {
+    function releasePortRemote(stationId, portId) {
       if (!confirm('Force release this port back to AVAILABLE status?')) return;
-      try {
-        const res = await fetch('/api/stations', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'release', stationId, portId })
-        });
-        if (res.ok) {
-          alert('Port released successfully.');
-          loadAdminData();
-        }
-      } catch (err) {
-        alert('Port release error: ' + err.message);
+      VoltGridDB.forceReleasePort(stationId, portId);
+      loadAdminData();
+      alert('✅ Port released successfully! Live Driver and Vendor portals updated immediately.');
+    }
+
+    function refundBooking(bookingId) {
+      if (!confirm('Are you sure you want to trigger a full refund for this booking?')) return;
+      const bookings = VoltGridDB.getBookings();
+      const b = bookings.find(x => x.id === bookingId || x._id === bookingId);
+      if (b) {
+        b.status = 'REFUNDED';
+        VoltGridDB.saveBookings(bookings);
+        loadAdminData();
+        alert('✅ Booking marked REFUNDED and settled back in platform database.');
       }
+    }
+
+    function resetFleetToDefaults() {
+      if (!confirm('Reset all stations and ports to default statewide configuration?')) return;
+      VoltGridDB.saveStations(window.INITIAL_STATIONS);
+      loadAdminData();
+      alert('✅ Station fleet successfully reset to default statewide state.');
     }
 
     async function triggerGlobalPayoutSweep() {
       alert('⚡ Global Payout Sweep Initiated!\n\nAll accrued vendor net balances (85%) have been automatically batched for IMPS/NEFT transfer via VoltGrid Escrow.');
-    }
-
-    async function resetFleetToDefaults() {
-      if (!confirm('Reset all stations and ports to default multi-vendor configuration?')) return;
-      try {
-        const res = await fetch('/api/stations', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'reset_to_default' })
-        });
-        if (res.ok) {
-          alert('Station fleet successfully reset to default multi-vendor state.');
-          loadAdminData();
-        }
-      } catch (err) {
-        alert('Reset error: ' + err.message);
-      }
     }
 
     function triggerDemoMoneyFlowAnimation() {
@@ -1000,6 +935,7 @@
     // Initialize on load
     window.addEventListener('DOMContentLoaded', () => {
       loadAdminData();
+      if (window.VoltGridDB) VoltGridDB.onSync(() => loadAdminData());
     });
   </script>
 </body>
