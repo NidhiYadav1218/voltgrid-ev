@@ -3,6 +3,8 @@
   "rewrites": [
     { "source": "/simulator", "destination": "/simulator.html" },
     { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/vendor", "destination": "/vendor.html" }
+    { "source": "/vendor", "destination": "/vendor.html" },
+    { "source": "/hubs", "destination": "/hubs.html" },
+    { "source": "/hub", "destination": "/hub.html" }
   ]
 }

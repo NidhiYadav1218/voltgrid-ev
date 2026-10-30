@@ -11,7 +11,9 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         simulator: resolve(__dirname, 'simulator.html'),
         admin: resolve(__dirname, 'admin.html'),
-        vendor: resolve(__dirname, 'vendor.html')
+        vendor: resolve(__dirname, 'vendor.html'),
+        hubs: resolve(__dirname, 'hubs.html'),
+        hub: resolve(__dirname, 'hub.html')
       }
     }
   },
