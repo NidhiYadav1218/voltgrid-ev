@@ -48,9 +48,16 @@ export const INITIAL_STATIONS = [
 ];
 
 export const VEHICLE_PRESETS = [
-  { id: 'v1', name: 'Tesla Model 3 Long Range', batteryKwh: 82, maxChargeKw: 250, connector: 'CCS2' },
-  { id: 'v2', name: 'Hyundai Ioniq 5', batteryKwh: 77.4, maxChargeKw: 350, connector: 'CCS2' },
-  { id: 'v3', name: 'Porsche Taycan 4S', batteryKwh: 93.4, maxChargeKw: 270, connector: 'CCS2' },
-  { id: 'v4', name: 'Tata Nexon EV Max', batteryKwh: 40.5, maxChargeKw: 60, connector: 'CCS2' },
-  { id: 'v5', name: 'MG ZS EV', batteryKwh: 50.3, maxChargeKw: 80, connector: 'CCS2' },
+  // 4-Wheelers
+  { id: 'v1', name: 'Tata Nexon EV Max', batteryKwh: 40.5, maxChargeKw: 60, connector: 'CCS2', type: '4W' },
+  { id: 'v2', name: 'Tata Punch EV', batteryKwh: 35.0, maxChargeKw: 50, connector: 'CCS2', type: '4W' },
+  { id: 'v3', name: 'MG ZS EV', batteryKwh: 50.3, maxChargeKw: 80, connector: 'CCS2', type: '4W' },
+  { id: 'v4', name: 'Hyundai Ioniq 5', batteryKwh: 77.4, maxChargeKw: 350, connector: 'CCS2', type: '4W' },
+  { id: 'v5', name: 'Mahindra XUV400', batteryKwh: 39.4, maxChargeKw: 50, connector: 'CCS2', type: '4W' },
+  { id: 'v6', name: 'Tesla Model 3 Long Range', batteryKwh: 82, maxChargeKw: 250, connector: 'CCS2', type: '4W' },
+  // 2-Wheelers
+  { id: 'v7', name: 'Ather 450X Gen 3', batteryKwh: 3.7, maxChargeKw: 3.3, connector: 'Ather Type 6', type: '2W' },
+  { id: 'v8', name: 'Ola S1 Pro Gen 2', batteryKwh: 4.0, maxChargeKw: 3.0, connector: '16A Smart Socket', type: '2W' },
+  { id: 'v9', name: 'TVS iQube ST', batteryKwh: 3.4, maxChargeKw: 1.5, connector: '16A Smart Socket', type: '2W' },
+  { id: 'v10', name: 'Bajaj Chetak EV', batteryKwh: 3.2, maxChargeKw: 1.5, connector: '16A Smart Socket', type: '2W' }
 ];

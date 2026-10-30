@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -41,7 +41,40 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Booking payload required' });
       }
 
+      // Handle Admin Refund action
+      if (bookingData.action === 'refund') {
+        const { bookingId } = bookingData;
+        let query = {};
+        try {
+          query = { _id: new ObjectId(bookingId) };
+        } catch {
+          query = { $or: [{ id: bookingId }, { bookingId: bookingId }] };
+        }
+
+        await bookingsCol.updateOne(query, {
+          $set: {
+            status: 'REFUNDED',
+            refundedAt: new Date().toISOString(),
+            refundReason: 'Admin Manual Settlement'
+          }
+        });
+
+        return res.status(200).json({ success: true, message: 'Booking refunded successfully' });
+      }
+
+      // Standard New Booking Creation with Money Flow Split (85% Vendor, 15% Platform Margin)
+      const totalAmount = Number(bookingData.totalAmount) || 180;
+      const platformFee = Math.round(totalAmount * 0.15); // 15% VoltGrid commission
+      const vendorPayout = totalAmount - platformFee;     // 85% Vendor share
+
       bookingData.createdAt = new Date().toISOString();
+      bookingData.platformFee = platformFee;
+      bookingData.vendorPayout = vendorPayout;
+      bookingData.vendorId = bookingData.vendorId || 'vendor-jiobp';
+      bookingData.vendorName = bookingData.vendorName || 'Jio-bp pulse';
+      bookingData.status = bookingData.status || 'CONFIRMED';
+      bookingData.paymentStatus = 'ESCROW_SETTLED';
+
       const insertResult = await bookingsCol.insertOne(bookingData);
 
       // Increment sessions and fuel savings in user document
@@ -60,7 +93,15 @@ export default async function handler(req, res) {
         );
       }
 
-      return res.status(200).json({ success: true, bookingId: insertResult.insertedId });
+      return res.status(200).json({
+        success: true,
+        bookingId: insertResult.insertedId,
+        moneyFlow: {
+          totalAmount,
+          vendorPayout,
+          platformFee
+        }
+      });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
