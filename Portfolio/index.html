@@ -182,25 +182,25 @@
           </h1>
 
           <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
-            Planning a trip on the Delhi-Jaipur Expressway or heading to DLF Cyber Hub? Lock in a verified fast charger 15 minutes before arrival. Guaranteed available upon your arrival.
+            Driving across the Ahmedabad-Vadodara Expressway (NE-1), visiting GIFT City Gandhinagar, or commuting in Surat and Rajkot? Lock in verified fast chargers for <strong>2-wheelers & 4-wheelers</strong> 15 minutes before arrival. Guaranteed available upon hookup.
           </p>
 
           <!-- Key Metrics Badges -->
           <div class="grid grid-cols-3 gap-3 pt-2">
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-center shadow-sm">
               <span class="text-xl mb-0.5 block">⚡</span>
-              <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">350 kW Ultra</strong>
+              <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">360 kW Hyper</strong>
               <span class="text-[10px] text-slate-500">10% &rarr; 80% in 18 Mins</span>
             </div>
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-center shadow-sm">
               <span class="text-xl mb-0.5 block">🔒</span>
               <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">15-Min Lock</strong>
-              <span class="text-[10px] text-slate-500">Nobody Can Steal It</span>
+              <span class="text-[10px] text-slate-500">Zero Slot Theft</span>
             </div>
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 text-center shadow-sm">
-              <span class="text-xl mb-0.5 block">🚗</span>
-              <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">All EV Models</strong>
-              <span class="text-[10px] text-slate-500">Tata, Tesla, Hyundai, MG</span>
+              <span class="text-xl mb-0.5 block">🛵🚗</span>
+              <strong class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">2W & 4W Ready</strong>
+              <span class="text-[10px] text-slate-500">Ather, Ola, Tata, MG</span>
             </div>
           </div>
 
@@ -208,7 +208,7 @@
           <div class="pt-2 flex flex-wrap items-center gap-3">
             <a href="#chargers" class="px-6 py-3 rounded-xl font-bold text-xs sm:text-sm bg-emerald-500 hover:bg-emerald-600 dark:bg-cyan-400 dark:hover:bg-cyan-300 text-white dark:text-slate-950 shadow-md shadow-emerald-500/20 transition-all flex items-center gap-2">
               <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              <span>Explore Real Stations & Reserve</span>
+              <span>Explore Real Gujarat Stations</span>
             </a>
             <button onclick="openAdminModal()" class="px-5 py-3 rounded-xl font-bold text-xs sm:text-sm bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-1.5 shadow-sm">
               <span>Admin Live Monitor &rarr;</span>
@@ -223,17 +223,17 @@
             
             <div class="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-slate-800">
               <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-cyan-400">Live Station Hub</span>
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">DLF Cyber Hub &bull; Sector 24</h3>
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-cyan-400">Live Station Hub • Gujarat</span>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">SG Highway HyperHub • Bodakdev</h3>
               </div>
               <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-                🟢 3 Ports Free
+                🟢 5 Bays Free
               </span>
             </div>
 
             <div class="mt-4 space-y-3">
               <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                <span>📍 Gurugram, Haryana &bull; Opposite Cyber City Metro</span>
+                <span>📍 Ahmedabad, Gujarat &bull; Off Sindhu Bhavan Road</span>
               </p>
 
               <!-- Quick Status Cards -->
@@ -466,18 +466,34 @@
             </button>
           </div>
 
-          <!-- GPS Location & Distance Selector -->
+          <!-- Vehicle Compatibility Filter (2W vs 4W) -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1 hidden sm:inline">EV Category:</span>
+            <button onclick="setVehicleTypeFilter('ALL')" id="vhFilter-ALL" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-500 text-white shadow-sm transition-all">
+              ⚡ All Ports (2W & 4W)
+            </button>
+            <button onclick="setVehicleTypeFilter('4W')" id="vhFilter-4W" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all">
+              🚗 4-Wheelers (Cars/SUVs)
+            </button>
+            <button onclick="setVehicleTypeFilter('2W')" id="vhFilter-2W" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all">
+              🛵 2-Wheelers (Scooters/Bikes)
+            </button>
+          </div>
+
+          <!-- GPS Location & Distance Selector (Gujarat Regional Grid) -->
           <div class="flex items-center gap-2">
             <button onclick="detectDeviceGpsLocation()" class="px-3 py-1.5 rounded-xl bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 text-xs font-bold flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all shadow-sm" title="Calculate distance using browser GPS">
               <span>🎯</span> <span class="hidden sm:inline">Use My Live</span> GPS
             </button>
 
             <select id="userLocationSelector" onchange="onUserLocationChanged(this.value)" class="bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 rounded-xl px-3 py-1.5 focus:outline-none focus:border-emerald-500">
-              <option value="cyberhub">📍 Near Cyber City Gurugram</option>
-              <option value="manesar">📍 Near Manesar Toll NH-48</option>
-              <option value="aerocity">📍 Near Aerocity IGI Airport</option>
-              <option value="golfcourse">📍 Near Golf Course Road</option>
-              <option value="cp">📍 Near Connaught Place Delhi</option>
+              <option value="ahmedabad">📍 Ahmedabad (SG Highway & Bodakdev)</option>
+              <option value="gandhinagar">📍 Gandhinagar (GIFT City)</option>
+              <option value="airport">📍 Ahmedabad Airport T2 (Hansol)</option>
+              <option value="vadodara">📍 Vadodara (Expressway Entry NE-1)</option>
+              <option value="surat">📍 Surat (VR Mall & Dumas Road)</option>
+              <option value="rajkot">📍 Rajkot (150ft Ring Road)</option>
+              <option value="kevadia">📍 Statue of Unity (Ekta Nagar)</option>
             </select>
           </div>
 
@@ -903,8 +919,8 @@
           <span class="font-bold text-slate-900 dark:text-white">₹<span id="billBase">1,262.80</span></span>
         </div>
         <div class="flex justify-between text-slate-600 dark:text-slate-300">
-          <span>High-Power Grid Access Fee</span>
-          <span class="font-bold text-slate-900 dark:text-white">₹40.00</span>
+          <span>Grid Access / Plug-in Fee</span>
+          <span class="font-bold text-slate-900 dark:text-white" id="billGridFee">₹40.00</span>
         </div>
         <div class="flex justify-between text-slate-600 dark:text-slate-300">
           <span>GST (18%)</span>
@@ -1151,32 +1167,42 @@
       <!-- Vehicle Model Selector -->
       <div class="mt-5 space-y-2">
         <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-          Select Simulated EV Model
+          Select Simulated EV Model (4W & 2W)
         </label>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-          <button type="button" onclick="setSimulatedVehicle('MG ZS EV')" id="simCarBtn_MG_ZS_EV" class="p-2.5 rounded-xl border font-bold text-left transition-all">
-            <span class="block text-sm">MG ZS EV</span>
-            <span class="text-[10px] text-slate-400 font-mono">50.3 kWh • 80 kW DC</span>
-          </button>
+          <!-- 4-Wheelers -->
           <button type="button" onclick="setSimulatedVehicle('Tata Nexon EV Max')" id="simCarBtn_Tata_Nexon_EV_Max" class="p-2.5 rounded-xl border font-bold text-left transition-all">
-            <span class="block text-sm">Tata Nexon EV</span>
+            <span class="block text-sm">🚗 Tata Nexon EV</span>
             <span class="text-[10px] text-slate-400 font-mono">40.5 kWh • 60 kW DC</span>
           </button>
+          <button type="button" onclick="setSimulatedVehicle('MG ZS EV')" id="simCarBtn_MG_ZS_EV" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">🚗 MG ZS EV</span>
+            <span class="text-[10px] text-slate-400 font-mono">50.3 kWh • 80 kW DC</span>
+          </button>
           <button type="button" onclick="setSimulatedVehicle('Hyundai Ioniq 5')" id="simCarBtn_Hyundai_Ioniq_5" class="p-2.5 rounded-xl border font-bold text-left transition-all">
-            <span class="block text-sm">Hyundai Ioniq 5</span>
+            <span class="block text-sm">🚗 Hyundai Ioniq 5</span>
             <span class="text-[10px] text-slate-400 font-mono">77.4 kWh • 350 kW 800V</span>
           </button>
-          <button type="button" onclick="setSimulatedVehicle('Tesla Model 3 Long Range')" id="simCarBtn_Tesla_Model_3_Long_Range" class="p-2.5 rounded-xl border font-bold text-left transition-all">
-            <span class="block text-sm">Tesla Model 3</span>
-            <span class="text-[10px] text-slate-400 font-mono">82.0 kWh • 250 kW DC</span>
-          </button>
           <button type="button" onclick="setSimulatedVehicle('Mahindra XUV400')" id="simCarBtn_Mahindra_XUV400" class="p-2.5 rounded-xl border font-bold text-left transition-all">
-            <span class="block text-sm">Mahindra XUV400</span>
+            <span class="block text-sm">🚗 Mahindra XUV400</span>
             <span class="text-[10px] text-slate-400 font-mono">39.4 kWh • 50 kW DC</span>
           </button>
-          <button type="button" onclick="setSimulatedVehicle('Porsche Taycan 4S')" id="simCarBtn_Porsche_Taycan_4S" class="p-2.5 rounded-xl border font-bold text-left transition-all">
-            <span class="block text-sm">Porsche Taycan</span>
-            <span class="text-[10px] text-slate-400 font-mono">93.4 kWh • 270 kW 800V</span>
+          <button type="button" onclick="setSimulatedVehicle('Tesla Model 3 Long Range')" id="simCarBtn_Tesla_Model_3_Long_Range" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">🚗 Tesla Model 3</span>
+            <span class="text-[10px] text-slate-400 font-mono">82.0 kWh • 250 kW DC</span>
+          </button>
+          <!-- 2-Wheelers -->
+          <button type="button" onclick="setSimulatedVehicle('Ather 450X Gen 3')" id="simCarBtn_Ather_450X_Gen_3" class="p-2.5 rounded-xl border font-bold text-left transition-all bg-amber-500/5 hover:border-amber-500">
+            <span class="block text-sm text-amber-500 dark:text-amber-300">🛵 Ather 450X Gen 3</span>
+            <span class="text-[10px] text-slate-400 font-mono">3.7 kWh • Ather Fast Grid</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Ola S1 Pro Gen 2')" id="simCarBtn_Ola_S1_Pro_Gen_2" class="p-2.5 rounded-xl border font-bold text-left transition-all bg-amber-500/5 hover:border-amber-500">
+            <span class="block text-sm text-amber-500 dark:text-amber-300">🛵 Ola S1 Pro</span>
+            <span class="text-[10px] text-slate-400 font-mono">4.0 kWh • 16A Smart Socket</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('TVS iQube ST')" id="simCarBtn_TVS_iQube_ST" class="p-2.5 rounded-xl border font-bold text-left transition-all bg-amber-500/5 hover:border-amber-500">
+            <span class="block text-sm text-amber-500 dark:text-amber-300">🛵 TVS iQube ST</span>
+            <span class="text-[10px] text-slate-400 font-mono">3.4 kWh • 16A AC Plug</span>
           </button>
         </div>
       </div>
@@ -1646,23 +1672,24 @@
         vendorName: 'Jio-bp pulse',
         vendorLogo: '⛽',
         vendorColor: 'blue',
-        name: 'Jio-bp pulse Expressway HyperHub (NH-48)',
-        type: 'Highway Ultra-Fast Hub',
-        location: 'NH 48 Highway Corridor, Near Manesar Toll, Gurugram',
-        lat: 28.3587,
-        lng: 76.9388,
-        mapsUrl: 'https://maps.google.com/?q=28.3587,76.9388',
-        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.3587,76.9388',
-        pricePerKwh: 28,
+        name: 'Jio-bp pulse SG Highway HyperHub • Ahmedabad',
+        type: 'Highway Ultra-Fast Hub (2W & 4W)',
+        location: 'Sindhu Bhavan Marg, Off S.G. Highway, Bodakdev, Ahmedabad, Gujarat 380054',
+        lat: 23.0416,
+        lng: 72.5074,
+        mapsUrl: 'https://maps.google.com/?q=23.0416,72.5074',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=23.0416,72.5074',
+        pricePerKwh: 26,
         solar: true,
         rating: 4.9,
+        amenities: ['24x7 Wild Bean Cafe', 'Restrooms', 'Free Wi-Fi', 'EV Lounge', '2W Dedicated Bay'],
         ports: [
-          { id: 'p101', name: 'Port 01', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available', connector: 'CCS2' },
-          { id: 'p102', name: 'Port 02', type: '350kW Ultra-Fast DC', maxKw: 350, status: 'available', connector: 'CCS2' },
-          { id: 'p103', name: 'Port 03', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2' },
-          { id: 'p104', name: 'Port 04', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2' },
-          { id: 'p105', name: 'Port 05', type: '100kW DC', maxKw: 100, status: 'available', connector: 'CHAdeMO' },
-          { id: 'p106', name: 'Port 06', type: '22kW AC Destination', maxKw: 22, status: 'available', connector: 'Type 2' }
+          { id: 'p101', name: 'Bay 01 (4W)', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p102', name: 'Bay 02 (4W)', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p103', name: 'Bay 03 (4W)', type: '60kW Fast DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p104', name: 'Bay 04 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p105', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' },
+          { id: 'p106', name: 'Bay 06 (2W)', type: '3.3kW 16A Universal Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' }
         ]
       },
       {
@@ -1671,21 +1698,23 @@
         vendorName: 'Tata Power EZ Charge',
         vendorLogo: '⚡',
         vendorColor: 'emerald',
-        name: 'Tata Power Cyber Hub Destination Hub',
-        type: 'Corporate Ultra-Hub',
-        location: 'DLF Cyber City, Basement Bay B4, Sector 24, Gurugram',
-        lat: 28.4952,
-        lng: 77.0891,
-        mapsUrl: 'https://maps.google.com/?q=28.4952,77.0891',
-        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.4952,77.0891',
-        pricePerKwh: 26,
-        solar: false,
-        rating: 4.8,
+        name: 'Tata Power GIFT City FinTech SuperHub • Gandhinagar',
+        type: 'FinTech Corridor Smart Grid (2W & 4W)',
+        location: 'Block 12, Road 1D, GIFT SEZ Tower 1, GIFT City, Gandhinagar, Gujarat 382355',
+        lat: 23.1610,
+        lng: 72.6841,
+        mapsUrl: 'https://maps.google.com/?q=23.1610,72.6841',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=23.1610,72.6841',
+        pricePerKwh: 24,
+        solar: true,
+        rating: 4.9,
+        amenities: ['GIFT Club Access', 'Coffee Lounge', 'Automated Parking', '24x7 Security'],
         ports: [
-          { id: 'p201', name: 'Port 01', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2' },
-          { id: 'p202', name: 'Port 02', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2' },
-          { id: 'p203', name: 'Port 03', type: '43kW Fast AC', maxKw: 43, status: 'available', connector: 'Type 2' },
-          { id: 'p204', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'available', connector: 'Type 2' }
+          { id: 'p201', name: 'Bay 01 (4W)', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p202', name: 'Bay 02 (4W)', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p203', name: 'Bay 03 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p204', name: 'Bay 04 (2W)', type: '3.3kW 16A Smart Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' },
+          { id: 'p205', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' }
         ]
       },
       {
@@ -1694,20 +1723,22 @@
         vendorName: 'Zeon Charging',
         vendorLogo: '🔋',
         vendorColor: 'indigo',
-        name: 'Zeon Aerocity Airport Gateway',
-        type: 'Airport Hypergrid',
-        location: 'Worldmark Hospitality District, Aerocity, New Delhi',
-        lat: 28.5504,
-        lng: 77.1215,
-        mapsUrl: 'https://maps.google.com/?q=28.5504,77.1215',
-        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.5504,77.1215',
-        pricePerKwh: 30,
+        name: 'Zeon Ahmedabad Airport T2 Gateway Hub',
+        type: 'Airport Hypergrid (2W & 4W)',
+        location: 'Terminal 2 Commercial Forecourt, SVPI Airport, Hansol, Ahmedabad, Gujarat 380003',
+        lat: 23.0734,
+        lng: 72.6266,
+        mapsUrl: 'https://maps.google.com/?q=23.0734,72.6266',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=23.0734,72.6266',
+        pricePerKwh: 28,
         solar: true,
-        rating: 4.7,
+        rating: 4.8,
+        amenities: ['Airport Shuttle', '24x7 Airport Security', 'Luggage Assistance', 'Costa Coffee'],
         ports: [
-          { id: 'p301', name: 'Port 01', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available', connector: 'CCS2' },
-          { id: 'p302', name: 'Port 02', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2' },
-          { id: 'p303', name: 'Port 03', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'Type 2' }
+          { id: 'p301', name: 'Bay 01 (4W)', type: '240kW Ultra-Fast DC', maxKw: 240, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p302', name: 'Bay 02 (4W)', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p303', name: 'Bay 03 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p304', name: 'Bay 04 (2W)', type: '3.3kW 16A Universal 2W Point', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' }
         ]
       },
       {
@@ -1716,21 +1747,23 @@
         vendorName: 'Statiq EV Fast Hub',
         vendorLogo: '🚀',
         vendorColor: 'amber',
-        name: 'Statiq Horizon Fast Hub • Golf Course Road',
-        type: 'Luxury Commercial Hub',
-        location: 'One Horizon Centre, Golf Course Rd, DLF Phase 5, Gurugram',
-        lat: 28.4728,
-        lng: 77.0982,
-        mapsUrl: 'https://maps.google.com/?q=28.4728,77.0982',
-        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.4728,77.0982',
-        pricePerKwh: 27,
+        name: 'Statiq NE-1 Expressway Gateway • Vadodara',
+        type: 'Intercity Expressway Gateway (NE-1)',
+        location: 'National Expressway 1 Entry Plaza, Golden Chokdi, Vadodara, Gujarat 390022',
+        lat: 22.3615,
+        lng: 73.2104,
+        mapsUrl: 'https://maps.google.com/?q=22.3615,73.2104',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=22.3615,73.2104',
+        pricePerKwh: 25,
         solar: true,
-        rating: 4.6,
+        rating: 4.7,
+        amenities: ['Expressway Food Court', 'EV Lounge', 'Clean Restrooms', 'Tyre Pressure Check'],
         ports: [
-          { id: 'p401', name: 'Port 01', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2' },
-          { id: 'p402', name: 'Port 02', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2' },
-          { id: 'p403', name: 'Port 03', type: '60kW DC', maxKw: 60, status: 'available', connector: 'CCS2' },
-          { id: 'p404', name: 'Port 04', type: '22kW AC Destination', maxKw: 22, status: 'available', connector: 'Type 2' }
+          { id: 'p401', name: 'Bay 01 (4W)', type: '150kW Fast DC', maxKw: 150, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p402', name: 'Bay 02 (4W)', type: '60kW Fast DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p403', name: 'Bay 03 (Dual)', type: '22kW AC Destination', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p404', name: 'Bay 04 (2W)', type: 'Ather Grid 3.3kW Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' },
+          { id: 'p405', name: 'Bay 05 (2W)', type: '3.3kW 16A Smart Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' }
         ]
       },
       {
@@ -1739,21 +1772,74 @@
         vendorName: 'VoltGrid Direct Flagship',
         vendorLogo: '🛡️',
         vendorColor: 'cyan',
-        name: 'VoltGrid CP SuperHub • Connaught Place',
-        type: 'Central Metro Hub',
-        location: 'Outer Circle, Near Shivaji Stadium Metro, New Delhi',
-        lat: 28.6328,
-        lng: 77.2197,
-        mapsUrl: 'https://maps.google.com/?q=28.6328,77.2197',
-        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=28.6328,77.2197',
-        pricePerKwh: 25,
+        name: 'VoltGrid VR Surat & Dumas Mega-Hub',
+        type: 'Diamond City Central Metro Hub',
+        location: 'VR Surat Mall, Dumas Road, Near Magdalla Port Junction, Surat, Gujarat 395007',
+        lat: 21.1442,
+        lng: 72.7562,
+        mapsUrl: 'https://maps.google.com/?q=21.1442,72.7562',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=21.1442,72.7562',
+        pricePerKwh: 24,
         solar: true,
         rating: 5.0,
+        amenities: ['Mall Access', 'Solar Canopy Power', 'Food Court', 'Dedicated 2W Fleet Bay'],
         ports: [
-          { id: 'p501', name: 'Port 01', type: '360kW Hyper-DC', maxKw: 360, status: 'available', connector: 'CCS2' },
-          { id: 'p502', name: 'Port 02', type: '200kW Fast DC', maxKw: 200, status: 'available', connector: 'CCS2' },
-          { id: 'p503', name: 'Port 03', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2' },
-          { id: 'p504', name: 'Port 04', type: '22kW AC', maxKw: 22, status: 'available', connector: 'Type 2' }
+          { id: 'p501', name: 'Bay 01 (4W)', type: '360kW Hyper-DC', maxKw: 360, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p502', name: 'Bay 02 (4W)', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p503', name: 'Bay 03 (4W)', type: '60kW DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p504', name: 'Bay 04 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p505', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' },
+          { id: 'p506', name: 'Bay 06 (2W)', type: '3.3kW 16A Smart Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' }
+        ]
+      },
+      {
+        id: 'st-06',
+        vendorId: 'vendor-tata',
+        vendorName: 'Tata Power EZ Charge',
+        vendorLogo: '⚡',
+        vendorColor: 'emerald',
+        name: 'Tata Power 150ft Ring Road Hub • Rajkot',
+        type: 'Saurashtra Highway & City Ultra-Hub',
+        location: 'KKV Hall Circle, 150 Feet Ring Road, Kalawad Road, Rajkot, Gujarat 360005',
+        lat: 22.2837,
+        lng: 70.7686,
+        mapsUrl: 'https://maps.google.com/?q=22.2837,70.7686',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=22.2837,70.7686',
+        pricePerKwh: 25,
+        solar: true,
+        rating: 4.8,
+        amenities: ['Dining', 'Restrooms', '24x7 Security', 'Convenience Store'],
+        ports: [
+          { id: 'p601', name: 'Bay 01 (4W)', type: '120kW Fast DC', maxKw: 120, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p602', name: 'Bay 02 (4W)', type: '60kW Fast DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p603', name: 'Bay 03 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p604', name: 'Bay 04 (2W)', type: '3.3kW 16A Universal Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' },
+          { id: 'p605', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Charger', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' }
+        ]
+      },
+      {
+        id: 'st-07',
+        vendorId: 'vendor-jiobp',
+        vendorName: 'Jio-bp pulse',
+        vendorLogo: '⛽',
+        vendorColor: 'blue',
+        name: 'Jio-bp Statue of Unity Green Zone • Kevadia',
+        type: '100% Green Tourism Hub (2W & 4W)',
+        location: 'Ekta Mall & Shrestha Bharat Bhavan, Ekta Nagar, Kevadia, Gujarat 393151',
+        lat: 21.8380,
+        lng: 73.7191,
+        mapsUrl: 'https://maps.google.com/?q=21.8380,73.7191',
+        directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=21.8380,73.7191',
+        pricePerKwh: 23,
+        solar: true,
+        rating: 5.0,
+        amenities: ['Tourist Information', 'Solar Canopy', 'EV Buggy Transfer', 'Restrooms'],
+        ports: [
+          { id: 'p701', name: 'Bay 01 (4W)', type: '180kW Fast DC', maxKw: 180, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p702', name: 'Bay 02 (4W)', type: '60kW Fast DC', maxKw: 60, status: 'available', connector: 'CCS2', vehicleType: '4W' },
+          { id: 'p703', name: 'Bay 03 (Dual)', type: '22kW Type 2 AC', maxKw: 22, status: 'available', connector: 'Type 2', vehicleType: 'BOTH' },
+          { id: 'p704', name: 'Bay 04 (2W)', type: '3.3kW 16A E-Scooter Socket', maxKw: 3.3, status: 'available', connector: '16A Smart Socket', vehicleType: '2W' },
+          { id: 'p705', name: 'Bay 05 (2W)', type: 'Ather Grid Fast Point', maxKw: 3.3, status: 'available', connector: 'Ather Type 6', vehicleType: '2W' }
         ]
       }
     ];
@@ -1776,6 +1862,12 @@
       bookings: loadSaved('voltgrid_bookings', JSON.parse(JSON.stringify(INITIAL_BOOKINGS))),
       stations: loadSaved('voltgrid_stations', JSON.parse(JSON.stringify(INITIAL_STATIONS)))
     };
+
+    // Auto-migrate cached database to Gujarat stations if still holding older Delhi data
+    if (!VoltGridDB.stations || !Array.isArray(VoltGridDB.stations) || !VoltGridDB.stations.some(s => s.location && s.location.includes('Gujarat'))) {
+      VoltGridDB.stations = JSON.parse(JSON.stringify(INITIAL_STATIONS));
+      localStorage.setItem('voltgrid_stations', JSON.stringify(VoltGridDB.stations));
+    }
 
     function saveVoltGridDB() {
       try {
@@ -1994,12 +2086,22 @@
     }
 
     const vehicles = {
-      'Tata Nexon EV Max': { battery: 40.5, speed: 60, efficiency: 7.2 },
-      'Tesla Model 3 Long Range': { battery: 82, speed: 250, efficiency: 6.5 },
-      'Hyundai Ioniq 5': { battery: 77.4, speed: 350, efficiency: 6.2 },
-      'MG ZS EV': { battery: 50.3, speed: 80, efficiency: 6.8 },
-      'Mahindra XUV400': { battery: 39.4, speed: 50, efficiency: 6.9 },
-      'Porsche Taycan 4S': { battery: 93.4, speed: 270, efficiency: 5.5 }
+      // 4-Wheelers (Cars & SUVs)
+      'Tata Nexon EV Max': { battery: 40.5, speed: 60, efficiency: 7.2, type: '4W', connector: 'CCS2' },
+      'Tata Punch EV': { battery: 35.0, speed: 50, efficiency: 7.8, type: '4W', connector: 'CCS2' },
+      'MG ZS EV': { battery: 50.3, speed: 80, efficiency: 6.8, type: '4W', connector: 'CCS2' },
+      'Mahindra XUV400': { battery: 39.4, speed: 50, efficiency: 6.9, type: '4W', connector: 'CCS2' },
+      'Hyundai Ioniq 5': { battery: 77.4, speed: 350, efficiency: 6.2, type: '4W', connector: 'CCS2' },
+      'BYD Atto 3': { battery: 60.5, speed: 80, efficiency: 6.5, type: '4W', connector: 'CCS2' },
+      'Tesla Model 3 Long Range': { battery: 82, speed: 250, efficiency: 6.5, type: '4W', connector: 'CCS2' },
+      'Porsche Taycan 4S': { battery: 93.4, speed: 270, efficiency: 5.5, type: '4W', connector: 'CCS2' },
+
+      // 2-Wheelers (E-Scooters & E-Motorcycles)
+      'Ather 450X Gen 3': { battery: 3.7, speed: 3.3, efficiency: 30.0, type: '2W', connector: 'Ather Type 6' },
+      'Ola S1 Pro Gen 2': { battery: 4.0, speed: 3.0, efficiency: 35.0, type: '2W', connector: '16A Smart Socket' },
+      'TVS iQube ST': { battery: 3.4, speed: 1.5, efficiency: 30.0, type: '2W', connector: '16A Smart Socket' },
+      'Bajaj Chetak EV': { battery: 3.2, speed: 1.5, efficiency: 28.0, type: '2W', connector: '16A Smart Socket' },
+      'Ultraviolette F77': { battery: 10.3, speed: 3.3, efficiency: 20.0, type: '2W', connector: 'Type 2' }
     };
 
     function resetDemoData() {
@@ -2355,20 +2457,21 @@
       const carSpec = vehicles[car] || { battery: 50.3, speed: 80 };
       const batteryCap = carSpec.battery || 50.3;
       const startSoc = (currentSoc !== undefined && currentSoc !== null) ? Number(currentSoc) : 22;
-      const neededKwh = Math.max(2, ((100 - startSoc) / 100) * batteryCap);
+      const neededKwh = Math.max(0.5, +(((100 - startSoc) / 100) * batteryCap).toFixed(2));
 
       const portMaxKw = port ? (port.maxKw || 60) : 60;
-      // AC destination chargers (e.g. 22kW) vs DC fast chargers (50kW - 350kW)
-      const isAcPort = portMaxKw <= 22 || (port && port.type && port.type.includes('AC'));
-      const effectiveKw = isAcPort ? Math.min(portMaxKw, 22) : Math.min(portMaxKw, carSpec.speed || 80);
+      // AC destination / 2W chargers (e.g. 3.3kW, 22kW) vs DC fast chargers (50kW - 350kW)
+      const isAcPort = portMaxKw <= 22 || (port && port.type && (port.type.includes('AC') || port.type.includes('Socket') || port.type.includes('Point')));
+      const effectiveKw = isAcPort ? Math.min(portMaxKw, carSpec.speed || 3.3) : Math.min(portMaxKw, carSpec.speed || 80);
 
-      const estMins = Math.max(10, Math.round((neededKwh / Math.max(5, effectiveKw)) * 60));
+      const estMins = Math.max(5, Math.round((neededKwh / Math.max(1, effectiveKw)) * 60));
       return estMins;
     }
 
-    // ---------------- MULTI-VENDOR & GPS PROXIMITY LOGIC ----------------
+    // ---------------- MULTI-VENDOR & GPS PROXIMITY LOGIC (GUJARAT REGIONAL GRID) ----------------
     let activeVendorFilter = 'ALL';
-    let userLocation = { lat: 28.4952, lng: 77.0891, name: 'Cyber City' };
+    let activeVehicleTypeFilter = 'ALL';
+    let userLocation = { lat: 23.0416, lng: 72.5074, name: 'Ahmedabad (SG Highway)' };
 
     function calculateDistanceKm(lat1, lon1, lat2, lon2) {
       if (!lat1 || !lon1 || !lat2 || !lon2) return null;
@@ -2398,13 +2501,31 @@
       renderStationSelector();
     }
 
+    function setVehicleTypeFilter(vType) {
+      activeVehicleTypeFilter = vType;
+      const filters = ['ALL', '4W', '2W'];
+      filters.forEach(f => {
+        const btn = document.getElementById('vhFilter-' + f);
+        if (btn) {
+          if (f === vType) {
+            btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-500 text-white shadow-sm transition-all';
+          } else {
+            btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all';
+          }
+        }
+      });
+      renderPorts();
+    }
+
     function onUserLocationChanged(val) {
       const PRESETS = {
-        cyberhub: { lat: 28.4952, lng: 77.0891, name: 'Cyber City' },
-        manesar: { lat: 28.3587, lng: 76.9388, name: 'Manesar Toll NH-48' },
-        aerocity: { lat: 28.5504, lng: 77.1215, name: 'Aerocity IGI Airport' },
-        golfcourse: { lat: 28.4728, lng: 77.0982, name: 'Golf Course Road' },
-        cp: { lat: 28.6328, lng: 77.2197, name: 'Connaught Place' }
+        ahmedabad: { lat: 23.0416, lng: 72.5074, name: 'Ahmedabad (SG Highway)' },
+        gandhinagar: { lat: 23.1610, lng: 72.6841, name: 'Gandhinagar (GIFT City)' },
+        airport: { lat: 23.0734, lng: 72.6266, name: 'Ahmedabad Airport T2' },
+        vadodara: { lat: 22.3615, lng: 73.2104, name: 'Vadodara (Expressway Entry NE-1)' },
+        surat: { lat: 21.1442, lng: 72.7562, name: 'Surat (VR Mall & Dumas Rd)' },
+        rajkot: { lat: 22.2837, lng: 70.7686, name: 'Rajkot (150ft Ring Road)' },
+        kevadia: { lat: 21.8380, lng: 73.7191, name: 'Statue of Unity (Ekta Nagar)' }
       };
       if (PRESETS[val]) {
         userLocation = PRESETS[val];
@@ -2424,11 +2545,11 @@
             lng: pos.coords.longitude,
             name: 'Live GPS'
           };
-          alert(`📍 Live GPS Detected: (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)})\nStations sorted by closest driving proximity!`);
+          alert(`📍 Live GPS Detected: (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)})\nGujarat stations sorted by closest driving proximity!`);
           renderStationSelector();
         },
         (err) => {
-          alert('GPS location permission denied or timed out. Defaulting to Gurugram Cyber Hub.');
+          alert('GPS location permission denied or timed out. Defaulting to Ahmedabad SG Highway.');
         },
         { enableHighAccuracy: true, timeout: 8000 }
       );
@@ -2448,7 +2569,7 @@
 
       // Compute distance and sort by proximity
       displayStations.forEach(st => {
-        const d = calculateDistanceKm(userLocation.lat, userLocation.lng, st.lat || 28.4952, st.lng || 77.0891);
+        const d = calculateDistanceKm(userLocation.lat, userLocation.lng, st.lat || 23.0416, st.lng || 72.5074);
         st.calculatedDistanceKm = d !== null ? d : 2.5;
       });
       displayStations.sort((a, b) => a.calculatedDistanceKm - b.calculatedDistanceKm);
@@ -2459,7 +2580,7 @@
       }
 
       if (displayStations.length === 0) {
-        container.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-500 font-mono">No stations found for this vendor network. Switch to "All Networks" to see all 5 CPO hubs.</div>`;
+        container.innerHTML = `<div class="col-span-3 text-center py-8 text-slate-500 font-mono">No stations found for this vendor network. Switch to "All Networks" to see all Gujarat CPO hubs.</div>`;
         renderPorts();
         return;
       }
@@ -2470,7 +2591,7 @@
         const avail = st.ports.filter(p => p.status === 'available').length;
         const dist = st.calculatedDistanceKm;
         const estDriveMins = Math.max(2, Math.round(dist * 2.2));
-        const directionsLink = st.directionsUrl || `https://www.google.com/maps/dir/?api=1&destination=${st.lat || 28.4952},${st.lng || 77.0891}`;
+        const directionsLink = st.directionsUrl || `https://www.google.com/maps/dir/?api=1&destination=${st.lat || 23.0416},${st.lng || 72.5074}`;
 
         return `
           <div onclick="selectStation('${st.id}')" class="cursor-pointer rounded-3xl p-5 border transition-all duration-200 ${
@@ -2502,7 +2623,7 @@
                   🚗 ${dist} km (${estDriveMins}m)
                 </span>
               </div>
-              <a href="${directionsLink}" target="_blank" onclick="event.stopPropagation()" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-cyan-400 font-bold flex items-center gap-1 transition-all" title="Open Google Maps Turn-by-Turn Navigation">
+              <a href="${directionsLink}" target="_blank" onclick="event.stopPropagation()" class="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-cyan-400 font-bold flex items-center gap-1 transition-all" title="Open Google Maps Real Navigation">
                 <span>🗺️ Directions ↗</span>
               </a>
             </div>
@@ -2517,7 +2638,26 @@
       const station = stations.find(s => s.id === currentStationId);
       if (!station) return;
 
-      container.innerHTML = station.ports.map(port => {
+      let portsToDisplay = station.ports;
+      if (activeVehicleTypeFilter === '4W') {
+        portsToDisplay = portsToDisplay.filter(p => p.vehicleType === '4W' || p.vehicleType === 'BOTH');
+      } else if (activeVehicleTypeFilter === '2W') {
+        portsToDisplay = portsToDisplay.filter(p => p.vehicleType === '2W' || p.vehicleType === 'BOTH');
+      }
+
+      if (portsToDisplay.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-12 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6">
+            <span class="text-3xl mb-2 block">🔌</span>
+            <h4 class="text-base font-bold text-slate-800 dark:text-white">No ${activeVehicleTypeFilter === '2W' ? '2-Wheeler' : '4-Wheeler'} ports at this station</h4>
+            <p class="text-xs text-slate-500 mt-1">Switch filter back to "All Ports" or choose another Gujarat charging hub above.</p>
+            <button onclick="setVehicleTypeFilter('ALL')" class="mt-4 px-4 py-2 rounded-xl bg-cyan-500 text-white font-bold text-xs">Show All Ports</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = portsToDisplay.map(port => {
         const isAvail = port.status === 'available';
         const isRes = port.status === 'reserved';
         const isChg = port.status === 'charging';
@@ -2560,6 +2700,12 @@
           }
         }
 
+        const vTag = port.vehicleType === '2W'
+          ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-500 dark:text-amber-300 border border-amber-500/30">🛵 2W Smart Socket</span>'
+          : port.vehicleType === '4W'
+          ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-500 dark:text-cyan-300 border border-cyan-500/30">🚗 4W Fast DC</span>'
+          : '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-500 dark:text-emerald-300 border border-emerald-500/30">🚗🛵 Dual 2W & 4W AC</span>';
+
         return `
           <div class="bg-white dark:bg-slate-900 border ${borderClass} rounded-3xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
             <div>
@@ -2570,8 +2716,11 @@
                 </span>
               </div>
 
-              <h4 class="text-lg font-extrabold text-slate-900 dark:text-white font-heading">${port.name}</h4>
-              <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">${port.type} &bull; Up to ${port.maxKw} kW</p>
+              <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                <h4 class="text-lg font-extrabold text-slate-900 dark:text-white font-heading">${port.name}</h4>
+                ${vTag}
+              </div>
+              <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">${port.type} &bull; Up to ${port.maxKw} kW (${port.connector || 'CCS2'})</p>
 
               <div class="mt-4 p-3 bg-slate-50 dark:bg-slate-950/60 rounded-2xl border border-slate-100 dark:border-slate-800/80 min-h-[72px] flex flex-col justify-center">
                 ${isAvail ? `
@@ -2855,11 +3004,12 @@
 
       const chargerKw = pendingCheckout.maxKw || 60;
       const isAcPort = chargerKw <= 22;
-      const effectiveKw = isAcPort ? Math.min(chargerKw, 22) : Math.min(chargerKw, carSpec.speed || 80);
-      const estMinutes = isFull ? 0 : Math.max(5, Math.round((neededKwh / Math.max(5, effectiveKw)) * 60));
+      const effectiveKw = isAcPort ? Math.min(chargerKw, carSpec.speed || 3.3) : Math.min(chargerKw, carSpec.speed || 80);
+      const estMinutes = isFull ? 0 : Math.max(3, Math.round((neededKwh / Math.max(0.5, effectiveKw)) * 60));
 
+      const is2W = carSpec.type === '2W';
       const baseCost = isFull ? 0 : +(neededKwh * pendingCheckout.pricePerKwh).toFixed(2);
-      const gridFee = isFull ? 0 : 40.00;
+      const gridFee = isFull ? 0 : (is2W ? 15.00 : 40.00);
       const gst = isFull ? 0 : +((baseCost + gridFee) * 0.18).toFixed(2);
       const total = isFull ? 0 : +(baseCost + gridFee + gst).toFixed(2);
 
@@ -2931,6 +3081,8 @@
       if (billBase) billBase.innerText = baseCost;
       if (billGst) billGst.innerText = gst;
       if (billTotal) billTotal.innerText = total;
+      const gridFeeEl = document.getElementById('billGridFee');
+      if (gridFeeEl) gridFeeEl.innerText = `₹${gridFee.toFixed(2)}`;
 
       const billVendorShare = document.getElementById('billVendorShare');
       const billPlatformShare = document.getElementById('billPlatformShare');
@@ -2969,12 +3121,21 @@
 
     // ================= SMARTCAR VIRTUAL VEHICLE SIMULATOR ENGINE =================
     const VIRTUAL_VIN_MAP = {
+      // 4-Wheelers
       'MG ZS EV': '1MGZS48EV20265921',
       'Tata Nexon EV Max': 'MAT621NEXON202688',
+      'Tata Punch EV': 'MAT518PUNCH202635',
       'Hyundai Ioniq 5': 'KMH88IONIQ5202677',
       'Tesla Model 3 Long Range': '5YJ3E1EB20269941',
       'Mahindra XUV400': 'MAH400XUV2026392',
-      'Porsche Taycan 4S': 'WP0AB2Y120269344'
+      'BYD Atto 3': 'BYD604ATTO3202660',
+      'Porsche Taycan 4S': 'WP0AB2Y120269344',
+      // 2-Wheelers
+      'Ather 450X Gen 3': 'ME4ATH450X2026037',
+      'Ola S1 Pro Gen 2': 'MD2OLA400S1202604',
+      'TVS iQube ST': 'MD6TVS340IQ202603',
+      'Bajaj Chetak EV': 'MD2BAJ320CH202603',
+      'Ultraviolette F77': 'ME2UVF77X2026103'
     };
 
     let virtualCarState = loadSaved('voltgrid_virtual_car', {
@@ -3198,7 +3359,7 @@
       const temp = virtualCarState.temp || 28.4;
 
       // Update Car selector buttons
-      ['MG_ZS_EV', 'Tata_Nexon_EV_Max', 'Hyundai_Ioniq_5', 'Tesla_Model_3_Long_Range', 'Mahindra_XUV400', 'Porsche_Taycan_4S'].forEach(key => {
+      ['MG_ZS_EV', 'Tata_Nexon_EV_Max', 'Hyundai_Ioniq_5', 'Tesla_Model_3_Long_Range', 'Mahindra_XUV400', 'Ather_450X_Gen_3', 'Ola_S1_Pro_Gen_2', 'TVS_iQube_ST'].forEach(key => {
         const btn = document.getElementById(`simCarBtn_${key}`);
         if (!btn) return;
         const matches = key.replace(/_/g, ' ') === carName;
