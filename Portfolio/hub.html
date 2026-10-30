@@ -495,6 +495,88 @@
     </div>
   </div>
 
+  <!-- ================= ARRIVAL PIN UNLOCK MODAL ================= -->
+  <div id="pinModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+    <div class="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 text-center shadow-2xl">
+      <button onclick="closePinModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white font-bold text-lg">✕</button>
+
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-emerald-500 to-cyan-400 p-0.5 shadow-lg shadow-emerald-500/20 mb-3">
+        <div class="w-full h-full bg-white dark:bg-slate-900 rounded-[14px] flex items-center justify-center">
+          <span class="text-2xl">⚡</span>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-extrabold text-slate-900 dark:text-white font-heading">
+        Unlock EV Charging Cable
+      </h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+        Enter the 4-digit security PIN generated when you reserved your slot.
+      </p>
+
+      <!-- Port Details Summary -->
+      <div class="mt-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 text-left space-y-2">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-500">Charging Station:</span>
+          <span id="pinModalStationName" class="font-bold text-slate-800 dark:text-slate-200">HyperHub</span>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-500">Assigned Port:</span>
+          <span id="pinModalPortName" class="font-mono font-bold text-emerald-600 dark:text-cyan-400">Bay 01</span>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-500">Booked Driver:</span>
+          <span id="pinModalCustomer" class="font-bold text-slate-800 dark:text-slate-200">Nidhi Yadav</span>
+        </div>
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-500">Battery Charging Plan:</span>
+          <span id="pinModalBatteryPlan" class="font-mono font-bold text-cyan-600 dark:text-cyan-400">22% ➔ 100%</span>
+        </div>
+        <div class="flex justify-between items-center text-xs pt-2 border-t border-dashed border-slate-200 dark:border-slate-800">
+          <span class="text-slate-500 font-medium">Your Security PIN:</span>
+          <span id="pinModalDisplayPin" class="font-mono font-black text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-950/80 px-2.5 py-0.5 rounded text-sm tracking-wider">1234</span>
+        </div>
+      </div>
+
+      <!-- PIN Input -->
+      <div class="mt-4 text-left">
+        <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5 text-center">
+          Confirm 4-Digit Unlock PIN
+        </label>
+        <input 
+          type="text" 
+          id="arrivalPinInput" 
+          maxlength="6" 
+          inputmode="numeric" 
+          placeholder="e.g. 1234" 
+          onkeydown="if(event.key === 'Enter') submitArrivalPin()"
+          class="w-full text-center tracking-[0.4em] text-2xl font-mono font-black py-3 px-4 rounded-2xl border-2 border-emerald-400 dark:border-emerald-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-emerald-500/20 shadow-inner"
+        />
+        <p id="pinModalError" class="text-xs text-rose-500 font-semibold hidden text-center mt-2">
+          ❌ Incorrect PIN. Please enter your valid 4-digit PIN.
+        </p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="mt-5 flex gap-2">
+        <button 
+          type="button" 
+          onclick="closePinModal()" 
+          class="flex-1 py-3 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        >
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          id="btnSubmitArrivalPin" 
+          onclick="submitArrivalPin()" 
+          class="flex-[2] py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-1.5"
+        >
+          <span>⚡</span> Unlock Cable & Charge
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ================= NOTIFICATION TOAST ================= -->
   <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 border border-emerald-500/40 text-white px-4 py-3 rounded-2xl shadow-2xl font-mono text-xs flex items-center gap-2.5">
     <span class="text-emerald-400 text-base">✓</span>
@@ -651,6 +733,253 @@
       renderPortsList();
     }
 
+    // Helper Functions (Synced with index.html)
+    function formatTime(seconds) {
+      if (isNaN(seconds) || seconds < 0) seconds = 0;
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function getDeviceSessionId() {
+      let sid = localStorage.getItem('voltgrid_device_session_id');
+      if (!sid) {
+        sid = 'dev_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+        localStorage.setItem('voltgrid_device_session_id', sid);
+      }
+      return sid;
+    }
+
+    function getMyLocalHolds() {
+      try {
+        const raw = JSON.parse(localStorage.getItem('voltgrid_my_local_holds') || '{}');
+        const now = Date.now();
+        let changed = false;
+        const valid = {};
+        for (const [k, v] of Object.entries(raw)) {
+          if (v && v.timestamp && (now - v.timestamp < 7200000)) {
+            valid[k] = v;
+          } else if (v && !v.timestamp) {
+            changed = true;
+          } else {
+            changed = true;
+          }
+        }
+        if (changed) {
+          localStorage.setItem('voltgrid_my_local_holds', JSON.stringify(valid));
+        }
+        return valid;
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function getMyLocalHold(portId) {
+      if (!portId) return null;
+      const holds = getMyLocalHolds();
+      return holds[portId] || null;
+    }
+
+    function saveMyLocalHold(portId, data) {
+      const holds = getMyLocalHolds();
+      if (data) {
+        holds[portId] = { ...data, timestamp: Date.now() };
+      } else {
+        delete holds[portId];
+      }
+      localStorage.setItem('voltgrid_my_local_holds', JSON.stringify(holds));
+    }
+
+    function isPortOwner(port) {
+      if (!port) return false;
+      // 1. Check local session hold on this device
+      const localHold = getMyLocalHold(port.id);
+      if (localHold && localHold.active) return true;
+
+      // 2. Check device session ID match
+      const currentSid = getDeviceSessionId();
+      if (port.sessionId && port.sessionId === currentSid) return true;
+
+      // 3. Check logged-in user profile match
+      if (currentUser) {
+        if (port.userId && port.userId === currentUser.id) return true;
+        if (port.phone && currentUser.phone && port.phone.replace(/\D/g, '') === currentUser.phone.replace(/\D/g, '')) return true;
+        if (port.customer && currentUser.name && port.customer.toLowerCase().trim() === currentUser.name.toLowerCase().trim()) return true;
+      }
+      return false;
+    }
+
+    let currentArrivalPortId = null;
+
+    function simulateArrivalCharge(portId) {
+      if (!currentStation || !currentStation.ports) return;
+      const port = currentStation.ports.find(p => p.id === portId);
+      if (!port) return;
+
+      if (!isPortOwner(port)) {
+        alert("🔒 ACCESS DENIED!\n\nThis port was reserved by another driver.\nOnly the verified driver who booked this slot can unlock it.");
+        return;
+      }
+
+      currentArrivalPortId = portId;
+      const stationNameEl = document.getElementById('pinModalStationName');
+      const portNameEl = document.getElementById('pinModalPortName');
+      const customerEl = document.getElementById('pinModalCustomer');
+      const displayPinEl = document.getElementById('pinModalDisplayPin');
+      const planEl = document.getElementById('pinModalBatteryPlan');
+      const pinInput = document.getElementById('arrivalPinInput');
+      const errorEl = document.getElementById('pinModalError');
+
+      if (stationNameEl) stationNameEl.innerText = currentStation.name;
+      if (portNameEl) portNameEl.innerText = `${port.name} (${port.maxKw} kW)`;
+      if (customerEl) customerEl.innerText = port.customer || (currentUser ? currentUser.name : 'Nidhi Yadav');
+      if (displayPinEl) displayPinEl.innerText = port.pin ? String(port.pin) : '1234';
+      if (planEl) {
+        const startSoc = (port.initialSoc !== undefined && port.initialSoc !== null) ? port.initialSoc : 22;
+        planEl.innerText = `${startSoc}% ➔ 100%`;
+      }
+      if (pinInput) pinInput.value = port.pin ? String(port.pin) : '';
+      if (errorEl) errorEl.classList.add('hidden');
+
+      const modal = document.getElementById('pinModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (pinInput) setTimeout(() => pinInput.focus(), 100);
+      }
+    }
+
+    function closePinModal() {
+      const modal = document.getElementById('pinModal');
+      if (modal) modal.classList.add('hidden');
+      currentArrivalPortId = null;
+    }
+
+    async function submitArrivalPin() {
+      if (!currentArrivalPortId || !currentStation) return;
+      const port = currentStation.ports.find(p => p.id === currentArrivalPortId);
+      if (!port) {
+        closePinModal();
+        return;
+      }
+
+      const pinInput = document.getElementById('arrivalPinInput');
+      const enteredPin = pinInput ? pinInput.value.trim() : '';
+      const actualPin = port.pin ? String(port.pin).trim() : '1234';
+
+      if (enteredPin === actualPin) {
+        closePinModal();
+
+        try {
+          const fresh = localStorage.getItem('voltgrid_virtual_car');
+          if (fresh) virtualCarState = JSON.parse(fresh);
+        } catch(e) {}
+
+        const liveSoc = (virtualCarState && virtualCarState.soc !== undefined)
+          ? virtualCarState.soc
+          : ((port.initialSoc !== undefined && port.initialSoc !== null) ? port.initialSoc : 22);
+
+        port.status = 'charging';
+        port.initialSoc = liveSoc;
+        port.soc = liveSoc;
+        port.targetSoc = 100;
+        port.secondsLeft = 900;
+        port.chargingStartedAt = Date.now();
+        port.kw = port.maxKw ? Math.round(port.maxKw * 0.8) : 120;
+
+        if (window.VoltGridDB) {
+          const stations = VoltGridDB.getStations();
+          const st = stations.find(s => s.id === currentStation.id);
+          if (st && st.ports) {
+            const p = st.ports.find(x => x.id === port.id);
+            if (p) {
+              p.status = 'charging';
+              p.initialSoc = liveSoc;
+              p.soc = liveSoc;
+              p.secondsLeft = 900;
+            }
+            VoltGridDB.saveStations(stations);
+          }
+        }
+
+        renderPortsList();
+        showToast(`⚡ Dock Handshake Complete! Charging started at ${liveSoc}%.`);
+      } else {
+        const errorEl = document.getElementById('pinModalError');
+        if (errorEl) errorEl.classList.remove('hidden');
+      }
+    }
+
+    function releaseHubPort(portId) {
+      if (!currentStation || !currentStation.ports) return;
+      const port = currentStation.ports.find(p => p.id === portId);
+      if (!port) return;
+
+      if (!isPortOwner(port)) {
+        alert("🔒 ACCESS DENIED! Only the driver who initiated charging can disconnect.");
+        return;
+      }
+
+      port.status = 'available';
+      port.pin = null;
+      port.userId = null;
+      port.customer = null;
+      port.sessionId = null;
+      port.secondsLeft = 0;
+
+      saveMyLocalHold(port.id, null);
+
+      if (window.VoltGridDB) {
+        const stations = VoltGridDB.getStations();
+        const st = stations.find(s => s.id === currentStation.id);
+        if (st && st.ports) {
+          const p = st.ports.find(x => x.id === port.id);
+          if (p) {
+            p.status = 'available';
+            p.pin = null;
+            p.userId = null;
+            p.sessionId = null;
+          }
+          VoltGridDB.saveStations(stations);
+        }
+      }
+
+      renderPortsList();
+      showToast('🔌 Cable Disconnected & Bay Released! Thank you for charging.');
+    }
+
+    function forceReleasePortForTesting(portId) {
+      if (!currentStation || !currentStation.ports) return;
+      const port = currentStation.ports.find(p => p.id === portId);
+      if (!port) return;
+
+      port.status = 'available';
+      port.pin = null;
+      port.userId = null;
+      port.customer = null;
+      port.sessionId = null;
+      port.secondsLeft = 0;
+
+      saveMyLocalHold(port.id, null);
+
+      if (window.VoltGridDB) {
+        const stations = VoltGridDB.getStations();
+        const st = stations.find(s => s.id === currentStation.id);
+        if (st && st.ports) {
+          const p = st.ports.find(x => x.id === port.id);
+          if (p) {
+            p.status = 'available';
+            p.pin = null;
+            p.userId = null;
+            p.sessionId = null;
+          }
+          VoltGridDB.saveStations(stations);
+        }
+      }
+
+      renderPortsList();
+      showToast('⚡ [Dev Test Mode] Port reset to Available!');
+    }
+
     function renderPortsList() {
       const container = document.getElementById('hubPortsGrid');
       if (!currentStation || !currentStation.ports) return;
@@ -679,19 +1008,137 @@
         const isReserved = port.status === 'reserved';
         const is2W = port.vehicleType === '2W';
 
+        // Check if current user / browser session is the owner of this booked bay:
+        const isMySession = (isReserved || isCharging) && isPortOwner(port);
+
         let statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> AVAILABLE</span>';
-        if (isCharging) {
-          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-300 border border-cyan-200 animate-pulse">⚡ CHARGING (' + (port.soc || 45) + '%)</span>';
-        } else if (isReserved) {
-          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-200">HOLD (15m)</span>';
+        let cardBorder = isAvail ? 'border-purple-200/80 dark:border-slate-800 hover:border-emerald-400' : 'border-slate-200 dark:border-slate-800 opacity-90';
+
+        if (isReserved) {
+          if (isMySession) {
+            statusBadge = '<span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300 border border-purple-300 animate-pulse">YOUR HOLD • ' + formatTime(port.secondsLeft || 900) + '</span>';
+            cardBorder = 'border-purple-300 dark:border-purple-600 ring-2 ring-purple-300/40 shadow-md';
+          } else {
+            statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-200">HOLD (15m)</span>';
+            cardBorder = 'border-amber-200 dark:border-amber-900/40';
+          }
+        } else if (isCharging) {
+          if (isMySession) {
+            statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 animate-pulse">⚡ CHARGING (' + (port.soc || 25) + '%)</span>';
+            cardBorder = 'border-emerald-300 dark:border-emerald-600 ring-2 ring-emerald-300/30';
+          } else {
+            statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">IN USE</span>';
+            cardBorder = 'border-slate-200 dark:border-slate-800';
+          }
         }
 
         let speedNote = '⚡ 10% → 80% in ~18 mins';
         if (port.maxKw >= 240) speedNote = '🚀 Ultra-Fast: 10% → 80% in ~14 mins';
         else if (port.maxKw <= 22) speedNote = is2W ? '🛵 E-Scooter Full Refill in ~45 mins' : '🔋 Destination AC Slow Top-up';
 
+        // Middle Content Area
+        let middleBox = '';
+        if (isAvail) {
+          middleBox = 
+            '<div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 space-y-1.5 text-xs font-mono">' +
+              '<div class="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-sans font-medium">' +
+                '<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>' +
+                '<span>Ready for immediate hookup • Zero wait</span>' +
+              '</div>' +
+              '<div class="text-[11px] text-sky-600 dark:text-sky-400 flex items-center gap-1 font-sans font-medium">' +
+                '<span>🛡️</span> 15-min arrival hold guaranteed' +
+              '</div>' +
+            '</div>';
+        } else if (isReserved && isMySession) {
+          middleBox = 
+            '<div class="p-3 rounded-2xl bg-purple-50/70 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 space-y-1.5 text-xs">' +
+              '<div class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">' +
+                '<span>✓</span> Reserved by You (' + (port.customer || 'Nidhi Yadav') + ')' +
+              '</div>' +
+              '<div class="flex items-center justify-between text-[11px] text-amber-600 dark:text-amber-400 font-mono">' +
+                '<span>15m Lock: ' + formatTime(port.secondsLeft || 900) + '</span>' +
+                '<span class="bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded font-black text-amber-700 dark:text-amber-300">Your PIN: ' + (port.pin || '1234') + '</span>' +
+              '</div>' +
+            '</div>';
+        } else if (isReserved && !isMySession) {
+          middleBox = 
+            '<div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 space-y-1 text-xs">' +
+              '<div class="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-2">' +
+                '<span class="w-2 h-2 rounded-full bg-amber-500"></span>' +
+                '<span>Reserved by another driver</span>' +
+              '</div>' +
+              '<div class="text-[11px] text-slate-400">15-min arrival hold in progress • Slot unavailable</div>' +
+            '</div>';
+        } else if (isCharging && isMySession) {
+          middleBox = 
+            '<div class="p-3 rounded-2xl bg-cyan-50/50 dark:bg-cyan-950/40 border border-cyan-200 dark:border-cyan-800 space-y-2 text-xs">' +
+              '<div class="flex justify-between items-center text-xs">' +
+                '<span class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">' +
+                  '<span class="w-2 h-2 rounded-full ' + ((port.soc >= 100) ? 'bg-emerald-400' : 'bg-cyan-400 animate-pulse') + '"></span>' +
+                  (port.vehicle || 'MG ZS EV') +
+                '</span>' +
+                '<span class="font-mono font-black text-sm text-cyan-600 dark:text-cyan-400">' + (port.soc || 25) + '%</span>' +
+              '</div>' +
+              '<div class="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden p-0.5">' +
+                '<div class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full transition-all duration-300" style="width: ' + (port.soc || 25) + '%"></div>' +
+              '</div>' +
+              '<div class="flex justify-between text-[11px] font-mono text-slate-500">' +
+                '<span>⚡ ' + ((port.soc >= 100) ? 0 : 120) + ' kW active draw</span>' +
+                '<span>' + ((port.soc >= 100) ? '🎉 100% Full' : '⏳ Charging to 100%') + '</span>' +
+              '</div>' +
+            '</div>';
+        } else {
+          middleBox = 
+            '<div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 space-y-1 text-xs">' +
+              '<div class="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-2">' +
+                '<span class="w-2 h-2 rounded-full bg-cyan-500"></span>' +
+                '<span>In Use • Vehicle charging</span>' +
+              '</div>' +
+              '<div class="text-[11px] text-slate-400">Port occupied • Cable locked</div>' +
+            '</div>';
+        }
+
+        // Action Button
+        let actionBtn = '';
+        if (isAvail) {
+          actionBtn = 
+            '<button onclick="openCheckoutForPort(&quot;' + port.id + '&quot;)" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-emerald-500/20 transition-all flex items-center justify-center gap-1.5 hover:scale-[1.02] active:scale-95 cursor-pointer">' +
+              '<span>⚡ Reserve & Checkout</span> <span>&rarr;</span>' +
+            '</button>';
+        } else if (isReserved && isMySession) {
+          actionBtn = 
+            '<button onclick="simulateArrivalCharge(&quot;' + port.id + '&quot;)" class="w-full py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer">' +
+              '<span>⚡</span> ARRIVED? ENTER PIN (' + (port.pin || '1234') + ') & CHARGE' +
+            '</button>';
+        } else if (isReserved && !isMySession) {
+          actionBtn = 
+            '<div class="space-y-1">' +
+              '<button disabled class="w-full py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 font-bold text-xs cursor-not-allowed border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5">' +
+                '<span>🔒</span> Reserved by Another Driver' +
+              '</button>' +
+              '<button type="button" onclick="forceReleasePortForTesting(&quot;' + port.id + '&quot;)" class="w-full text-center text-[10px] text-slate-400 hover:text-rose-500 font-mono transition-colors underline py-0.5">' +
+                '[Free up this port for testing]' +
+              '</button>' +
+            '</div>';
+        } else if (isCharging && isMySession) {
+          actionBtn = 
+            '<button onclick="releaseHubPort(&quot;' + port.id + '&quot;)" class="w-full py-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950 dark:hover:bg-rose-900 text-xs font-extrabold uppercase tracking-wider border border-rose-200 dark:border-rose-800 transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-sm">' +
+              '<span>⏹</span> STOP / DISCONNECT CABLE' +
+            '</button>';
+        } else {
+          actionBtn = 
+            '<div class="space-y-1">' +
+              '<button disabled class="w-full py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 font-bold text-xs cursor-not-allowed border border-slate-200 dark:border-slate-700 flex items-center justify-center gap-1.5">' +
+                '<span>🔒</span> In Use • Cable Locked' +
+              '</button>' +
+              '<button type="button" onclick="forceReleasePortForTesting(&quot;' + port.id + '&quot;)" class="w-full text-center text-[10px] text-slate-400 hover:text-rose-500 font-mono transition-colors underline py-0.5">' +
+                '[Free up this port for testing]' +
+              '</button>' +
+            '</div>';
+        }
+
         return (
-          '<div class="bg-white dark:bg-slate-900 border ' + (isAvail ? 'border-purple-200/80 dark:border-slate-800 hover:border-emerald-400' : 'border-slate-200 dark:border-slate-800 opacity-90') + ' rounded-3xl p-5 shadow-sm space-y-4 transition-all duration-200 flex flex-col justify-between">' +
+          '<div class="bg-white dark:bg-slate-900 border ' + cardBorder + ' rounded-3xl p-5 shadow-sm space-y-4 transition-all duration-200 flex flex-col justify-between">' +
             '<div class="space-y-3">' +
               '<div class="flex items-center justify-between gap-2">' +
                 '<span class="text-xs font-mono font-bold text-slate-400">' + port.id.toUpperCase() + '</span>' +
@@ -719,19 +1166,13 @@
                   '<strong class="text-slate-800 dark:text-slate-200">₹' + currentStation.pricePerKwh + '/kWh</strong>' +
                 '</div>' +
               '</div>' +
+              middleBox +
               '<div class="text-[11px] text-slate-500 flex items-center gap-1">' +
                 '<span>⚡</span> <span>' + speedNote + '</span>' +
               '</div>' +
             '</div>' +
             '<div class="pt-3 border-t border-slate-100 dark:border-slate-800">' +
-              (isAvail ? 
-                '<button onclick="openCheckoutForPort(&quot;' + port.id + '&quot;)" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-emerald-500/20 transition-all flex items-center justify-center gap-1.5 hover:scale-[1.02] active:scale-95 cursor-pointer">' +
-                  '<span>⚡ Reserve & Checkout</span> <span>&rarr;</span>' +
-                '</button>' :
-                '<button disabled class="w-full py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 font-bold text-xs cursor-not-allowed border border-slate-200 dark:border-slate-700">' +
-                  (isCharging ? '🔌 Bay Currently In Use' : '🔒 Reserved by Another Driver') +
-                '</button>'
-              ) +
+              actionBtn +
             '</div>' +
           '</div>'
         );
@@ -1002,7 +1443,13 @@
       if (rangeEl) rangeEl.innerText = `${estRangeKm} km range`;
 
       const fullNoticeEl = document.getElementById('checkoutFullBatteryNotice');
-      if (fullNoticeEl) fullNoticeEl.classList.add('hidden');
+      if (fullNoticeEl) {
+        if (isFull) {
+          fullNoticeEl.classList.remove('hidden');
+        } else {
+          fullNoticeEl.classList.add('hidden');
+        }
+      }
 
       const btnPay = document.getElementById('btnPayConfirm');
       if (isFull) {
@@ -1050,15 +1497,24 @@
     }
 
     function simulateCarDrive(dropPercent = 15) {
-      const newSoc = Math.max(10, (virtualCarState.soc || 100) - dropPercent);
+      let current = (virtualCarState && virtualCarState.soc !== undefined) ? virtualCarState.soc : 100;
+      const newSoc = Math.max(10, current - dropPercent);
       virtualCarState.soc = newSoc;
       virtualCarState.tripDistance = +((Number(virtualCarState.tripDistance || 0) + 30).toFixed(1));
       try {
         localStorage.setItem('voltgrid_virtual_car', JSON.stringify(virtualCarState));
       } catch (e) {}
       if (currentUser) currentUser.lastKnownBmsSoc = newSoc;
+      try {
+        const ch = new BroadcastChannel('voltgrid_telematics');
+        ch.postMessage({ action: 'INJECT_SOC', soc: newSoc, car: virtualCarState.car || 'MG ZS EV' });
+      } catch(e) {}
       updateBatteryEstimation(newSoc);
-      showToast(`🛣️ Simulated 30 km drive! Battery now at ${newSoc}%.`);
+      const sub = document.getElementById('smartcarStatusSub');
+      if (sub) {
+        sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${virtualCarState.car || 'MG ZS EV'} at <strong class="text-white">${newSoc}%</strong> (Needs charge to 100%)`;
+      }
+      showToast(`🛣️ Simulated 30 km drive! Battery consumed to ${newSoc}%.`);
     }
 
     function injectSimScenario(targetSoc = 22) {
@@ -1068,7 +1524,15 @@
         localStorage.setItem('voltgrid_virtual_car', JSON.stringify(virtualCarState));
       } catch (e) {}
       if (currentUser) currentUser.lastKnownBmsSoc = targetSoc;
+      try {
+        const ch = new BroadcastChannel('voltgrid_telematics');
+        ch.postMessage({ action: 'INJECT_SOC', soc: targetSoc, car: virtualCarState.car || 'MG ZS EV' });
+      } catch(e) {}
       updateBatteryEstimation(targetSoc);
+      const sub = document.getElementById('smartcarStatusSub');
+      if (sub) {
+        sub.innerHTML = `<span class="text-emerald-400 font-bold">✓ Live BMS Synced:</span> ${virtualCarState.car || 'MG ZS EV'} at <strong class="text-white">${targetSoc}%</strong> (Needs charge to 100%)`;
+      }
       showToast(`🚗 Reset battery to ${targetSoc}% arrival level!`);
     }
 
@@ -1087,18 +1551,39 @@
       const bookedPort = currentStation.ports.find(p => p.id === pendingCheckout.portId);
       if (!bookedPort) return;
 
+      const activeUserId = (currentUser && currentUser.id) ? currentUser.id : 'USR-1';
+      const custName = (currentUser && currentUser.name) ? currentUser.name : 'Nidhi Yadav';
+      const custPhone = (currentUser && currentUser.phone) ? currentUser.phone : '+91 93287 03345';
+      const currentSid = getDeviceSessionId();
+
       bookedPort.status = 'reserved';
       bookedPort.pin = newPin;
       bookedPort.invoiceNumber = invNum;
       bookedPort.secondsLeft = 900;
       bookedPort.reservedAt = Date.now();
+      bookedPort.userId = activeUserId;
+      bookedPort.customer = custName;
+      bookedPort.phone = custPhone;
+      bookedPort.sessionId = currentSid;
+      bookedPort.initialSoc = pendingCheckout.currentSoc;
+      bookedPort.soc = pendingCheckout.currentSoc;
+      bookedPort.vehicle = (virtualCarState && virtualCarState.car) ? virtualCarState.car : 'MG ZS EV';
+
+      // Save local session hold
+      saveMyLocalHold(bookedPort.id, {
+        active: true,
+        pin: newPin,
+        invNum: invNum,
+        userId: activeUserId,
+        sessionId: currentSid
+      });
 
       const newBooking = {
         id: invNum,
         createdAt: new Date().toISOString(),
-        customerName: (currentUser && currentUser.name) ? currentUser.name : 'Nidhi Yadav',
-        customerPhone: (currentUser && currentUser.phone) ? currentUser.phone : '+91 93287 03345',
-        vehicleModel: (virtualCarState && virtualCarState.car) ? virtualCarState.car : 'MG ZS EV',
+        customerName: custName,
+        customerPhone: custPhone,
+        vehicleModel: bookedPort.vehicle,
         stationId: currentStation.id,
         stationName: currentStation.name,
         vendorId: currentStation.vendorId || 'vendor-jiobp',
@@ -1119,6 +1604,14 @@
             p.status = 'reserved';
             p.pin = newPin;
             p.invoiceNumber = invNum;
+            p.secondsLeft = 900;
+            p.userId = activeUserId;
+            p.customer = custName;
+            p.phone = custPhone;
+            p.sessionId = currentSid;
+            p.initialSoc = pendingCheckout.currentSoc;
+            p.soc = pendingCheckout.currentSoc;
+            p.vehicle = bookedPort.vehicle;
           }
           VoltGridDB.saveStations(stations);
         }
@@ -1154,6 +1647,27 @@
 
     function toggleTheme() {
       document.documentElement.classList.toggle('dark');
+    }
+
+    function updateHubBatteryEstimation(soc) {
+      updateBatteryEstimation(soc);
+    }
+
+    function updateHubTripTelematics(car) {
+      updateCheckoutTripTelematics(car);
+    }
+
+    function resyncHubTelematicsNow(manual = false) {
+      try {
+        const fresh = localStorage.getItem('voltgrid_virtual_car');
+        if (fresh) {
+          handleHubTelematicsPacket(JSON.parse(fresh));
+        }
+      } catch(e) {}
+      const checkoutModal = document.getElementById('checkoutModal');
+      if (checkoutModal && !checkoutModal.classList.contains('hidden')) {
+        syncLiveSmartcarBattery(manual);
+      }
     }
 
     // Real-time synchronization
@@ -1214,6 +1728,37 @@
     window.addEventListener('focus', () => {
       resyncHubTelematicsNow(false);
     });
+
+    // 1-Second Countdown Ticker for 15-Minute Reservation Holds & Charging Progress
+    setInterval(() => {
+      if (!currentStation || !currentStation.ports) return;
+      let needRender = false;
+      currentStation.ports.forEach(port => {
+        if (port.status === 'reserved' && port.secondsLeft > 0) {
+          port.secondsLeft--;
+          needRender = true;
+          if (port.secondsLeft <= 0) {
+            port.status = 'available';
+            saveMyLocalHold(port.id, null);
+          }
+        } else if (port.status === 'charging') {
+          if ((port.soc || 0) < 100) {
+            if (!port._lastTick || Date.now() - port._lastTick >= 3000) {
+              port.soc = Math.min(100, (port.soc || 25) + 1);
+              port._lastTick = Date.now();
+              needRender = true;
+            }
+          }
+        }
+      });
+      if (needRender) {
+        const checkoutModal = document.getElementById('checkoutModal');
+        const pinModal = document.getElementById('pinModal');
+        if ((!checkoutModal || checkoutModal.classList.contains('hidden')) && (!pinModal || pinModal.classList.contains('hidden'))) {
+          renderPortsList();
+        }
+      }
+    }, 1000);
 
     window.addEventListener('DOMContentLoaded', () => {
       initHubPage();
