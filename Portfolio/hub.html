@@ -266,23 +266,70 @@
 
       <!-- Car Telematics Status & Battery Visual Bar -->
       <div class="p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-purple-50/50 dark:bg-slate-950 border border-purple-100 dark:border-slate-800 space-y-3">
-        <div class="flex items-center justify-between text-xs">
-          <div class="flex items-center gap-2">
-            <span class="text-base">🚗</span>
-            <strong id="smartcarCarName" class="text-slate-800 dark:text-white font-bold">MG ZS EV</strong>
-            <span id="smartcarVinBadge" class="text-[10px] font-mono text-slate-400">• VIN: ...5921</span>
+        <!-- Live Connected Car Header -->
+        <div class="flex items-center justify-between text-xs pb-1 border-b border-purple-100/60 dark:border-slate-800">
+          <div class="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-300">
+            <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+            <span>Connected EV Vehicle</span>
+            <span class="px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-300 text-[10px] font-extrabold uppercase tracking-wide">Live Auto-Sync</span>
           </div>
-          <span id="checkoutBatteryDisplay" class="font-extrabold font-mono text-emerald-600 dark:text-emerald-400">22% Left</span>
+          <div class="flex items-center gap-2">
+            <a href="simulator.html" target="_blank" class="text-[11px] font-bold text-purple-600 dark:text-sky-400 hover:underline flex items-center gap-1" title="Open Virtual EV Telematics Simulator">
+              <span>🚗 Simulator</span> <span>↗</span>
+            </a>
+            <button type="button" onclick="resyncHubTelematicsNow(true)" class="px-2 py-0.5 rounded-lg bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-[10px] font-bold transition-all flex items-center gap-1 shadow-xs active:scale-95">
+              <span id="hubResyncIcon">🔄</span>
+              <span id="hubResyncText">Re-sync</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Vehicle Details & BMS Badge -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 flex items-center justify-center text-xl shrink-0">
+              🚗
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <strong id="smartcarCarName" class="text-sm font-extrabold text-slate-900 dark:text-white">MG ZS EV</strong>
+                <span id="smartcarVinBadge" class="text-[10px] font-mono text-slate-400">• VIN: ...5921</span>
+              </div>
+              <p id="smartcarBmsSub" class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                <span class="text-emerald-500 font-bold">✓ Live BMS Synced:</span> <span id="smartcarStatusDesc">MG ZS EV at 22% Left</span>
+              </p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span id="checkoutBatteryDisplay" class="inline-block px-2.5 py-1 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 font-mono font-black text-xs">22% Left</span>
+            <p id="smartcarEstRange" class="text-[10px] font-mono text-slate-400 mt-0.5">75 km range</p>
+          </div>
+        </div>
+
+        <!-- Trip Telematics Metrics Grid -->
+        <div class="grid grid-cols-3 gap-2 py-2 px-3 rounded-xl bg-white/70 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800 text-center text-xs">
+          <div>
+            <span class="block text-[9px] uppercase font-bold text-slate-400">Total Odo</span>
+            <strong id="hubCheckoutOdometer" class="font-mono text-slate-800 dark:text-slate-200 text-xs">14,250.0 km</strong>
+          </div>
+          <div>
+            <span class="block text-[9px] uppercase font-bold text-slate-400">Driven Today</span>
+            <strong id="hubCheckoutTripDistance" class="font-mono text-cyan-600 dark:text-cyan-400 text-xs">+0.0 km</strong>
+          </div>
+          <div>
+            <span class="block text-[9px] uppercase font-bold text-slate-400">Battery Used</span>
+            <strong id="hubCheckoutTripConsumed" class="font-mono text-rose-500 text-xs">-0% SoC</strong>
+          </div>
         </div>
 
         <!-- Battery Bar Graphic -->
         <div class="relative p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-purple-200/70 dark:border-slate-700">
           <div class="flex h-7 rounded-xl overflow-hidden font-bold text-[11px] leading-7 text-center">
             <div id="batteryVisualCurrent" class="bg-gradient-to-r from-sky-400 to-blue-500 text-white transition-all duration-300 flex items-center justify-center truncate px-2 shadow-xs" style="width: 22%;">
-              <span id="batteryVisualCurrentText">🔋 22% Left</span>
+              <span id="batteryVisualCurrentText">⚡ 22% Left</span>
             </div>
             <div id="batteryVisualNeeded" class="bg-gradient-to-r from-orange-300 via-rose-300 to-purple-400 text-slate-900 transition-all duration-300 flex items-center justify-center truncate px-2" style="width: 78%;">
-              <span id="batteryVisualNeededText">⚡ +78% Needed</span>
+              <span id="batteryVisualNeededText">🔋 +78% Needed</span>
             </div>
           </div>
         </div>
@@ -290,10 +337,10 @@
         <!-- Full Battery Notice with 1-Click Simulation Buttons -->
         <div id="checkoutFullBatteryNotice" class="hidden p-3 rounded-2xl bg-amber-500/10 border border-amber-500/40 text-amber-900 dark:text-amber-300 text-xs space-y-2">
           <div class="flex items-center gap-2">
-            <span class="text-base">🎉</span>
+            <span class="text-base">⚠️</span>
             <div>
               <strong class="block text-xs font-bold text-amber-800 dark:text-amber-200">Vehicle Battery is 100% Full!</strong>
-              <span class="text-[11px] text-amber-700/90 dark:text-amber-300/80">No charging energy needed. Booking is blocked to keep bays free for drivers needing power.</span>
+              <span class="text-[11px] text-amber-700/90 dark:text-amber-300/80">No charging energy needed. Click a test preset below to simulate highway battery consumption:</span>
             </div>
           </div>
           <div class="flex items-center gap-2 pt-1 border-t border-amber-500/20">
@@ -314,7 +361,7 @@
               <button type="button" onclick="updateHubBatteryEstimation(15)" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold hover:bg-emerald-500 hover:text-white transition-all">15%</button>
               <button type="button" onclick="updateHubBatteryEstimation(25)" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold hover:bg-emerald-500 hover:text-white transition-all">25%</button>
               <button type="button" onclick="updateHubBatteryEstimation(45)" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold hover:bg-emerald-500 hover:text-white transition-all">45%</button>
-              <button type="button" onclick="updateHubBatteryEstimation(65)" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold hover:bg-emerald-500 hover:text-white transition-all">65%</button>
+              <button type="button" onclick="updateHubBatteryEstimation(71)" class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold hover:bg-emerald-500 hover:text-white transition-all">71%</button>
             </div>
           </div>
           <input 
@@ -683,13 +730,28 @@
 
       pendingPort = port;
 
+      // Ensure freshest state from Virtual Vehicle Simulator
       try {
         const fresh = localStorage.getItem('voltgrid_virtual_car');
-        if (fresh) virtualCarState = JSON.parse(fresh);
+        if (fresh) {
+          const parsed = JSON.parse(fresh);
+          if (parsed && parsed.soc !== undefined) {
+            virtualCarState = { ...virtualCarState, ...parsed };
+          }
+        }
+      } catch(e) {}
+
+      // Ping simulator tab to ensure active battery sync
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          const ch = new BroadcastChannel('voltgrid_telematics');
+          ch.postMessage({ action: 'REQUEST_TELEMATICS' });
+        }
       } catch(e) {}
 
       let currentSoc = Math.round(Number(virtualCarState.soc) || 22);
       updateHubBatteryEstimation(currentSoc);
+      updateHubTripTelematics(virtualCarState);
       document.getElementById('checkoutModal').classList.remove('hidden');
     }
 
@@ -738,10 +800,10 @@
       } else {
         visualCurrent.style.width = currentSoc + '%';
         visualCurrent.className = 'bg-gradient-to-r from-sky-400 to-blue-500 text-white transition-all duration-300 flex items-center justify-center truncate px-2 shadow-xs';
-        visualCurrentText.innerText = '🔋 ' + currentSoc + '% Left';
+        visualCurrentText.innerText = '⚡ ' + currentSoc + '% Left';
         visualNeeded.style.width = percentNeeded + '%';
         visualNeeded.style.display = 'flex';
-        visualNeededText.innerText = '⚡ +' + percentNeeded + '% Needed';
+        visualNeededText.innerText = '🔋 +' + percentNeeded + '% Needed';
       }
 
       document.getElementById('billKwh').innerText = neededKwh.toFixed(1);
@@ -766,26 +828,101 @@
       }
 
       updateNavbarCarPill(currentSoc);
+      updateHubTripTelematics(virtualCarState);
+    }
+
+    function updateHubTripTelematics(carData) {
+      const data = carData || virtualCarState;
+      if (!data) return;
+      const odoEl = document.getElementById('hubCheckoutOdometer');
+      const tripDistEl = document.getElementById('hubCheckoutTripDistance');
+      const tripConsEl = document.getElementById('hubCheckoutTripConsumed');
+      const subDesc = document.getElementById('smartcarStatusDesc');
+      const rangeEl = document.getElementById('smartcarEstRange');
+
+      const odo = data.odometer !== undefined ? Number(data.odometer).toFixed(1) : '14,250.0';
+      const tripKm = data.tripDistance !== undefined ? Number(data.tripDistance).toFixed(1) : '0.0';
+      const soc = data.soc !== undefined ? Math.round(data.soc) : 22;
+      const dropped = Math.max(0, 100 - soc);
+
+      if (odoEl) odoEl.innerText = odo + ' km';
+      if (tripDistEl) tripDistEl.innerText = '+' + tripKm + ' km';
+      if (tripConsEl) tripConsEl.innerText = '-' + dropped + '% SoC';
+
+      const estRangeKm = Math.round((soc / 100) * (50.3 * 6.8));
+      if (rangeEl) rangeEl.innerText = estRangeKm + ' km range';
+
+      if (subDesc) {
+        if (soc >= 100) {
+          subDesc.innerHTML = `<span class="text-slate-800 dark:text-white font-bold">${data.car || 'MG ZS EV'}</span> at <strong class="text-emerald-500">100% Full</strong> (No charge needed)`;
+        } else {
+          subDesc.innerHTML = `<span class="text-slate-800 dark:text-white font-bold">${data.car || 'MG ZS EV'}</span> at <strong class="text-sky-500">${soc}% Left</strong> (Needs charge to 100%)`;
+        }
+      }
+    }
+
+    async function resyncHubTelematicsNow(manual = false) {
+      const icon = document.getElementById('hubResyncIcon');
+      const text = document.getElementById('hubResyncText');
+      if (icon) icon.className = 'inline-block animate-spin';
+      if (text) text.innerText = 'Syncing...';
+
+      // Ask Simulator tab to broadcast current state
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          const ch = new BroadcastChannel('voltgrid_telematics');
+          ch.postMessage({ action: 'REQUEST_TELEMATICS' });
+        }
+      } catch(e) {}
+
+      if (manual) {
+        await new Promise(r => setTimeout(r, 400));
+      }
+
+      try {
+        const fresh = localStorage.getItem('voltgrid_virtual_car');
+        if (fresh) {
+          const parsed = JSON.parse(fresh);
+          if (parsed && parsed.soc !== undefined) {
+            virtualCarState = { ...virtualCarState, ...parsed };
+          }
+        }
+      } catch(e) {}
+
+      const liveSoc = virtualCarState && virtualCarState.soc !== undefined ? virtualCarState.soc : 22;
+      updateNavbarCarPill(liveSoc);
+      updateHubBatteryEstimation(liveSoc);
+      updateHubTripTelematics(virtualCarState);
+
+      if (icon) icon.className = '';
+      if (text) text.innerText = 'Re-sync';
+      if (manual) {
+        showToast('🚗 Synced with Simulator: ' + (virtualCarState.car || 'MG ZS EV') + ' at ' + liveSoc + '% SoC!');
+      }
     }
 
     function simulateHubCarDrive(dropPercent) {
       let currentSoc = Math.round(Number(virtualCarState.soc) || 100);
       let newSoc = Math.max(10, currentSoc - (dropPercent || 15));
       virtualCarState.soc = newSoc;
+      virtualCarState.tripDistance = +((Number(virtualCarState.tripDistance || 0) + 30).toFixed(1));
       try {
         localStorage.setItem('voltgrid_virtual_car', JSON.stringify(virtualCarState));
       } catch(e) {}
       updateHubBatteryEstimation(newSoc);
+      updateHubTripTelematics(virtualCarState);
       showToast('🛣️ Simulated 30 km Highway Drive: Battery reduced to ' + newSoc + '%!');
     }
 
     function resetHubBattery(targetSoc) {
       let newSoc = targetSoc || 22;
       virtualCarState.soc = newSoc;
+      virtualCarState.tripDistance = 0.0;
       try {
         localStorage.setItem('voltgrid_virtual_car', JSON.stringify(virtualCarState));
       } catch(e) {}
       updateHubBatteryEstimation(newSoc);
+      updateHubTripTelematics(virtualCarState);
       showToast('🚗 Battery reset to ' + newSoc + '% arrival level!');
     }
 
@@ -893,23 +1030,55 @@
     }
 
     // Real-time IoT Virtual Vehicle Telematics Listener (Cross-tab Smartcar simulator sync)
+    function handleHubTelematicsPacket(raw) {
+      if (!raw) return;
+      const d = raw.data ? raw.data : raw;
+      if (!d || typeof d !== 'object' || d.soc === undefined) return;
+
+      if (d.soc >= 98) {
+        d.soc = 100;
+        d.isDriving = false;
+        d.speed = 0;
+      }
+      virtualCarState = { ...virtualCarState, ...d };
+      try {
+        localStorage.setItem('voltgrid_virtual_car', JSON.stringify(virtualCarState));
+      } catch(e) {}
+
+      updateNavbarCarPill(virtualCarState.soc);
+
+      const modal = document.getElementById('checkoutModal');
+      if (modal && !modal.classList.contains('hidden')) {
+        updateHubBatteryEstimation(virtualCarState.soc);
+        updateHubTripTelematics(virtualCarState);
+      }
+    }
+
     try {
       const simChannel = new BroadcastChannel('voltgrid_telematics');
       simChannel.onmessage = (event) => {
-        if (event.data && event.data.type === 'TELEMATICS_UPDATE' && event.data.data) {
-          const d = event.data.data;
-          virtualCarState = { ...virtualCarState, ...d };
-          const navText = document.getElementById('navHubSimStatusText');
-          if (navText) navText.innerText = Math.round(d.soc) + '% SoC';
-          const modal = document.getElementById('checkoutModal');
-          if (modal && !modal.classList.contains('hidden')) {
-            updateHubBatteryEstimation(d.soc);
-          }
-        }
+        if (event.data) handleHubTelematicsPacket(event.data);
       };
+      // Broadcast request so active Simulator tab immediately replies with current battery
+      simChannel.postMessage({ action: 'REQUEST_TELEMATICS' });
     } catch (e) {}
 
-    window.addEventListener('DOMContentLoaded', initHubPage);
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'voltgrid_virtual_car' && e.newValue) {
+        try {
+          handleHubTelematicsPacket(JSON.parse(e.newValue));
+        } catch (err) {}
+      }
+    });
+
+    window.addEventListener('focus', () => {
+      resyncHubTelematicsNow(false);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initHubPage();
+      resyncHubTelematicsNow(false);
+    });
   </script>
 </body>
 </html>

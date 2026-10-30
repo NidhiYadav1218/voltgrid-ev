@@ -5702,6 +5702,9 @@
         data.gear = 'P';
       }
       virtualCarState = data;
+      try {
+        localStorage.setItem('voltgrid_virtual_car', JSON.stringify(virtualCarState));
+      } catch (e) {}
       if (currentUser) {
         currentUser.car = data.car;
         currentUser.lastKnownBmsSoc = data.soc;

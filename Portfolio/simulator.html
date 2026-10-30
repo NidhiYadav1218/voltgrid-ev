@@ -646,6 +646,8 @@ Loading live telematics stream...
           showToast('⚡ Received Full Charge from VoltGrid Station! Car parked at [P].');
         } else if (event.data.action === 'INJECT_SOC' && event.data.soc) {
           refillToSoc(event.data.soc);
+        } else if (event.data.action === 'REQUEST_TELEMATICS' || event.data.action === 'REQUEST_STATE') {
+          if (telematicsChannel) telematicsChannel.postMessage(state);
         }
       };
     }
