@@ -4389,35 +4389,36 @@
     // 3. OR the logged-in user's verified phone number matches port.phone
     function isPortOwner(port) {
       if (!port) return false;
-      if (!currentUser) return false; // Unregistered visitors can NEVER own or unlock a port!
+
+      // 1. Match by local active hold on this device (always honors current device hold):
+      const localHold = getMyLocalHold(port.id);
+      if (localHold && localHold.active) return true;
+
+      // 2. Match by Device Session ID:
+      const currentSid = getDeviceSessionId();
+      if (currentSid && port.sessionId && port.sessionId === currentSid) return true;
+
+      if (!currentUser) return false;
 
       const currentId = String(currentUser.userId || currentUser.id || currentUser._id || '').trim();
       const portUserId = String(port.userId || '').trim();
 
-      // 1. Match by User ID:
+      // 3. Match by User ID:
       if (currentId && portUserId && currentId === portUserId) return true;
 
-      // 2. Match by clean phone number:
+      // 4. Match by clean phone number:
       if (port.phone && currentUser.phone) {
         const p1 = String(port.phone).replace(/\D/g, '');
         const p2 = String(currentUser.phone).replace(/\D/g, '');
         if (p1 && p2 && p1 === p2) return true;
       }
 
-      // 3. Match by customer name:
+      // 5. Match by customer name:
       if (port.customer && currentUser.name) {
         if (String(port.customer).trim().toLowerCase() === String(currentUser.name).trim().toLowerCase()) {
           return true;
         }
       }
-
-      // 4. Match by Device Session ID (same browser testing!):
-      const currentSid = getDeviceSessionId();
-      if (currentSid && port.sessionId && port.sessionId === currentSid) return true;
-
-      // 5. Match by local active hold:
-      const localHold = getMyLocalHold(port.id);
-      if (localHold && localHold.active) return true;
 
       return false;
     }
