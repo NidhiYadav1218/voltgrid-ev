@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>VoltGrid Hub Charging Bays • Select Port & Reserve</title>
+  <meta name="description" content="View all charging ports, gun types, power outputs, and reserve your bay with zero waiting line." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- VoltGrid Shared Statewide Database Engine -->
+  <script src="voltgrid_db.js"></script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              900: '#064e3b',
+              950: '#022c22'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            heading: ['Outfit', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white transition-colors duration-300">
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-purple-100 dark:border-slate-800 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      
+      <!-- Brand & Back Button -->
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 group">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/25 group-hover:scale-105 transition-transform">
+            <span class="text-xl">⚡</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-extrabold text-lg tracking-tight font-heading text-slate-900 dark:text-white">VoltGrid</span>
+              <span class="text-[9px] font-mono font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200">GUJARAT</span>
+            </div>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Smart EV Station Bay Explorer</p>
+          </div>
+        </a>
+
+        <!-- Return to Map Breadcrumb -->
+        <a href="index.html" class="hidden sm:flex items-center gap-1.5 ml-3 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-emerald-600 dark:text-slate-300 dark:hover:text-emerald-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-all hover:scale-105">
+          <span>&larr;</span> <span>All Gujarat Hubs</span>
+        </a>
+      </div>
+
+      <!-- Quick Portals & Action Buttons -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a href="vendor.html" class="px-2.5 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 dark:bg-purple-950 dark:text-purple-300 border border-purple-200 dark:border-purple-800 text-xs font-bold transition-all flex items-center gap-1" title="Open Vendor CPO Portal">
+          <span>💼</span> <span class="hidden md:inline">Vendor</span>
+        </a>
+        <a href="admin.html" class="px-2.5 py-1.5 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-900 dark:bg-rose-950 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-xs font-bold transition-all flex items-center gap-1" title="Open Admin HQ">
+          <span>🛡️</span> <span class="hidden md:inline">Admin</span>
+        </a>
+        <a href="simulator.html" target="_blank" class="px-2.5 py-1.5 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-900 dark:bg-sky-950 dark:text-sky-300 border border-sky-200 dark:border-sky-800 text-xs font-bold transition-all flex items-center gap-1" title="Open Smartcar Simulator">
+          <span>🚗</span> <span class="hidden md:inline">Simulator</span>
+        </a>
+        <button onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all" title="Toggle Dark/Light Mode">
+          🌓
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= SUB-HEADER BREADCRUMB ================= -->
+  <div class="bg-gradient-to-r from-purple-50 via-sky-50 to-emerald-50 dark:bg-slate-900/60 border-b border-purple-100 dark:border-slate-800 py-2.5 px-4 text-xs">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 flex-wrap">
+      <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+        <a href="index.html" class="hover:text-emerald-600 dark:hover:text-cyan-400 font-medium">Gujarat Hubs</a>
+        <span>&rsaquo;</span>
+        <span id="breadcrumbCity" class="font-bold text-slate-700 dark:text-slate-300">City</span>
+        <span>&rsaquo;</span>
+        <span id="breadcrumbStation" class="font-bold text-emerald-600 dark:text-emerald-400 truncate max-w-[240px] sm:max-w-md">Station Details</span>
+      </div>
+      <a href="index.html" class="text-emerald-700 dark:text-emerald-400 font-bold hover:underline flex items-center gap-1">
+        <span>&larr;</span> Choose another station
+      </a>
+    </div>
+  </div>
+
+  <!-- ================= MAIN HUB SHOWCASE CONTAINER ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+    <!-- Station Hero Card -->
+    <div id="stationHeroCard" class="bg-white dark:bg-slate-900 border border-purple-100 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+      
+      <!-- Top Row: Operator Logo, Station Name, Real Directions Button -->
+      <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+        <div class="space-y-2 flex-1">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="hubVendorLogo" class="text-2xl">⛽</span>
+            <span id="hubVendorBadge" class="text-xs font-bold font-mono px-3 py-1 rounded-full bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300 border border-purple-200">Jio-bp pulse</span>
+            <span id="hubCityBadge" class="text-xs font-bold px-3 py-1 rounded-full bg-sky-100 text-sky-900 dark:bg-sky-950 dark:text-sky-300 border border-sky-200">📍 Ahmedabad</span>
+            <span id="hubTypeBadge" class="text-xs font-semibold text-slate-500 dark:text-slate-400">• Highway Ultra-Fast Hub</span>
+          </div>
+
+          <h1 id="hubTitle" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white font-heading tracking-tight leading-tight">
+            Station Name Loading...
+          </h1>
+
+          <p id="hubLocation" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 flex items-start gap-1.5 pt-0.5">
+            <span>📍</span>
+            <span id="hubAddressText">Station Address...</span>
+          </p>
+        </div>
+
+        <!-- Big Directions CTA Button -->
+        <div class="shrink-0 flex flex-col sm:flex-row items-center gap-3">
+          <a id="hubGoogleMapsBtn" href="#" target="_blank" class="w-full sm:w-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg shadow-purple-600/20 transition-all flex items-center justify-center gap-2 hover:scale-105 active:scale-95">
+            <span>🗺️ Open Google Maps Directions</span>
+            <span>↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Strip: Rate, Total Bays, Rating, Solar Status -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-purple-100/80 dark:border-slate-800">
+        <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block">Tariff Rate</span>
+          <span class="text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 font-heading mt-0.5 block">
+            ₹<span id="hubRate">26</span><span class="text-xs font-normal text-slate-400">/kWh</span>
+          </span>
+          <span class="text-[10px] text-slate-400">Live grid tariff</span>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block">Available Bays</span>
+          <span class="text-xl sm:text-2xl font-extrabold text-sky-600 dark:text-cyan-400 font-heading mt-0.5 block" id="hubBaysStat">
+            6 / 6 Free
+          </span>
+          <span class="text-[10px] text-slate-400">Zero waiting line</span>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block">Station Rating</span>
+          <span class="text-xl sm:text-2xl font-extrabold text-amber-500 font-heading mt-0.5 block" id="hubRating">
+            ★ 4.9
+          </span>
+          <span class="text-[10px] text-slate-400">Verified safe bay</span>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-center">
+          <span class="text-[10px] uppercase font-bold text-slate-400 block">Clean Energy</span>
+          <span class="text-xl sm:text-2xl font-extrabold text-emerald-500 font-heading mt-0.5 block">
+            ☀️ Solar
+          </span>
+          <span class="text-[10px] text-slate-400">Canopy empowered</span>
+        </div>
+      </div>
+
+      <!-- Amenities Pill List -->
+      <div class="pt-2 flex items-center gap-2 flex-wrap text-xs">
+        <span class="text-slate-400 font-bold uppercase text-[10px] mr-1">Hub Amenities:</span>
+        <div id="hubAmenitiesList" class="flex items-center gap-1.5 flex-wrap">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= PORTS SELECTION MATRIX ================= -->
+    <div class="space-y-5">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-0.5">Dedicated Bay Matrix</span>
+          <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white font-heading">
+            Choose a Port & Lock Your Slot
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Select your preferred power output and connector gun. Each booking generates an instant 4-digit PIN with a guaranteed 15-minute arrival hold.
+          </p>
+        </div>
+
+        <!-- Vehicle Type Filter Tabs -->
+        <div class="flex items-center gap-1.5 shrink-0 bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+          <button onclick="filterPorts(&quot;ALL&quot;)" id="tabPort-ALL" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-xs transition-all">
+            ⚡ All Ports (<span id="countPort-ALL">6</span>)
+          </button>
+          <button onclick="filterPorts('4W')" id="tabPort-4W" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+            🚗 4-Wheelers (<span id="countPort-4W">4</span>)
+          </button>
+          <button onclick="filterPorts('2W')" id="tabPort-2W" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+            🛵 2-Wheelers (<span id="countPort-2W">2</span>)
+          </button>
+        </div>
+      </div>
+
+      <!-- Ports Cards Grid -->
+      <div id="hubPortsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered by JS -->
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ================= CHECKOUT / BOOKING MODAL ================= -->
+  <div id="checkoutModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl space-y-5 max-h-[92vh] overflow-y-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Guaranteed Bay Reservation</span>
+          <h3 id="checkoutPortTitle" class="text-xl font-extrabold text-slate-900 dark:text-white font-heading mt-0.5">
+            Bay 01 • 240kW Ultra-Fast DC
+          </h3>
+          <p id="checkoutStationSub" class="text-xs text-slate-500 dark:text-slate-400">
+            Jio-bp pulse SG Highway HyperHub • Ahmedabad
+          </p>
+        </div>
+        <button onclick="closeCheckoutModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center transition-all">
+          ✕
+        </button>
+      </div>
+
+      <!-- Car Telematics Status & Battery Visual Bar -->
+      <div class="p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-purple-50/50 dark:bg-slate-950 border border-purple-100 dark:border-slate-800 space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-base">🚗</span>
+            <strong id="smartcarCarName" class="text-slate-800 dark:text-white font-bold">MG ZS EV</strong>
+            <span id="smartcarVinBadge" class="text-[10px] font-mono text-slate-400">• VIN: ...5921</span>
+          </div>
+          <span id="checkoutBatteryDisplay" class="font-extrabold font-mono text-emerald-600 dark:text-emerald-400">22% Left</span>
+        </div>
+
+        <!-- Battery Bar Graphic -->
+        <div class="relative p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-purple-200/70 dark:border-slate-700">
+          <div class="flex h-7 rounded-xl overflow-hidden font-bold text-[11px] leading-7 text-center">
+            <div id="batteryVisualCurrent" class="bg-gradient-to-r from-sky-400 to-blue-500 text-white transition-all duration-300 flex items-center justify-center truncate px-2 shadow-xs" style="width: 22%;">
+              <span id="batteryVisualCurrentText">🔋 22% Left</span>
+            </div>
+            <div id="batteryVisualNeeded" class="bg-gradient-to-r from-orange-300 via-rose-300 to-purple-400 text-slate-900 transition-all duration-300 flex items-center justify-center truncate px-2" style="width: 78%;">
+              <span id="batteryVisualNeededText">⚡ +78% Needed</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-purple-100 dark:border-slate-800">
+          <div>
+            <span class="block text-[10px] uppercase font-bold text-slate-400">Energy Needed</span>
+            <strong class="text-slate-800 dark:text-slate-200 text-xs"><span id="checkoutPercentNeeded">78</span>% (<span id="checkoutKwhNeeded">39.2</span> kWh)</strong>
+          </div>
+          <div class="text-right">
+            <span class="block text-[10px] uppercase font-bold text-slate-400">Est. Charging Time</span>
+            <strong class="text-purple-600 dark:text-sky-400 font-bold text-xs"><span id="checkoutEstMinutes">16 mins</span></strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Itemized Bill Table -->
+      <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 space-y-2 text-xs font-mono">
+        <div class="flex justify-between text-slate-600 dark:text-slate-300">
+          <span>Est. Energy (<span id="billKwh">39.2</span> kWh &times; ₹<span id="billRate">26</span>)</span>
+          <span class="font-bold text-slate-900 dark:text-white">₹<span id="billBase">1019.20</span></span>
+        </div>
+        <div class="flex justify-between text-slate-600 dark:text-slate-300">
+          <span>Grid Access & Connector Fee</span>
+          <span class="font-bold text-slate-900 dark:text-white" id="billGridFee">₹40.00</span>
+        </div>
+        <div class="flex justify-between text-slate-600 dark:text-slate-300">
+          <span>GST (18% on Energy & Infrastructure)</span>
+          <span class="font-bold text-slate-900 dark:text-white">₹<span id="billGst">190.66</span></span>
+        </div>
+        <div class="pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-between text-sm font-sans font-extrabold text-slate-900 dark:text-white">
+          <span>Total Payable Amount</span>
+          <span class="text-emerald-600 dark:text-emerald-400 font-mono text-base">₹<span id="billTotal">1249.86</span></span>
+        </div>
+      </div>
+
+      <!-- Demo Payment Method Selection -->
+      <div class="space-y-2">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Select Demo Payment Method:</span>
+        <div class="grid grid-cols-2 gap-2 text-xs font-medium">
+          <label class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 cursor-pointer hover:border-emerald-500">
+            <input type="radio" name="hubPaymentMethod" value="card" checked class="text-emerald-500" />
+            <div>
+              <strong class="block text-slate-800 dark:text-slate-200">Demo Card</strong>
+              <span class="text-[10px] text-slate-400 font-mono">&bull;&bull;&bull;&bull; 4242</span>
+            </div>
+          </label>
+          <label class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 cursor-pointer hover:border-emerald-500">
+            <input type="radio" name="hubPaymentMethod" value="upi" class="text-emerald-500" />
+            <div>
+              <strong class="block text-slate-800 dark:text-slate-200">Demo UPI</strong>
+              <span class="text-[10px] text-slate-400 font-mono">Fast Pay Instant</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- 15-Minute Safe Hold Guarantee -->
+      <div class="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-[11px] text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+        <span>🛡️</span>
+        <span><strong>15-Minute Hold Guarantee:</strong> This bay is reserved solely for your vehicle. Free cancellation anytime.</span>
+      </div>
+
+      <!-- Action Button -->
+      <button id="btnPayConfirm" onclick="confirmHubPayment()" class="w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/25 transition-all flex flex-col items-center justify-center cursor-pointer active:scale-95">
+        <span>Confirm & Lock Charging Spot ⚡</span>
+        <span class="text-[10px] font-medium opacity-90">Instant 4-digit PIN generated</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ================= PIN CONFIRMATION MODAL ================= -->
+  <div id="pinSuccessModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-slate-900 border border-emerald-500/50 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl text-center space-y-4">
+      <div class="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center text-3xl shadow-md shadow-emerald-500/20">
+        ✓
+      </div>
+
+      <div class="space-y-1">
+        <h3 class="text-xl font-extrabold text-slate-900 dark:text-white font-heading">
+          Charging Spot Confirmed!
+        </h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Your arrival window is now active for <strong id="bookedPortNameText">Bay 01</strong>.
+        </p>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-emerald-200 dark:border-emerald-800 space-y-1">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Your Private Arrival PIN</span>
+        <div id="displayPinText" class="text-4xl font-mono font-black text-emerald-500 tracking-widest py-1">
+          1234
+        </div>
+        <p class="text-[11px] text-slate-500">Enter this PIN on the charging dock or hook up cable upon arrival.</p>
+      </div>
+
+      <div class="flex items-center gap-3 pt-2">
+        <a href="index.html" class="flex-1 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 transition-all">
+          View on Live Dashboard
+        </a>
+        <button onclick="closePinSuccessModal()" class="flex-1 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-xs font-bold text-white shadow-md shadow-emerald-500/20 transition-all">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= NOTIFICATION TOAST ================= -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 border border-emerald-500/40 text-white px-4 py-3 rounded-2xl shadow-2xl font-mono text-xs flex items-center gap-2.5">
+    <span class="text-emerald-400 text-base">✓</span>
+    <span id="toastNotificationText">Notification</span>
+  </div>
+
+  <!-- ================= PAGE LOGIC ENGINE ================= -->
+  <script>
+    let currentStation = null;
+    let pendingPort = null;
+    let activeFilter = 'ALL';
+    let virtualCarState = { soc: 22, car: 'MG ZS EV' };
+
+    // Load Smartcar virtual vehicle telematics
+    try {
+      const savedCar = localStorage.getItem('voltgrid_virtual_car');
+      if (savedCar) virtualCarState = JSON.parse(savedCar);
+    } catch(e) {}
+
+    // Initialize Hub Details
+    function initHubPage() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetId = urlParams.get('id') || 'st-01';
+
+      const stations = (window.VoltGridDB && window.VoltGridDB.getStations) 
+        ? window.VoltGridDB.getStations() 
+        : (window.INITIAL_STATIONS || []);
+
+      currentStation = stations.find(s => s.id === targetId) || stations[0];
+
+      if (!currentStation) {
+        alert('Station not found! Returning to Gujarat hub list.');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      renderStationShowcase();
+      renderPortsList();
+    }
+
+    function renderStationShowcase() {
+      const st = currentStation;
+      document.title = st.name + ' • VoltGrid EV Ports';
+
+      document.getElementById('breadcrumbCity').innerText = st.city || 'Gujarat';
+      document.getElementById('breadcrumbStation').innerText = st.name;
+
+      document.getElementById('hubVendorLogo').innerText = st.vendorLogo || '⚡';
+      document.getElementById('hubVendorBadge').innerText = st.vendorName || 'VoltGrid';
+      document.getElementById('hubCityBadge').innerText = '📍 ' + (st.city || 'Gujarat');
+      document.getElementById('hubTypeBadge').innerText = '• ' + st.type;
+
+      document.getElementById('hubTitle').innerText = st.name;
+      document.getElementById('hubAddressText').innerText = st.location;
+      document.getElementById('hubRate').innerText = st.pricePerKwh || 26;
+      document.getElementById('hubRating').innerText = '★ ' + (st.rating || 4.9);
+
+      const total = st.ports ? st.ports.length : 0;
+      const avail = st.ports ? st.ports.filter(p => p.status === 'available').length : 0;
+      document.getElementById('hubBaysStat').innerText = avail + ' / ' + total + ' Free';
+
+      // Directions Link
+      const dirLink = st.directionsUrl || ('https://www.google.com/maps/dir/?api=1&destination=' + st.lat + ',' + st.lng);
+      document.getElementById('hubGoogleMapsBtn').href = dirLink;
+
+      // Amenities
+      const amContainer = document.getElementById('hubAmenitiesList');
+      const amenities = st.amenities || ['24x7 Assistance', 'Clean Restrooms', 'Solar Power Canopy'];
+      amContainer.innerHTML = amenities.map(a => 
+        '<span class="px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700">' + a + '</span>'
+      ).join('');
+
+      // Port counts
+      const count4W = st.ports ? st.ports.filter(p => p.vehicleType === '4W' || p.vehicleType === 'BOTH').length : 0;
+      const count2W = st.ports ? st.ports.filter(p => p.vehicleType === '2W' || p.vehicleType === 'BOTH').length : 0;
+      document.getElementById('countPort-ALL').innerText = total;
+      document.getElementById('countPort-4W').innerText = count4W;
+      document.getElementById('countPort-2W').innerText = count2W;
+    }
+
+    function filterPorts(vType) {
+      activeFilter = vType;
+      ['ALL', '4W', '2W'].forEach(t => {
+        const btn = document.getElementById('tabPort-' + t);
+        if (t === vType) {
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-xs transition-all';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all';
+        }
+      });
+      renderPortsList();
+    }
+
+    function renderPortsList() {
+      const container = document.getElementById('hubPortsGrid');
+      if (!currentStation || !currentStation.ports) return;
+
+      let ports = currentStation.ports;
+      if (activeFilter === '4W') {
+        ports = ports.filter(p => p.vehicleType === '4W' || p.vehicleType === 'BOTH');
+      } else if (activeFilter === '2W') {
+        ports = ports.filter(p => p.vehicleType === '2W' || p.vehicleType === 'BOTH');
+      }
+
+      if (ports.length === 0) {
+        container.innerHTML = 
+          '<div class="col-span-full py-12 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6">' +
+            '<span class="text-3xl mb-2 block">🔌</span>' +
+            '<h4 class="text-base font-bold text-slate-800 dark:text-white">No ' + (activeFilter === '2W' ? '2-Wheeler' : '4-Wheeler') + ' ports at this station</h4>' +
+            '<p class="text-xs text-slate-500 mt-1">Switch filter back to "All Ports" to view all available charging bays.</p>' +
+            '<button onclick="filterPorts(&quot;ALL&quot;)" class="mt-4 px-4 py-2 rounded-xl bg-emerald-500 text-white font-bold text-xs">Show All Ports</button>' +
+          '</div>';
+        return;
+      }
+
+      container.innerHTML = ports.map(port => {
+        const isAvail = port.status === 'available';
+        const isCharging = port.status === 'charging';
+        const isReserved = port.status === 'reserved';
+        const is2W = port.vehicleType === '2W';
+
+        let statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> AVAILABLE</span>';
+        if (isCharging) {
+          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-800 dark:bg-cyan-950 dark:text-cyan-300 border border-cyan-200 animate-pulse">⚡ CHARGING (' + (port.soc || 45) + '%)</span>';
+        } else if (isReserved) {
+          statusBadge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border border-amber-200">HOLD (15m)</span>';
+        }
+
+        let speedNote = '⚡ 10% → 80% in ~18 mins';
+        if (port.maxKw >= 240) speedNote = '🚀 Ultra-Fast: 10% → 80% in ~14 mins';
+        else if (port.maxKw <= 22) speedNote = is2W ? '🛵 E-Scooter Full Refill in ~45 mins' : '🔋 Destination AC Slow Top-up';
+
+        return (
+          '<div class="bg-white dark:bg-slate-900 border ' + (isAvail ? 'border-purple-200/80 dark:border-slate-800 hover:border-emerald-400' : 'border-slate-200 dark:border-slate-800 opacity-90') + ' rounded-3xl p-5 shadow-sm space-y-4 transition-all duration-200 flex flex-col justify-between">' +
+            '<div class="space-y-3">' +
+              '<div class="flex items-center justify-between gap-2">' +
+                '<span class="text-xs font-mono font-bold text-slate-400">' + port.id.toUpperCase() + '</span>' +
+                statusBadge +
+              '</div>' +
+              '<div>' +
+                '<div class="flex items-center gap-1.5 mb-1">' +
+                  '<span class="text-base">' + (is2W ? '🛵' : '🚗') + '</span>' +
+                  '<span class="text-xs font-extrabold text-slate-800 dark:text-slate-200">' + (is2W ? '2-Wheeler Dedicated' : '4-Wheeler Bay') + '</span>' +
+                '</div>' +
+                '<h3 class="text-lg font-extrabold text-slate-900 dark:text-white font-heading">' + port.name + '</h3>' +
+                '<p class="text-xs text-slate-500 font-medium mt-0.5">' + port.type + '</p>' +
+              '</div>' +
+              '<div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/60 dark:border-slate-800 space-y-1.5 text-xs font-mono">' +
+                '<div class="flex justify-between">' +
+                  '<span class="text-slate-400 font-sans">Power Output:</span>' +
+                  '<strong class="text-emerald-600 dark:text-emerald-400 font-bold">' + port.maxKw + ' kW</strong>' +
+                '</div>' +
+                '<div class="flex justify-between">' +
+                  '<span class="text-slate-400 font-sans">Connector Gun:</span>' +
+                  '<strong class="text-slate-800 dark:text-slate-200">' + (port.connector || 'CCS2') + '</strong>' +
+                '</div>' +
+                '<div class="flex justify-between">' +
+                  '<span class="text-slate-400 font-sans">Rate:</span>' +
+                  '<strong class="text-slate-800 dark:text-slate-200">₹' + currentStation.pricePerKwh + '/kWh</strong>' +
+                '</div>' +
+              '</div>' +
+              '<div class="text-[11px] text-slate-500 flex items-center gap-1">' +
+                '<span>⚡</span> <span>' + speedNote + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="pt-3 border-t border-slate-100 dark:border-slate-800">' +
+              (isAvail ? 
+                '<button onclick="openCheckoutForPort(&quot;' + port.id + '&quot;)" class="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs uppercase tracking-wider shadow-md shadow-emerald-500/20 transition-all flex items-center justify-center gap-1.5 hover:scale-[1.02] active:scale-95 cursor-pointer">' +
+                  '<span>⚡ Reserve & Checkout</span> <span>&rarr;</span>' +
+                '</button>' :
+                '<button disabled class="w-full py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 font-bold text-xs cursor-not-allowed border border-slate-200 dark:border-slate-700">' +
+                  (isCharging ? '🔌 Bay Currently In Use' : '🔒 Reserved by Another Driver') +
+                '</button>'
+              ) +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+    }
+
+    // Checkout Modal Flow
+    function openCheckoutForPort(portId) {
+      if (!currentStation) return;
+      const port = currentStation.ports.find(p => p.id === portId);
+      if (!port) return;
+
+      pendingPort = port;
+
+      try {
+        const fresh = localStorage.getItem('voltgrid_virtual_car');
+        if (fresh) virtualCarState = JSON.parse(fresh);
+      } catch(e) {}
+
+      let currentSoc = Math.round(Number(virtualCarState.soc) || 22);
+      if (currentSoc >= 98) currentSoc = 100;
+      const isFull = currentSoc >= 100;
+
+      const batteryCap = 50.3; // kWh MG ZS EV default
+      const percentNeeded = isFull ? 0 : (100 - currentSoc);
+      const neededKwh = isFull ? 0 : +((percentNeeded / 100) * batteryCap).toFixed(1);
+      const baseCost = isFull ? 0 : +(neededKwh * currentStation.pricePerKwh).toFixed(2);
+      const gridFee = isFull ? 0 : (port.vehicleType === '2W' ? 15.00 : 40.00);
+      const gst = isFull ? 0 : +((baseCost + gridFee) * 0.18).toFixed(2);
+      const total = isFull ? 0 : +(baseCost + gridFee + gst).toFixed(2);
+
+      document.getElementById('checkoutPortTitle').innerText = port.name + ' • ' + port.type;
+      document.getElementById('checkoutStationSub').innerText = currentStation.name;
+      document.getElementById('billRate').innerText = currentStation.pricePerKwh;
+
+      document.getElementById('smartcarCarName').innerText = virtualCarState.car || 'MG ZS EV';
+      document.getElementById('smartcarVinBadge').innerText = virtualCarState.vin ? ('• VIN: ...' + virtualCarState.vin.slice(-4)) : '• Live Connected';
+
+      document.getElementById('checkoutBatteryDisplay').innerText = isFull ? '100% Charged' : (currentSoc + '% Left');
+      document.getElementById('checkoutPercentNeeded').innerText = percentNeeded;
+      document.getElementById('checkoutKwhNeeded').innerText = neededKwh.toFixed(1);
+      document.getElementById('checkoutEstMinutes').innerText = isFull ? '0 mins (Full)' : '16 mins';
+
+      const visualCurrent = document.getElementById('batteryVisualCurrent');
+      const visualCurrentText = document.getElementById('batteryVisualCurrentText');
+      const visualNeeded = document.getElementById('batteryVisualNeeded');
+      const visualNeededText = document.getElementById('batteryVisualNeededText');
+
+      if (isFull) {
+        visualCurrent.style.width = '100%';
+        visualCurrent.className = 'bg-gradient-to-r from-emerald-400 to-teal-500 text-white transition-all duration-300 flex items-center justify-center truncate px-2 shadow-xs';
+        visualCurrentText.innerText = '🔋 100% Charged';
+        visualNeeded.style.width = '0%';
+        visualNeeded.style.display = 'none';
+        visualNeededText.innerText = '';
+      } else {
+        visualCurrent.style.width = currentSoc + '%';
+        visualCurrent.className = 'bg-gradient-to-r from-sky-400 to-blue-500 text-white transition-all duration-300 flex items-center justify-center truncate px-2 shadow-xs';
+        visualCurrentText.innerText = '🔋 ' + currentSoc + '% Left';
+        visualNeeded.style.width = percentNeeded + '%';
+        visualNeeded.style.display = 'flex';
+        visualNeededText.innerText = '⚡ +' + percentNeeded + '% Needed';
+      }
+
+      document.getElementById('billKwh').innerText = neededKwh.toFixed(1);
+      document.getElementById('billBase').innerText = baseCost.toFixed(2);
+      document.getElementById('billGridFee').innerText = '₹' + gridFee.toFixed(2);
+      document.getElementById('billGst').innerText = gst.toFixed(2);
+      document.getElementById('billTotal').innerText = total.toFixed(2);
+
+      const btnPay = document.getElementById('btnPayConfirm');
+      if (isFull) {
+        btnPay.disabled = true;
+        btnPay.className = 'w-full py-3.5 rounded-2xl font-bold text-xs uppercase tracking-wider bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-slate-300 dark:border-slate-700 shadow-none';
+        btnPay.innerHTML = '<span>🚫 Vehicle 100% Charged</span><span class="text-[10px] font-medium opacity-80">Booking disabled • Charging not needed</span>';
+      } else {
+        btnPay.disabled = false;
+        btnPay.className = 'w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/25 transition-all flex flex-col items-center justify-center cursor-pointer active:scale-95';
+        btnPay.innerHTML = '<span>Confirm & Lock Charging Spot ⚡</span><span class="text-[10px] font-medium opacity-90">Instant 4-digit PIN generated</span>';
+      }
+
+      document.getElementById('checkoutModal').classList.remove('hidden');
+    }
+
+    function closeCheckoutModal() {
+      document.getElementById('checkoutModal').classList.add('hidden');
+      pendingPort = null;
+    }
+
+    function confirmHubPayment() {
+      if (!currentStation || !pendingPort) return;
+
+      const newPin = Math.floor(1000 + Math.random() * 9000).toString();
+      const invNum = 'INV-2026-' + Math.floor(1000 + Math.random() * 9000);
+      const totalAmt = Number(document.getElementById('billTotal').innerText) || 850;
+      const kwhAmt = Number(document.getElementById('billKwh').innerText) || 32;
+
+      pendingPort.status = 'reserved';
+      pendingPort.pin = newPin;
+      pendingPort.invoiceNumber = invNum;
+      pendingPort.secondsLeft = 900;
+      pendingPort.reservedAt = Date.now();
+
+      const newBooking = {
+        id: invNum,
+        createdAt: new Date().toISOString(),
+        customerName: 'Driver',
+        customerPhone: '+91 93287 03345',
+        vehicleModel: virtualCarState.car || 'MG ZS EV',
+        stationId: currentStation.id,
+        stationName: currentStation.name,
+        vendorId: currentStation.vendorId || 'vendor-jiobp',
+        vendorName: currentStation.vendorName || 'Jio-bp pulse',
+        portId: pendingPort.name,
+        energyKwh: kwhAmt,
+        totalAmount: totalAmt,
+        platformFee: Math.round(totalAmt * 0.15),
+        vendorPayout: Math.round(totalAmt * 0.85),
+        status: 'CONFIRMED'
+      };
+
+      if (window.VoltGridDB) {
+        const stations = VoltGridDB.getStations();
+        const st = stations.find(s => s.id === currentStation.id);
+        if (st && st.ports) {
+          const p = st.ports.find(x => x.id === pendingPort.id);
+          if (p) {
+            p.status = 'reserved';
+            p.pin = newPin;
+            p.invoiceNumber = invNum;
+          }
+          VoltGridDB.saveStations(stations);
+        }
+        VoltGridDB.addBooking(newBooking);
+      }
+
+      closeCheckoutModal();
+
+      document.getElementById('bookedPortNameText').innerText = pendingPort.name + ' at ' + currentStation.name;
+      document.getElementById('displayPinText').innerText = newPin;
+      document.getElementById('pinSuccessModal').classList.remove('hidden');
+
+      renderPortsList();
+      showToast('⚡ Bay Reserved Successfully! Live PIN Generated.');
+    }
+
+    function closePinSuccessModal() {
+      document.getElementById('pinSuccessModal').classList.add('hidden');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      const text = document.getElementById('toastNotificationText');
+      if (!toast || !text) return;
+      text.innerText = msg;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3000);
+    }
+
+    function toggleTheme() {
+      document.documentElement.classList.toggle('dark');
+    }
+
+    // Real-time synchronization
+    if (window.VoltGridDB) {
+      VoltGridDB.onSync((type, data) => {
+        const stations = VoltGridDB.getStations();
+        const updated = stations.find(s => s.id === (currentStation ? currentStation.id : 'st-01'));
+        if (updated) {
+          currentStation = updated;
+          renderStationShowcase();
+          renderPortsList();
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', initHubPage);
+  </script>
+</body>
+</html>
