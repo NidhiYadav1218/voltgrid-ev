@@ -15,6 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
   <!-- VoltGrid Shared Statewide Database Engine -->
+  <script src="/voltgrid_db.js"></script>
   <script src="voltgrid_db.js"></script>
 
   <!-- Tailwind CSS CDN -->
@@ -402,24 +403,87 @@
     } catch(e) {}
 
     // Initialize Hub Details
-    function initHubPage() {
+    async function initHubPage() {
       const urlParams = new URLSearchParams(window.location.search);
       const targetId = urlParams.get('id') || 'st-01';
 
-      const stations = (window.VoltGridDB && window.VoltGridDB.getStations) 
-        ? window.VoltGridDB.getStations() 
-        : (window.INITIAL_STATIONS || []);
+      let stations = [];
+
+      // 1. Try VoltGridDB
+      if (window.VoltGridDB && typeof window.VoltGridDB.getStations === 'function') {
+        try { stations = window.VoltGridDB.getStations(); } catch(e) {}
+      }
+
+      // 2. Try window.INITIAL_STATIONS
+      if ((!stations || stations.length === 0) && window.INITIAL_STATIONS && window.INITIAL_STATIONS.length > 0) {
+        stations = window.INITIAL_STATIONS;
+      }
+
+      // 3. Try LocalStorage directly
+      if (!stations || stations.length === 0) {
+        try {
+          const saved = localStorage.getItem('voltgrid_stations');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) stations = parsed;
+          }
+        } catch(e) {}
+      }
+
+      // 4. Try Cloud API fetch directly from /api/stations
+      if (!stations || stations.length === 0) {
+        try {
+          const res = await fetch('/api/stations');
+          if (res.ok) {
+            const data = await res.json();
+            const list = Array.isArray(data) ? data : (data && Array.isArray(data.stations) ? data.stations : []);
+            if (list.length > 0) {
+              stations = list;
+              try { localStorage.setItem('voltgrid_stations', JSON.stringify(list)); } catch(e) {}
+            }
+          }
+        } catch(e) {}
+      }
+
+      // 5. Emergency Built-in Fallback for st-01
+      if (!stations || stations.length === 0) {
+        stations = [
+          {
+            id: "st-01",
+            vendorId: "vendor-jiobp",
+            vendorName: "Jio-bp pulse",
+            vendorLogo: "⛽",
+            vendorColor: "blue",
+            city: "Ahmedabad",
+            name: "Jio-bp pulse SG Highway HyperHub • Ahmedabad",
+            type: "Highway Ultra-Fast Hub (2W & 4W)",
+            location: "Sindhu Bhavan Marg, Off S.G. Highway, Bodakdev, Ahmedabad, Gujarat 380054",
+            lat: 23.0416,
+            lng: 72.5074,
+            mapsUrl: "https://maps.google.com/?q=23.0416,72.5074",
+            directionsUrl: "https://www.google.com/maps/dir/?api=1&destination=23.0416,72.5074",
+            pricePerKwh: 26,
+            solar: true,
+            rating: 4.9,
+            amenities: ["24x7 Wild Bean Cafe", "Restrooms", "Free Wi-Fi", "EV Lounge", "2W Dedicated Bay"],
+            ports: [
+              { id: "p101", name: "Bay 01 (4W)", type: "240kW Ultra-Fast DC", maxKw: 240, status: "available", connector: "CCS2", vehicleType: "4W" },
+              { id: "p102", name: "Bay 02 (4W)", type: "120kW Fast DC", maxKw: 120, status: "available", connector: "CCS2", vehicleType: "4W" },
+              { id: "p103", name: "Bay 03 (4W)", type: "60kW Fast DC", maxKw: 60, status: "available", connector: "CCS2", vehicleType: "4W" },
+              { id: "p104", name: "Bay 04 (Dual)", type: "22kW Type 2 AC", maxKw: 22, status: "available", connector: "Type 2", vehicleType: "BOTH" },
+              { id: "p105", name: "Bay 05 (2W)", type: "Ather Grid Fast Point", maxKw: 3.3, status: "available", connector: "Ather Type 6", vehicleType: "2W" },
+              { id: "p106", name: "Bay 06 (2W)", type: "3.3kW 16A Universal Socket", maxKw: 3.3, status: "available", connector: "16A Smart Socket", vehicleType: "2W" }
+            ]
+          }
+        ];
+      }
 
       currentStation = stations.find(s => s.id === targetId) || stations[0];
 
-      if (!currentStation) {
-        alert('Station not found! Returning to Gujarat hub list.');
-        window.location.href = 'index.html';
-        return;
+      if (currentStation) {
+        renderStationShowcase();
+        renderPortsList();
       }
-
-      renderStationShowcase();
-      renderPortsList();
     }
 
     function renderStationShowcase() {

@@ -247,6 +247,7 @@
   </footer>
 
   <!-- Unified Database & Synchronizer -->
+  <script src="/voltgrid_db.js"></script>
   <script src="voltgrid_db.js"></script>
 
   <!-- Hubs Directory Controller -->
@@ -271,8 +272,21 @@
 
     function getStationsData() {
       if (window.VoltGridDB && window.VoltGridDB.getStations) {
-        return window.VoltGridDB.getStations();
+        try {
+          const list = window.VoltGridDB.getStations();
+          if (list && list.length > 0) return list;
+        } catch(e) {}
       }
+      if (window.INITIAL_STATIONS && window.INITIAL_STATIONS.length > 0) {
+        return window.INITIAL_STATIONS;
+      }
+      try {
+        const saved = localStorage.getItem('voltgrid_stations');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch(e) {}
       return [];
     }
 
