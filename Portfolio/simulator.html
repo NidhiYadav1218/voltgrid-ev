@@ -255,6 +255,9 @@
       </div>
       <!-- Instant 1-Click Fast Drive Actions -->
       <div class="flex flex-wrap items-center gap-2 shrink-0">
+        <button onclick="refillToSoc(22)" class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-heading font-black text-xs shadow-md active:scale-95 transition-all" title="Simulate vehicle arriving at charging station with depleted battery">
+          ⚡ Arrive for Charge (22% SoC)
+        </button>
         <button onclick="injectPresetDrive(20)" class="px-3 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-heading font-black text-xs shadow-md active:scale-95 transition-all">
           🛣️ Drive 20 km (-15% SoC)
         </button>
@@ -610,10 +613,10 @@ Loading live telematics stream...
       } catch (e) {}
       return {
         car: 'MG ZS EV',
-        soc: 100,
+        soc: 22,
         initialDaySoc: 100,
-        odometer: 14250.0,
-        tripDistance: 0.0,
+        odometer: 14272.8,
+        tripDistance: 22.8,
         energyConsumedKwh: 0.0,
         speed: 0,
         targetSpeed: 0,
@@ -644,6 +647,16 @@ Loading live telematics stream...
           state.gear = 'P';
           refillToSoc(100);
           showToast('⚡ Received Full Charge from VoltGrid Station! Car parked at [P].');
+        } else if (event.data.action === 'CHARGE_START') {
+          state.isDriving = false;
+          state.speed = 0;
+          state.targetSpeed = 0;
+          state.gear = 'P';
+          showToast(`⚡ Plugged into Charging Dock! Active handshake established.`);
+          renderUI();
+        } else if (event.data.action === 'CHARGE_STOP') {
+          showToast(`🔌 Charging cable unplugged from vehicle.`);
+          renderUI();
         } else if (event.data.action === 'INJECT_SOC' && event.data.soc) {
           refillToSoc(event.data.soc);
         } else if (event.data.action === 'REQUEST_TELEMATICS' || event.data.action === 'REQUEST_STATE') {

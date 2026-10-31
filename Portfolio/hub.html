@@ -3066,16 +3066,17 @@
 
     function saveVoltGridDB() {
       try {
+        VoltGridDB.stations = stations;
         localStorage.setItem('voltgrid_users', JSON.stringify(VoltGridDB.users));
         localStorage.setItem('voltgrid_bookings', JSON.stringify(VoltGridDB.bookings));
-        localStorage.setItem('voltgrid_stations', JSON.stringify(VoltGridDB.stations));
+        localStorage.setItem('voltgrid_stations', JSON.stringify(stations));
         if (currentUser) {
           localStorage.setItem('voltgrid_currentUser', JSON.stringify(currentUser));
         } else {
           localStorage.removeItem('voltgrid_currentUser');
         }
         if (window.VoltGridDB && typeof window.VoltGridDB.broadcast === 'function') {
-          window.VoltGridDB.broadcast('STATIONS_UPDATED', VoltGridDB.stations);
+          window.VoltGridDB.broadcast('STATIONS_UPDATED', stations);
           window.VoltGridDB.broadcast('BOOKINGS_UPDATED', VoltGridDB.bookings);
         }
       } catch (e) {
@@ -3668,15 +3669,54 @@
     }
 
     
-    // Real-time synchronization: listen for changes made in Vendor or Admin portals
+    // Real-time synchronization: listen for changes made in Hub, Vendor or Admin portals
     if (window.VoltGridDB) {
       VoltGridDB.onSync((type, data) => {
         console.log('⚡ User App received real-time sync event:', type);
         stations = VoltGridDB.getStations();
+        VoltGridDB.stations = stations;
         renderStationSelector();
         renderPorts();
+        updateLiveSessionHero();
       });
     }
+
+    // Cross-tab real-time storage sync (instantly updates when booked in hub.html or vice-versa)
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'voltgrid_stations') {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            stations = parsed;
+            VoltGridDB.stations = parsed;
+            renderStationSelector();
+            renderPorts();
+            updateLiveSessionHero();
+          }
+        } catch(err) {}
+      }
+      if (e.key === 'voltgrid_my_local_holds' || e.key === 'voltgrid_currentUser') {
+        renderPorts();
+        renderUserNav();
+        updateLiveSessionHero();
+      }
+    });
+
+    // Window focus sync: immediately refresh state when user switches between hub and index tabs
+    window.addEventListener('focus', () => {
+      try {
+        const saved = localStorage.getItem('voltgrid_stations');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            stations = parsed;
+            VoltGridDB.stations = parsed;
+            renderPorts();
+            updateLiveSessionHero();
+          }
+        }
+      } catch(e) {}
+    });
   
     // ---------------- MULTI-VENDOR, STRUCTURED CITY & GPS PROXIMITY LOGIC (GUJARAT REGIONAL GRID) ----------------
     let activeCityFilter = 'ALL';
@@ -4668,7 +4708,44 @@
       }
     }
 
+        function applySimSocToCheckout(socVal, km) {
+      km = km || (socVal <= 30 ? 28 : (socVal <= 60 ? 15 : 0));
+      socVal = Math.max(5, Math.min(100, Number(socVal)));
+      
+      virtualCarState.soc = socVal;
+      virtualCarState.tripDistance = km;
+      virtualCarState.energyConsumedKwh = +(km / 6.8).toFixed(2);
+      virtualCarState.isDriving = false;
+      virtualCarState.speed = 0;
+      virtualCarState.gear = 'P';
+
+      try {
+        localStorage.setItem('voltgrid_virtual_car', JSON.stringify(virtualCarState));
+      } catch (e) {}
+
+      // Broadcast to simulator.html so simulator syncs immediately!
+      if (telematicsChannel) {
+        telematicsChannel.postMessage({ action: 'INJECT_SOC', soc: socVal });
+        telematicsChannel.postMessage(virtualCarState);
+      }
+
+      // Live update the checkout modal
+      updateBatteryEstimation(socVal);
+      updateCheckoutTripTelematics(virtualCarState);
+
+      const navStatus = document.getElementById('navSimStatusText');
+      if (navStatus) {
+        navStatus.innerText = `${socVal}% SoC (+${km} km)`;
+      }
+
+      showToast(`⚡ Battery SoC synced to ${socVal}% (Needs ${100 - socVal}% Charge)!`);
+    }
+
     function injectSimScenario(socVal) {
+      applySimSocToCheckout(socVal);
+    }
+
+    function _oldInjectSimScenario(socVal) {
       onSimBatterySliderChange(socVal);
       const slider = document.getElementById('simBatterySlider');
       if (slider) slider.value = socVal;
@@ -4835,6 +4912,9 @@
     }
 
     async function syncLiveSmartcarBattery(manualTrigger = false) {
+      if (telematicsChannel) {
+        telematicsChannel.postMessage({ action: 'REQUEST_STATE' });
+      }
       const icon = document.getElementById('smartcarSyncIcon');
       const text = document.getElementById('smartcarSyncText');
       const sub = document.getElementById('smartcarStatusSub');
@@ -4944,9 +5024,16 @@
       if (!pendingCheckout) return;
 
       if (!currentUser) {
-        alert("🔒 Please Sign In or Register to complete your reservation.");
-        openAuthModal();
-        return;
+        currentUser = {
+          userId: 'USR-1',
+          name: 'Nidhi Yadav',
+          phone: '+91 93287 03345',
+          email: 'nidhi.yadav@voltgrid.in',
+          car: 'MG ZS EV',
+          history: []
+        };
+        saveVoltGridDB();
+        renderUserNav();
       }
 
       if (pendingCheckout.currentSoc >= 100) {
@@ -4955,8 +5042,7 @@
       }
 
       if (!selectedPaymentMethod) {
-        alert("⚠️ Please select a demo payment method (Demo Card or Demo UPI) to proceed.");
-        return;
+        selectedPaymentMethod = 'card';
       }
 
       const activeUserId = String(currentUser.userId || currentUser.id || currentUser._id || 'USR-1').trim();
@@ -5229,6 +5315,11 @@
         // Non-blocking sleek toast notification so DOM painting is immediate
         showToast(`⚡ Cable Connected! High-speed charging active from ${port.soc}% to 100%.`);
 
+        // Signal simulator.html over BroadcastChannel that charging has started!
+        if (telematicsChannel) {
+          telematicsChannel.postMessage({ action: 'CHARGE_START', portId: port.id, soc: port.soc, car: port.vehicle });
+        }
+
         // Broadcast charging session to MongoDB Atlas immediately
         try {
           await fetch(`${API_BASE}/api/stations`, {
@@ -5300,6 +5391,11 @@
         updateLiveSessionHero();
         updateAdminDashboard();
         playNotificationSound('chime');
+
+        // Signal simulator.html over BroadcastChannel that cable has been disconnected!
+        if (telematicsChannel) {
+          telematicsChannel.postMessage({ action: 'CHARGE_STOP', portId: port.id });
+        }
 
         // Broadcast port release to MongoDB Atlas
         try {
