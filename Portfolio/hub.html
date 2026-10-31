@@ -61,646 +61,131 @@
     .font-mono { font-family: 'JetBrains Mono', monospace; }
   </style>
 </head>
-<body class="bg-gradient-to-b from-rose-50/30 via-slate-50 to-purple-50/20 text-slate-800 dark:from-[#090d16] dark:via-[#090d16] dark:to-[#090d16] dark:text-slate-100 antialiased selection:bg-purple-300 selection:text-purple-900 overflow-x-hidden w-full max-w-full">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen antialiased flex flex-col transition-colors duration-200">
 
-  <!-- ================= TOP NOTICE BANNER ================= -->
-  <div class="bg-gradient-to-r from-rose-100 via-purple-100 to-sky-100 dark:from-purple-950/70 dark:via-indigo-950/70 dark:to-sky-950/70 text-purple-950 dark:text-purple-200 font-semibold text-xs py-2 px-3 sm:px-4 text-center border-b border-purple-200/50 dark:border-purple-800/40 shadow-xs">
-    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap">
-      <span>✨ <strong>15-Minute Guaranteed Hold:</strong> Reserve your charger with zero queue & pay ₹0 upfront.</span>
-      <span class="text-[10px] bg-white/70 dark:bg-purple-900/60 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider hidden md:inline">
-        Safe Demo Sandbox
-      </span>
-    </div>
-  </div>
-
-  <!-- ================= NAVIGATION BAR ================= -->
-  <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#090d16]/95 backdrop-blur-md border-b border-purple-100/80 dark:border-slate-800 transition-colors w-full overflow-hidden">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2">
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#090d16]/95 backdrop-blur-md border-b border-purple-100/80 dark:border-slate-800 transition-colors w-full">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
       
-      <!-- Brand Logo -->
-      <a href="#" class="flex items-center gap-2 sm:gap-2.5 group shrink-0">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-rose-400 via-purple-400 to-sky-400 p-0.5 shadow-md shadow-purple-500/15 group-hover:scale-105 transition-transform">
-          <div class="w-full h-full bg-white dark:bg-[#090d16] rounded-[14px] flex items-center justify-center">
-            <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-            </svg>
+      <!-- Brand & Back Button -->
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2.5 group">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-500/25 group-hover:scale-105 transition-transform">
+            <span class="text-xl">⚡</span>
           </div>
-        </div>
-        <div class="flex items-baseline">
-          <span class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white font-heading">
-            Volt<span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-sky-500">Grid</span>
-          </span>
-          <span class="hidden md:inline-block ml-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
-            Gujarat EV Hub
-          </span>
-        </div>
-      </a>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-extrabold text-base tracking-tight text-slate-900 dark:text-white">VoltGrid</span>
+              <span class="px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">GUJARAT</span>
+            </div>
+            <p class="text-[10px] text-slate-500 font-medium">Smart EV Station Bay Explorer</p>
+          </div>
+        </a>
 
-      <!-- Desktop Nav Links -->
-      <nav class="hidden lg:flex items-center gap-6 text-sm font-semibold text-slate-600 dark:text-slate-300">
-        <a href="hubs.html" class="text-purple-600 dark:text-purple-400 hover:text-purple-700 font-bold transition-colors flex items-center gap-1"><span>🏛️</span> <span>All Gujarat Hubs (34)</span></a>
-        <a href="#chargers" class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Nearest Hubs (6)</a>
-        <a href="#customer-savings" class="hover:text-sky-600 dark:hover:text-sky-400 transition-colors">Your Savings & ROI</a>
-        <a href="#how-it-works" class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">How It Works</a>
-        <a href="#live-session" class="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Live Charger</a>
-      </nav>
+        <a href="index.html" class="inline-flex items-center gap-1.5 ml-2 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors">
+          <span>&larr;</span> All Gujarat Hubs (34)
+        </a>
+      </div>
 
-      <!-- Right Controls: Simulator, Hubs, Auth, Theme -->
-      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        
-        <!-- Virtual Vehicle Simulator Trigger (Opens Standalone Driving Simulator Page) -->
+      <!-- Right Controls: Simulator, Vendor, Admin, Theme & Auth -->
+      <div class="flex items-center gap-2">
+        <!-- Live Connected Vehicle SoC Pill -->
         <a 
           href="simulator.html" 
           target="_blank"
           id="navCarSimLink" 
-          class="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-sky-100/90 text-sky-900 dark:bg-sky-950/80 dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:scale-105 active:scale-95 transition-all shadow-xs"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-sky-100/90 text-sky-900 dark:bg-sky-950/80 dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:scale-105 active:scale-95 transition-all shadow-xs"
           title="Live Connected Car Telematics & Battery Status (Click to open Simulator in new tab)"
         >
           <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
           <span>🚗</span>
-          <span id="navSimStatusText" class="font-mono text-[10px] sm:text-[11px] font-extrabold text-sky-700 dark:text-sky-300">100%</span>
+          <span id="navSimStatusText" class="font-mono text-xs font-extrabold text-sky-700 dark:text-sky-300">100%</span>
         </a>
 
-        <!-- Vendor CPO Hub Link (visible sm+) -->
-        <a 
-          href="vendor.html" 
-          class="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-purple-100/90 text-purple-900 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-200 dark:border-purple-800 hover:scale-105 transition-all shadow-xs"
-          title="Open Vendor & Station Operator Hub"
-        >
-          <span>💼</span>
-          <span>Vendor</span>
+        <!-- Vendor Portal -->
+        <a href="vendor.html" class="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 dark:bg-purple-950 dark:text-purple-300 text-xs font-bold transition-colors">
+          <span>💼</span> Vendor
         </a>
 
-        <!-- Admin Console Link (visible md+) -->
-        <a 
-          href="admin.html" 
-          class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-rose-100/90 text-rose-900 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:scale-105 transition-all shadow-xs"
-          title="Open Dedicated Admin Command Center"
-        >
-          <span>🛡️</span>
-          <span>Admin</span>
+        <!-- Admin HQ -->
+        <a href="admin.html" class="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-900 dark:bg-rose-950 dark:text-rose-300 text-xs font-bold transition-colors">
+          <span>🛡️</span> Admin
         </a>
 
-        <!-- User Authentication Button / Profile Badge -->
-        <div id="navUserSlot" class="shrink-0">
-          <!-- Rendered by JS -->
-        </div>
-
-        <!-- Dark / Light Mode Switcher -->
+        <!-- Dark/Light Theme -->
         <button 
           id="themeToggleBtn"
           onclick="toggleTheme()" 
           title="Switch Dark / Light Mode"
-          class="p-2 rounded-xl bg-purple-50 hover:bg-purple-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-purple-700 dark:text-amber-300 border border-purple-200 dark:border-slate-700 transition-all shadow-xs shrink-0"
+          class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all shrink-0"
         >
-          <!-- Sun Icon -->
           <svg id="sunIcon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
-          <!-- Moon Icon -->
           <svg id="moonIcon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
           </svg>
         </button>
 
+        <!-- Driver Profile / Login Slot -->
+        <div id="navUserSlot" class="shrink-0">
+          <!-- Rendered by JS -->
+        </div>
       </div>
 
     </div>
   </header>
-  <!-- ================= MULTI-PAGE NETWORK ROLE SWITCHER BANNER ================= -->
-  <div class="bg-gradient-to-r from-emerald-500/10 via-sky-500/10 to-purple-500/10 border-b border-emerald-500/20 py-2.5 px-4 text-xs">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5">
-      <div class="flex items-center gap-2 flex-wrap justify-center sm:justify-start">
-        <span class="px-2.5 py-0.5 rounded-full bg-emerald-500 text-white font-extrabold text-[10px] tracking-wide uppercase shadow-xs">Driver App</span>
-        <span class="text-slate-700 dark:text-slate-300 font-medium text-center sm:text-left">
-          ⚡ <strong>VoltGrid Multi-Page Network:</strong> Station data & pricing are live-synced directly from the <strong>CPO Vendor Portal</strong> & <strong>Admin HQ</strong>.
-        </span>
-      </div>
-      <div class="flex items-center gap-2 flex-wrap justify-center">
-        <span class="text-slate-400 text-[11px] hidden lg:inline">Switch Portal:</span>
-        <a href="vendor.html" class="px-3 py-1 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 dark:bg-purple-950 dark:text-purple-300 font-bold border border-purple-200 dark:border-purple-800 transition-all flex items-center gap-1 shadow-xs hover:scale-105 active:scale-95" title="Open Vendor Portal to manage station tariffs and deploy new ports">
-          <span>💼</span> Vendor CPO Portal &rarr;
-        </a>
-        <a href="admin.html" class="px-3 py-1 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-900 dark:bg-rose-950 dark:text-rose-300 font-bold border border-rose-200 dark:border-rose-800 transition-all flex items-center gap-1 shadow-xs hover:scale-105 active:scale-95" title="Open Admin HQ to audit settlements, platform margin, and refund bookings">
-          <span>🛡️</span> Admin HQ &rarr;
-        </a>
-        <a href="simulator.html" target="_blank" class="px-3 py-1 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-900 dark:bg-sky-950 dark:text-sky-300 font-bold border border-sky-200 dark:border-sky-800 transition-all flex items-center gap-1 shadow-xs hover:scale-105 active:scale-95" title="Open Smartcar Virtual Car Simulator in a new tab">
-          <span>🚗</span> Simulator ↗
-        </a>
-      </div>
-    </div>
-  </div>
 
-
-  <!-- ================= HERO SECTION ================= -->
-  <section class="relative pt-10 pb-16 lg:pt-16 lg:pb-24 overflow-hidden border-b border-slate-200 dark:border-slate-800">
+  <main class="py-8 sm:py-12 flex-1">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-        
-        <!-- Left Hero Content -->
-        <div class="lg:col-span-7 space-y-5">
-          
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-rose-100 via-purple-100 to-sky-100 text-purple-900 dark:from-purple-950/60 dark:to-sky-950/60 dark:text-purple-200 text-xs font-bold border border-purple-200/60 shadow-xs">
-            <span class="flex h-2 w-2 rounded-full bg-purple-500 animate-ping"></span>
-            <span>Real Gujarat Locations &bull; Guaranteed Spot Hold &bull; Zero Waiting</span>
-          </div>
 
-          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.14] font-heading">
-            Reserve Your EV Charger. <br/>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-sky-500 dark:from-purple-400 dark:via-pink-300 dark:to-sky-300">
-              Never Wait in Line Again.
-            </span>
-          </h1>
-
-          <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
-            Driving across the Ahmedabad-Vadodara Expressway (NE-1), visiting GIFT City Gandhinagar, or commuting in Surat and Rajkot? Lock in verified fast chargers for <strong>2-wheelers & 4-wheelers</strong> 15 minutes before arrival. Guaranteed available upon hookup.
-          </p>
-
-          <!-- Key Metrics Badges (Lavender, Peach & Light Blue) -->
-          <div class="grid grid-cols-3 gap-2 sm:gap-3 pt-2">
-            <div class="bg-purple-50/90 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/60 rounded-2xl p-2.5 sm:p-3.5 text-center shadow-xs">
-              <span class="text-lg sm:text-xl mb-0.5 block">⚡</span>
-              <strong class="text-xs sm:text-sm font-bold text-purple-950 dark:text-purple-200 block">360 kW Hyper</strong>
-              <span class="text-[10px] text-purple-700/80 dark:text-purple-300/80">10% &rarr; 80% (18m)</span>
-            </div>
-            <div class="bg-orange-50/90 dark:bg-orange-950/40 border border-orange-200/80 dark:border-orange-800/60 rounded-2xl p-2.5 sm:p-3.5 text-center shadow-xs">
-              <span class="text-lg sm:text-xl mb-0.5 block">🔒</span>
-              <strong class="text-xs sm:text-sm font-bold text-orange-950 dark:text-orange-200 block">15-Min Lock</strong>
-              <span class="text-[10px] text-orange-700/80 dark:text-orange-300/80">Zero Slot Theft</span>
-            </div>
-            <div class="bg-sky-50/90 dark:bg-sky-950/40 border border-sky-200/80 dark:border-sky-800/60 rounded-2xl p-2.5 sm:p-3.5 text-center shadow-xs">
-              <span class="text-lg sm:text-xl mb-0.5 block">🛵🚗</span>
-              <strong class="text-xs sm:text-sm font-bold text-sky-950 dark:text-sky-200 block">2W & 4W Ready</strong>
-              <span class="text-[10px] text-sky-700/80 dark:text-sky-300/80">Ather, Ola, Tata, MG</span>
-            </div>
-          </div>
-
-          <!-- CTAs -->
-          <div class="pt-2 flex flex-wrap items-center gap-3">
-            <a href="#chargers" class="px-6 py-3.5 rounded-2xl font-bold text-xs sm:text-sm bg-gradient-to-r from-purple-600 via-pink-500 to-sky-500 hover:from-purple-700 hover:to-sky-600 text-white shadow-md shadow-purple-500/20 transition-all flex items-center gap-2">
-              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              <span>Explore Real Gujarat Stations</span>
-            </a>
-            <button onclick="openAdminModal()" class="px-5 py-3.5 rounded-2xl font-bold text-xs sm:text-sm bg-white dark:bg-slate-900 hover:bg-purple-50 dark:hover:bg-slate-800 border border-purple-200/80 dark:border-slate-700 text-purple-900 dark:text-slate-200 transition-all flex items-center gap-1.5 shadow-xs">
-              <span>Admin Monitor &rarr;</span>
-            </button>
-          </div>
-
-        </div>
-
-        <!-- Right Hero Live Interactive Hub Preview -->
-        <div class="lg:col-span-5">
-          <div class="bg-gradient-to-br from-white via-purple-50/30 to-sky-50/30 dark:bg-slate-900 border border-purple-100 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl relative">
-            
-            <div class="flex items-center justify-between pb-3.5 border-b border-purple-100/80 dark:border-slate-800">
-              <div>
-                <span class="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-sky-400">Live Station Hub • Gujarat</span>
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">SG Highway HyperHub • Bodakdev</h3>
-              </div>
-              <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300">
-                🟢 5 Bays Free
-              </span>
-            </div>
-
-            <div class="mt-4 space-y-3">
-              <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                <span>📍 Ahmedabad, Gujarat &bull; Off Sindhu Bhavan Road</span>
-              </p>
-
-              <!-- Quick Status Cards: Peach & Light Blue -->
-              <div class="grid grid-cols-2 gap-2.5 pt-1">
-                <div class="bg-orange-50/90 dark:bg-slate-950 p-3 rounded-2xl border border-orange-200 dark:border-orange-800/80">
-                  <div class="flex items-center justify-between text-xs font-bold text-orange-950 dark:text-white mb-0.5">
-                    <span>Port 01 (180kW)</span>
-                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  </div>
-                  <span class="text-[11px] text-orange-700 dark:text-orange-400 font-bold block">Available &bull; ₹26/kWh</span>
-                </div>
-
-                <div class="bg-sky-50/90 dark:bg-slate-950 p-3 rounded-2xl border border-sky-200 dark:border-sky-800/80">
-                  <div class="flex items-center justify-between text-xs font-bold text-sky-950 dark:text-white mb-0.5">
-                    <span>Port 02 (180kW)</span>
-                    <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
-                  </div>
-                  <span class="text-[11px] text-sky-700 dark:text-sky-400 font-bold block">Charging &bull; 74%</span>
-                </div>
-              </div>
-
-              <!-- Interactive Simulator bar -->
-              <div class="bg-white/80 dark:bg-slate-950 p-3.5 rounded-2xl border border-purple-100 dark:border-slate-800 space-y-2">
-                <div class="flex justify-between text-xs font-medium">
-                  <span class="text-slate-500">Battery Goal:</span>
-                  <span class="text-purple-600 dark:text-sky-400 font-bold">25% &rarr; 80% (~18 mins)</span>
-                </div>
-                <div class="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
-                  <div class="bg-gradient-to-r from-sky-400 via-purple-400 to-rose-400 h-full w-[78%] rounded-full"></div>
-                </div>
-                <div class="flex justify-between text-[11px] text-slate-500">
-                  <span>Est. Highway Range: <strong>+220 km</strong></span>
-                  <span>Est. Cost: <strong class="text-purple-600 dark:text-sky-400">₹1,140</strong></span>
-                </div>
-              </div>
-
-              <a href="#chargers" class="w-full py-3 rounded-2xl font-bold text-xs uppercase tracking-wider bg-gradient-to-r from-purple-600 via-pink-500 to-sky-500 hover:from-purple-700 hover:to-sky-600 text-white flex items-center justify-center gap-2 transition-all shadow-md shadow-purple-500/20">
-                <span>View All 7 Gujarat Hubs & Lock Spot</span>
-                <span>&rarr;</span>
-              </a>
-
-            </div>
-
-          </div>
-        </div>
-
+      <!-- Live Active Charging Banner (Appears ONLY during an in-progress session) -->
+      <div id="liveSessionContainer" class="mb-8">
+        <!-- Rendered dynamically if user has active charging session -->
       </div>
 
-    </div>
-  </section>
-
-  <!-- ================= CUSTOMER VALUE & SAVINGS (INTERACTIVE CALCULATOR) ================= -->
-  <section id="customer-savings" class="py-14 sm:py-20 bg-white dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="text-center max-w-2xl mx-auto mb-10">
-        <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-cyan-400 block mb-1">Interactive Customer ROI Calculator</span>
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading">
-          How Much Are You Saving vs Petrol?
-        </h2>
-        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2">
-          Adjust your monthly driving distance and EV model to see exact fuel savings and carbon reduction.
-        </p>
-      </div>
-
-      <!-- Interactive Calculator Controls & Live Results Grid -->
-      <div class="max-w-5xl mx-auto bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-lg">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          
-          <!-- Left: Input Controls (5 cols) -->
-          <div class="lg:col-span-5 space-y-6">
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
-                Select Your EV Vehicle
-              </label>
-              <select id="calcCarSelect" onchange="recalculateSavings()" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                <option value="tata">Tata Nexon EV Max (40.5 kWh • 7.2 km/kWh)</option>
-                <option value="mg">MG ZS EV (50.3 kWh • 6.8 km/kWh)</option>
-                <option value="tesla">Tesla Model 3 LR (82 kWh • 6.5 km/kWh)</option>
-                <option value="hyundai">Hyundai Ioniq 5 (77.4 kWh • 6.2 km/kWh)</option>
-                <option value="mahindra">Mahindra XUV400 (39.4 kWh • 6.9 km/kWh)</option>
-              </select>
-            </div>
-
-            <div>
-              <div class="flex justify-between items-center mb-2">
-                <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  Monthly Driving Distance
-                </label>
-                <span id="calcKmDisplay" class="text-sm font-extrabold text-emerald-600 dark:text-cyan-400 font-mono">1,200 km / month</span>
-              </div>
-              <input 
-                type="range" 
-                id="calcKmRange" 
-                min="300" 
-                max="3500" 
-                step="50" 
-                value="1200" 
-                oninput="recalculateSavings()"
-                class="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-              />
-              <div class="flex justify-between text-[11px] text-slate-400 mt-1">
-                <span>300 km</span>
-                <span>1,200 km (Avg commute)</span>
-                <span>3,500 km</span>
-              </div>
-            </div>
-
-            <div class="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-300 flex items-start gap-2.5">
-              <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Calculated against petrol benchmark at <strong>₹102/L</strong> (14 km/L city-highway blend) vs VoltGrid Fast Charging tariff.</span>
-            </div>
-          </div>
-
-          <!-- Right: Visual Impact Metrics (7 cols) with Peach, Light Blue & Lavender -->
-          <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            
-            <!-- Metric 1: Monthly Fuel Savings (Soft Peach) -->
-            <div class="bg-gradient-to-br from-orange-50/90 to-rose-50/70 dark:bg-slate-900 p-5 rounded-3xl border border-orange-200/80 dark:border-rose-900/40 shadow-xs relative overflow-hidden group">
-              <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-rose-400/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
-              <span class="text-[10px] font-bold uppercase tracking-wider text-rose-800/70 dark:text-rose-400 block mb-1">Net Monthly Savings</span>
-              <span id="calcMonthlySave" class="text-3xl font-extrabold text-rose-600 dark:text-rose-400 font-heading block">
-                ₹6,543
-              </span>
-              <span class="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
-                Petrol: <span id="calcPetrolCost" class="line-through text-rose-400 font-semibold">₹8,742</span> • EV: <span id="calcEvCost" class="text-emerald-600 font-bold">₹2,199</span>
-              </span>
-            </div>
-
-            <!-- Metric 2: Annual Projected Savings (Soft Light Blue) -->
-            <div class="bg-gradient-to-br from-sky-50/90 to-blue-50/70 dark:bg-slate-900 p-5 rounded-3xl border border-sky-200/80 dark:border-sky-900/40 shadow-xs relative overflow-hidden group">
-              <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-sky-400/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
-              <span class="text-[10px] font-bold uppercase tracking-wider text-sky-800/70 dark:text-sky-400 block mb-1">Annual Money in Your Pocket</span>
-              <span id="calcAnnualSave" class="text-3xl font-extrabold text-sky-600 dark:text-sky-400 font-heading block">
-                ₹78,516
-              </span>
-              <span class="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
-                Extra cash kept in your wallet by charging on VoltGrid
-              </span>
-            </div>
-
-            <!-- Metric 3: Carbon Prevented (Soft Mint) -->
-            <div class="bg-gradient-to-br from-emerald-50/90 to-teal-50/70 dark:bg-slate-900 p-5 rounded-3xl border border-emerald-200/80 dark:border-emerald-900/40 shadow-xs">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800/70 dark:text-emerald-400 block mb-1">CO₂ Emissions Prevented</span>
-              <span id="calcCo2" class="text-2xl font-extrabold text-teal-600 dark:text-teal-400 font-heading block">
-                186 kg / mo
-              </span>
-              <span class="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
-                Equivalent to planting <strong id="calcTrees" class="text-slate-800 dark:text-slate-200 font-bold">9 trees</strong> every month
-              </span>
-            </div>
-
-            <!-- Metric 4: Queue Time Saved (Soft Lavender) -->
-            <div class="bg-gradient-to-br from-purple-50/90 to-violet-50/70 dark:bg-slate-900 p-5 rounded-3xl border border-purple-200/80 dark:border-purple-900/40 shadow-xs">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-purple-800/70 dark:text-purple-400 block mb-1">Guaranteed Slot Queue Saved</span>
-              <span class="text-2xl font-extrabold text-purple-600 dark:text-purple-400 font-heading block">
-                45 Mins
-              </span>
-              <span class="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
-                Anti-steal lock guarantees reserved bay upon arrival
-              </span>
-            </div>
-
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ================= REAL STATIONS & LIVE PORTS MATRIX ================= -->
-  <section id="chargers" class="py-14 sm:py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
+      <!-- Dedicated Bay Matrix Header & Port Filter Controls -->
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
-          <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-cyan-400 block mb-1">Live Reservation Matrix</span>
-          <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-heading">
-            Choose a Real Location & Lock Your Spot
-          </h2>
-          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Real highway corridors & prime commercial hubs with live directions.
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider mb-2 border border-emerald-200 dark:border-emerald-800">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="hubStationBadge">DEDICATED BAY MATRIX</span>
+          </div>
+          <h1 id="hubStationTitle" class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading tracking-tight">
+            Choose a Port &amp; Lock Your Slot
+          </h1>
+          <p id="hubStationLocation" class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-xl">
+            Select your preferred power output and connector gun. Each booking generates an instant 4-digit PIN with a guaranteed 15-minute arrival hold.
           </p>
         </div>
 
-        <!-- Real-Time Legend & Audio Test -->
-        <div class="flex flex-wrap items-center gap-3 text-xs font-semibold">
-          <span class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Free to Book
-          </span>
-          <span class="flex items-center gap-1.5 text-cyan-600 dark:text-cyan-400">
-            <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> In Use / Charging
-          </span>
-          <span class="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
-            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Reserved
-          </span>
-          <button id="btnTestSound" onclick="testSoundFx()" title="Verify speaker output & unlock browser Web Audio" class="ml-1 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 dark:border-slate-700 hover:border-emerald-500 text-slate-700 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-cyan-400 bg-white dark:bg-slate-900 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
-            <span>🔊</span> Test Sound
-          </button>
-        </div>
-      </div>
-
-      <!-- Multi-Vendor Filter & Proximity Location Bar -->
-      <div class="mb-6 space-y-3">
-
-        <!-- Tier 1: Dedicated Structured City / Location Explorer -->
-        <div class="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-white via-slate-50 to-emerald-50/30 dark:bg-slate-900 border-2 border-emerald-500/20 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-          
-          <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-3">
-            <div class="flex items-center gap-2 shrink-0">
-              <span class="text-xl">📍</span>
-              <div>
-                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">Choose Gujarat Location</span>
-                <span class="text-xs font-bold text-slate-800 dark:text-white">Filter Stations by City:</span>
-              </div>
-            </div>
-
-            <!-- Structured City Dropdown -->
-            <div class="flex-1 max-w-md">
-              <select id="cityFilterSelect" onchange="onCityFilterChanged(this.value)" class="w-full bg-white dark:bg-slate-950 border-2 border-emerald-400/60 dark:border-emerald-500/40 text-slate-900 dark:text-white text-xs sm:text-sm font-bold rounded-2xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-xs cursor-pointer transition-all">
-                <option value="ALL" selected>🏙️ All Gujarat (34 SuperHubs Statewide)</option>
-                <optgroup label="── Major Urban Hubs ──">
-                  <option value="Surat">📍 Surat (VR Mall Dumas, Diamond Bourse & Adajan • 3 Hubs)</option>
-                  <option value="Ahmedabad">📍 Ahmedabad (SG Highway, Riverfront, Bopal, Motera • 6 Hubs)</option>
-                  <option value="Vadodara">📍 Vadodara (Expressway Golden Chokdi & Alkapuri • 2 Hubs)</option>
-                  <option value="Rajkot">📍 Rajkot (150ft Ring Road & Madhapar • 2 Hubs)</option>
-                  <option value="Gandhinagar">📍 Gandhinagar (GIFT City FinTech SuperHub)</option>
-                  <option value="Bhavnagar">📍 Bhavnagar (Victoria Park SuperHub)</option>
-                  <option value="Jamnagar">📍 Jamnagar (Reliance Greens Refinery Gateway)</option>
-                  <option value="Junagadh">📍 Junagadh (Girnar Eco-Hub)</option>
-                </optgroup>
-                <optgroup label="── Highway & Industrial Corridors ──">
-                  <option value="Anand">📍 Anand & Nadiad (Amul Dairy & NE-1 Oasis • 2 Hubs)</option>
-                  <option value="Bharuch">📍 Bharuch & Ankleshwar (Narmada Golden Bridge & GIDC • 2 Hubs)</option>
-                  <option value="Vapi">📍 Vapi & Valsad (Gunjan NH-48 & Tithal Beach • 2 Hubs)</option>
-                  <option value="Morbi">📍 Morbi (Ceramic Expressway NH-27)</option>
-                  <option value="Mehsana">📍 Mehsana (Sun Temple Highway Corridor)</option>
-                </optgroup>
-                <optgroup label="── Pilgrimage & Tourism Corridors ──">
-                  <option value="Dwarka">📍 Dwarka (Dwarkadhish & Shivrajpur Beach)</option>
-                  <option value="Somnath">📍 Somnath (Oceanfront Jyotirlinga Heritage)</option>
-                  <option value="Sasan Gir">📍 Sasan Gir (Lion Safari National Reserve)</option>
-                  <option value="Kevadia">📍 Statue of Unity (Ekta Nagar Green Zone)</option>
-                  <option value="Porbandar">📍 Porbandar (Coastal Chowpati Beach)</option>
-                </optgroup>
-                <optgroup label="── Kutch Region ──">
-                  <option value="Kutch">📍 Kutch (Bhuj Heritage, White Rann Dhordo & Kandla • 3 Hubs)</option>
-                </optgroup>
-              </select>
-            </div>
-          </div>
-
-          <!-- GPS Proximity Button & Location Indicator -->
-          <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
-            <button onclick="detectDeviceGpsLocation()" id="btnLiveGps" class="px-3.5 py-2.5 rounded-2xl bg-cyan-100 hover:bg-cyan-200 text-cyan-900 dark:bg-cyan-950 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 text-xs font-bold flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all shadow-xs" title="Calculate real-time driving distances from your live device GPS">
-              <span>🎯</span> <span>Current Location (GPS)</span>
+        <!-- Port Vehicle Compatibility Filters & Quick Directions -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <div class="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <button onclick="setVehicleTypeFilter('ALL')" id="vhFilter-ALL" class="px-3.5 py-1.5 rounded-xl font-bold text-xs bg-cyan-500 text-white shadow-sm transition-all">
+              ⚡ All Ports
             </button>
-            <span id="activeLocationPill" class="text-xs font-bold px-3 py-2 rounded-2xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 shadow-xs">
-              📍 All Gujarat
-            </span>
-          </div>
-
-        </div>
-
-        <!-- Tier 2: Refined Filters (CPO Network + EV Category) -->
-        <div class="p-3.5 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-          
-          <!-- Vendor Network Filter Tabs -->
-          <div class="flex items-center gap-1.5 flex-wrap" id="vendorFilterTabs">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1 hidden sm:inline">CPO Network:</span>
-            <button onclick="setVendorFilter('ALL')" id="vFilter-ALL" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-sm transition-all">
-              🏢 All Networks (34 Hubs)
-            </button>
-            <button onclick="setVendorFilter('vendor-jiobp')" id="vFilter-vendor-jiobp" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
-              ⛽ Jio-bp pulse
-            </button>
-            <button onclick="setVendorFilter('vendor-tata')" id="vFilter-vendor-tata" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
-              ⚡ Tata Power
-            </button>
-            <button onclick="setVendorFilter('vendor-zeon')" id="vFilter-vendor-zeon" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
-              🔋 Zeon
-            </button>
-            <button onclick="setVendorFilter('vendor-statiq')" id="vFilter-vendor-statiq" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
-              🚀 Statiq
-            </button>
-            <button onclick="setVendorFilter('vendor-voltgrid')" id="vFilter-vendor-voltgrid" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
-              🛡️ VoltGrid Direct
-            </button>
-          </div>
-
-          <!-- Vehicle Compatibility Filter (2W vs 4W) -->
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1 hidden sm:inline">EV Category:</span>
-            <button onclick="setVehicleTypeFilter('ALL')" id="vhFilter-ALL" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-500 text-white shadow-sm transition-all">
-              ⚡ All Ports (2W & 4W)
-            </button>
-            <button onclick="setVehicleTypeFilter('4W')" id="vhFilter-4W" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all">
+            <button onclick="setVehicleTypeFilter('4W')" id="vhFilter-4W" class="px-3.5 py-1.5 rounded-xl font-bold text-xs bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all">
               🚗 4-Wheelers
             </button>
-            <button onclick="setVehicleTypeFilter('2W')" id="vhFilter-2W" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all">
+            <button onclick="setVehicleTypeFilter('2W')" id="vhFilter-2W" class="px-3.5 py-1.5 rounded-xl font-bold text-xs bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all">
               🛵 2-Wheelers
             </button>
           </div>
 
+          <a id="hubDirectionsBtn" href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 rounded-2xl font-bold text-xs bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white shadow-sm transition-all flex items-center gap-1.5">
+            <span>🗺️</span> Directions
+          </a>
         </div>
-
-      </div>
-
-      <!-- Active Station Counter & Region Indicator -->
-      <div class="flex items-center justify-between mb-4 px-1 text-xs">
-        <div class="flex items-center gap-2">
-          <span class="font-bold text-slate-700 dark:text-slate-300">Available Gujarat Hubs:</span>
-          <span id="stationCountDisplay" class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-extrabold font-mono text-[11px] border border-emerald-200">
-            34 Hubs Across Gujarat
-          </span>
-        </div>
-        <span class="text-slate-500 text-[11px] hidden sm:inline" id="stationProximityNote">
-          📍 Sorted by distance from your chosen location
-        </span>
-      </div>
-
-      <!-- Station Hub Selector Buttons -->
-      <div id="stationButtons" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <!-- Rendered by JS -->
       </div>
 
       <!-- Active Station Ports Grid -->
       <div id="portsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- Rendered by JS -->
+        <!-- Rendered dynamically by renderPorts() -->
       </div>
 
     </div>
-  </section>
-
-  <!-- ================= LIVE IN-PROGRESS CHARGING STATUS (DYNAMIC) ================= -->
-  <section id="live-session" class="py-10 sm:py-14 bg-slate-100 dark:bg-slate-900/40 border-t border-slate-200 dark:border-slate-800">
-    <div id="liveSessionContainer" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <!-- Dynamically populated by updateLiveSessionHero() -->
-    </div>
-  </section>
-
-  <!-- ================= HOW IT WORKS (3 STEPS) ================= -->
-  <section id="how-it-works" class="py-14 sm:py-20 bg-white dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="text-center max-w-2xl mx-auto mb-12">
-        <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-cyan-400 block mb-1">Simple Booking Flow</span>
-        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-heading">
-          How VoltGrid Works in 3 Steps
-        </h2>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <div class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-3xl p-6">
-          <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-extrabold text-xl flex items-center justify-center mb-4">
-            1
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1.5">Pick Hub & Charger</h3>
-          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-            See real-time available ports across Highway and City hubs with verified speed (150kW to 350kW).
-          </p>
-        </div>
-
-        <div class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-3xl p-6">
-          <div class="w-12 h-12 rounded-2xl bg-cyan-100 dark:bg-cyan-950 text-cyan-600 dark:text-cyan-400 font-extrabold text-xl flex items-center justify-center mb-4">
-            2
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1.5">Lock Spot & Checkout</h3>
-          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-            Simulate payment in sandbox mode. Port locks exclusively to your 4-digit PIN for 15 minutes.
-          </p>
-        </div>
-
-        <div class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-3xl p-6">
-          <div class="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 font-extrabold text-xl flex items-center justify-center mb-4">
-            3
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1.5">Plug In & Get Receipt</h3>
-          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-            Arrive, enter your PIN on the charger, plug in, and download your official itemized tax invoice!
-          </p>
-        </div>
-
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ================= TARIFF PRICING ================= -->
-  <section id="pricing" class="py-14 sm:py-20 border-t border-slate-200 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <div class="text-center max-w-2xl mx-auto mb-12">
-        <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-cyan-400 block mb-1">Transparent Tariffs</span>
-        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-heading">
-          Pay for Energy Used &bull; Zero Hidden Fees
-        </h2>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
-          <span class="text-xs font-bold uppercase text-slate-400">Casual Driver</span>
-          <h3 class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">Pay-As-You-Go</h3>
-          <div class="mt-3 flex items-baseline gap-1">
-            <span class="text-3xl font-extrabold text-slate-900 dark:text-white">₹28</span>
-            <span class="text-xs text-slate-500">/ kWh (Highway Ultra-Hubs)</span>
-          </div>
-          <ul class="space-y-2 mt-4 text-xs text-slate-600 dark:text-slate-300">
-            <li>✓ Free 15-minute anti-steal hold</li>
-            <li>✓ All 350kW & 150kW DC ports</li>
-            <li>✓ Automated tax invoice generation</li>
-          </ul>
-        </div>
-
-        <div class="bg-gradient-to-b from-emerald-50 to-teal-50 dark:from-slate-900 dark:to-[#0f1d2b] border-2 border-emerald-500 dark:border-cyan-400 rounded-3xl p-6 shadow-md relative">
-          <span class="text-xs font-bold uppercase text-emerald-700 dark:text-cyan-400">Frequent Commuter</span>
-          <h3 class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">VoltGrid Prime Pass</h3>
-          <div class="mt-3 flex items-baseline gap-1">
-            <span class="text-3xl font-extrabold text-emerald-600 dark:text-cyan-400">₹799</span>
-            <span class="text-xs text-slate-500">/ month</span>
-          </div>
-          <ul class="space-y-2 mt-4 text-xs text-slate-700 dark:text-slate-300">
-            <li>✓ <strong>20% discount on off-peak energy rates (₹22/kWh)</strong></li>
-            <li>✓ <strong>30-minute extended slot hold</strong></li>
-            <li>✓ Priority lane booking on highway weekends</li>
-          </ul>
-        </div>
-      </div>
-
-    </div>
-  </section>
+  </main>
 
   <!-- ================= FOOTER ================= -->
   <footer class="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 py-8 text-xs text-slate-500">
@@ -5189,6 +4674,7 @@
     }
 
     function renderPorts() {
+      if (typeof updateHubStationInfo === 'function') updateHubStationInfo();
       const container = document.getElementById('portsGrid');
       const station = stations.find(s => s.id === currentStationId);
       if (!station) return;
@@ -5439,31 +4925,9 @@
         if (activePort) break;
       }
 
-      // If no active session belonging to current user:
+      // If no active session belonging to current user, keep container clean:
       if (!activePort) {
-        container.innerHTML = `
-          <div class="flex flex-col md:flex-row items-center justify-between gap-6 p-6 sm:p-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm">
-            <div class="space-y-2 max-w-xl">
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-cyan-400">
-                  Live Station Telemetry Standby
-                </span>
-              </div>
-              <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white font-heading">
-                No Active Charging Cable Connected
-              </h3>
-              <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                Select an available high-speed bay in the reservation matrix below to lock your 15-minute arrival guarantee. Once you arrive at the charging hub, enter your private PIN to plug in and monitor real-time charging telemetry.
-              </p>
-            </div>
-            <div>
-              <a href="#chargers" class="px-5 py-3 rounded-2xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 dark:bg-cyan-400 dark:hover:bg-cyan-300 text-white dark:text-slate-950 shadow-md shadow-emerald-500/20 transition-all flex items-center gap-2">
-                <span>⚡</span> Select a Charging Bay Below
-              </a>
-            </div>
-          </div>
-        `;
+        container.innerHTML = '';
         return;
       }
 
@@ -7130,7 +6594,33 @@
     }, 1000);
 
     // ---------------- INITIALIZATION ----------------
+    
+    function updateHubStationInfo() {
+      const st = stations.find(s => s.id === currentStationId) || stations[0];
+      if (!st) return;
+      const badgeEl = document.getElementById('hubStationBadge');
+      const titleEl = document.getElementById('hubStationTitle');
+      const locEl = document.getElementById('hubStationLocation');
+      const directionsBtn = document.getElementById('hubDirectionsBtn');
+
+      if (badgeEl) {
+        badgeEl.innerText = (st.vendorName || 'VoltGrid') + ' • ' + (st.city || 'Gujarat');
+      }
+      if (titleEl) {
+        titleEl.innerText = st.name || 'Choose a Port & Lock Your Slot';
+      }
+      if (locEl) {
+        locEl.innerText = (st.location ? st.location + ' • ' : '') + 'Select your preferred power output and connector gun. Each booking generates an instant 4-digit PIN with a guaranteed 15-minute arrival hold.';
+      }
+      if (directionsBtn) {
+        const dirUrl = st.directionsUrl || ('https://www.google.com/maps/dir/?api=1&destination=' + (st.lat || 23.0416) + ',' + (st.lng || 72.5074));
+        directionsBtn.href = dirUrl;
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
+      updateHubStationInfo();
+      renderPorts();
       resetPaymentSelection();
       initTheme();
       renderUserNav();
