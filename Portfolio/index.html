@@ -4330,7 +4330,7 @@
     });
     saveVoltGridDB();
     let currentUser = loadSaved('voltgrid_currentUser', null);
-    let currentStationId = 'st-01';
+    let currentStationId = (typeof window !== 'undefined' && window.location && new URLSearchParams(window.location.search).get('id')) || 'st-01';
     let pendingCheckout = null;
     let activeAdminTab = 'bookings';
 
@@ -5543,8 +5543,13 @@
       `;
     }
 
-        function selectStation(id) {
-      window.location.href = 'hub.html?id=' + encodeURIComponent(id);
+    function selectStation(id) {
+      currentStationId = id;
+      renderStationSelector();
+      renderPorts();
+      updateLiveSessionHero();
+      const el = document.getElementById('portsSection') || document.getElementById('portsGrid');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
 
     // ---------------- CHECKOUT & BILLING FLOW ----------------

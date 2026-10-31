@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VoltGrid // Gujarat EV Charging SuperHub Details</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>VoltGrid // Smart EV Fast Charging & Slot Reservation</title>
+  <meta name="description" content="Reserve fast EV chargers at highway stops and shopping malls before you arrive. Guaranteed spots, zero waiting in line, and friendly live battery tracking." />
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
   <script src="voltgrid_db.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -15,207 +22,770 @@
       darkMode: 'class',
       theme: {
         extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              400: '#34d399',
+              500: '#10b981', // Emerald
+              600: '#059669',
+              700: '#047857',
+              dark: '#090d16',
+              cyan: '#06b6d4'
+            }
+          },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            heading: ['"Outfit"', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace']
           }
         }
       }
-    };
+    }
   </script>
   <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+      width: 100% !important;
+      box-sizing: border-box;
+    }
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    .font-heading { font-family: 'Outfit', sans-serif; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen antialiased flex flex-col transition-colors duration-200">
+<body class="bg-gradient-to-b from-rose-50/30 via-slate-50 to-purple-50/20 text-slate-800 dark:from-[#090d16] dark:via-[#090d16] dark:to-[#090d16] dark:text-slate-100 antialiased selection:bg-purple-300 selection:text-purple-900 overflow-x-hidden w-full max-w-full">
 
-  <!-- ================= TOP NAVIGATION BAR ================= -->
-  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-purple-100 dark:border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+  <!-- ================= TOP NOTICE BANNER ================= -->
+  <div class="bg-gradient-to-r from-rose-100 via-purple-100 to-sky-100 dark:from-purple-950/70 dark:via-indigo-950/70 dark:to-sky-950/70 text-purple-950 dark:text-purple-200 font-semibold text-xs py-2 px-3 sm:px-4 text-center border-b border-purple-200/50 dark:border-purple-800/40 shadow-xs">
+    <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap">
+      <span>✨ <strong>15-Minute Guaranteed Hold:</strong> Reserve your charger with zero queue & pay ₹0 upfront.</span>
+      <span class="text-[10px] bg-white/70 dark:bg-purple-900/60 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider hidden md:inline">
+        Safe Demo Sandbox
+      </span>
+    </div>
+  </div>
+
+  <!-- ================= NAVIGATION BAR ================= -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-[#090d16]/95 backdrop-blur-md border-b border-purple-100/80 dark:border-slate-800 transition-colors w-full overflow-hidden">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2">
       
-      <!-- Brand & Back Button -->
-      <div class="flex items-center gap-3">
-        <a href="index.html" class="flex items-center gap-2.5 group">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-500/25 group-hover:scale-105 transition-transform">
-            <span class="text-xl">⚡</span>
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-2 sm:gap-2.5 group shrink-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-rose-400 via-purple-400 to-sky-400 p-0.5 shadow-md shadow-purple-500/15 group-hover:scale-105 transition-transform">
+          <div class="w-full h-full bg-white dark:bg-[#090d16] rounded-[14px] flex items-center justify-center">
+            <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
           </div>
-          <div>
-            <div class="flex items-center gap-1.5">
-              <span class="font-extrabold text-base tracking-tight text-slate-900 dark:text-white">VoltGrid</span>
-              <span class="px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">GUJARAT</span>
-            </div>
-            <p class="text-[10px] text-slate-500 font-medium">Smart EV Station Bay Explorer</p>
-          </div>
-        </a>
+        </div>
+        <div class="flex items-baseline">
+          <span class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white font-heading">
+            Volt<span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-sky-500">Grid</span>
+          </span>
+          <span class="hidden md:inline-block ml-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+            Gujarat EV Hub
+          </span>
+        </div>
+      </a>
 
-        <a href="index.html" class="hidden sm:inline-flex items-center gap-1.5 ml-3 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors">
-          <span>&larr;</span> All Gujarat Hubs (34)
-        </a>
-      </div>
+      <!-- Desktop Nav Links -->
+      <nav class="hidden lg:flex items-center gap-6 text-sm font-semibold text-slate-600 dark:text-slate-300">
+        <a href="hubs.html" class="text-purple-600 dark:text-purple-400 hover:text-purple-700 font-bold transition-colors flex items-center gap-1"><span>🏛️</span> <span>All Gujarat Hubs (34)</span></a>
+        <a href="#chargers" class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">Nearest Hubs (6)</a>
+        <a href="#customer-savings" class="hover:text-sky-600 dark:hover:text-sky-400 transition-colors">Your Savings & ROI</a>
+        <a href="#how-it-works" class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">How It Works</a>
+        <a href="#live-session" class="hover:text-rose-500 dark:hover:text-rose-400 transition-colors">Live Charger</a>
+      </nav>
 
-      <!-- Right Controls: Telematics Pill, Nav User Slot, Quick Links & Theme -->
-      <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Right Controls: Simulator, Hubs, Auth, Theme -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
         
-        <!-- Live Connected Vehicle SoC Pill -->
-        <a href="simulator.html" target="_blank" title="Connected EV Telematics • Click to open simulator" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-50 dark:bg-slate-800 border border-sky-200 dark:border-slate-700 text-xs font-bold text-sky-700 dark:text-sky-300 hover:border-sky-400 transition-colors">
-          <span class="text-sm">🚗</span>
-          <span id="navSimStatusText">22% SoC</span>
+        <!-- Virtual Vehicle Simulator Trigger (Opens Standalone Driving Simulator Page) -->
+        <a 
+          href="simulator.html" 
+          target="_blank"
+          id="navCarSimLink" 
+          class="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-sky-100/90 text-sky-900 dark:bg-sky-950/80 dark:text-sky-300 border border-sky-200 dark:border-sky-800 hover:scale-105 active:scale-95 transition-all shadow-xs"
+          title="Live Connected Car Telematics & Battery Status (Click to open Simulator in new tab)"
+        >
+          <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
+          <span>🚗</span>
+          <span id="navSimStatusText" class="font-mono text-[10px] sm:text-[11px] font-extrabold text-sky-700 dark:text-sky-300">100%</span>
         </a>
 
-        <!-- Vendor & Admin Hub Links -->
-        <a href="vendor.html" class="hidden md:inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/60 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 text-xs font-bold transition-colors">
-          <span>💼</span> Vendor
-        </a>
-        <a href="admin.html" class="hidden md:inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 text-xs font-bold transition-colors">
-          <span>🛡️</span> Admin
-        </a>
-        <a href="simulator.html" target="_blank" class="hidden lg:inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/60 dark:hover:bg-sky-900/60 text-sky-700 dark:text-sky-300 text-xs font-bold transition-colors">
-          <span>🚗</span> Simulator
+        <!-- Vendor CPO Hub Link (visible sm+) -->
+        <a 
+          href="vendor.html" 
+          class="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-purple-100/90 text-purple-900 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-200 dark:border-purple-800 hover:scale-105 transition-all shadow-xs"
+          title="Open Vendor & Station Operator Hub"
+        >
+          <span>💼</span>
+          <span>Vendor</span>
         </a>
 
-        <!-- Dark/Light Mode Toggle -->
-        <button onclick="toggleDarkMode()" title="Toggle Theme" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-colors">
-          🌓
+        <!-- Admin Console Link (visible md+) -->
+        <a 
+          href="admin.html" 
+          class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap bg-rose-100/90 text-rose-900 dark:bg-rose-950/80 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:scale-105 transition-all shadow-xs"
+          title="Open Dedicated Admin Command Center"
+        >
+          <span>🛡️</span>
+          <span>Admin</span>
+        </a>
+
+        <!-- User Authentication Button / Profile Badge -->
+        <div id="navUserSlot" class="shrink-0">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Dark / Light Mode Switcher -->
+        <button 
+          id="themeToggleBtn"
+          onclick="toggleTheme()" 
+          title="Switch Dark / Light Mode"
+          class="p-2 rounded-xl bg-purple-50 hover:bg-purple-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-purple-700 dark:text-amber-300 border border-purple-200 dark:border-slate-700 transition-all shadow-xs shrink-0"
+        >
+          <!-- Sun Icon -->
+          <svg id="sunIcon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <!-- Moon Icon -->
+          <svg id="moonIcon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
         </button>
 
-        <!-- Driver Profile / Login Slot (Exact from index.html) -->
-        <div id="navUserSlot" class="flex items-center">
-          <button onclick="openAuthModal()" class="px-3.5 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider shadow-sm transition-all">
-            Sign In / Register
-          </button>
-        </div>
-
       </div>
+
     </div>
   </header>
+  <!-- ================= MULTI-PAGE NETWORK ROLE SWITCHER BANNER ================= -->
+  <div class="bg-gradient-to-r from-emerald-500/10 via-sky-500/10 to-purple-500/10 border-b border-emerald-500/20 py-2.5 px-4 text-xs">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5">
+      <div class="flex items-center gap-2 flex-wrap justify-center sm:justify-start">
+        <span class="px-2.5 py-0.5 rounded-full bg-emerald-500 text-white font-extrabold text-[10px] tracking-wide uppercase shadow-xs">Driver App</span>
+        <span class="text-slate-700 dark:text-slate-300 font-medium text-center sm:text-left">
+          ⚡ <strong>VoltGrid Multi-Page Network:</strong> Station data & pricing are live-synced directly from the <strong>CPO Vendor Portal</strong> & <strong>Admin HQ</strong>.
+        </span>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap justify-center">
+        <span class="text-slate-400 text-[11px] hidden lg:inline">Switch Portal:</span>
+        <a href="vendor.html" class="px-3 py-1 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 dark:bg-purple-950 dark:text-purple-300 font-bold border border-purple-200 dark:border-purple-800 transition-all flex items-center gap-1 shadow-xs hover:scale-105 active:scale-95" title="Open Vendor Portal to manage station tariffs and deploy new ports">
+          <span>💼</span> Vendor CPO Portal &rarr;
+        </a>
+        <a href="admin.html" class="px-3 py-1 rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-900 dark:bg-rose-950 dark:text-rose-300 font-bold border border-rose-200 dark:border-rose-800 transition-all flex items-center gap-1 shadow-xs hover:scale-105 active:scale-95" title="Open Admin HQ to audit settlements, platform margin, and refund bookings">
+          <span>🛡️</span> Admin HQ &rarr;
+        </a>
+        <a href="simulator.html" target="_blank" class="px-3 py-1 rounded-xl bg-sky-100 hover:bg-sky-200 text-sky-900 dark:bg-sky-950 dark:text-sky-300 font-bold border border-sky-200 dark:border-sky-800 transition-all flex items-center gap-1 shadow-xs hover:scale-105 active:scale-95" title="Open Smartcar Virtual Car Simulator in a new tab">
+          <span>🚗</span> Simulator ↗
+        </a>
+      </div>
+    </div>
+  </div>
 
-  <!-- ================= MAIN STATION HUB SHOWCASE ================= -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
 
-    <!-- Station Details Hero Banner -->
-    <div id="stationHeroCard" class="relative overflow-hidden bg-white dark:bg-slate-900 border border-purple-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+  <!-- ================= HERO SECTION ================= -->
+  <section class="relative pt-10 pb-16 lg:pt-16 lg:pb-24 overflow-hidden border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
         
-        <!-- Left: Station Info -->
-        <div class="space-y-3">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span id="hubVendorBadge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 flex items-center gap-1.5">
-              <span id="hubVendorLogo">⛽</span> <span id="hubVendorName">Jio-bp pulse</span>
-            </span>
-            <span id="hubCityBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-              📍 <span id="hubCityText">Ahmedabad</span>
-            </span>
-            <span id="hubTypeBadge" class="text-xs font-semibold text-slate-500 dark:text-slate-400">
-              • <span id="hubTypeText">Highway Ultra-Fast Hub (2W & 4W)</span>
-            </span>
+        <!-- Left Hero Content -->
+        <div class="lg:col-span-7 space-y-5">
+          
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-rose-100 via-purple-100 to-sky-100 text-purple-900 dark:from-purple-950/60 dark:to-sky-950/60 dark:text-purple-200 text-xs font-bold border border-purple-200/60 shadow-xs">
+            <span class="flex h-2 w-2 rounded-full bg-purple-500 animate-ping"></span>
+            <span>Real Gujarat Locations &bull; Guaranteed Spot Hold &bull; Zero Waiting</span>
           </div>
 
-          <h1 id="hubStationTitle" class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-heading tracking-tight">
-            Jio-bp pulse SG Highway HyperHub • Ahmedabad
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.14] font-heading">
+            Reserve Your EV Charger. <br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-500 to-sky-500 dark:from-purple-400 dark:via-pink-300 dark:to-sky-300">
+              Never Wait in Line Again.
+            </span>
           </h1>
 
-          <p id="hubStationAddress" class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl">
-            Sindhu Bhavan Marg, Off S.G. Highway, Bodakdev, Ahmedabad, Gujarat 380054
+          <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
+            Driving across the Ahmedabad-Vadodara Expressway (NE-1), visiting GIFT City Gandhinagar, or commuting in Surat and Rajkot? Lock in verified fast chargers for <strong>2-wheelers & 4-wheelers</strong> 15 minutes before arrival. Guaranteed available upon hookup.
           </p>
 
-          <!-- Turnkey Google Maps Turn-by-Turn Directions Button -->
-          <div class="pt-2 flex items-center gap-3">
-            <a 
-              id="hubDirectionsBtn" 
-              href="https://www.google.com/maps/dir/?api=1&destination=23.0416,72.5074" 
-              target="_blank" 
-              class="px-5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-sky-600 hover:from-purple-700 hover:to-sky-700 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-purple-500/25 flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all"
-            >
-              <span>🗺️</span> OPEN GOOGLE MAPS DIRECTIONS ↗
+          <!-- Key Metrics Badges (Lavender, Peach & Light Blue) -->
+          <div class="grid grid-cols-3 gap-2 sm:gap-3 pt-2">
+            <div class="bg-purple-50/90 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/60 rounded-2xl p-2.5 sm:p-3.5 text-center shadow-xs">
+              <span class="text-lg sm:text-xl mb-0.5 block">⚡</span>
+              <strong class="text-xs sm:text-sm font-bold text-purple-950 dark:text-purple-200 block">360 kW Hyper</strong>
+              <span class="text-[10px] text-purple-700/80 dark:text-purple-300/80">10% &rarr; 80% (18m)</span>
+            </div>
+            <div class="bg-orange-50/90 dark:bg-orange-950/40 border border-orange-200/80 dark:border-orange-800/60 rounded-2xl p-2.5 sm:p-3.5 text-center shadow-xs">
+              <span class="text-lg sm:text-xl mb-0.5 block">🔒</span>
+              <strong class="text-xs sm:text-sm font-bold text-orange-950 dark:text-orange-200 block">15-Min Lock</strong>
+              <span class="text-[10px] text-orange-700/80 dark:text-orange-300/80">Zero Slot Theft</span>
+            </div>
+            <div class="bg-sky-50/90 dark:bg-sky-950/40 border border-sky-200/80 dark:border-sky-800/60 rounded-2xl p-2.5 sm:p-3.5 text-center shadow-xs">
+              <span class="text-lg sm:text-xl mb-0.5 block">🛵🚗</span>
+              <strong class="text-xs sm:text-sm font-bold text-sky-950 dark:text-sky-200 block">2W & 4W Ready</strong>
+              <span class="text-[10px] text-sky-700/80 dark:text-sky-300/80">Ather, Ola, Tata, MG</span>
+            </div>
+          </div>
+
+          <!-- CTAs -->
+          <div class="pt-2 flex flex-wrap items-center gap-3">
+            <a href="#chargers" class="px-6 py-3.5 rounded-2xl font-bold text-xs sm:text-sm bg-gradient-to-r from-purple-600 via-pink-500 to-sky-500 hover:from-purple-700 hover:to-sky-600 text-white shadow-md shadow-purple-500/20 transition-all flex items-center gap-2">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              <span>Explore Real Gujarat Stations</span>
             </a>
+            <button onclick="openAdminModal()" class="px-5 py-3.5 rounded-2xl font-bold text-xs sm:text-sm bg-white dark:bg-slate-900 hover:bg-purple-50 dark:hover:bg-slate-800 border border-purple-200/80 dark:border-slate-700 text-purple-900 dark:text-slate-200 transition-all flex items-center gap-1.5 shadow-xs">
+              <span>Admin Monitor &rarr;</span>
+            </button>
           </div>
+
         </div>
 
-        <!-- Right: 4 Stat Cards -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-3 min-w-[280px]">
-          <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 text-center">
-            <span class="block text-[10px] font-bold uppercase text-slate-400">Tariff Rate</span>
-            <strong class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">₹<span id="hubTariffRate">26</span><span class="text-xs font-normal">/kWh</span></strong>
-            <span class="block text-[10px] text-slate-500 mt-0.5">Live grid tariff</span>
-          </div>
-          <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 text-center">
-            <span class="block text-[10px] font-bold uppercase text-slate-400">Available Bays</span>
-            <strong class="text-lg font-extrabold text-sky-600 dark:text-sky-400 font-mono" id="hubBaysAvailable">6 / 6 Free</strong>
-            <span class="block text-[10px] text-slate-500 mt-0.5">Zero waiting line</span>
-          </div>
-          <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 text-center">
-            <span class="block text-[10px] font-bold uppercase text-slate-400">Station Rating</span>
-            <strong class="text-lg font-extrabold text-amber-500 font-mono" id="hubRating">★ 4.9</strong>
-            <span class="block text-[10px] text-slate-500 mt-0.5">Verified safe bay</span>
-          </div>
-          <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 text-center">
-            <span class="block text-[10px] font-bold uppercase text-slate-400">Clean Energy</span>
-            <strong class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400 flex items-center justify-center gap-1">
-              <span>☀️</span> Solar
-            </strong>
-            <span class="block text-[10px] text-slate-500 mt-0.5">Canopy empowered</span>
+        <!-- Right Hero Live Interactive Hub Preview -->
+        <div class="lg:col-span-5">
+          <div class="bg-gradient-to-br from-white via-purple-50/30 to-sky-50/30 dark:bg-slate-900 border border-purple-100 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl relative">
+            
+            <div class="flex items-center justify-between pb-3.5 border-b border-purple-100/80 dark:border-slate-800">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-sky-400">Live Station Hub • Gujarat</span>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">SG Highway HyperHub • Bodakdev</h3>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300">
+                🟢 5 Bays Free
+              </span>
+            </div>
+
+            <div class="mt-4 space-y-3">
+              <p class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                <span>📍 Ahmedabad, Gujarat &bull; Off Sindhu Bhavan Road</span>
+              </p>
+
+              <!-- Quick Status Cards: Peach & Light Blue -->
+              <div class="grid grid-cols-2 gap-2.5 pt-1">
+                <div class="bg-orange-50/90 dark:bg-slate-950 p-3 rounded-2xl border border-orange-200 dark:border-orange-800/80">
+                  <div class="flex items-center justify-between text-xs font-bold text-orange-950 dark:text-white mb-0.5">
+                    <span>Port 01 (180kW)</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  </div>
+                  <span class="text-[11px] text-orange-700 dark:text-orange-400 font-bold block">Available &bull; ₹26/kWh</span>
+                </div>
+
+                <div class="bg-sky-50/90 dark:bg-slate-950 p-3 rounded-2xl border border-sky-200 dark:border-sky-800/80">
+                  <div class="flex items-center justify-between text-xs font-bold text-sky-950 dark:text-white mb-0.5">
+                    <span>Port 02 (180kW)</span>
+                    <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span>
+                  </div>
+                  <span class="text-[11px] text-sky-700 dark:text-sky-400 font-bold block">Charging &bull; 74%</span>
+                </div>
+              </div>
+
+              <!-- Interactive Simulator bar -->
+              <div class="bg-white/80 dark:bg-slate-950 p-3.5 rounded-2xl border border-purple-100 dark:border-slate-800 space-y-2">
+                <div class="flex justify-between text-xs font-medium">
+                  <span class="text-slate-500">Battery Goal:</span>
+                  <span class="text-purple-600 dark:text-sky-400 font-bold">25% &rarr; 80% (~18 mins)</span>
+                </div>
+                <div class="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                  <div class="bg-gradient-to-r from-sky-400 via-purple-400 to-rose-400 h-full w-[78%] rounded-full"></div>
+                </div>
+                <div class="flex justify-between text-[11px] text-slate-500">
+                  <span>Est. Highway Range: <strong>+220 km</strong></span>
+                  <span>Est. Cost: <strong class="text-purple-600 dark:text-sky-400">₹1,140</strong></span>
+                </div>
+              </div>
+
+              <a href="#chargers" class="w-full py-3 rounded-2xl font-bold text-xs uppercase tracking-wider bg-gradient-to-r from-purple-600 via-pink-500 to-sky-500 hover:from-purple-700 hover:to-sky-600 text-white flex items-center justify-center gap-2 transition-all shadow-md shadow-purple-500/20">
+                <span>View All 7 Gujarat Hubs & Lock Spot</span>
+                <span>&rarr;</span>
+              </a>
+
+            </div>
+
           </div>
         </div>
 
       </div>
 
-      <!-- Amenities Section -->
-      <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2 flex-wrap text-xs">
-        <span class="font-bold text-slate-400 text-[11px] uppercase tracking-wider mr-1">Hub Amenities:</span>
-        <div id="hubAmenitiesList" class="flex items-center gap-2 flex-wrap">
-          <span class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs">☕ 24x7 Wild Bean Cafe</span>
-          <span class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs">🚻 Restrooms</span>
-          <span class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs">📶 Free Wi-Fi</span>
-          <span class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs">🛋️ EV Lounge</span>
-          <span class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs">🛵 2W Dedicated Bay</span>
-        </div>
-      </div>
     </div>
+  </section>
 
-    <!-- ================= DEDICATED BAY MATRIX SECTION ================= -->
-    <div class="space-y-4">
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+  <!-- ================= CUSTOMER VALUE & SAVINGS (INTERACTIVE CALCULATOR) ================= -->
+  <section id="customer-savings" class="py-14 sm:py-20 bg-white dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-cyan-400 block mb-1">Interactive Customer ROI Calculator</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading">
+          How Much Are You Saving vs Petrol?
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2">
+          Adjust your monthly driving distance and EV model to see exact fuel savings and carbon reduction.
+        </p>
+      </div>
+
+      <!-- Interactive Calculator Controls & Live Results Grid -->
+      <div class="max-w-5xl mx-auto bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-lg">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          <!-- Left: Input Controls (5 cols) -->
+          <div class="lg:col-span-5 space-y-6">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                Select Your EV Vehicle
+              </label>
+              <select id="calcCarSelect" onchange="recalculateSavings()" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <option value="tata">Tata Nexon EV Max (40.5 kWh • 7.2 km/kWh)</option>
+                <option value="mg">MG ZS EV (50.3 kWh • 6.8 km/kWh)</option>
+                <option value="tesla">Tesla Model 3 LR (82 kWh • 6.5 km/kWh)</option>
+                <option value="hyundai">Hyundai Ioniq 5 (77.4 kWh • 6.2 km/kWh)</option>
+                <option value="mahindra">Mahindra XUV400 (39.4 kWh • 6.9 km/kWh)</option>
+              </select>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Monthly Driving Distance
+                </label>
+                <span id="calcKmDisplay" class="text-sm font-extrabold text-emerald-600 dark:text-cyan-400 font-mono">1,200 km / month</span>
+              </div>
+              <input 
+                type="range" 
+                id="calcKmRange" 
+                min="300" 
+                max="3500" 
+                step="50" 
+                value="1200" 
+                oninput="recalculateSavings()"
+                class="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+              />
+              <div class="flex justify-between text-[11px] text-slate-400 mt-1">
+                <span>300 km</span>
+                <span>1,200 km (Avg commute)</span>
+                <span>3,500 km</span>
+              </div>
+            </div>
+
+            <div class="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-300 flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Calculated against petrol benchmark at <strong>₹102/L</strong> (14 km/L city-highway blend) vs VoltGrid Fast Charging tariff.</span>
+            </div>
+          </div>
+
+          <!-- Right: Visual Impact Metrics (7 cols) with Peach, Light Blue & Lavender -->
+          <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Metric 1: Monthly Fuel Savings (Soft Peach) -->
+            <div class="bg-gradient-to-br from-orange-50/90 to-rose-50/70 dark:bg-slate-900 p-5 rounded-3xl border border-orange-200/80 dark:border-rose-900/40 shadow-xs relative overflow-hidden group">
+              <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-rose-400/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-rose-800/70 dark:text-rose-400 block mb-1">Net Monthly Savings</span>
+              <span id="calcMonthlySave" class="text-3xl font-extrabold text-rose-600 dark:text-rose-400 font-heading block">
+                ₹6,543
+              </span>
+              <span class="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
+                Petrol: <span id="calcPetrolCost" class="line-through text-rose-400 font-semibold">₹8,742</span> • EV: <span id="calcEvCost" class="text-emerald-600 font-bold">₹2,199</span>
+              </span>
+            </div>
+
+            <!-- Metric 2: Annual Projected Savings (Soft Light Blue) -->
+            <div class="bg-gradient-to-br from-sky-50/90 to-blue-50/70 dark:bg-slate-900 p-5 rounded-3xl border border-sky-200/80 dark:border-sky-900/40 shadow-xs relative overflow-hidden group">
+              <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-sky-400/10 rounded-full blur-xl group-hover:scale-150 transition-transform"></div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-sky-800/70 dark:text-sky-400 block mb-1">Annual Money in Your Pocket</span>
+              <span id="calcAnnualSave" class="text-3xl font-extrabold text-sky-600 dark:text-sky-400 font-heading block">
+                ₹78,516
+              </span>
+              <span class="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
+                Extra cash kept in your wallet by charging on VoltGrid
+              </span>
+            </div>
+
+            <!-- Metric 3: Carbon Prevented (Soft Mint) -->
+            <div class="bg-gradient-to-br from-emerald-50/90 to-teal-50/70 dark:bg-slate-900 p-5 rounded-3xl border border-emerald-200/80 dark:border-emerald-900/40 shadow-xs">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800/70 dark:text-emerald-400 block mb-1">CO₂ Emissions Prevented</span>
+              <span id="calcCo2" class="text-2xl font-extrabold text-teal-600 dark:text-teal-400 font-heading block">
+                186 kg / mo
+              </span>
+              <span class="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
+                Equivalent to planting <strong id="calcTrees" class="text-slate-800 dark:text-slate-200 font-bold">9 trees</strong> every month
+              </span>
+            </div>
+
+            <!-- Metric 4: Queue Time Saved (Soft Lavender) -->
+            <div class="bg-gradient-to-br from-purple-50/90 to-violet-50/70 dark:bg-slate-900 p-5 rounded-3xl border border-purple-200/80 dark:border-purple-900/40 shadow-xs">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-purple-800/70 dark:text-purple-400 block mb-1">Guaranteed Slot Queue Saved</span>
+              <span class="text-2xl font-extrabold text-purple-600 dark:text-purple-400 font-heading block">
+                45 Mins
+              </span>
+              <span class="text-[11px] text-slate-600 dark:text-slate-400 mt-1 block">
+                Anti-steal lock guarantees reserved bay upon arrival
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= REAL STATIONS & LIVE PORTS MATRIX ================= -->
+  <section id="chargers" class="py-14 sm:py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
-          <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Dedicated Bay Matrix</span>
-          <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white font-heading">
-            Choose a Port & Lock Your Slot
+          <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-cyan-400 block mb-1">Live Reservation Matrix</span>
+          <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-heading">
+            Choose a Real Location & Lock Your Spot
           </h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Select your preferred power output and connector gun. Each booking generates an instant 4-digit PIN with a guaranteed 15-minute arrival hold.
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Real highway corridors & prime commercial hubs with live directions.
           </p>
         </div>
 
-        <!-- Vehicle Type Filter Pills (Exact from index.html) -->
-        <div class="flex items-center gap-1.5 p-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shrink-0 shadow-xs">
-          <button id="filterBtn_ALL" onclick="setVehicleTypeFilter('ALL')" class="px-3.5 py-1.5 rounded-xl font-extrabold text-xs bg-emerald-500 text-white shadow-xs transition-all">
-            ⚡ All Ports (<span id="countAllPorts">6</span>)
-          </button>
-          <button id="filterBtn_4W" onclick="setVehicleTypeFilter('4W')" class="px-3.5 py-1.5 rounded-xl font-bold text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-            🚗 4-Wheelers (<span id="count4WPorts">4</span>)
-          </button>
-          <button id="filterBtn_2W" onclick="setVehicleTypeFilter('2W')" class="px-3.5 py-1.5 rounded-xl font-bold text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
-            🛵 2-Wheelers (<span id="count2WPorts">2</span>)
+        <!-- Real-Time Legend & Audio Test -->
+        <div class="flex flex-wrap items-center gap-3 text-xs font-semibold">
+          <span class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> Free to Book
+          </span>
+          <span class="flex items-center gap-1.5 text-cyan-600 dark:text-cyan-400">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> In Use / Charging
+          </span>
+          <span class="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Reserved
+          </span>
+          <button id="btnTestSound" onclick="testSoundFx()" title="Verify speaker output & unlock browser Web Audio" class="ml-1 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-300 dark:border-slate-700 hover:border-emerald-500 text-slate-700 dark:text-slate-300 hover:text-emerald-500 dark:hover:text-cyan-400 bg-white dark:bg-slate-900 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+            <span>🔊</span> Test Sound
           </button>
         </div>
       </div>
 
-      <!-- Ports Grid Container (Rendered exactly by renderPorts() from index.html) -->
-      <div id="portsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <!-- Live charging bays dynamically injected here -->
-      </div>
-    </div>
+      <!-- Multi-Vendor Filter & Proximity Location Bar -->
+      <div class="mb-6 space-y-3">
 
-  </main>
+        <!-- Tier 1: Dedicated Structured City / Location Explorer -->
+        <div class="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-white via-slate-50 to-emerald-50/30 dark:bg-slate-900 border-2 border-emerald-500/20 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          
+          <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="text-xl">📍</span>
+              <div>
+                <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block">Choose Gujarat Location</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-white">Filter Stations by City:</span>
+              </div>
+            </div>
+
+            <!-- Structured City Dropdown -->
+            <div class="flex-1 max-w-md">
+              <select id="cityFilterSelect" onchange="onCityFilterChanged(this.value)" class="w-full bg-white dark:bg-slate-950 border-2 border-emerald-400/60 dark:border-emerald-500/40 text-slate-900 dark:text-white text-xs sm:text-sm font-bold rounded-2xl px-3.5 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-xs cursor-pointer transition-all">
+                <option value="ALL" selected>🏙️ All Gujarat (34 SuperHubs Statewide)</option>
+                <optgroup label="── Major Urban Hubs ──">
+                  <option value="Surat">📍 Surat (VR Mall Dumas, Diamond Bourse & Adajan • 3 Hubs)</option>
+                  <option value="Ahmedabad">📍 Ahmedabad (SG Highway, Riverfront, Bopal, Motera • 6 Hubs)</option>
+                  <option value="Vadodara">📍 Vadodara (Expressway Golden Chokdi & Alkapuri • 2 Hubs)</option>
+                  <option value="Rajkot">📍 Rajkot (150ft Ring Road & Madhapar • 2 Hubs)</option>
+                  <option value="Gandhinagar">📍 Gandhinagar (GIFT City FinTech SuperHub)</option>
+                  <option value="Bhavnagar">📍 Bhavnagar (Victoria Park SuperHub)</option>
+                  <option value="Jamnagar">📍 Jamnagar (Reliance Greens Refinery Gateway)</option>
+                  <option value="Junagadh">📍 Junagadh (Girnar Eco-Hub)</option>
+                </optgroup>
+                <optgroup label="── Highway & Industrial Corridors ──">
+                  <option value="Anand">📍 Anand & Nadiad (Amul Dairy & NE-1 Oasis • 2 Hubs)</option>
+                  <option value="Bharuch">📍 Bharuch & Ankleshwar (Narmada Golden Bridge & GIDC • 2 Hubs)</option>
+                  <option value="Vapi">📍 Vapi & Valsad (Gunjan NH-48 & Tithal Beach • 2 Hubs)</option>
+                  <option value="Morbi">📍 Morbi (Ceramic Expressway NH-27)</option>
+                  <option value="Mehsana">📍 Mehsana (Sun Temple Highway Corridor)</option>
+                </optgroup>
+                <optgroup label="── Pilgrimage & Tourism Corridors ──">
+                  <option value="Dwarka">📍 Dwarka (Dwarkadhish & Shivrajpur Beach)</option>
+                  <option value="Somnath">📍 Somnath (Oceanfront Jyotirlinga Heritage)</option>
+                  <option value="Sasan Gir">📍 Sasan Gir (Lion Safari National Reserve)</option>
+                  <option value="Kevadia">📍 Statue of Unity (Ekta Nagar Green Zone)</option>
+                  <option value="Porbandar">📍 Porbandar (Coastal Chowpati Beach)</option>
+                </optgroup>
+                <optgroup label="── Kutch Region ──">
+                  <option value="Kutch">📍 Kutch (Bhuj Heritage, White Rann Dhordo & Kandla • 3 Hubs)</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <!-- GPS Proximity Button & Location Indicator -->
+          <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+            <button onclick="detectDeviceGpsLocation()" id="btnLiveGps" class="px-3.5 py-2.5 rounded-2xl bg-cyan-100 hover:bg-cyan-200 text-cyan-900 dark:bg-cyan-950 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 text-xs font-bold flex items-center gap-1.5 hover:scale-105 active:scale-95 transition-all shadow-xs" title="Calculate real-time driving distances from your live device GPS">
+              <span>🎯</span> <span>Current Location (GPS)</span>
+            </button>
+            <span id="activeLocationPill" class="text-xs font-bold px-3 py-2 rounded-2xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 shadow-xs">
+              📍 All Gujarat
+            </span>
+          </div>
+
+        </div>
+
+        <!-- Tier 2: Refined Filters (CPO Network + EV Category) -->
+        <div class="p-3.5 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          
+          <!-- Vendor Network Filter Tabs -->
+          <div class="flex items-center gap-1.5 flex-wrap" id="vendorFilterTabs">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1 hidden sm:inline">CPO Network:</span>
+            <button onclick="setVendorFilter('ALL')" id="vFilter-ALL" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-sm transition-all">
+              🏢 All Networks (34 Hubs)
+            </button>
+            <button onclick="setVendorFilter('vendor-jiobp')" id="vFilter-vendor-jiobp" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              ⛽ Jio-bp pulse
+            </button>
+            <button onclick="setVendorFilter('vendor-tata')" id="vFilter-vendor-tata" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              ⚡ Tata Power
+            </button>
+            <button onclick="setVendorFilter('vendor-zeon')" id="vFilter-vendor-zeon" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              🔋 Zeon
+            </button>
+            <button onclick="setVendorFilter('vendor-statiq')" id="vFilter-vendor-statiq" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              🚀 Statiq
+            </button>
+            <button onclick="setVendorFilter('vendor-voltgrid')" id="vFilter-vendor-voltgrid" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-all">
+              🛡️ VoltGrid Direct
+            </button>
+          </div>
+
+          <!-- Vehicle Compatibility Filter (2W vs 4W) -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1 hidden sm:inline">EV Category:</span>
+            <button onclick="setVehicleTypeFilter('ALL')" id="vhFilter-ALL" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-cyan-500 text-white shadow-sm transition-all">
+              ⚡ All Ports (2W & 4W)
+            </button>
+            <button onclick="setVehicleTypeFilter('4W')" id="vhFilter-4W" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all">
+              🚗 4-Wheelers
+            </button>
+            <button onclick="setVehicleTypeFilter('2W')" id="vhFilter-2W" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 transition-all">
+              🛵 2-Wheelers
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Active Station Counter & Region Indicator -->
+      <div class="flex items-center justify-between mb-4 px-1 text-xs">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-slate-700 dark:text-slate-300">Available Gujarat Hubs:</span>
+          <span id="stationCountDisplay" class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-extrabold font-mono text-[11px] border border-emerald-200">
+            34 Hubs Across Gujarat
+          </span>
+        </div>
+        <span class="text-slate-500 text-[11px] hidden sm:inline" id="stationProximityNote">
+          📍 Sorted by distance from your chosen location
+        </span>
+      </div>
+
+      <!-- Station Hub Selector Buttons -->
+      <div id="stationButtons" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Active Station Ports Grid -->
+      <div id="portsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered by JS -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= LIVE IN-PROGRESS CHARGING STATUS (DYNAMIC) ================= -->
+  <section id="live-session" class="py-10 sm:py-14 bg-slate-100 dark:bg-slate-900/40 border-t border-slate-200 dark:border-slate-800">
+    <div id="liveSessionContainer" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Dynamically populated by updateLiveSessionHero() -->
+    </div>
+  </section>
+
+  <!-- ================= HOW IT WORKS (3 STEPS) ================= -->
+  <section id="how-it-works" class="py-14 sm:py-20 bg-white dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-cyan-400 block mb-1">Simple Booking Flow</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-heading">
+          How VoltGrid Works in 3 Steps
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-3xl p-6">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-extrabold text-xl flex items-center justify-center mb-4">
+            1
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1.5">Pick Hub & Charger</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            See real-time available ports across Highway and City hubs with verified speed (150kW to 350kW).
+          </p>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-3xl p-6">
+          <div class="w-12 h-12 rounded-2xl bg-cyan-100 dark:bg-cyan-950 text-cyan-600 dark:text-cyan-400 font-extrabold text-xl flex items-center justify-center mb-4">
+            2
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1.5">Lock Spot & Checkout</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Simulate payment in sandbox mode. Port locks exclusively to your 4-digit PIN for 15 minutes.
+          </p>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 rounded-3xl p-6">
+          <div class="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 font-extrabold text-xl flex items-center justify-center mb-4">
+            3
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1.5">Plug In & Get Receipt</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Arrive, enter your PIN on the charger, plug in, and download your official itemized tax invoice!
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= TARIFF PRICING ================= -->
+  <section id="pricing" class="py-14 sm:py-20 border-t border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-cyan-400 block mb-1">Transparent Tariffs</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-heading">
+          Pay for Energy Used &bull; Zero Hidden Fees
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+          <span class="text-xs font-bold uppercase text-slate-400">Casual Driver</span>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">Pay-As-You-Go</h3>
+          <div class="mt-3 flex items-baseline gap-1">
+            <span class="text-3xl font-extrabold text-slate-900 dark:text-white">₹28</span>
+            <span class="text-xs text-slate-500">/ kWh (Highway Ultra-Hubs)</span>
+          </div>
+          <ul class="space-y-2 mt-4 text-xs text-slate-600 dark:text-slate-300">
+            <li>✓ Free 15-minute anti-steal hold</li>
+            <li>✓ All 350kW & 150kW DC ports</li>
+            <li>✓ Automated tax invoice generation</li>
+          </ul>
+        </div>
+
+        <div class="bg-gradient-to-b from-emerald-50 to-teal-50 dark:from-slate-900 dark:to-[#0f1d2b] border-2 border-emerald-500 dark:border-cyan-400 rounded-3xl p-6 shadow-md relative">
+          <span class="text-xs font-bold uppercase text-emerald-700 dark:text-cyan-400">Frequent Commuter</span>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mt-0.5">VoltGrid Prime Pass</h3>
+          <div class="mt-3 flex items-baseline gap-1">
+            <span class="text-3xl font-extrabold text-emerald-600 dark:text-cyan-400">₹799</span>
+            <span class="text-xs text-slate-500">/ month</span>
+          </div>
+          <ul class="space-y-2 mt-4 text-xs text-slate-700 dark:text-slate-300">
+            <li>✓ <strong>20% discount on off-peak energy rates (₹22/kWh)</strong></li>
+            <li>✓ <strong>30-minute extended slot hold</strong></li>
+            <li>✓ Priority lane booking on highway weekends</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
 
   <!-- ================= FOOTER ================= -->
-  <footer class="mt-auto border-t border-purple-100 dark:border-slate-800 bg-white dark:bg-slate-900 py-6 text-center text-xs text-slate-400">
-    <p>VoltGrid &bull; Connected EV Cockpit & CPO Platform &bull; Real-time Gujarat Charging Network</p>
+  <footer class="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 py-8 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span class="font-bold text-slate-900 dark:text-white">VoltGrid Smart EV Network</span>
+        <span>&bull; Sandbox Demo Platform</span>
+      </div>
+      <p>&copy; 2026 VoltGrid Inc. All test transactions are simulated. No real money deducted.</p>
+    </div>
   </footer>
 
-  <!-- ================= MODALS COPIED DIRECTLY FROM INDEX.HTML ================= -->
+  <!-- ================= USER LOGIN / SIGN UP MODAL ================= -->
+  <div id="authModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+    <div class="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+      <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white">✕</button>
 
-<div id="profileModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+      <div class="text-center mb-5">
+        <div class="w-12 h-12 mx-auto rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl font-bold mb-2">
+          👤
+        </div>
+        <h3 id="authModalTitle" class="text-2xl font-extrabold text-slate-900 dark:text-white font-heading">User Sign In / Register</h3>
+        <p class="text-xs text-slate-500 mt-1">Manage your active EV slot bookings & past receipts</p>
+      </div>
+
+      <form onsubmit="handleAuthSubmit(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Full Name</label>
+          <input type="text" id="authName" required placeholder="e.g. Rahul Sharma" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Phone Number (For Charger PIN)</label>
+          <input type="tel" id="authPhone" required placeholder="+91 98765 43210" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Email Address</label>
+          <input type="email" id="authEmail" required placeholder="rahul@example.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase mb-1">Your EV Car Model</label>
+          <select id="authCar" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="Tata Nexon EV Max">Tata Nexon EV Max</option>
+            <option value="Tesla Model 3 Long Range">Tesla Model 3 Long Range</option>
+            <option value="Hyundai Ioniq 5">Hyundai Ioniq 5</option>
+            <option value="MG ZS EV">MG ZS EV</option>
+            <option value="Mahindra XUV400">Mahindra XUV400</option>
+            <option value="Porsche Taycan 4S">Porsche Taycan 4S</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 text-white shadow-md transition-all">
+          Save & Log In to VoltGrid
+        </button>
+      </form>
+
+      <!-- Quick Switch Driver Profiles -->
+      <div class="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800">
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2 text-center">Quick Switch Driver Profile</span>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <button type="button" onclick="switchDemoUser('Nidhi Yadav', '9328703345', 'nidhiyadav1218@gmail.com', 'Tata Nexon EV Max', 'USR-1')" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 bg-slate-50 dark:bg-slate-800 text-left transition-all">
+            <div class="font-extrabold text-slate-900 dark:text-white flex items-center justify-between">
+              <span>Nidhi Yadav</span>
+              <span class="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 font-bold">#1</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Nexon EV Max</div>
+          </button>
+          <button type="button" onclick="switchDemoUser('Rahul Sharma', '9876543210', 'rahul.sharma@example.com', 'MG ZS EV', 'USR-2')" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500 bg-slate-50 dark:bg-slate-800 text-left transition-all">
+            <div class="font-extrabold text-slate-900 dark:text-white flex items-center justify-between">
+              <span>Rahul Sharma</span>
+              <span class="text-[10px] font-mono text-amber-600 dark:text-amber-400 font-bold">#2</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-0.5">MG ZS EV</div>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= USER PROFILE & BOOKINGS HISTORY MODAL ================= -->
+  <div id="profileModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
     <div class="relative w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
       <button onclick="closeProfileModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white font-bold text-lg">✕</button>
 
@@ -268,9 +838,227 @@
     </div>
   </div>
 
-  <!-- ================= CHECKOUT & BILLING MODAL
+  <!-- ================= CHECKOUT & BILLING MODAL (SANDBOX - NO REAL MONEY) ================= -->
+  <div id="checkoutModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+    <div class="relative w-full max-w-lg max-h-[92vh] overflow-y-auto bg-white dark:bg-slate-900 border border-purple-200/80 dark:border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
+      <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white font-bold text-lg">✕</button>
 
-<div id="invoiceModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-purple-600 dark:text-sky-400 uppercase tracking-wider">Itemized Checkout</span>
+          <span class="text-[10px] bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-300 px-2.5 py-0.5 rounded-full font-bold border border-orange-200">
+            Demo Sandbox
+          </span>
+        </div>
+        <h3 id="checkoutPortTitle" class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white font-heading mt-0.5">
+          Port 01 &bull; 350kW Ultra-Fast
+        </h3>
+        <p id="checkoutStationSub" class="text-xs text-slate-500">Delhi-Jaipur Expressway Hub (Km 42)</p>
+      </div>
+
+      <!-- Friendly Vehicle Connection & Smart Battery Allocation (Lavender, Peach & Sky) -->
+      <div class="mt-4 bg-gradient-to-br from-purple-50/60 via-white to-orange-50/50 dark:bg-slate-900/60 border border-purple-200/80 dark:border-slate-800 rounded-3xl p-3.5 sm:p-5 space-y-3 shadow-xs">
+        
+        <!-- Vehicle Card -->
+        <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-800 border border-purple-100 dark:border-slate-700 shadow-xs space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse"></span>
+              <span class="text-xs font-bold text-slate-800 dark:text-white tracking-wide">Connected EV Vehicle</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-200">Live Auto-Sync</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <a 
+                href="simulator.html" 
+                target="_blank"
+                title="Open Vehicle Simulator in New Tab to test driving or change battery"
+                class="text-[11px] text-purple-600 hover:text-purple-700 dark:text-purple-400 font-bold flex items-center gap-1 transition-colors underline"
+              >
+                <span>🚗</span> Simulator ↗
+              </a>
+              <button 
+                type="button" 
+                onclick="syncLiveSmartcarBattery(true)" 
+                title="Re-query vehicle telematics"
+                class="text-[11px] text-slate-600 dark:text-slate-300 hover:text-purple-600 font-bold flex items-center gap-1 transition-colors"
+              >
+                <span id="smartcarSyncIcon">🔄</span>
+                <span id="smartcarSyncText">Re-sync</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <div class="flex items-center gap-2.5">
+              <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-100 to-sky-100 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 flex items-center justify-center text-xl shadow-xs shrink-0">
+                🚗
+              </div>
+              <div>
+                <div class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5 flex-wrap">
+                  <span id="smartcarCarName">MG ZS EV</span>
+                  <span class="text-[11px] font-normal text-slate-400" id="smartcarVinBadge">&bull; VIN: ...5921</span>
+                </div>
+                <div id="smartcarStatusSub" class="text-xs text-purple-800 dark:text-purple-300 mt-0.5">
+                  <span class="font-bold">✓ Live Battery:</span> Auto-detected from your vehicle
+                </div>
+              </div>
+            </div>
+
+            <div class="text-right shrink-0">
+              <span id="checkoutBatteryDisplay" class="px-3 py-1 rounded-xl font-extrabold text-sm bg-gradient-to-r from-sky-500 to-indigo-500 text-white shadow-xs inline-block">
+                22% Left
+              </span>
+              <span id="smartcarRangeSub" class="block text-[11px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5">
+                88 km range
+              </span>
+            </div>
+          </div>
+
+          <!-- Soft Friendly Trip Telematics Bar (Peach, Lavender, Sky) -->
+          <div class="mt-2.5 grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-gradient-to-r from-orange-50/80 via-purple-50/70 to-sky-50/80 dark:bg-slate-900/60 border border-purple-100 dark:border-slate-700/60 text-xs text-center">
+            <div>
+              <span class="text-slate-500 block text-[10px] font-bold uppercase">Total Odo</span>
+              <strong id="checkoutOdometer" class="text-slate-800 dark:text-slate-100 font-bold">14,250.0 km</strong>
+            </div>
+            <div>
+              <span class="text-slate-500 block text-[10px] font-bold uppercase">Driven Today</span>
+              <strong id="checkoutTripDistance" class="text-sky-700 dark:text-sky-400 font-bold">+0.0 km</strong>
+            </div>
+            <div>
+              <span class="text-slate-500 block text-[10px] font-bold uppercase">Battery Used</span>
+              <strong id="checkoutTripConsumed" class="text-orange-700 dark:text-orange-400 font-bold">-78%</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Two-Tone Battery Graphic (Sky Blue & Peach/Lavender) -->
+        <div class="relative p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-purple-200/70 dark:border-slate-700">
+          <div class="flex h-7 rounded-xl overflow-hidden font-bold text-[11px] leading-7 text-center">
+            <!-- Left: Current Battery in Vehicle (Soft Sky Blue) -->
+            <div id="batteryVisualCurrent" class="bg-gradient-to-r from-sky-400 to-blue-500 text-white transition-all duration-300 flex items-center justify-center truncate px-2 shadow-xs" style="width: 22%;">
+              <span id="batteryVisualCurrentText">🔋 22% Left</span>
+            </div>
+            <!-- Right: Needed Charge to 100% (Soft Peach / Lavender) -->
+            <div id="batteryVisualNeeded" class="bg-gradient-to-r from-orange-300 via-rose-300 to-purple-400 text-slate-900 transition-all duration-300 flex items-center justify-center truncate px-2" style="width: 78%;">
+              <span id="batteryVisualNeededText">⚡ +78% Needed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clarifying Breakdown Cards -->
+        <div class="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-purple-100 dark:border-slate-800">
+          <div class="text-slate-600 dark:text-slate-400">
+            <span class="block text-[10px] uppercase font-bold text-slate-400">Energy Needed to Reach 100%</span>
+            <strong class="text-slate-800 dark:text-slate-200 text-xs"><span id="checkoutPercentNeeded">78</span>% (<span id="checkoutKwhNeeded">39.2</span> kWh)</strong>
+          </div>
+          <div class="text-right">
+            <span class="block text-[10px] uppercase font-bold text-slate-400">Est. Charging Time Needed</span>
+            <strong class="text-purple-600 dark:text-sky-400 font-bold text-xs"><span id="checkoutEstMinutes">16 mins</span></strong>
+          </div>
+        </div>
+
+        <!-- Live Battery Trust Card (No manual override; simulator controls state) -->
+        <div class="flex items-center justify-between p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-purple-100 dark:border-slate-700 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="text-base">✨</span>
+            <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium">Battery auto-synced live from vehicle</span>
+          </div>
+          <a href="simulator.html" target="_blank" class="text-[11px] font-bold text-purple-600 hover:text-purple-700 dark:text-purple-400 underline underline-offset-2 flex items-center gap-1">
+            Change in Simulator ↗
+          </a>
+        </div>
+
+        <!-- Notice if Car is already 100% Full -->
+        <div id="checkoutFullBatteryNotice" class="hidden p-3 rounded-2xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 text-orange-900 dark:text-orange-300 text-xs space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="text-base">🎉</span>
+            <div>
+              <strong class="block text-xs font-bold text-orange-800 dark:text-orange-200">Vehicle Battery is Already 100% Full!</strong>
+              <span class="text-[11px] text-orange-700/90 dark:text-orange-300/80">No charging energy needed. Booking is blocked to prevent occupying charging bays unnecessarily.</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 pt-1 border-t border-orange-200/50">
+            <button type="button" onclick="applySimSocToCheckout(22, 28)" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold text-xs shadow-md shadow-emerald-500/20 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer">
+              <span>⚡</span> Simulate 22% Arrival SoC (Unlock Booking)
+            </button>
+            <button type="button" onclick="applySimSocToCheckout(45, 18)" class="px-3 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs shadow-md shadow-sky-500/20 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer">
+              <span>🚗</span> 45% SoC
+            </button>
+            <a href="simulator.html" target="_blank" class="px-3 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 font-bold text-xs transition-all flex items-center gap-1">
+              <span>🎮</span> Simulator ↗
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Itemized Bill Table -->
+      <div class="mt-4 bg-slate-50 dark:bg-slate-950 border border-purple-100/90 dark:border-slate-800 rounded-2xl p-4 space-y-2 text-xs">
+        <div class="flex justify-between text-slate-600 dark:text-slate-300">
+          <span>Est. Energy (<span id="billKwh">45.1</span> kWh &times; ₹<span id="billRate">28</span>)</span>
+          <span class="font-bold text-slate-900 dark:text-white">₹<span id="billBase">1,262.80</span></span>
+        </div>
+        <div class="flex justify-between text-slate-600 dark:text-slate-300">
+          <span>Grid Access / Plug-in Fee</span>
+          <span class="font-bold text-slate-900 dark:text-white" id="billGridFee">₹40.00</span>
+        </div>
+        <div class="flex justify-between text-slate-600 dark:text-slate-300">
+          <span>GST (18%)</span>
+          <span class="font-bold text-slate-900 dark:text-white">₹<span id="billGst">234.50</span></span>
+        </div>
+        <div class="pt-2 border-t border-purple-100 dark:border-slate-800 flex justify-between text-sm font-extrabold text-slate-900 dark:text-white">
+          <span>Total Payable Amount</span>
+          <span class="text-purple-600 dark:text-sky-400">₹<span id="billTotal">1,537.30</span></span>
+        </div>
+
+        <div id="billTripNote" class="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1 pt-1.5 border-t border-purple-100/60 dark:border-slate-800">
+          <span>ℹ️</span> <span>Telematics: Billed to refill battery consumed over <strong id="billTripKm" class="text-sky-600 dark:text-sky-400">0.0</strong> km trip back to 100%.</span>
+        </div>
+      </div>
+
+      <!-- Sandbox Payment Selector -->
+      <div class="mt-4 space-y-3">
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">Select Demo Payment Method</label>
+        
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <label id="payOptionCard" onclick="selectPayMethod('card')" class="flex items-center gap-2 p-3 rounded-2xl border border-purple-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-purple-300 dark:hover:border-slate-600 cursor-pointer transition-all">
+            <input type="radio" name="payMethod" value="card" class="accent-purple-500" />
+            <div>
+              <strong class="block text-slate-900 dark:text-white">Demo Card</strong>
+              <span class="text-[10px] text-slate-500">&bull;&bull;&bull;&bull; 4242</span>
+            </div>
+          </label>
+
+          <label id="payOptionUpi" onclick="selectPayMethod('upi')" class="flex items-center gap-2 p-3 rounded-2xl border border-purple-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:border-purple-300 dark:hover:border-slate-600 cursor-pointer transition-all">
+            <input type="radio" name="payMethod" value="upi" class="accent-purple-500" />
+            <div>
+              <strong class="block text-slate-900 dark:text-white">Demo UPI</strong>
+              <span class="text-[10px] text-slate-500">Fast Pay</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- Reassuring Safety Notice (Peach, Lavender, Sky) -->
+        <div class="p-3 bg-gradient-to-r from-orange-50/90 via-purple-50/80 to-sky-50/90 dark:bg-slate-900/80 border border-purple-200/80 dark:border-slate-800 rounded-2xl text-xs space-y-1 text-purple-950 dark:text-purple-200">
+          <div class="font-bold flex items-center gap-1.5">
+            <span>🛡️ 100% Safe & Guaranteed Reservation</span>
+          </div>
+          <p class="text-[11px] text-purple-800/90 dark:text-purple-300/90 leading-relaxed">
+            Exclusive 15-minute hold • Bay reserved solely for your vehicle PIN • Zero waiting line
+          </p>
+        </div>
+
+        <button onclick="executePayment()" id="btnPayConfirm" class="w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-violet-600 via-indigo-600 to-sky-500 hover:from-violet-700 hover:to-sky-600 text-white shadow-lg shadow-purple-500/25 transition-all flex flex-col items-center justify-center cursor-pointer">
+          <span>Confirm & Lock Charging Spot ⚡</span>
+          <span class="text-[10px] font-medium opacity-90">Instant 4-digit PIN generated • Free cancellation</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= OFFICIAL TAX INVOICE & DIGITAL PASS MODAL ================= -->
+  <div id="invoiceModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
     <div class="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 text-center shadow-2xl">
       <button onclick="closeInvoiceModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white">✕</button>
 
@@ -332,8 +1120,8 @@
     </div>
   </div>
 
-  <!-- ================= ARRIVAL PIN UNLOCK MODAL
-<div id="pinModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+  <!-- ================= ARRIVAL PIN UNLOCK MODAL ================= -->
+  <div id="pinModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
     <div class="relative w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 text-center shadow-2xl">
       <button onclick="closePinModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white font-bold text-lg">✕</button>
 
@@ -414,11 +1202,414 @@
     </div>
   </div>
 
-  <!-- ================= SMARTCAR VIRTUAL VEHICLE SIMULATOR MODAL
+  <!-- ================= SMARTCAR VIRTUAL VEHICLE SIMULATOR MODAL ================= -->
+  <div id="vehicleSimulatorModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+    <div class="relative w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-7 shadow-2xl max-h-[92vh] overflow-y-auto">
+      
+      <button onclick="closeVehicleSimulatorModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white font-bold text-lg">✕</button>
 
+      <!-- Header with Live IoT Telemetry Indicators -->
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-emerald-400 p-0.5 shadow-lg shadow-cyan-500/20 shrink-0">
+          <div class="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center text-xl text-white">
+            🚗
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-xl font-extrabold text-slate-900 dark:text-white font-heading">
+              Smartcar Virtual Vehicle Simulator
+            </h3>
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-500/30">
+              ● Live eSIM Connected
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Simulate real-time vehicle BMS telemetry, battery consumption, and cellular IoT payloads for VoltGrid.
+          </p>
+        </div>
+      </div>
 
-  <!-- ================= APPLICATION ENGINE SCRIPT (COPIED DIRECTLY FROM INDEX.HTML) ================= -->
-<script>
+      <!-- Network & Hardware Diagnostics Pill Bar -->
+      <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono">
+        <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-slate-400 block uppercase font-bold text-[9px]">eSIM Network</span>
+          <strong class="text-slate-800 dark:text-slate-200">Jio-IoT 4G LTE</strong>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-slate-400 block uppercase font-bold text-[9px]">Cell Signal</span>
+          <strong class="text-emerald-500 font-bold">-68 dBm (Strong)</strong>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-slate-400 block uppercase font-bold text-[9px]">BMS Bus Protocol</span>
+          <strong class="text-cyan-500">CAN 2.0B / ISO 15118</strong>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-slate-400 block uppercase font-bold text-[9px]">API Latency</span>
+          <strong class="text-amber-500" id="simLatency">134 ms</strong>
+        </div>
+      </div>
+
+      <!-- Vehicle Model Selector -->
+      <div class="mt-5 space-y-2">
+        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+          Select Simulated EV Model (4W & 2W)
+        </label>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+          <!-- 4-Wheelers -->
+          <button type="button" onclick="setSimulatedVehicle('Tata Nexon EV Max')" id="simCarBtn_Tata_Nexon_EV_Max" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">🚗 Tata Nexon EV</span>
+            <span class="text-[10px] text-slate-400 font-mono">40.5 kWh • 60 kW DC</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('MG ZS EV')" id="simCarBtn_MG_ZS_EV" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">🚗 MG ZS EV</span>
+            <span class="text-[10px] text-slate-400 font-mono">50.3 kWh • 80 kW DC</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Hyundai Ioniq 5')" id="simCarBtn_Hyundai_Ioniq_5" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">🚗 Hyundai Ioniq 5</span>
+            <span class="text-[10px] text-slate-400 font-mono">77.4 kWh • 350 kW 800V</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Mahindra XUV400')" id="simCarBtn_Mahindra_XUV400" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">🚗 Mahindra XUV400</span>
+            <span class="text-[10px] text-slate-400 font-mono">39.4 kWh • 50 kW DC</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Tesla Model 3 Long Range')" id="simCarBtn_Tesla_Model_3_Long_Range" class="p-2.5 rounded-xl border font-bold text-left transition-all">
+            <span class="block text-sm">🚗 Tesla Model 3</span>
+            <span class="text-[10px] text-slate-400 font-mono">82.0 kWh • 250 kW DC</span>
+          </button>
+          <!-- 2-Wheelers -->
+          <button type="button" onclick="setSimulatedVehicle('Ather 450X Gen 3')" id="simCarBtn_Ather_450X_Gen_3" class="p-2.5 rounded-xl border font-bold text-left transition-all bg-amber-500/5 hover:border-amber-500">
+            <span class="block text-sm text-amber-500 dark:text-amber-300">🛵 Ather 450X Gen 3</span>
+            <span class="text-[10px] text-slate-400 font-mono">3.7 kWh • Ather Fast Grid</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('Ola S1 Pro Gen 2')" id="simCarBtn_Ola_S1_Pro_Gen_2" class="p-2.5 rounded-xl border font-bold text-left transition-all bg-amber-500/5 hover:border-amber-500">
+            <span class="block text-sm text-amber-500 dark:text-amber-300">🛵 Ola S1 Pro</span>
+            <span class="text-[10px] text-slate-400 font-mono">4.0 kWh • 16A Smart Socket</span>
+          </button>
+          <button type="button" onclick="setSimulatedVehicle('TVS iQube ST')" id="simCarBtn_TVS_iQube_ST" class="p-2.5 rounded-xl border font-bold text-left transition-all bg-amber-500/5 hover:border-amber-500">
+            <span class="block text-sm text-amber-500 dark:text-amber-300">🛵 TVS iQube ST</span>
+            <span class="text-[10px] text-slate-400 font-mono">3.4 kWh • 16A AC Plug</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Virtual BMS Cockpit -->
+      <div class="mt-5 p-4 rounded-2xl bg-slate-900 text-white border border-slate-700/80 shadow-inner space-y-4">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-extrabold text-white" id="simVehicleTitle">MG ZS EV</span>
+              <span class="text-[10px] font-mono text-slate-400" id="simVinDisplay">VIN: 1MGZS48EV20265921</span>
+            </div>
+            <p class="text-[11px] text-slate-400" id="simVehicleSub">
+              50.3 kWh Lithium-ion Pack • 6.8 km/kWh efficiency
+            </p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="text-right">
+              <span class="text-2xl font-black font-mono text-emerald-400" id="simSocDisplay">22%</span>
+              <span class="block text-[10px] text-slate-400 font-mono" id="simRangeDisplay">88 km remaining</span>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-lg">
+              🔋
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Battery Bar -->
+        <div class="space-y-1">
+          <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 border border-slate-700">
+            <div id="simProgressBar" class="h-full rounded-full bg-gradient-to-r from-amber-500 via-emerald-400 to-cyan-400 transition-all duration-300" style="width: 22%"></div>
+          </div>
+          <div class="flex justify-between text-[9px] font-mono text-slate-400">
+            <span>0% Empty</span>
+            <span>Usable Energy: <span id="simKwhRemaining" class="text-white font-bold">11.1 kWh</span> / <span id="simTotalKwh">50.3 kWh</span></span>
+            <span>100% Full</span>
+          </div>
+        </div>
+
+        <!-- Real-Time Interactive Slider -->
+        <div class="space-y-1.5 pt-1">
+          <div class="flex justify-between text-xs font-bold">
+            <span class="text-slate-300">Live Battery State-of-Charge (SoC) Slider:</span>
+            <span class="text-cyan-400 font-mono" id="simSliderVal">22%</span>
+          </div>
+          <input 
+            type="range" 
+            id="simBatterySlider" 
+            min="5" 
+            max="100" 
+            value="22" 
+            step="1" 
+            oninput="onSimBatterySliderChange(this.value)"
+            class="w-full h-2.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-400" 
+          />
+        </div>
+
+        <!-- Quick Scenario Injection Buttons -->
+        <div class="space-y-1.5">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Inject Real-World Road Scenarios:</span>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 text-[11px] font-bold">
+            <button type="button" onclick="injectSimScenario(12)" class="px-2.5 py-1.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-800 transition-all text-center">
+              🚨 Critical Low (12%)
+            </button>
+            <button type="button" onclick="injectSimScenario(22)" class="px-2.5 py-1.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 transition-all text-center">
+              🚗 Highway Stop (22%)
+            </button>
+            <button type="button" onclick="injectSimScenario(45)" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 transition-all text-center">
+              🔋 Half Charge (45%)
+            </button>
+            <button type="button" onclick="injectSimScenario(100)" class="px-2.5 py-1.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border border-cyan-800 transition-all text-center">
+              ⚡ 100% Full Tank
+            </button>
+          </div>
+        </div>
+
+        <!-- Live BMS Hardware Sensor Feeds -->
+        <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800 text-[10px] font-mono">
+          <div class="text-center">
+            <span class="text-slate-400 block">Pack Voltage</span>
+            <span class="text-white font-bold" id="simVoltageDisplay">394.2 V DC</span>
+          </div>
+          <div class="text-center">
+            <span class="text-slate-400 block">Cell Temp</span>
+            <span class="text-emerald-400 font-bold" id="simTempDisplay">28.4 °C (Normal)</span>
+          </div>
+          <div class="text-center">
+            <span class="text-slate-400 block">Plug Port Status</span>
+            <span class="text-cyan-400 font-bold" id="simPlugStateDisplay">Ready to Connect</span>
+          </div>
+        </div>
+
+        <!-- Simulate Drive Button -->
+        <div class="pt-1 flex gap-2">
+          <button 
+            type="button" 
+            onclick="simulateCarDrive(5)" 
+            class="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
+          >
+            <span>🛣️</span> Drive 20 km (-5% Battery)
+          </button>
+          <button 
+            type="button" 
+            onclick="applySimulatorToVoltGrid()" 
+            class="flex-1 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-slate-950 font-extrabold text-xs uppercase tracking-wider shadow-md shadow-emerald-500/20 transition-all flex items-center justify-center gap-1.5"
+          >
+            <span>⚡</span> Sync to VoltGrid Bay
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Developer REST JSON Inspector (Smartcar API v2.0 Payload) -->
+      <div class="mt-4 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+        <div class="bg-slate-100 dark:bg-slate-950 px-3.5 py-2 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 text-xs font-mono">
+          <div class="flex items-center gap-2">
+            <span class="px-1.5 py-0.5 rounded bg-emerald-500 text-slate-950 font-bold text-[10px]">GET</span>
+            <span class="text-slate-600 dark:text-slate-300">/v2.0/vehicles/<span id="simPayloadCarId">veh_mg_zs_ev</span>/battery</span>
+          </div>
+          <span class="text-[10px] text-slate-400">Response 200 OK</span>
+        </div>
+        <pre id="simJsonPayload" class="p-3 bg-slate-950 text-emerald-400 font-mono text-[11px] overflow-x-auto max-h-40 leading-relaxed"></pre>
+      </div>
+
+      <div class="mt-4 flex justify-between items-center text-xs">
+        <span class="text-slate-400 text-[11px]">
+          💡 Changes here instantly broadcast to VoltGrid Checkout & Stations.
+        </span>
+        <button 
+          type="button" 
+          onclick="closeVehicleSimulatorModal()" 
+          class="px-5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold text-slate-800 dark:text-slate-200 transition-colors"
+        >
+          Done / Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= ADMIN LIVE COMMAND CENTER (WITH BUSINESS ROI & IMPACT) ================= -->
+  <div id="adminModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+    <div class="relative w-full max-w-5xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl max-h-[92vh] overflow-y-auto">
+      
+      <button onclick="closeAdminModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 dark:hover:text-white font-bold text-lg">✕</button>
+
+      <!-- Admin Passcode Screen -->
+      <div id="adminLockScreen">
+        <div class="text-center max-w-sm mx-auto py-8">
+          <span class="text-3xl mb-2 block">🔐</span>
+          <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white font-heading">Station Owner Admin Portal</h3>
+          <p class="text-xs text-slate-500 mt-1 mb-5">Enter your owner passcode to view live customer bookings, customer ROI, and MongoDB document collections.</p>
+          
+          <form onsubmit="unlockAdmin(event)" class="space-y-3">
+            <input type="password" id="adminPassInput" placeholder="Enter Passcode (hint: admin123)" required class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-center font-mono text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            <button type="submit" class="w-full py-3 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-900 dark:bg-emerald-500 text-white dark:text-slate-950">
+              Unlock Admin Console
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Admin Dashboard Content -->
+      <div id="adminDashboardContent" class="hidden space-y-6">
+        
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-cyan-400">Owner Business Intelligence</span>
+            </div>
+            <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white font-heading mt-0.5">
+              VoltGrid Master Command Center
+            </h3>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="resetDemoData()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950 dark:text-slate-300 transition-colors">
+              Reset Demo Data
+            </button>
+            <button onclick="lockAdmin()" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+              Log Out Admin
+            </button>
+          </div>
+        </div>
+
+        <!-- Live MongoDB Atlas Connection Status Banner -->
+        <div class="flex flex-wrap items-center justify-between p-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs gap-2">
+          <div class="flex items-center gap-2.5">
+            <span id="cloudDbPulse" class="w-3 h-3 rounded-full bg-amber-500 animate-pulse"></span>
+            <span class="font-bold text-slate-700 dark:text-slate-200">MongoDB Atlas Cloud:</span>
+            <span id="cloudDbStatus" class="font-mono font-bold text-amber-600 dark:text-amber-400">Checking live connection...</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="purgeAndResetDatabase()" class="px-3 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-[11px] font-bold shadow-sm hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5">
+              <span>🗑️</span> Drop All & Reset DB
+            </button>
+            <button type="button" onclick="syncWithMongoDBAtlas(true)" class="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-700 text-[11px] font-bold text-slate-800 dark:text-white shadow-sm hover:scale-105 active:scale-95 transition-all flex items-center gap-1.5">
+              <span>🔄</span> Test / Sync Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric Summary Cards (5 cards with fix for adminActiveCharging) -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
+          <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">Total Bookings</span>
+            <span id="adminTotalBookings" class="text-xl font-extrabold text-slate-900 dark:text-white">4</span>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">Active Reserved</span>
+            <span id="adminActiveReserved" class="text-xl font-extrabold text-amber-500">2 Ports</span>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">Active Charging</span>
+            <span id="adminActiveCharging" class="text-xl font-extrabold text-emerald-500">3 Ports</span>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">Customer Savings</span>
+            <span id="adminTotalSavings" class="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">&#8377;148,200</span>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <span class="text-[10px] uppercase font-bold text-slate-400 block">Revenue (Demo)</span>
+            <span id="adminTotalRevenue" class="text-xl font-extrabold text-cyan-500">&#8377;18,450</span>
+          </div>
+        </div>
+
+        <!-- Admin View Switcher Tabs -->
+        <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+          <button id="btnTabBookings" onclick="switchAdminTab('bookings')" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-white shadow-sm transition-all">
+            1. Live Slot Holds & Port Control
+          </button>
+          <button id="btnTabUsers" onclick="switchAdminTab('users')" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-all">
+            2. Registered Drivers & Customer Impact (ROI)
+          </button>
+          <button id="btnTabMongo" onclick="switchAdminTab('mongo')" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-all flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            3. MongoDB Database Inspector (JSON)
+          </button>
+        </div>
+
+        <!-- Tab 1: Live Customer Bookings Table -->
+        <div id="adminViewBookings">
+          <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+            Active Port Reservations (15-Min Anti-Steal Guaranteed Hold Window)
+          </h4>
+          <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-500 text-[10px] uppercase border-b border-slate-200 dark:border-slate-800">
+                <tr>
+                  <th class="p-3">Customer Name</th>
+                  <th class="p-3">Phone</th>
+                  <th class="p-3">Vehicle</th>
+                  <th class="p-3">Station & Port</th>
+                  <th class="p-3">Hold Expiry</th>
+                  <th class="p-3">Amount Paid</th>
+                  <th class="p-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="adminBookingsTableBody" class="divide-y divide-slate-200 dark:divide-slate-800">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 2: Registered Drivers & Customer ROI Directory -->
+        <div id="adminViewUsers" class="hidden">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              Registered Drivers Database & Value Delivered
+            </h4>
+            <span class="text-[11px] text-emerald-600 dark:text-cyan-400 font-semibold">
+              Live tracking: Money saved vs Petrol & CO₂ avoided per customer
+            </span>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-500 text-[10px] uppercase border-b border-slate-200 dark:border-slate-800">
+                <tr>
+                  <th class="p-3">Customer Profile</th>
+                  <th class="p-3">Phone & Email</th>
+                  <th class="p-3">Vehicle</th>
+                  <th class="p-3">Sessions</th>
+                  <th class="p-3">Energy Drawn</th>
+                  <th class="p-3">Fuel Money Saved</th>
+                  <th class="p-3">CO₂ Prevented</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTableBody" class="divide-y divide-slate-200 dark:divide-slate-800">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 3: MongoDB BSON / JSON Inspector -->
+        <div id="adminViewMongo" class="hidden space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900 text-white p-3 rounded-2xl text-xs font-mono">
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-400 font-bold">mongodb://localhost:27017/voltgrid</span>
+              <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full">Connected</span>
+            </div>
+            <button onclick="copyMongoJson()" id="btnCopyMongo" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-[11px] font-sans font-bold text-slate-200 transition-colors">
+              📋 Copy Collections JSON
+            </button>
+          </div>
+          <p class="text-xs text-slate-500">
+            This live document schema is what gets queried by <strong>Mongoose</strong> in Node.js / Express (<code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono">User.find()</code>, <code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono">Booking.create()</code>).
+          </p>
+          <pre id="mongoJsonPre" class="p-4 bg-slate-950 text-emerald-400 rounded-2xl border border-slate-800 text-xs font-mono max-h-80 overflow-y-auto leading-relaxed"></pre>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= APPLICATION JAVASCRIPT ================= -->
+  <script>
     // =========================================================================
     // VOLTGRID IN-MEMORY DATABASE (MONGODB / MONGOOSE COMPLIANT SCHEMAS)
     // =========================================================================
@@ -3139,7 +4330,7 @@
     });
     saveVoltGridDB();
     let currentUser = loadSaved('voltgrid_currentUser', null);
-    let currentStationId = 'st-01';
+    let currentStationId = (typeof window !== 'undefined' && window.location && new URLSearchParams(window.location.search).get('id')) || 'st-01';
     let pendingCheckout = null;
     let activeAdminTab = 'bookings';
 
@@ -4352,8 +5543,13 @@
       `;
     }
 
-        function selectStation(id) {
-      window.location.href = 'hub.html?id=' + encodeURIComponent(id);
+    function selectStation(id) {
+      currentStationId = id;
+      renderStationSelector();
+      renderPorts();
+      updateLiveSessionHero();
+      const el = document.getElementById('portsSection') || document.getElementById('portsGrid');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
     }
 
     // ---------------- CHECKOUT & BILLING FLOW ----------------
@@ -5949,74 +7145,6 @@
         syncWithMongoDBAtlas(false);
       }, 3500);
     });
-  </script>
-
-  <!-- Hub Station Detail Initializer & Dynamic Header Sync -->
-  <script>
-    function renderHubStationShowcase() {
-      const st = stations.find(s => s.id === currentStationId) || stations[0];
-      if (!st) return;
-
-      const titleEl = document.getElementById('hubStationTitle');
-      const addrEl = document.getElementById('hubStationAddress');
-      const vendorBadgeEl = document.getElementById('hubVendorBadge');
-      const vendorNameEl = document.getElementById('hubVendorName');
-      const vendorLogoEl = document.getElementById('hubVendorLogo');
-      const cityTextEl = document.getElementById('hubCityText');
-      const typeTextEl = document.getElementById('hubTypeText');
-      const tariffEl = document.getElementById('hubTariffRate');
-      const ratingEl = document.getElementById('hubRating');
-      const baysAvailEl = document.getElementById('hubBaysAvailable');
-      const directionsBtn = document.getElementById('hubDirectionsBtn');
-      const amenitiesEl = document.getElementById('hubAmenitiesList');
-
-      if (titleEl) titleEl.innerText = st.name;
-      if (addrEl) addrEl.innerText = st.location || 'Gujarat, India';
-      if (vendorNameEl) vendorNameEl.innerText = st.vendorName || 'VoltGrid';
-      if (vendorLogoEl) vendorLogoEl.innerText = st.vendorLogo || '⚡';
-      if (cityTextEl) cityTextEl.innerText = st.city || 'Gujarat';
-      if (typeTextEl) typeTextEl.innerText = st.type || 'SuperHub';
-      if (tariffEl) tariffEl.innerText = st.pricePerKwh || 26;
-      if (ratingEl) ratingEl.innerText = '★ ' + (st.rating || 4.9);
-
-      const freePorts = st.ports ? st.ports.filter(p => p.status === 'available').length : 0;
-      const totalPorts = st.ports ? st.ports.length : 6;
-      if (baysAvailEl) baysAvailEl.innerText = freePorts + ' / ' + totalPorts + ' Free';
-
-      const all4w = st.ports ? st.ports.filter(p => p.vehicleType === '4W' || p.vehicleType === 'BOTH').length : 0;
-      const all2w = st.ports ? st.ports.filter(p => p.vehicleType === '2W' || p.vehicleType === 'BOTH').length : 0;
-      const countAll = document.getElementById('countAllPorts');
-      const count4w = document.getElementById('count4WPorts');
-      const count2w = document.getElementById('count2WPorts');
-      if (countAll) countAll.innerText = totalPorts;
-      if (count4w) count4w.innerText = all4w;
-      if (count2w) count2w.innerText = all2w;
-
-      const dirUrl = st.directionsUrl || ('https://www.google.com/maps/dir/?api=1&destination=' + (st.lat || 23.0416) + ',' + (st.lng || 72.5074));
-      if (directionsBtn) directionsBtn.href = dirUrl;
-
-      if (amenitiesEl && Array.isArray(st.amenities)) {
-        amenitiesEl.innerHTML = st.amenities.map(a => 
-          '<span class="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-xs">' + a + '</span>'
-        ).join('');
-      }
-    }
-
-    // Set Station ID from URL Parameter and Render
-    window.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const targetId = urlParams.get('id') || 'st-01';
-      currentStationId = targetId;
-      renderHubStationShowcase();
-      renderPorts();
-    });
-
-    // Also update header showcase on live sync
-    if (window.VoltGridDB && typeof window.VoltGridDB.onSync === 'function') {
-      window.VoltGridDB.onSync((type, data) => {
-        renderHubStationShowcase();
-      });
-    }
   </script>
 </body>
 </html>
