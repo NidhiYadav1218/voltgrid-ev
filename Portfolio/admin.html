@@ -359,11 +359,11 @@
           <!-- Administrator Profile Pill -->
           <div class="flex items-center gap-3 pl-2 sm:border-l sm:border-slate-200">
             <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-md shadow-indigo-500/20">
-              JD
+              NY
             </div>
             <div class="hidden sm:block text-left">
-              <span class="block text-xs font-bold text-slate-900 leading-tight">John Doe</span>
-              <span class="block text-[10px] text-slate-400 font-medium leading-tight">Administrator</span>
+              <span class="block text-xs font-bold text-slate-900 leading-tight">Nidhi Yadav</span>
+              <span class="block text-[10px] text-indigo-600 font-bold leading-tight">Administrator</span>
             </div>
             <button onclick="lockAdminSession()" title="Lock Admin Console" class="text-xs p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-all">
               🔒
@@ -643,7 +643,16 @@
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">Registered EV Drivers</h1>
-              <p class="text-xs text-slate-500 mt-0.5">Customer profiles, telematics telemetry, and loyalty wallet balances</p>
+              <p class="text-xs text-slate-500 mt-0.5">Customer profiles, telematics telemetry, live vehicle battery SoC, and charging session history</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <input 
+                type="text" 
+                id="userSearchInput" 
+                oninput="renderUsersTab()" 
+                placeholder="🔍 Search driver name, phone, vehicle..." 
+                class="px-4 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs w-64"
+              />
             </div>
           </div>
 
@@ -652,13 +661,14 @@
               <table class="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr class="border-b border-slate-100 text-slate-400 uppercase font-extrabold text-[10px] tracking-wider bg-slate-50/50">
-                    <th class="py-3 px-6">Driver Name</th>
-                    <th class="py-3 px-6">Phone & Email</th>
-                    <th class="py-3 px-6">Vehicle Model</th>
-                    <th class="py-3 px-6">City</th>
-                    <th class="py-3 px-6">Sessions</th>
-                    <th class="py-3 px-6">Total Spent</th>
-                    <th class="py-3 px-6 text-right">KYC Status</th>
+                    <th class="py-3.5 px-6">Driver Name</th>
+                    <th class="py-3.5 px-6">Phone & Email</th>
+                    <th class="py-3.5 px-6">Vehicle & Battery</th>
+                    <th class="py-3.5 px-6">City</th>
+                    <th class="py-3.5 px-6">Sessions</th>
+                    <th class="py-3.5 px-6">Total Spent</th>
+                    <th class="py-3.5 px-6">KYC Status</th>
+                    <th class="py-3.5 px-6 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="usersTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
@@ -940,6 +950,35 @@
     </div>
   </div>
 
+  <!-- DRIVER DETAIL MODAL -->
+  <div id="driverDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-3xl border border-slate-200 max-w-xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-start border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-3">
+          <div id="driverModalAvatar" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-extrabold text-base flex items-center justify-center shadow-md">
+            NY
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 id="driverModalName" class="text-lg font-bold text-slate-900 font-heading">Nidhi Yadav</h3>
+              <span id="driverModalKyc" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">KYC VERIFIED</span>
+            </div>
+            <p id="driverModalId" class="text-xs text-slate-400 font-mono">Driver ID: #USR-01 • Member</p>
+          </div>
+        </div>
+        <button onclick="closeDriverDetailModal()" class="text-slate-400 hover:text-slate-700 p-1 font-bold text-lg">✕</button>
+      </div>
+
+      <div class="space-y-4 text-xs" id="driverModalBody">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 flex gap-2">
+        <button onclick="closeDriverDetailModal()" class="w-full py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200">Close Profile</button>
+      </div>
+    </div>
+  </div>
+
   <!-- TARIFF EDIT MODAL -->
   <div id="tariffModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
     <div class="bg-white rounded-3xl border border-slate-200 max-w-sm w-full p-6 shadow-2xl space-y-4">
@@ -1043,6 +1082,20 @@
       }
     }
 
+    // Embedded Fallback EV Drivers for Statewide Infrastructure
+    const FALLBACK_USERS = [
+      { id: 'usr-01', name: 'Nidhi Yadav', email: 'nidhiyadav1218@gmail.com', phone: '+91 93287 03345', city: 'Ahmedabad', vehicle: 'MG ZS EV', soc: 22, bookingsCount: 16, totalSpent: 5240, walletBalance: 1250, kyc: 'VERIFIED', joinedDate: '12 Jan 2025' },
+      { id: 'usr-02', name: 'Aarav Sharma', email: 'aarav.sharma@gmail.com', phone: '+91 98250 12345', city: 'Ahmedabad', vehicle: 'MG ZS EV', soc: 78, bookingsCount: 11, totalSpent: 4120, walletBalance: 820, kyc: 'VERIFIED', joinedDate: '18 Jan 2025' },
+      { id: 'usr-03', name: 'Rohan Mehra', email: 'rohan.mehra@gmail.com', phone: '+91 98980 54321', city: 'Gandhinagar', vehicle: 'Hyundai Ioniq 5', soc: 65, bookingsCount: 8, totalSpent: 3890, walletBalance: 450, kyc: 'VERIFIED', joinedDate: '02 Feb 2025' },
+      { id: 'usr-04', name: 'Kiran Patel', email: 'kiran.patel@gmail.com', phone: '+91 97240 98765', city: 'Surat', vehicle: 'Tata Punch EV', soc: 45, bookingsCount: 6, totalSpent: 1980, walletBalance: 320, kyc: 'VERIFIED', joinedDate: '14 Feb 2025' },
+      { id: 'usr-05', name: 'Priya Joshi', email: 'priya.j@gmail.com', phone: '+91 94260 11223', city: 'Vadodara', vehicle: 'Ather 450X Gen 3', soc: 82, bookingsCount: 14, totalSpent: 1180, walletBalance: 190, kyc: 'VERIFIED', joinedDate: '22 Feb 2025' },
+      { id: 'usr-06', name: 'Vikram Mehta', email: 'vikram.m@gmail.com', phone: '+91 98241 22334', city: 'Vadodara', vehicle: 'Kia EV6', soc: 58, bookingsCount: 9, totalSpent: 4620, walletBalance: 1500, kyc: 'VERIFIED', joinedDate: '01 Mar 2025' },
+      { id: 'usr-07', name: 'Ananya Desai', email: 'ananya.d@gmail.com', phone: '+91 97129 33445', city: 'Rajkot', vehicle: 'Tata Nexon EV Max', soc: 70, bookingsCount: 7, totalSpent: 2840, walletBalance: 610, kyc: 'VERIFIED', joinedDate: '09 Mar 2025' },
+      { id: 'usr-08', name: 'Bhavin Shah', email: 'bhavin.shah@gmail.com', phone: '+91 98795 44556', city: 'Surat', vehicle: 'BYD Atto 3', soc: 38, bookingsCount: 10, totalSpent: 3950, walletBalance: 940, kyc: 'VERIFIED', joinedDate: '15 Mar 2025' },
+      { id: 'usr-09', name: 'Sneha Trivedi', email: 'sneha.t@gmail.com', phone: '+91 94270 55667', city: 'Ahmedabad', vehicle: 'Ola S1 Pro', soc: 90, bookingsCount: 15, totalSpent: 1250, walletBalance: 240, kyc: 'VERIFIED', joinedDate: '20 Mar 2025' },
+      { id: 'usr-10', name: 'Jayesh Parmar', email: 'jayesh.p@gmail.com', phone: '+91 99090 66778', city: 'Kevadia', vehicle: 'Mahindra XUV400 EV', soc: 52, bookingsCount: 5, totalSpent: 2190, walletBalance: 400, kyc: 'VERIFIED', joinedDate: '25 Mar 2025' }
+    ];
+
     // Refresh Data from VoltGridDB
     function refreshDataFromDB() {
       if (window.VoltGridDB) {
@@ -1067,6 +1120,15 @@
       if (!globalBookings || globalBookings.length === 0) {
         if (window.INITIAL_BOOKINGS && window.INITIAL_BOOKINGS.length > 0) {
           globalBookings = window.INITIAL_BOOKINGS;
+        }
+      }
+      if (!globalUsers || globalUsers.length === 0) {
+        if (window.INITIAL_USERS && window.INITIAL_USERS.length > 0) {
+          globalUsers = window.INITIAL_USERS;
+        } else if (window.VoltGridDB && typeof window.VoltGridDB.getUsers === 'function') {
+          globalUsers = window.VoltGridDB.getUsers();
+        } else {
+          globalUsers = FALLBACK_USERS;
         }
       }
       if (!globalPorts || globalPorts.length === 0) {
@@ -1207,11 +1269,24 @@
           statusPill = `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-sky-50 text-sky-600 border border-sky-200">● Confirmed</span>`;
         }
 
+        const initials = (customer || 'EV').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const vehicle = order.vehicle || order.vehicleModel || 'MG ZS EV';
+
         return `
           <tr class="hover:bg-slate-50/80 transition-colors">
             <td class="py-3.5 px-6 font-mono font-bold text-slate-900">${orderId}</td>
-            <td class="py-3.5 px-6 font-semibold text-slate-800">${customer}</td>
-            <td class="py-3.5 px-6 text-slate-500">${dateStr}</td>
+            <td class="py-3.5 px-6">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 font-extrabold text-[11px] flex items-center justify-center shrink-0">
+                  ${initials}
+                </div>
+                <div>
+                  <strong class="block text-slate-900 font-bold leading-tight">${customer}</strong>
+                  <span class="text-[10px] text-slate-400 block">${vehicle}</span>
+                </div>
+              </div>
+            </td>
+            <td class="py-3.5 px-6 text-slate-500 font-medium">${dateStr}</td>
             <td class="py-3.5 px-6 font-bold text-slate-900 font-mono">₹${amount.toFixed(2)}</td>
             <td class="py-3.5 px-6">${statusPill}</td>
             <td class="py-3.5 px-6 text-right">
@@ -1366,20 +1441,64 @@
       const tbody = document.getElementById('usersTableBody');
       if (!tbody) return;
 
-      tbody.innerHTML = globalUsers.map(u => {
+      const q = (document.getElementById('userSearchInput') ? document.getElementById('userSearchInput').value : '').toLowerCase().trim();
+      let list = globalUsers;
+      if (q) {
+        list = list.filter(u => 
+          (u.name || '').toLowerCase().includes(q) ||
+          (u.phone || '').toLowerCase().includes(q) ||
+          (u.email || '').toLowerCase().includes(q) ||
+          (u.vehicle || u.car || '').toLowerCase().includes(q) ||
+          (u.city || '').toLowerCase().includes(q)
+        );
+      }
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-400 font-mono">No EV drivers found matching search.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(u => {
+        const initials = (u.name || 'EV').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const userId = u.id || u.userId || 'usr-01';
+        const car = u.vehicle || u.car || 'MG ZS EV';
+        const soc = u.soc || 25;
+        const totalSpent = Number(u.totalSpent || 1200);
+        const sessions = Number(u.bookingsCount || u.sessionsCount || 1);
+
         return `
           <tr class="hover:bg-slate-50/80 transition-colors">
-            <td class="py-3 px-6 font-bold text-slate-900">${u.name}</td>
             <td class="py-3 px-6">
-              <span class="block text-slate-800 font-mono">${u.phone}</span>
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs">
+                  ${initials}
+                </div>
+                <div>
+                  <strong class="block text-slate-900 font-bold">${u.name}</strong>
+                  <span class="text-[10px] text-slate-400 font-mono">${userId}</span>
+                </div>
+              </div>
+            </td>
+            <td class="py-3 px-6">
+              <span class="block text-slate-800 font-mono font-medium">${u.phone || '-'}</span>
               <span class="text-[10px] text-slate-400">${u.email || '-'}</span>
             </td>
-            <td class="py-3 px-6 font-medium text-slate-700">${u.vehicle || u.car || 'MG ZS EV'}</td>
-            <td class="py-3 px-6 text-slate-500">${u.city || 'Ahmedabad'}</td>
-            <td class="py-3 px-6 font-mono font-bold text-indigo-600">${u.bookingsCount || u.sessionsCount || 1}</td>
-            <td class="py-3 px-6 font-mono font-bold text-emerald-600">₹${(u.totalSpent || 1200).toLocaleString()}</td>
-            <td class="py-3 px-6 text-right">
+            <td class="py-3 px-6">
+              <strong class="block text-slate-800 text-xs">${car}</strong>
+              <span class="inline-flex items-center gap-1 text-[10px] text-emerald-600 font-bold font-mono">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>${soc}% SoC Synced
+              </span>
+            </td>
+            <td class="py-3 px-6 text-slate-600 font-medium">${u.city || 'Ahmedabad'}</td>
+            <td class="py-3 px-6 font-mono font-bold text-indigo-600">${sessions}</td>
+            <td class="py-3 px-6 font-mono font-bold text-emerald-600">₹${totalSpent.toLocaleString()}</td>
+            <td class="py-3 px-6">
               <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">VERIFIED</span>
+            </td>
+            <td class="py-3 px-6 text-right">
+              <button onclick="openDriverDetailModal('${userId}')" class="px-2.5 py-1 rounded-lg border border-slate-200 text-indigo-600 hover:bg-indigo-50 font-bold text-xs transition-all shadow-2xs">
+                🔍 Details
+              </button>
             </td>
           </tr>
         `;
@@ -1660,18 +1779,63 @@
 
       const bodyEl = document.getElementById('modalOrderDetailsBody');
       if (bodyEl) {
+        const platformFee = Math.round((order.totalAmount || 0) * 0.15);
+        const vendorNet = (order.totalAmount || 0) - platformFee;
+
         bodyEl.innerHTML = `
-          <div class="grid grid-cols-2 gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-100">
-            <div><span class="text-slate-400 block text-[10px] uppercase">Customer</span><strong>${order.customerName || order.customer || 'Driver'}</strong></div>
-            <div><span class="text-slate-400 block text-[10px] uppercase">Phone</span><strong class="font-mono">${order.customerPhone || order.phone || '-'}</strong></div>
-            <div><span class="text-slate-400 block text-[10px] uppercase">Vehicle</span><strong>${order.vehicle || order.vehicleModel || 'EV'}</strong></div>
-            <div><span class="text-slate-400 block text-[10px] uppercase">PIN</span><strong class="font-mono text-indigo-600 text-sm">${order.pin || '4821'}</strong></div>
+          <!-- Driver & Vehicle Profile -->
+          <div class="p-3.5 rounded-2xl bg-indigo-50/50 border border-indigo-100 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-bold text-sm flex items-center justify-center">
+                ${(order.customerName || order.customer || 'Driver').substring(0, 2).toUpperCase()}
+              </div>
+              <div>
+                <strong class="text-sm text-slate-900 block font-bold">${order.customerName || order.customer || 'Driver'}</strong>
+                <span class="text-slate-500 font-mono text-[11px]">${order.customerPhone || order.phone || '+91 93287 03345'} • ${order.customerEmail || 'nidhiyadav1218@gmail.com'}</span>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">VERIFIED DRIVER</span>
           </div>
-          <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
-            <div><span class="text-slate-400 text-[10px] uppercase block">Station & Port</span><strong>${order.stationName} • ${order.portName || order.portId}</strong></div>
-            <div class="flex justify-between pt-1 border-t border-slate-200 font-bold">
-              <span>Amount Paid</span>
-              <span class="text-emerald-600 font-mono">₹${Number(order.totalAmount || order.amountPaid || 0).toFixed(2)}</span>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+              <span class="text-slate-400 block text-[10px] uppercase font-mono">Vehicle Model</span>
+              <strong class="text-slate-800 text-xs">${order.vehicle || order.vehicleModel || 'MG ZS EV'}</strong>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+              <span class="text-slate-400 block text-[10px] uppercase font-mono">Secret Unlocking PIN</span>
+              <strong class="font-mono text-indigo-600 text-sm tracking-widest">${order.pin || '4821'}</strong>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1.5 text-xs">
+            <div>
+              <span class="text-slate-400 text-[10px] uppercase block font-mono">SuperHub Station</span>
+              <strong class="text-slate-800">${order.stationName || 'Gujarat Hub'}</strong>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span>Charging Port:</span>
+              <span class="font-bold text-indigo-600">${order.portName || order.portId || 'Bay 01 (4W)'}</span>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span>Energy Delivered:</span>
+              <span class="font-mono font-bold">${order.energyKwh || 38.5} kWh</span>
+            </div>
+          </div>
+
+          <!-- Financial Breakdown -->
+          <div class="p-3 rounded-xl bg-slate-900 text-white space-y-1 text-xs">
+            <div class="flex justify-between text-slate-400 text-[11px]">
+              <span>Platform Take-Rate (15%):</span>
+              <span class="font-mono text-amber-400">₹${platformFee.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between text-slate-400 text-[11px]">
+              <span>CPO Net Payout (85%):</span>
+              <span class="font-mono text-emerald-400">₹${vendorNet.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between pt-1.5 border-t border-slate-800 text-sm font-bold">
+              <span>Total Paid by Driver:</span>
+              <span class="font-mono text-white text-base">₹${Number(order.totalAmount || order.amountPaid || 0).toFixed(2)}</span>
             </div>
           </div>
         `;
@@ -1682,6 +1846,102 @@
 
     function closeOrderDetailModal() {
       document.getElementById('orderDetailModal').classList.add('hidden');
+    }
+
+    // Driver Profile Modal Logic
+    function openDriverDetailModal(userId) {
+      const u = globalUsers.find(x => (x.id || x.userId) === userId) || globalUsers[0];
+      if (!u) return;
+
+      const initials = (u.name || 'EV').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      document.getElementById('driverModalAvatar').innerText = initials;
+      document.getElementById('driverModalName').innerText = u.name;
+      document.getElementById('driverModalId').innerText = `Driver ID: #${u.id || u.userId || 'USR-01'} • Joined: ${u.joinedDate || 'Jan 2025'}`;
+
+      // User's specific bookings
+      const userBookings = globalBookings.filter(b => 
+        (b.customerName && b.customerName.toLowerCase() === u.name.toLowerCase()) ||
+        (b.customerPhone && (b.customerPhone.replace(/\D/g, '') === (u.phone || '').replace(/\D/g, ''))) ||
+        b.userId === u.id
+      );
+
+      const body = document.getElementById('driverModalBody');
+      body.innerHTML = `
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <span class="text-[10px] text-slate-400 uppercase font-mono block">Phone Number</span>
+            <strong class="font-mono text-slate-800 text-xs">${u.phone || '-'}</strong>
+          </div>
+          <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <span class="text-[10px] text-slate-400 uppercase font-mono block">Email Address</span>
+            <strong class="text-slate-800 text-xs truncate block" title="${u.email}">${u.email || '-'}</strong>
+          </div>
+          <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <span class="text-[10px] text-slate-400 uppercase font-mono block">Registered Car</span>
+            <strong class="text-slate-800 text-xs">${u.vehicle || u.car || 'MG ZS EV'}</strong>
+          </div>
+          <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <span class="text-[10px] text-slate-400 uppercase font-mono block">Home City</span>
+            <strong class="text-slate-800 text-xs">${u.city || 'Ahmedabad'}</strong>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div class="p-3 rounded-2xl bg-indigo-50/60 border border-indigo-100">
+            <span class="text-[10px] text-indigo-500 uppercase font-bold block">Charging Sessions</span>
+            <div class="text-lg font-extrabold text-indigo-700 font-mono">${u.bookingsCount || u.sessionsCount || userBookings.length || 1}</div>
+          </div>
+          <div class="p-3 rounded-2xl bg-emerald-50/60 border border-emerald-100">
+            <span class="text-[10px] text-emerald-600 uppercase font-bold block">Total Lifetime Spent</span>
+            <div class="text-lg font-extrabold text-emerald-700 font-mono">₹${Number(u.totalSpent || 1200).toLocaleString()}</div>
+          </div>
+          <div class="p-3 rounded-2xl bg-purple-50/60 border border-purple-100">
+            <span class="text-[10px] text-purple-600 uppercase font-bold block">VoltGrid Wallet</span>
+            <div class="text-lg font-extrabold text-purple-700 font-mono">₹${Number(u.walletBalance || 1000).toLocaleString()}</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider font-heading">Recent Charging Ledger & Invoices</h4>
+            <span class="text-[10px] text-slate-400 font-mono">${userBookings.length} Bookings Recorded</span>
+          </div>
+          <div class="border border-slate-100 rounded-2xl overflow-hidden max-h-48 overflow-y-auto">
+            <table class="w-full text-left text-[11px]">
+              <thead class="bg-slate-50 text-slate-400 font-bold border-b border-slate-100">
+                <tr>
+                  <th class="py-2 px-3">Order ID</th>
+                  <th class="py-2 px-3">Station & Bay</th>
+                  <th class="py-2 px-3">Energy</th>
+                  <th class="py-2 px-3">Amount</th>
+                  <th class="py-2 px-3">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${userBookings.length > 0 ? userBookings.map(b => `
+                  <tr class="hover:bg-slate-50/60">
+                    <td class="py-2 px-3 font-mono font-bold text-slate-800">${b.id || b.invoiceNumber || '#BK-01'}</td>
+                    <td class="py-2 px-3 text-slate-700">${b.stationName ? b.stationName.split('•')[0] : 'SuperHub'} (${b.portId || b.portName || 'Bay 01'})</td>
+                    <td class="py-2 px-3 font-mono">${b.energyKwh || 35} kWh</td>
+                    <td class="py-2 px-3 font-mono font-bold text-emerald-600">₹${Number(b.totalAmount || 850).toFixed(2)}</td>
+                    <td class="py-2 px-3"><span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-teal-50 text-teal-600 border border-teal-200">${b.status || 'COMPLETED'}</span></td>
+                  </tr>
+                `).join('') : `
+                  <tr>
+                    <td colspan="5" class="py-4 text-center text-slate-400 font-mono">No direct bookings linked yet.</td>
+                  </tr>
+                `}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('driverDetailModal').classList.remove('hidden');
+    }
+
+    function closeDriverDetailModal() {
+      document.getElementById('driverDetailModal').classList.add('hidden');
     }
 
     function executeAdminRefund() {

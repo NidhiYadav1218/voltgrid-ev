@@ -2935,6 +2935,15 @@ const VoltGridDB = {
     return merged;
   },
 
+  saveUsers: function(users) {
+    try {
+      localStorage.setItem('voltgrid_users', JSON.stringify(users));
+      this.trigger('USERS_UPDATED', users);
+    } catch (e) {
+      console.warn('Failed to save users to localStorage:', e);
+    }
+  },
+
   getAllPorts: function() {
     const stations = this.getStations();
     const portsList = [];
@@ -3006,6 +3015,48 @@ const VoltGridDB = {
     const list = this.getBookings();
     list.unshift(booking);
     this.saveBookings(list);
+
+    // Auto-upsert EV Driver profile into users list
+    try {
+      const users = this.getUsers();
+      const customerName = booking.customerName || booking.customer || 'Driver';
+      const customerPhone = booking.customerPhone || booking.phone || '';
+      const cleanPhone = customerPhone.replace(/\D/g, '');
+      const existingUser = users.find(u => 
+        (cleanPhone && (u.phone || '').replace(/\D/g, '') === cleanPhone) || 
+        (u.name && u.name.toLowerCase() === customerName.toLowerCase())
+      );
+
+      const spentAmount = Number(booking.totalAmount || booking.amountPaid || 0);
+
+      if (existingUser) {
+        existingUser.bookingsCount = (existingUser.bookingsCount || 0) + 1;
+        existingUser.totalSpent = (existingUser.totalSpent || 0) + spentAmount;
+        if (booking.vehicle) existingUser.vehicle = booking.vehicle;
+        if (booking.customerPhone && !existingUser.phone) existingUser.phone = booking.customerPhone;
+        existingUser.lastActive = new Date().toISOString();
+      } else {
+        const newUser = {
+          id: 'usr-' + (users.length + 1).toString().padStart(2, '0'),
+          name: customerName,
+          phone: customerPhone || '+91 93287 03345',
+          email: booking.customerEmail || `${customerName.toLowerCase().replace(/\s+/g, '.')}@gmail.com`,
+          city: (booking.stationName && booking.stationName.includes('•') ? booking.stationName.split('•')[1] : 'Ahmedabad').trim(),
+          vehicle: booking.vehicle || 'MG ZS EV',
+          soc: booking.currentSoc || 25,
+          bookingsCount: 1,
+          totalSpent: spentAmount,
+          walletBalance: 1000,
+          kyc: 'VERIFIED',
+          joinedDate: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+          lastActive: new Date().toISOString()
+        };
+        users.unshift(newUser);
+      }
+      this.saveUsers(users);
+    } catch (uErr) {
+      console.warn('Could not auto-upsert user on booking:', uErr);
+    }
   },
 
   updateStationTariff: function(stationId, newPrice) {
@@ -3116,6 +3167,7 @@ window.VoltGridDB = VoltGridDB;
 window.INITIAL_STATIONS = INITIAL_STATIONS;
 window.INITIAL_VENDORS = INITIAL_VENDORS;
 window.INITIAL_BOOKINGS = INITIAL_BOOKINGS;
+window.INITIAL_USERS = INITIAL_USERS;
 
 
 // Auto-sync from cloud on load
