@@ -2529,12 +2529,26 @@ const INITIAL_VENDORS = [
   }
 ];
 
+const INITIAL_USERS = [
+  { id: 'usr-01', name: 'Nidhi Yadav', email: 'nidhiyadav1218@gmail.com', phone: '+91 93287 03345', city: 'Ahmedabad', vehicle: 'MG ZS EV', soc: 22, bookingsCount: 16, totalSpent: 5240, walletBalance: 1250, kyc: 'VERIFIED', joinedDate: '12 Jan 2025' },
+  { id: 'usr-02', name: 'Aarav Sharma', email: 'aarav.sharma@gmail.com', phone: '+91 98250 12345', city: 'Ahmedabad', vehicle: 'MG ZS EV', soc: 78, bookingsCount: 11, totalSpent: 4120, walletBalance: 820, kyc: 'VERIFIED', joinedDate: '18 Jan 2025' },
+  { id: 'usr-03', name: 'Rohan Mehra', email: 'rohan.mehra@gmail.com', phone: '+91 98980 54321', city: 'Gandhinagar', vehicle: 'Hyundai Ioniq 5', soc: 65, bookingsCount: 8, totalSpent: 3890, walletBalance: 450, kyc: 'VERIFIED', joinedDate: '02 Feb 2025' },
+  { id: 'usr-04', name: 'Kiran Patel', email: 'kiran.patel@gmail.com', phone: '+91 97240 98765', city: 'Surat', vehicle: 'Tata Punch EV', soc: 45, bookingsCount: 6, totalSpent: 1980, walletBalance: 320, kyc: 'VERIFIED', joinedDate: '14 Feb 2025' },
+  { id: 'usr-05', name: 'Priya Joshi', email: 'priya.j@gmail.com', phone: '+91 94260 11223', city: 'Vadodara', vehicle: 'Ather 450X Gen 3', soc: 82, bookingsCount: 14, totalSpent: 1180, walletBalance: 190, kyc: 'VERIFIED', joinedDate: '22 Feb 2025' },
+  { id: 'usr-06', name: 'Vikram Mehta', email: 'vikram.m@gmail.com', phone: '+91 98241 22334', city: 'Vadodara', vehicle: 'Kia EV6', soc: 58, bookingsCount: 9, totalSpent: 4620, walletBalance: 1500, kyc: 'VERIFIED', joinedDate: '01 Mar 2025' },
+  { id: 'usr-07', name: 'Ananya Desai', email: 'ananya.d@gmail.com', phone: '+91 97129 33445', city: 'Rajkot', vehicle: 'Tata Nexon EV Max', soc: 70, bookingsCount: 7, totalSpent: 2840, walletBalance: 610, kyc: 'VERIFIED', joinedDate: '09 Mar 2025' },
+  { id: 'usr-08', name: 'Bhavin Shah', email: 'bhavin.shah@gmail.com', phone: '+91 98795 44556', city: 'Surat', vehicle: 'BYD Atto 3', soc: 38, bookingsCount: 10, totalSpent: 3950, walletBalance: 940, kyc: 'VERIFIED', joinedDate: '15 Mar 2025' },
+  { id: 'usr-09', name: 'Sneha Trivedi', email: 'sneha.t@gmail.com', phone: '+91 94270 55667', city: 'Ahmedabad', vehicle: 'Ola S1 Pro', soc: 90, bookingsCount: 15, totalSpent: 1250, walletBalance: 240, kyc: 'VERIFIED', joinedDate: '20 Mar 2025' },
+  { id: 'usr-10', name: 'Jayesh Parmar', email: 'jayesh.p@gmail.com', phone: '+91 99090 66778', city: 'Kevadia', vehicle: 'Mahindra XUV400 EV', soc: 52, bookingsCount: 5, totalSpent: 2190, walletBalance: 400, kyc: 'VERIFIED', joinedDate: '25 Mar 2025' }
+];
+
 const INITIAL_BOOKINGS = [
   {
     id: 'BK-98214',
     createdAt: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
     customerName: 'Aarav Sharma',
     customerPhone: '+91 98250 12345',
+    customerEmail: 'aarav.sharma@gmail.com',
     vehicleModel: 'MG ZS EV (50.3 kWh)',
     stationId: 'st-01',
     stationName: 'Jio-bp pulse SG Highway HyperHub • Ahmedabad',
@@ -2545,13 +2559,15 @@ const INITIAL_BOOKINGS = [
     totalAmount: 1001,
     platformFee: 150,
     vendorPayout: 851,
-    status: 'COMPLETED'
+    status: 'COMPLETED',
+    pin: '7412'
   },
   {
     id: 'BK-98215',
     createdAt: new Date(Date.now() - 1000 * 60 * 35).toISOString(),
     customerName: 'Rohan Mehra',
     customerPhone: '+91 98980 54321',
+    customerEmail: 'rohan.mehra@gmail.com',
     vehicleModel: 'Hyundai Ioniq 5 (72.6 kWh)',
     stationId: 'st-02',
     stationName: 'Tata Power GIFT City FinTech SuperHub • Gandhinagar',
@@ -2562,13 +2578,15 @@ const INITIAL_BOOKINGS = [
     totalAmount: 1248,
     platformFee: 187,
     vendorPayout: 1061,
-    status: 'COMPLETED'
+    status: 'COMPLETED',
+    pin: '3920'
   },
   {
     id: 'BK-98216',
     createdAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
     customerName: 'Kiran Patel',
     customerPhone: '+91 97240 98765',
+    customerEmail: 'kiran.patel@gmail.com',
     vehicleModel: 'Tata Punch EV (35 kWh)',
     stationId: 'st-12',
     stationName: 'VoltGrid VR Surat & Dumas Mega-Hub',
@@ -2579,24 +2597,179 @@ const INITIAL_BOOKINGS = [
     totalAmount: 588,
     platformFee: 88,
     vendorPayout: 500,
-    status: 'CHARGING'
+    status: 'CHARGING',
+    pin: '8154'
   },
   {
     id: 'BK-98217',
     createdAt: new Date(Date.now() - 1000 * 60 * 50).toISOString(),
     customerName: 'Priya Joshi',
     customerPhone: '+91 94260 11223',
+    customerEmail: 'priya.j@gmail.com',
     vehicleModel: 'Ather 450X Gen 3 (3.7 kWh)',
     stationId: 'st-08',
-    stationName: 'Statiq NE-1 Expressway Gateway • Vadodara',
-    vendorId: 'vendor-statiq',
-    vendorName: 'Statiq EV Fast Hub',
+    stationName: 'Zeon Alkapuri Express Gateway • Vadodara',
+    vendorId: 'vendor-zeon',
+    vendorName: 'Zeon Charging',
     portId: 'Bay 04 (2W)',
     energyKwh: 3.2,
-    totalAmount: 80,
-    platformFee: 12,
-    vendorPayout: 68,
-    status: 'COMPLETED'
+    totalAmount: 96,
+    platformFee: 14,
+    vendorPayout: 82,
+    status: 'COMPLETED',
+    pin: '5012'
+  },
+  {
+    id: 'BK-98218',
+    createdAt: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+    customerName: 'Vikram Mehta',
+    customerPhone: '+91 98241 22334',
+    customerEmail: 'vikram.m@gmail.com',
+    vehicleModel: 'Kia EV6 (77.4 kWh)',
+    stationId: 'st-04',
+    stationName: 'Statiq NE-1 Expressway Entry Plaza • Vadodara',
+    vendorId: 'vendor-statiq',
+    vendorName: 'Statiq EV Fast Hub',
+    portId: 'Bay 01 (4W)',
+    energyKwh: 64.0,
+    totalAmount: 1600,
+    platformFee: 240,
+    vendorPayout: 1360,
+    status: 'COMPLETED',
+    pin: '9421'
+  },
+  {
+    id: 'BK-98219',
+    createdAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+    customerName: 'Ananya Desai',
+    customerPhone: '+91 97129 33445',
+    customerEmail: 'ananya.d@gmail.com',
+    vehicleModel: 'Tata Nexon EV Max (40.5 kWh)',
+    stationId: 'st-15',
+    stationName: 'Tata Power 150ft Ring Road • Rajkot',
+    vendorId: 'vendor-tata',
+    vendorName: 'Tata Power EZ Charge',
+    portId: 'Bay 01 (4W)',
+    energyKwh: 32.5,
+    totalAmount: 780,
+    platformFee: 117,
+    vendorPayout: 663,
+    status: 'COMPLETED',
+    pin: '2289'
+  },
+  {
+    id: 'BK-98220',
+    createdAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+    customerName: 'Bhavin Shah',
+    customerPhone: '+91 98795 44556',
+    customerEmail: 'bhavin.shah@gmail.com',
+    vehicleModel: 'BYD Atto 3 (60.48 kWh)',
+    stationId: 'st-13',
+    stationName: 'Jio-bp pulse Varachha Diamond Hub • Surat',
+    vendorId: 'vendor-jiobp',
+    vendorName: 'Jio-bp pulse',
+    portId: 'Bay 01 (4W)',
+    energyKwh: 45.0,
+    totalAmount: 1170,
+    platformFee: 175,
+    vendorPayout: 995,
+    status: 'COMPLETED',
+    pin: '6631'
+  },
+  {
+    id: 'BK-98221',
+    createdAt: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
+    customerName: 'Sneha Trivedi',
+    customerPhone: '+91 94270 55667',
+    customerEmail: 'sneha.t@gmail.com',
+    vehicleModel: 'Ola S1 Pro (4 kWh)',
+    stationId: 'st-03',
+    stationName: 'Zeon Ahmedabad Airport T2 Gateway Hub',
+    vendorId: 'vendor-zeon',
+    vendorName: 'Zeon Charging',
+    portId: 'Bay 04 (2W)',
+    energyKwh: 3.5,
+    totalAmount: 98,
+    platformFee: 15,
+    vendorPayout: 83,
+    status: 'COMPLETED',
+    pin: '1094'
+  },
+  {
+    id: 'BK-98222',
+    createdAt: new Date(Date.now() - 1000 * 60 * 310).toISOString(),
+    customerName: 'Jayesh Parmar',
+    customerPhone: '+91 99090 66778',
+    customerEmail: 'jayesh.p@gmail.com',
+    vehicleModel: 'Mahindra XUV400 EV (39.4 kWh)',
+    stationId: 'st-05',
+    stationName: 'Jio-bp Statue of Unity Green Zone • Kevadia',
+    vendorId: 'vendor-jiobp',
+    vendorName: 'Jio-bp pulse',
+    portId: 'Bay 02 (4W)',
+    energyKwh: 30.0,
+    totalAmount: 780,
+    platformFee: 117,
+    vendorPayout: 663,
+    status: 'COMPLETED',
+    pin: '4419'
+  },
+  {
+    id: 'BK-98223',
+    createdAt: new Date(Date.now() - 1000 * 60 * 420).toISOString(),
+    customerName: 'Meera Patel',
+    customerPhone: '+91 98255 77889',
+    customerEmail: 'meera.patel@gmail.com',
+    vehicleModel: 'MG Comet EV (17.3 kWh)',
+    stationId: 'st-10',
+    stationName: 'Tata Power Victoria Park Corridor • Bhavnagar',
+    vendorId: 'vendor-tata',
+    vendorName: 'Tata Power EZ Charge',
+    portId: 'Bay 03 (4W)',
+    energyKwh: 14.5,
+    totalAmount: 348,
+    platformFee: 52,
+    vendorPayout: 296,
+    status: 'COMPLETED',
+    pin: '7721'
+  },
+  {
+    id: 'BK-98224',
+    createdAt: new Date(Date.now() - 1000 * 60 * 2).toISOString(),
+    customerName: 'Nidhi Yadav',
+    customerPhone: '+91 93287 03345',
+    customerEmail: 'nidhiyadav1218@gmail.com',
+    vehicleModel: 'MG ZS EV (50.3 kWh)',
+    stationId: 'st-01',
+    stationName: 'Jio-bp pulse SG Highway HyperHub • Ahmedabad',
+    vendorId: 'vendor-jiobp',
+    vendorName: 'Jio-bp pulse',
+    portId: 'Bay 02 (4W)',
+    energyKwh: 39.2,
+    totalAmount: 1019,
+    platformFee: 153,
+    vendorPayout: 866,
+    status: 'CHARGING',
+    pin: '9045'
+  },
+  {
+    id: 'BK-98225',
+    createdAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+    customerName: 'Devang Solanki',
+    customerPhone: '+91 98982 88990',
+    customerEmail: 'devang.s@gmail.com',
+    vehicleModel: 'Tata Tiago EV (24 kWh)',
+    stationId: 'st-16',
+    stationName: 'Statiq Reliance Greens Digjam Hub • Jamnagar',
+    vendorId: 'vendor-statiq',
+    vendorName: 'Statiq EV Fast Hub',
+    portId: 'Bay 01 (4W)',
+    energyKwh: 20.0,
+    totalAmount: 520,
+    platformFee: 78,
+    vendorPayout: 442,
+    status: 'COMPLETED',
+    pin: '3318'
   }
 ];
 
@@ -2642,15 +2815,17 @@ const VoltGridDB = {
   },
 
   syncFromCloud: function(callback) {
+    var self = this;
     try {
       if (typeof fetch !== 'undefined') {
         fetch('/api/stations')
           .then(function(res) { return res.json(); })
           .then(function(data) {
-            if (data && data.stations && Array.isArray(data.stations) && data.stations.length >= 30) {
-              localStorage.setItem('voltgrid_stations', JSON.stringify(data.stations));
-              if (typeof callback === 'function') callback(data.stations);
-              if (window.VoltGridDB) window.VoltGridDB.notifySync('STATIONS_UPDATED', data.stations);
+            var list = Array.isArray(data) ? data : (data && Array.isArray(data.stations) ? data.stations : null);
+            if (list && list.length > 0) {
+              localStorage.setItem('voltgrid_stations', JSON.stringify(list));
+              if (typeof callback === 'function') callback(list);
+              if (self.broadcast) self.broadcast('STATIONS_UPDATED', list);
             }
           })
           .catch(function(err) {});
@@ -2658,23 +2833,164 @@ const VoltGridDB = {
     } catch(e) {}
   },
 
+  DEFAULT_VENDOR_PASSWORDS: {
+    'vendor-jiobp': 'jio123',
+    'vendor-tata': 'tata123',
+    'vendor-zeon': 'zeon123',
+    'vendor-statiq': 'statiq123',
+    'vendor-voltgrid': 'volt123'
+  },
+
+  getVendorPasswords: function() {
+    try {
+      const saved = localStorage.getItem('voltgrid_vendor_passwords');
+      if (saved) {
+        return Object.assign({}, this.DEFAULT_VENDOR_PASSWORDS, JSON.parse(saved));
+      }
+    } catch(e) {}
+    return Object.assign({}, this.DEFAULT_VENDOR_PASSWORDS);
+  },
+
+  setVendorPassword: function(vendorId, newPass) {
+    const passwords = this.getVendorPasswords();
+    passwords[vendorId] = String(newPass).trim();
+    try {
+      localStorage.setItem('voltgrid_vendor_passwords', JSON.stringify(passwords));
+      this.broadcast('VENDOR_PASSWORDS_UPDATED', passwords);
+    } catch(e) {}
+    return true;
+  },
+
+  verifyVendorPassword: function(vendorId, pass) {
+    const passwords = this.getVendorPasswords();
+    const correctPass = passwords[vendorId] || this.DEFAULT_VENDOR_PASSWORDS[vendorId] || 'vendor123';
+    return String(pass).trim() === correctPass;
+  },
+
   getVendors: function() {
     return JSON.parse(JSON.stringify(INITIAL_VENDORS));
   },
 
   getBookings: function() {
+    let savedList = [];
     try {
       const saved = localStorage.getItem('voltgrid_bookings');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed;
+          savedList = parsed;
         }
       }
     } catch (e) {}
-    const fresh = JSON.parse(JSON.stringify(INITIAL_BOOKINGS));
-    localStorage.setItem('voltgrid_bookings', JSON.stringify(fresh));
-    return fresh;
+
+    // Deduplicate and merge user-created bookings with INITIAL_BOOKINGS
+    const map = new Map();
+    // Default seeded bookings first
+    INITIAL_BOOKINGS.forEach(b => {
+      const key = b.id || b._id || b.invoiceNumber;
+      if (key) map.set(key, b);
+    });
+    // User-created bookings take precedence and overwrite
+    savedList.forEach(b => {
+      const key = b.id || b._id || b.invoiceNumber;
+      if (key) map.set(key, b);
+    });
+
+    const merged = Array.from(map.values()).sort((a, b) => {
+      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+    });
+
+    try {
+      localStorage.setItem('voltgrid_bookings', JSON.stringify(merged));
+    } catch (e) {}
+    return merged;
+  },
+
+  getUsers: function() {
+    let savedList = [];
+    try {
+      const saved = localStorage.getItem('voltgrid_users');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          savedList = parsed;
+        }
+      }
+    } catch (e) {}
+
+    const map = new Map();
+    INITIAL_USERS.forEach(u => {
+      const key = u.id || u.userId || u.phone;
+      if (key) map.set(key, u);
+    });
+    savedList.forEach(u => {
+      const key = u.id || u.userId || u.phone;
+      if (key) map.set(key, u);
+    });
+
+    const merged = Array.from(map.values());
+    try {
+      localStorage.setItem('voltgrid_users', JSON.stringify(merged));
+    } catch (e) {}
+    return merged;
+  },
+
+  getAllPorts: function() {
+    const stations = this.getStations();
+    const portsList = [];
+    stations.forEach(st => {
+      if (Array.isArray(st.ports)) {
+        st.ports.forEach(p => {
+          portsList.push({
+            id: p.id,
+            name: p.name,
+            stationId: st.id,
+            stationName: st.name,
+            city: st.city,
+            vendorId: st.vendorId,
+            vendorName: st.vendorName,
+            type: p.type || (p.maxKw + 'kW Fast DC'),
+            maxKw: p.maxKw || 60,
+            status: p.status || 'available',
+            connector: p.connector || (p.maxKw > 22 ? 'CCS2' : 'Type 2'),
+            vehicleType: p.vehicleType || (p.maxKw <= 22 ? '2W' : '4W'),
+            pricePerKwh: st.pricePerKwh,
+            secondsLeft: p.secondsLeft || 0,
+            soc: p.soc,
+            customer: p.customer,
+            vehicle: p.vehicle
+          });
+        });
+      }
+    });
+    return portsList;
+  },
+
+  updatePortStatus: function(stationId, portId, newStatus) {
+    const stations = this.getStations();
+    const st = stations.find(s => s.id === stationId);
+    if (st && st.ports) {
+      const port = st.ports.find(p => p.id === portId);
+      if (port) {
+        port.status = newStatus;
+        if (newStatus === 'available') {
+          port.secondsLeft = 0;
+          port.soc = null;
+          port.customer = null;
+          port.vehicle = null;
+        }
+        this.saveStations(stations);
+        return true;
+      }
+    }
+    return false;
+  },
+
+  saveUsers: function(users) {
+    try {
+      localStorage.setItem('voltgrid_users', JSON.stringify(users));
+      this.broadcast('USERS_UPDATED', users);
+    } catch (e) {}
   },
 
   saveBookings: function(bookings) {

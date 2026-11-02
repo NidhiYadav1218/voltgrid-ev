@@ -30,8 +30,112 @@ export default async function handler(req, res) {
     const bookingsCol = db.collection('bookings');
     const usersCol = db.collection('users');
 
-    if (req.method === 'GET') {
-      const bookings = await bookingsCol.find({}).sort({ createdAt: -1 }).toArray();
+        if (req.method === 'GET') {
+      let bookings = await bookingsCol.find({}).sort({ createdAt: -1 }).toArray();
+      if (!bookings || bookings.length === 0) {
+        // Auto-seed default realistic bookings if MongoDB Atlas collection is empty
+        const defaultBookings = [
+          {
+            id: 'BK-98214',
+            createdAt: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
+            customerName: 'Aarav Sharma',
+            customerPhone: '+91 98250 12345',
+            customerEmail: 'aarav.sharma@gmail.com',
+            vehicleModel: 'MG ZS EV (50.3 kWh)',
+            stationId: 'st-01',
+            stationName: 'Jio-bp pulse SG Highway HyperHub • Ahmedabad',
+            vendorId: 'vendor-jiobp',
+            vendorName: 'Jio-bp pulse',
+            portId: 'Bay 01 (4W)',
+            energyKwh: 38.5,
+            totalAmount: 1001,
+            platformFee: 150,
+            vendorPayout: 851,
+            status: 'COMPLETED',
+            pin: '7412'
+          },
+          {
+            id: 'BK-98215',
+            createdAt: new Date(Date.now() - 1000 * 60 * 35).toISOString(),
+            customerName: 'Rohan Mehra',
+            customerPhone: '+91 98980 54321',
+            customerEmail: 'rohan.mehra@gmail.com',
+            vehicleModel: 'Hyundai Ioniq 5 (72.6 kWh)',
+            stationId: 'st-02',
+            stationName: 'Tata Power GIFT City FinTech SuperHub • Gandhinagar',
+            vendorId: 'vendor-tata',
+            vendorName: 'Tata Power EZ Charge',
+            portId: 'Bay 01 (4W)',
+            energyKwh: 52.0,
+            totalAmount: 1248,
+            platformFee: 187,
+            vendorPayout: 1061,
+            status: 'COMPLETED',
+            pin: '3920'
+          },
+          {
+            id: 'BK-98216',
+            createdAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
+            customerName: 'Kiran Patel',
+            customerPhone: '+91 97240 98765',
+            customerEmail: 'kiran.patel@gmail.com',
+            vehicleModel: 'Tata Punch EV (35 kWh)',
+            stationId: 'st-12',
+            stationName: 'VoltGrid VR Surat & Dumas Mega-Hub',
+            vendorId: 'vendor-voltgrid',
+            vendorName: 'VoltGrid Direct Flagship',
+            portId: 'Bay 02 (4W)',
+            energyKwh: 24.5,
+            totalAmount: 588,
+            platformFee: 88,
+            vendorPayout: 500,
+            status: 'CHARGING',
+            pin: '8154'
+          },
+          {
+            id: 'BK-98217',
+            createdAt: new Date(Date.now() - 1000 * 60 * 50).toISOString(),
+            customerName: 'Priya Joshi',
+            customerPhone: '+91 94260 11223',
+            customerEmail: 'priya.j@gmail.com',
+            vehicleModel: 'Ather 450X Gen 3 (3.7 kWh)',
+            stationId: 'st-08',
+            stationName: 'Zeon Alkapuri Express Gateway • Vadodara',
+            vendorId: 'vendor-zeon',
+            vendorName: 'Zeon Charging',
+            portId: 'Bay 04 (2W)',
+            energyKwh: 3.2,
+            totalAmount: 96,
+            platformFee: 14,
+            vendorPayout: 82,
+            status: 'COMPLETED',
+            pin: '5012'
+          },
+          {
+            id: 'BK-98224',
+            createdAt: new Date(Date.now() - 1000 * 60 * 2).toISOString(),
+            customerName: 'Nidhi Yadav',
+            customerPhone: '+91 93287 03345',
+            customerEmail: 'nidhiyadav1218@gmail.com',
+            vehicleModel: 'MG ZS EV (50.3 kWh)',
+            stationId: 'st-01',
+            stationName: 'Jio-bp pulse SG Highway HyperHub • Ahmedabad',
+            vendorId: 'vendor-jiobp',
+            vendorName: 'Jio-bp pulse',
+            portId: 'Bay 02 (4W)',
+            energyKwh: 39.2,
+            totalAmount: 1019,
+            platformFee: 153,
+            vendorPayout: 866,
+            status: 'CHARGING',
+            pin: '9045'
+          }
+        ];
+        try {
+          await bookingsCol.insertMany(defaultBookings);
+          bookings = await bookingsCol.find({}).sort({ createdAt: -1 }).toArray();
+        } catch(e) {}
+      }
       return res.status(200).json(bookings);
     }
 
