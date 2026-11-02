@@ -361,10 +361,16 @@
           <input 
             type="password" 
             id="vendorGatePasswordInput" 
-            placeholder="Enter assigned password" 
+            placeholder="Enter assigned password (e.g. jio123)" 
             required 
             class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm font-mono focus:outline-none focus:border-emerald-500"
           />
+          <div class="mt-2 p-2.5 rounded-xl bg-slate-950 border border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
+            <span>🔑 Default: <code class="text-emerald-400 font-bold font-mono" id="vendorGateHintCode">jio123</code></span>
+            <button type="button" onclick="document.getElementById('vendorGatePasswordInput').value=document.getElementById('vendorGateHintCode').innerText" class="text-[10px] text-emerald-400 hover:text-emerald-300 font-bold uppercase underline">
+              Auto-fill
+            </button>
+          </div>
           <p id="vendorGateError" class="text-xs text-rose-500 font-bold mt-1.5 hidden">❌ Invalid password. Contact VoltGrid Admin to check or reset your assigned password.</p>
         </div>
 
@@ -458,6 +464,18 @@
 
       const errEl = document.getElementById('vendorGateError');
       if (errEl) errEl.classList.add('hidden');
+
+      const hintEl = document.getElementById('vendorGateHintCode');
+      if (hintEl) {
+        const hintMap = {
+          'vendor-jiobp': 'jio123',
+          'vendor-tata': 'tata123',
+          'vendor-zeon': 'zeon123',
+          'vendor-statiq': 'statiq123',
+          'vendor-voltgrid': 'volt123'
+        };
+        hintEl.innerText = hintMap[currentVendorId] || 'jio123';
+      }
 
       if (isAuth) {
         if (modal) modal.classList.add('hidden');

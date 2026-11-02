@@ -5819,7 +5819,12 @@
           console.warn('Could not sync station hold to cloud:', stErr);
         }
 
-        VoltGridDB.bookings.unshift(newBookingDoc);
+        if (window.VoltGridDB && typeof window.VoltGridDB.addBooking === 'function') {
+          VoltGridDB.addBooking(newBookingDoc);
+        } else {
+          VoltGridDB.bookings.unshift(newBookingDoc);
+          saveVoltGridDB();
+        }
         currentUser.sessionsCount = (currentUser.sessionsCount || 0) + 1;
         currentUser.totalKwhCharged = +((currentUser.totalKwhCharged || 0) + bookedKwh).toFixed(1);
         currentUser.totalMoneySaved = (currentUser.totalMoneySaved || 0) + Math.round(bookedKwh * 18);
@@ -6246,9 +6251,7 @@
     }
 
     function openAdminModal() {
-      document.getElementById('adminModal').classList.remove('hidden');
-      updateAdminDashboard();
-      syncWithMongoDBAtlas();
+      window.location.href = 'admin.html';
     }
 
     function closeAdminModal() {
