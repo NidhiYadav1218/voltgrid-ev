@@ -88,6 +88,10 @@
           <span>🛡️ Admin</span>
         </a>
 
+        <button onclick="lockCurrentVendor()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-rose-400 border border-slate-700 flex items-center gap-1 transition-all" title="Lock Operator Portal">
+          <span>🔒 Lock</span>
+        </button>
+
         <a href="index.html" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 border border-slate-700 flex items-center gap-1.5 transition-all">
           <span>⚡ App</span>
         </a>
@@ -340,6 +344,43 @@
     </div>
   </div>
 
+  <!-- CPO Vendor Operator Login Gate Modal -->
+  <div id="vendorLoginGateModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl text-center space-y-6">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-3xl shadow-inner" id="vendorGateLogo">
+        ⛽
+      </div>
+      <div>
+        <h2 class="text-xl font-extrabold text-white font-heading" id="vendorGateTitle">CPO Operator Login</h2>
+        <p class="text-xs text-slate-400 mt-1">Enter the operator password assigned to this CPO by VoltGrid Administrator to access your fleet & payouts.</p>
+      </div>
+
+      <form onsubmit="handleVendorLogin(event)" class="space-y-4 text-left">
+        <div>
+          <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Operator Password</label>
+          <input 
+            type="password" 
+            id="vendorGatePasswordInput" 
+            placeholder="Enter assigned password" 
+            required 
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-white text-sm font-mono focus:outline-none focus:border-emerald-500"
+          />
+          <p id="vendorGateError" class="text-xs text-rose-500 font-bold mt-1.5 hidden">❌ Invalid password. Contact VoltGrid Admin to check or reset your assigned password.</p>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2">
+          <span>Unlock CPO Dashboard</span>
+          <span>→</span>
+        </button>
+      </form>
+
+      <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+        <a href="admin.html" class="hover:text-emerald-400 font-medium">← Open Admin Panel</a>
+        <a href="index.html" class="hover:text-emerald-400 font-medium">Driver App →</a>
+      </div>
+    </div>
+  </div>
+
   <!-- Vendor Script Logic -->
   <script>
     let currentVendorId = 'vendor-jiobp';
@@ -398,10 +439,58 @@
         }
       } catch (e) {}
 
-      renderVendorDashboard();
+      checkVendorAuth();
     }
 
-    function updateVendorTariff(stationId) {
+    function checkVendorAuth() {
+      const isAuth = sessionStorage.getItem('voltgrid_vendor_auth_' + currentVendorId) === 'true';
+      const modal = document.getElementById('vendorLoginGateModal');
+      const vendorInfo = VENDOR_DETAILS[currentVendorId] || VENDOR_DETAILS['vendor-jiobp'];
+      
+      const titleEl = document.getElementById('vendorGateTitle');
+      if (titleEl) titleEl.innerText = `${vendorInfo.logo} ${vendorInfo.name} Operator Login`;
+
+      const logoEl = document.getElementById('vendorGateLogo');
+      if (logoEl) logoEl.innerText = vendorInfo.logo;
+
+      const input = document.getElementById('vendorGatePasswordInput');
+      if (input) input.value = '';
+
+      const errEl = document.getElementById('vendorGateError');
+      if (errEl) errEl.classList.add('hidden');
+
+      if (isAuth) {
+        if (modal) modal.classList.add('hidden');
+        renderVendorDashboard();
+      } else {
+        if (modal) modal.classList.remove('hidden');
+      }
+    }
+
+    function handleVendorLogin(e) {
+      e.preventDefault();
+      const pass = document.getElementById('vendorGatePasswordInput').value.trim();
+      const errEl = document.getElementById('vendorGateError');
+
+      if (window.VoltGridDB && VoltGridDB.verifyVendorPassword(currentVendorId, pass)) {
+        sessionStorage.setItem('voltgrid_vendor_auth_' + currentVendorId, 'true');
+        document.getElementById('vendorLoginGateModal').classList.add('hidden');
+        if (errEl) errEl.classList.add('hidden');
+        renderVendorDashboard();
+      } else {
+        if (errEl) errEl.classList.remove('hidden');
+      }
+    }
+
+    function lockCurrentVendor() {
+      sessionStorage.removeItem('voltgrid_vendor_auth_' + currentVendorId);
+      checkVendorAuth();
+    }
+
+    function onVendorSelected(vendorId) {
+      currentVendorId = vendorId;
+      checkVendorAuth();
+    }
       const st = allStations.find(s => s.id === stationId);
       if (!st) return;
       const newPrice = prompt('Set new per-kWh charging tariff for ' + st.name + ' (₹):', st.pricePerKwh);

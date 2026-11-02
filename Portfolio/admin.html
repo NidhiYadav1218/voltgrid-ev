@@ -1,66 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VoltGrid Admin Panel • Platform Analytics & Financial Control</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M13 2L3 14h9l-1 8 10-12h-9l1-8z'/></svg>">
-  
-  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <title>VoltGrid Admin Panel • Statewide EV Infrastructure</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Core Database & Synchronization Engine -->
-  <script src="voltgrid_db.js"></script>
-
-  <!-- Tailwind CSS CDN -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#f5f3ff',
-              100: '#ede9fe',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-              900: '#312e81'
-            },
-            sidebar: '#111827'
-          },
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            heading: ['Outfit', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'monospace']
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- jsPDF & autoTable for Report Exports -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-
+  <script src="voltgrid_db.js"></script>
   <style>
     html, body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
       width: 100%;
-      background-color: #f4f2fb;
-    }
-    .font-heading {
-      font-family: 'Outfit', sans-serif;
+      max-width: 100vw;
+      background-color: #f8fafc;
+      color: #0f172a;
     }
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
     .table-container {
       width: 100%;
+      max-width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
@@ -79,33 +44,72 @@
     }
   </style>
 </head>
-<body class="text-slate-800 antialiased selection:bg-indigo-500 selection:text-white min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
 
-  <div class="flex min-h-screen w-full relative">
+  <!-- ================= 1. ADMIN LOGIN SCREEN (Password: admin123) ================= -->
+  <div id="adminLoginScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-md">
+    <div class="relative w-full max-w-md bg-white rounded-3xl border border-slate-200 p-8 shadow-2xl text-center space-y-6">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center text-3xl shadow-lg shadow-indigo-500/30">
+        ⚡
+      </div>
+      <div>
+        <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">Admin Console Login</h2>
+        <p class="text-xs text-slate-500 mt-1">Enter your master administrator password to manage stations, ports, CPO vendors & audit reports.</p>
+      </div>
 
-    <!-- ================= MOBILE BACKDROP OVERLAY ================= -->
+      <form onsubmit="handleAdminLogin(event)" class="space-y-4 text-left">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Master Password</label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="adminPasswordInput" 
+              placeholder="Enter password (hint: admin123)" 
+              required 
+              class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-mono"
+            />
+            <button type="button" onclick="toggleAdminPasswordVis()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 text-xs font-bold">
+              👁️
+            </button>
+          </div>
+          <p id="adminLoginError" class="text-xs text-rose-600 font-bold mt-1.5 hidden">❌ Incorrect password. Hint: admin123</p>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2">
+          <span>Unlock Admin Panel</span>
+          <span>→</span>
+        </button>
+      </form>
+
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        <a href="index.html" class="hover:text-indigo-600 font-medium">← Back to Driver App</a>
+        <a href="vendor.html" class="hover:text-indigo-600 font-medium">CPO Vendor Portal →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 2. MAIN ADMIN APP CONTENT ================= -->
+  <div id="adminAppContent" class="flex min-h-screen w-full relative">
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
     <div id="sidebarBackdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 hidden md:hidden transition-opacity"></div>
 
-    <!-- ================= LEFT DARK NAVY SIDEBAR ================= -->
-    <aside id="sidebar" class="fixed md:sticky top-0 inset-y-0 left-0 z-50 w-64 bg-[#111827] text-slate-300 min-h-screen shrink-0 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out border-r border-slate-800/80 shadow-2xl md:shadow-none">
+    <!-- LEFT DARK NAVY SIDEBAR -->
+    <aside id="sidebar" class="fixed md:sticky top-0 inset-y-0 left-0 z-50 w-64 bg-[#111827] text-slate-300 min-h-screen shrink-0 flex flex-col justify-between transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out border-r border-slate-800 shadow-2xl md:shadow-none">
       
       <div>
         <!-- Brand Header -->
-        <div class="h-16 flex items-center justify-between px-6 border-b border-slate-800/80">
-          <a href="#" class="flex items-center gap-3 group">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-slate-800">
+          <a href="admin.html" class="flex items-center gap-3 group">
             <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-md shadow-indigo-500/30 group-hover:scale-105 transition-transform">
               <span class="text-lg">⚡</span>
             </div>
             <div>
-              <div class="flex items-center gap-1.5">
-                <span class="font-extrabold text-lg text-white font-heading tracking-tight">Admin Panel</span>
-              </div>
-              <span class="text-[9px] font-bold uppercase tracking-wider text-indigo-400 font-mono">VoltGrid HQ</span>
+              <span class="font-extrabold text-lg text-white font-heading tracking-tight block">Admin Panel</span>
+              <span class="text-[9px] font-bold uppercase tracking-wider text-indigo-400 font-mono">VoltGrid Gujarat</span>
             </div>
           </a>
-          <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-400 hover:text-white p-1">
-            ✕
-          </button>
+          <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-400 hover:text-white p-1">✕</button>
         </div>
 
         <!-- Navigation Groups -->
@@ -115,76 +119,95 @@
           <div>
             <span class="px-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-2 font-mono">MAIN</span>
             <div class="space-y-1">
-              <button onclick="switchTab('dashboard')" id="navBtn-dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-left active-nav-tab">
+              
+              <!-- 1. Dashboard -->
+              <button onclick="switchTab('dashboard')" id="navBtn-dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left active-nav-tab">
                 <svg class="w-4 h-4 shrink-0 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                 <span>Dashboard</span>
               </button>
 
-              <button onclick="switchTab('users')" id="navBtn-users" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-left">
-                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              <!-- 2. Stations (Navbar item for Stations) -->
+              <button onclick="switchTab('stations')" id="navBtn-stations" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                 <div class="flex-1 flex items-center justify-between">
-                  <span>Users</span>
-                  <span id="badgeUsersCount" class="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-slate-800 text-indigo-300 font-mono">10</span>
+                  <span>Stations (Hubs)</span>
+                  <span id="badgeStationsNavCount" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-800 text-indigo-300 font-mono">34</span>
                 </div>
               </button>
 
-              <button onclick="switchTab('products')" id="navBtn-products" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-left">
-                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+              <!-- 3. Ports (Hardware) -->
+              <button onclick="switchTab('ports')" id="navBtn-ports" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                 <div class="flex-1 flex items-center justify-between">
-                  <span>Products (Ports)</span>
-                  <span id="badgeStationsCount" class="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400 font-mono">34</span>
+                  <span>Ports (Hardware)</span>
+                  <span id="badgePortsNavCount" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-800 text-emerald-400 font-mono">176</span>
                 </div>
               </button>
 
-              <button onclick="switchTab('orders')" id="navBtn-orders" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-left">
+              <!-- 4. Orders (Bookings Ledger) -->
+              <button onclick="switchTab('orders')" id="navBtn-orders" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                 <div class="flex-1 flex items-center justify-between">
                   <span>Orders (Bookings)</span>
-                  <span id="badgeOrdersCount" class="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-indigo-500/20 text-indigo-300 font-mono">12</span>
+                  <span id="badgeOrdersNavCount" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-mono">16</span>
                 </div>
               </button>
+
+              <!-- 5. Users (EV Drivers) -->
+              <button onclick="switchTab('users')" id="navBtn-users" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <div class="flex-1 flex items-center justify-between">
+                  <span>EV Drivers</span>
+                  <span id="badgeUsersNavCount" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400 font-mono">10</span>
+                </div>
+              </button>
+
+              <!-- 6. Vendors (CPO Partners - Next to Users as requested) -->
+              <button onclick="switchTab('vendors')" id="navBtn-vendors" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
+                <svg class="w-4 h-4 shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <div class="flex-1 flex items-center justify-between">
+                  <span>CPO Vendors</span>
+                  <span id="badgeVendorsNavCount" class="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-800 text-amber-300 font-mono">5</span>
+                </div>
+              </button>
+
             </div>
           </div>
 
           <!-- REPORTS GROUP -->
           <div>
-            <span class="px-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-2 font-mono">REPORTS</span>
+            <span class="px-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-2 font-mono">REPORTS & AUDIT</span>
             <div class="space-y-1">
-              <button onclick="switchTab('analytics')" id="navBtn-analytics" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-left">
-                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                <span>Analytics</span>
+              <!-- Reports Tab (PDF & Financial Audit) -->
+              <button onclick="switchTab('reports')" id="navBtn-reports" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
+                <svg class="w-4 h-4 shrink-0 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>Audit Reports (PDF)</span>
               </button>
 
-              <button onclick="switchTab('sales')" id="navBtn-sales" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-left">
+              <button onclick="switchTab('analytics')" id="navBtn-analytics" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                <span>Grid Analytics</span>
+              </button>
+
+              <button onclick="switchTab('sales')" id="navBtn-sales" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <div class="flex-1 flex items-center justify-between">
-                  <span>Sales & CPOs</span>
-                  <span class="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">85% Split</span>
-                </div>
+                <span>Escrow Settlements</span>
               </button>
             </div>
           </div>
 
           <!-- ADMIN GROUP -->
           <div>
-            <span class="px-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-2 font-mono">ADMIN</span>
+            <span class="px-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-2 font-mono">SETTINGS</span>
             <div class="space-y-1">
-              <button onclick="switchTab('settings')" id="navBtn-settings" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-left">
+              <button onclick="switchTab('settings')" id="navBtn-settings" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all text-left">
                 <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                <span>Settings</span>
+                <span>Platform Settings</span>
               </button>
 
-              <button onclick="switchTab('notifications')" id="navBtn-notifications" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-left">
-                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                <div class="flex-1 flex items-center justify-between">
-                  <span>Notifications</span>
-                  <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                </div>
-              </button>
-
-              <button onclick="switchTab('security')" id="navBtn-security" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-slate-300 hover:text-white hover:bg-slate-800/60 transition-all text-left">
-                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                <span>Security</span>
+              <button onclick="lockAdminSession()" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-rose-300 hover:text-white hover:bg-rose-950/40 transition-all text-left">
+                <svg class="w-4 h-4 shrink-0 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span>Lock Console</span>
               </button>
             </div>
           </div>
@@ -192,824 +215,962 @@
         </nav>
       </div>
 
-      <!-- Quick Platform Jump Links -->
-      <div class="p-3 border-t border-slate-800/80 bg-slate-950/40 space-y-1.5 text-xs">
-        <a href="index.html" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors">
-          <span>⚡ Driver Live App</span>
-          <span>↗</span>
-        </a>
-        <a href="vendor.html" class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-colors">
-          <span>💼 CPO Vendor Hub</span>
-          <span>↗</span>
-        </a>
-        <a href="simulator.html" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-xl text-indigo-400 hover:text-indigo-300 hover:bg-indigo-950/40 transition-colors font-bold">
-          <span>🚗 Car Simulator</span>
-          <span>↗</span>
-        </a>
+      <!-- Quick Portals Switcher in Footer -->
+      <div class="p-4 border-t border-slate-800 bg-slate-900/60 space-y-2">
+        <div class="text-[10px] font-extrabold uppercase text-slate-400 font-mono tracking-wider">PORTAL LINKS</div>
+        <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+          <a href="index.html" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-center font-bold">🏠 Driver App</a>
+          <a href="hubs.html" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-center font-bold">📍 Hubs (34)</a>
+          <a href="simulator.html" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-center font-bold">🚗 Simulator</a>
+          <a href="vendor.html" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-center font-bold">🏢 Vendor</a>
+        </div>
       </div>
-
     </aside>
 
-    <!-- ================= RIGHT MAIN PANEL ================= -->
-    <div class="flex-1 min-w-0 flex flex-col min-h-screen bg-[#f4f2fb]">
-      
-      <!-- Top Navigation Header -->
-      <header class="sticky top-0 z-30 h-16 bg-white border-b border-purple-100/80 px-4 sm:px-8 flex items-center justify-between gap-4 shadow-xs">
-        
-        <!-- Mobile Toggle & Search Input -->
-        <div class="flex items-center gap-3 flex-1 max-w-md">
-          <button onclick="toggleMobileSidebar()" class="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 focus:outline-none">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-          </button>
+    <!-- RIGHT MAIN CONTENT WRAPPER -->
+    <div class="flex-1 flex flex-col min-w-0 bg-[#f8fafc]">
 
+      <!-- TOP WHITE HEADER BAR (Search, Badges, Mark as Read, Admin Profile) -->
+      <header class="h-16 bg-white border-b border-slate-200 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 shadow-xs">
+        
+        <!-- Left: Mobile Menu Toggle & Global Search Input -->
+        <div class="flex items-center gap-3 sm:gap-4 flex-1 max-w-md">
+          <button onclick="toggleMobileSidebar()" class="md:hidden text-slate-600 hover:text-slate-900 p-1.5 rounded-lg border border-slate-200">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          
           <div class="relative w-full">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </span>
             <input 
               type="text" 
               id="globalSearchInput" 
               oninput="handleGlobalSearch(this.value)" 
-              placeholder="Search..." 
-              class="w-full pl-9 pr-4 py-2 rounded-full bg-slate-100 border-none text-xs sm:text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition-all"
+              placeholder="Search stations, ports, bookings, or drivers..." 
+              class="w-full pl-9 pr-4 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
             />
           </div>
         </div>
 
-        <!-- Top Right Alerts, Messages & Profile -->
-        <div class="flex items-center gap-3 sm:gap-4 shrink-0">
+        <!-- Right: Notifications, Messages & Profile Pill -->
+        <div class="flex items-center gap-2 sm:gap-4 shrink-0 ml-4 relative">
           
-          <!-- Notification Bell -->
-          <button onclick="switchTab('notifications')" class="relative p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors" title="Notifications">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-            <span class="absolute top-1 right-1 w-4 h-4 rounded-full bg-rose-500 text-white font-bold text-[9px] flex items-center justify-center">3</span>
-          </button>
+          <!-- 1. Notification Bell with Badge (3) -->
+          <div class="relative">
+            <button onclick="toggleNotifDropdown()" class="relative p-2 text-slate-500 hover:text-slate-800 rounded-xl hover:bg-slate-100 transition-all">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+              <span id="notifBadge" class="absolute top-1 right-1 px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-rose-500 text-white ring-2 ring-white">3</span>
+            </button>
 
-          <!-- Messages -->
-          <button onclick="switchTab('notifications')" class="relative p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors" title="System Messages">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-            <span class="absolute top-1 right-1 w-4 h-4 rounded-full bg-pink-500 text-white font-bold text-[9px] flex items-center justify-center">5</span>
-          </button>
+            <!-- Notification Dropdown Panel -->
+            <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl border border-slate-200 shadow-2xl z-50 p-4 space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <span class="font-bold text-slate-900 text-xs">System Notifications</span>
+                <button onclick="markAllNotifsRead()" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800">Mark all as read</button>
+              </div>
+              <div class="space-y-2 text-xs" id="notifList">
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2.5">
+                  <span class="text-base text-emerald-500">⚡</span>
+                  <div>
+                    <strong class="block text-slate-900 text-xs">New Bay Reservation</strong>
+                    <span class="text-[11px] text-slate-500">Nidhi Yadav reserved Bay 01 at SG Highway HyperHub.</span>
+                  </div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2.5">
+                  <span class="text-base text-indigo-500">🏦</span>
+                  <div>
+                    <strong class="block text-slate-900 text-xs">Escrow Disbursal Settled</strong>
+                    <span class="text-[11px] text-slate-500">₹851 transferred to Jio-bp pulse HDFC Bank account.</span>
+                  </div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-start gap-2.5">
+                  <span class="text-base text-amber-500">🔋</span>
+                  <div>
+                    <strong class="block text-slate-900 text-xs">Solar Microgrid Operating</strong>
+                    <span class="text-[11px] text-slate-500">GIFT City SuperHub generating 85 kW clean solar power.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          <!-- User Profile Avatar Pill -->
-          <div class="flex items-center gap-2.5 pl-2 sm:pl-3 border-l border-slate-200">
-            <div class="w-9 h-9 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-sm">
+          <!-- 2. Message Icon with Badge (5) -->
+          <div class="relative">
+            <button onclick="toggleMsgDropdown()" class="relative p-2 text-slate-500 hover:text-slate-800 rounded-xl hover:bg-slate-100 transition-all">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+              <span id="msgBadge" class="absolute top-1 right-1 px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-pink-500 text-white ring-2 ring-white">5</span>
+            </button>
+
+            <!-- Message Dropdown Panel -->
+            <div id="msgDropdown" class="hidden absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl border border-slate-200 shadow-2xl z-50 p-4 space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <span class="font-bold text-slate-900 text-xs">Driver & CPO Messages</span>
+                <button onclick="markAllMsgsRead()" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800">Mark all as read</button>
+              </div>
+              <div class="space-y-2 text-xs" id="msgList">
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <div class="flex justify-between items-center mb-0.5">
+                    <strong class="text-slate-900">Nidhi Yadav (Driver)</strong>
+                    <span class="text-[10px] text-slate-400">2m ago</span>
+                  </div>
+                  <p class="text-[11px] text-slate-600">Can I extend my reservation hold by 5 minutes? Traffic near Iscon cross road.</p>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <div class="flex justify-between items-center mb-0.5">
+                    <strong class="text-slate-900">Jio-bp pulse CPO</strong>
+                    <span class="text-[10px] text-slate-400">18m ago</span>
+                  </div>
+                  <p class="text-[11px] text-slate-600">Payout request submitted for week 44 charging settlements.</p>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <div class="flex justify-between items-center mb-0.5">
+                    <strong class="text-slate-900">Aarav Sharma</strong>
+                    <span class="text-[10px] text-slate-400">1h ago</span>
+                  </div>
+                  <p class="text-[11px] text-slate-600">Charging peak speed reached 210 kW on CCS2 port. Great experience!</p>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <div class="flex justify-between items-center mb-0.5">
+                    <strong class="text-slate-900">Zeon Operator</strong>
+                    <span class="text-[10px] text-slate-400">2h ago</span>
+                  </div>
+                  <p class="text-[11px] text-slate-600">Added 2 new Type-2 chargers at Airport Gateway Hub.</p>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <div class="flex justify-between items-center mb-0.5">
+                    <strong class="text-slate-900">Rohan Mehra</strong>
+                    <span class="text-[10px] text-slate-400">3h ago</span>
+                  </div>
+                  <p class="text-[11px] text-slate-600">Invoice receipt INV-2026-9812 verified for corporate expense claim.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Administrator Profile Pill -->
+          <div class="flex items-center gap-3 pl-2 sm:border-l sm:border-slate-200">
+            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-md shadow-indigo-500/20">
               JD
             </div>
-            <div class="hidden sm:block text-left leading-tight">
-              <span class="block text-xs font-bold text-slate-900 font-heading">John Doe</span>
-              <span class="block text-[10px] text-slate-400 font-medium">Administrator</span>
+            <div class="hidden sm:block text-left">
+              <span class="block text-xs font-bold text-slate-900 leading-tight">John Doe</span>
+              <span class="block text-[10px] text-slate-400 font-medium leading-tight">Administrator</span>
             </div>
+            <button onclick="lockAdminSession()" title="Lock Admin Console" class="text-xs p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-all">
+              🔒
+            </button>
           </div>
 
         </div>
 
       </header>
 
-      <!-- Main Dashboard Content Container -->
-      <main class="flex-1 p-4 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
-        
-        <!-- ================= TAB: DASHBOARD ================= -->
+      <!-- MAIN SCROLLABLE CONTENT BODY -->
+      <main class="flex-1 p-4 sm:p-8 max-w-7xl mx-auto w-full space-y-6">
+
+        <!-- ================= TAB 1: DASHBOARD ================= -->
         <section id="tabContent-dashboard" class="space-y-6">
           
-          <!-- Dashboard Header Row -->
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div class="inline-block relative">
-                <h1 class="text-2xl font-extrabold text-slate-900 font-heading tracking-tight pb-1">Dashboard</h1>
-                <!-- Active purple indicator bar like Image 2 -->
-                <div class="h-1 w-12 bg-indigo-600 rounded-full"></div>
-              </div>
+              <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">Dashboard</h1>
+              <div class="w-12 h-1 bg-indigo-600 rounded-full mt-1"></div>
             </div>
-
-            <!-- Action Buttons: Export & Add New -->
+            
             <div class="flex items-center gap-2.5">
-              <button onclick="exportPdfReport()" class="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs shadow-xs transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95">
-                <svg class="w-3.5 h-3.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                <span>Export</span>
+              <button onclick="exportAuditReportPdf()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-xs flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>Export PDF</span>
               </button>
 
-              <button onclick="openAddModal()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/25 transition-all flex items-center gap-1.5 hover:scale-105 active:scale-95">
-                <span>+</span>
-                <span>Add New</span>
+              <button onclick="switchTab('vendors')" class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/20 flex items-center gap-1.5">
+                <span>➕</span>
+                <span>Manage Vendors & Bays</span>
               </button>
             </div>
           </div>
 
-          <!-- 4 KPI Stat Cards (Exact replica of Image 2!) -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <!-- 4 KPI STAT CARDS -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             
             <!-- Card 1: Total Users -->
-            <div class="bg-white rounded-2xl p-5 shadow-xs border border-purple-100/70 hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between">
               <div class="flex items-start justify-between">
                 <div>
-                  <span class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading tracking-tight" id="kpiTotalUsers">1,504</span>
-                  <p class="text-xs font-semibold text-slate-400 mt-0.5">Total Users</p>
+                  <span class="text-3xl font-extrabold text-slate-900 tracking-tight block" id="kpiTotalUsers">1,504</span>
+                  <span class="text-xs font-semibold text-slate-500 mt-0.5 block">Total Users</span>
                 </div>
-                <div class="w-11 h-11 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-600/25 shrink-0">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <div class="w-11 h-11 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-lg shadow-md shadow-purple-600/30">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
                 </div>
               </div>
-              <div class="mt-4 pt-2 border-t border-slate-50 flex items-center gap-1 text-[11px] font-bold text-emerald-600">
-                <span>&uarr;</span> <span>12.5%</span> <span class="text-slate-400 font-normal">from last month</span>
+              <div class="mt-4 flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                <span>↑</span>
+                <span>12.5% from last month</span>
               </div>
             </div>
 
             <!-- Card 2: Total Revenue -->
-            <div class="bg-white rounded-2xl p-5 shadow-xs border border-purple-100/70 hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between">
               <div class="flex items-start justify-between">
                 <div>
-                  <span class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading tracking-tight" id="kpiTotalRevenue">₹1,24,750</span>
-                  <p class="text-xs font-semibold text-slate-400 mt-0.5">Total Revenue</p>
+                  <span class="text-3xl font-extrabold text-slate-900 tracking-tight block" id="kpiTotalRevenue">₹12,750</span>
+                  <span class="text-xs font-semibold text-slate-500 mt-0.5 block">Total Revenue</span>
                 </div>
-                <div class="w-11 h-11 rounded-full bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-500/25 shrink-0">
-                  <span class="text-lg font-bold">₹</span>
+                <div class="w-11 h-11 rounded-2xl bg-sky-500 text-white flex items-center justify-center text-lg shadow-md shadow-sky-500/30">
+                  <span class="font-bold">₹</span>
                 </div>
               </div>
-              <div class="mt-4 pt-2 border-t border-slate-50 flex items-center gap-1 text-[11px] font-bold text-emerald-600">
-                <span>&uarr;</span> <span>8.2%</span> <span class="text-slate-400 font-normal">from last month</span>
+              <div class="mt-4 flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                <span>↑</span>
+                <span>8.2% from last month</span>
               </div>
             </div>
 
             <!-- Card 3: Total Orders -->
-            <div class="bg-white rounded-2xl p-5 shadow-xs border border-purple-100/70 hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between">
               <div class="flex items-start justify-between">
                 <div>
-                  <span class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading tracking-tight" id="kpiTotalOrders">324</span>
-                  <p class="text-xs font-semibold text-slate-400 mt-0.5">Total Orders</p>
+                  <span class="text-3xl font-extrabold text-slate-900 tracking-tight block" id="kpiTotalOrders">324</span>
+                  <span class="text-xs font-semibold text-slate-500 mt-0.5 block">Total Orders</span>
                 </div>
-                <div class="w-11 h-11 rounded-full bg-teal-500 text-white flex items-center justify-center shadow-md shadow-teal-500/25 shrink-0">
+                <div class="w-11 h-11 rounded-2xl bg-teal-400 text-white flex items-center justify-center text-lg shadow-md shadow-teal-400/30">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                 </div>
               </div>
-              <div class="mt-4 pt-2 border-t border-slate-50 flex items-center gap-1 text-[11px] font-bold text-rose-500">
-                <span>&darr;</span> <span>3.1%</span> <span class="text-slate-400 font-normal">from last month</span>
+              <div class="mt-4 flex items-center gap-1 text-[11px] font-bold text-rose-500">
+                <span>↓</span>
+                <span>3.1% from last month</span>
               </div>
             </div>
 
-            <!-- Card 4: Conversion Rate / 85% Split -->
-            <div class="bg-white rounded-2xl p-5 shadow-xs border border-purple-100/70 hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between">
+            <!-- Card 4: Conversion Rate / Port Occupancy -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden flex flex-col justify-between">
               <div class="flex items-start justify-between">
                 <div>
-                  <span class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-heading tracking-tight">85%</span>
-                  <p class="text-xs font-semibold text-slate-400 mt-0.5">CPO Vendor Net Payout</p>
+                  <span class="text-3xl font-extrabold text-slate-900 tracking-tight block" id="kpiConversionRate">85%</span>
+                  <span class="text-xs font-semibold text-slate-500 mt-0.5 block">Port Occupancy Rate</span>
                 </div>
-                <div class="w-11 h-11 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-500/25 shrink-0">
+                <div class="w-11 h-11 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-lg shadow-md shadow-amber-500/30">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                 </div>
               </div>
-              <div class="mt-4 pt-2 border-t border-slate-50 flex items-center gap-1 text-[11px] font-bold text-emerald-600">
-                <span>&uarr;</span> <span>4.6%</span> <span class="text-slate-400 font-normal">from last month</span>
+              <div class="mt-4 flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                <span>↑</span>
+                <span>4.6% from last month</span>
               </div>
             </div>
 
           </div>
 
-          <!-- Recent Orders Card (Exact replica of Image 2!) -->
-          <div class="bg-white rounded-2xl shadow-xs border border-purple-100/70 p-5 sm:p-6 space-y-4">
-            
-            <div class="flex items-center justify-between">
+          <!-- RECENT ORDERS CARD -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+            <div class="px-6 py-4.5 border-b border-slate-200/80 flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                </div>
-                <h2 class="text-base font-extrabold text-slate-900 font-heading">Recent Orders</h2>
+                <span class="text-purple-600">🛍️</span>
+                <h3 class="font-bold text-slate-900 text-sm sm:text-base">Recent Orders</h3>
               </div>
-
-              <button onclick="switchTab('orders')" class="px-3.5 py-1.5 rounded-xl border border-slate-200 text-slate-700 hover:text-indigo-600 hover:border-indigo-200 text-xs font-bold transition-all flex items-center gap-1">
-                <span>👁️</span> <span>View All</span>
+              <button onclick="switchTab('orders')" class="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:text-indigo-600 border border-slate-200 hover:bg-slate-50 transition-all flex items-center gap-1">
+                <span>👁️ View All</span>
               </button>
             </div>
 
-            <!-- Table Container (Fully Mobile-Responsive, NEVER slides off screen!) -->
             <div class="table-container">
-              <table class="w-full text-left text-xs whitespace-nowrap">
+              <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr class="text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
-                    <th class="py-3 px-4">Order ID</th>
-                    <th class="py-3 px-4">Customer</th>
-                    <th class="py-3 px-4">Station & Vendor</th>
-                    <th class="py-3 px-4">Date</th>
-                    <th class="py-3 px-4">Amount</th>
-                    <th class="py-3 px-4">Status</th>
-                    <th class="py-3 px-4 text-center">Actions</th>
+                  <tr class="border-b border-slate-100 text-slate-400 uppercase font-extrabold text-[10px] tracking-wider bg-slate-50/50">
+                    <th class="py-3 px-6">Order ID</th>
+                    <th class="py-3 px-6">Customer</th>
+                    <th class="py-3 px-6">Date</th>
+                    <th class="py-3 px-6">Amount</th>
+                    <th class="py-3 px-6">Status</th>
+                    <th class="py-3 px-6 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="recentOrdersTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
-                  <!-- Populated by JavaScript with rich real data -->
+                  <!-- Injected via JavaScript -->
                 </tbody>
               </table>
-            </div>
-
-          </div>
-
-          <!-- Live Gujarat Hub Fleet Summary -->
-          <div class="bg-white rounded-2xl shadow-xs border border-purple-100/70 p-5 sm:p-6 space-y-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="text-base font-extrabold text-slate-900 font-heading">Gujarat CPO Partner Networks</h3>
-                <p class="text-xs text-slate-400 mt-0.5">34 Stations &bull; 150+ Bays &bull; Jio-bp, Tata Power, Zeon, Statiq, VoltGrid</p>
-              </div>
-              <button onclick="switchTab('sales')" class="text-xs font-bold text-indigo-600 hover:underline">
-                Settlements &rarr;
-              </button>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="quickVendorCards">
-              <!-- Populated by JS -->
             </div>
           </div>
 
         </section>
 
-        <!-- ================= TAB: USERS (EV DRIVERS) ================= -->
-        <section id="tabContent-users" class="space-y-6 hidden">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+        <!-- ================= TAB 2: STATIONS (34 Gujarat SuperHubs) ================= -->
+        <section id="tabContent-stations" class="space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 class="text-2xl font-extrabold text-slate-900 font-heading tracking-tight">EV Drivers Directory</h1>
-              <p class="text-xs text-slate-500 mt-0.5">Active registered drivers with verified vehicles and BMS telematics links</p>
+              <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">Charging Stations (Gujarat SuperHubs)</h1>
+              <p class="text-xs text-slate-500 mt-0.5">Manage 34 verified EV SuperHubs across Ahmedabad, Surat, Vadodara, Rajkot, Bhavnagar & GIFT City</p>
             </div>
-            <button onclick="openAddUserModal()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition-all">
-              + Register Driver
-            </button>
+            
+            <div class="flex items-center gap-2">
+              <select id="stationCityFilter" onchange="renderStationsTab()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700 cursor-pointer focus:ring-2 focus:ring-indigo-500">
+                <option value="ALL">All Gujarat (34 Stations)</option>
+                <option value="Ahmedabad">Ahmedabad</option>
+                <option value="Surat">Surat</option>
+                <option value="Vadodara">Vadodara</option>
+                <option value="Gandhinagar">Gandhinagar</option>
+                <option value="Rajkot">Rajkot</option>
+                <option value="Bhavnagar">Bhavnagar</option>
+                <option value="Jamnagar">Jamnagar</option>
+                <option value="Kevadia">Kevadia (Statue of Unity)</option>
+              </select>
+            </div>
           </div>
 
-          <div class="bg-white rounded-2xl shadow-xs border border-purple-100/70 p-5">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <span class="text-2xl font-black text-slate-900 font-mono">34</span>
+              <span class="text-[11px] font-bold text-slate-400 uppercase block">Total Stations</span>
+            </div>
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <span class="text-2xl font-black text-emerald-600 font-mono" id="stationsTotalBaysCount">176</span>
+              <span class="text-[11px] font-bold text-slate-400 uppercase block">Active Bays</span>
+            </div>
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <span class="text-2xl font-black text-amber-500 font-mono">18</span>
+              <span class="text-[11px] font-bold text-slate-400 uppercase block">Solar Powered</span>
+            </div>
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <span class="text-2xl font-black text-indigo-600 font-mono">₹24 - ₹28</span>
+              <span class="text-[11px] font-bold text-slate-400 uppercase block">Tariff / kWh</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="stationsGridContainer">
+            <!-- Injected via JavaScript -->
+          </div>
+        </section>
+
+        <!-- ================= TAB 3: PORTS (176 Hardware Bays) ================= -->
+        <section id="tabContent-ports" class="space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">Ports & Charging Bays</h1>
+              <p class="text-xs text-slate-500 mt-0.5">Real-time telematics, hardware status, and connector power for all bays statewide</p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <select id="portStatusFilter" onchange="renderPortsTab()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700 cursor-pointer focus:ring-2 focus:ring-indigo-500">
+                <option value="ALL">All Statuses</option>
+                <option value="available">Available (Free)</option>
+                <option value="charging">Charging (In Use)</option>
+                <option value="reserved">Reserved (Hold)</option>
+                <option value="maintenance">Maintenance</option>
+              </select>
+
+              <select id="portVehicleFilter" onchange="renderPortsTab()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700 cursor-pointer focus:ring-2 focus:ring-indigo-500">
+                <option value="ALL">All Vehicles</option>
+                <option value="4W">4-Wheelers (CCS2)</option>
+                <option value="2W">2-Wheelers (Type 2 / Ather)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
             <div class="table-container">
-              <table class="w-full text-left text-xs whitespace-nowrap">
+              <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr class="text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
-                    <th class="py-3 px-4">Driver</th>
-                    <th class="py-3 px-4">Contact</th>
-                    <th class="py-3 px-4">City</th>
-                    <th class="py-3 px-4">Connected EV</th>
-                    <th class="py-3 px-4">Live SoC</th>
-                    <th class="py-3 px-4">Sessions</th>
-                    <th class="py-3 px-4">Total Spent</th>
-                    <th class="py-3 px-4">KYC</th>
+                  <tr class="border-b border-slate-100 text-slate-400 uppercase font-extrabold text-[10px] tracking-wider bg-slate-50/50">
+                    <th class="py-3 px-6">Port / Bay</th>
+                    <th class="py-3 px-6">Station & City</th>
+                    <th class="py-3 px-6">Power & Type</th>
+                    <th class="py-3 px-6">Connector</th>
+                    <th class="py-3 px-6">Status</th>
+                    <th class="py-3 px-6 text-right">Admin Control</th>
+                  </tr>
+                </thead>
+                <tbody id="portsTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= TAB 4: ORDERS (Bookings Ledger) ================= -->
+        <section id="tabContent-orders" class="space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">Orders & Bookings Ledger</h1>
+              <p class="text-xs text-slate-500 mt-0.5">Comprehensive audit trail of driver reservations, escrow settlements, and charging bills</p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <button onclick="exportAuditReportPdf()" class="px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 transition-all flex items-center gap-1.5 shadow-sm">
+                <span>📄 Export PDF</span>
+              </button>
+              <button onclick="exportAllOrdersCSV()" class="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition-all flex items-center gap-1.5">
+                <span>📊 Export CSV</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+            <div class="table-container">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="border-b border-slate-100 text-slate-400 uppercase font-extrabold text-[10px] tracking-wider bg-slate-50/50">
+                    <th class="py-3 px-6">Order ID</th>
+                    <th class="py-3 px-6">Customer & Phone</th>
+                    <th class="py-3 px-6">Station & Port</th>
+                    <th class="py-3 px-6">Energy (kWh)</th>
+                    <th class="py-3 px-6">Amount Paid</th>
+                    <th class="py-3 px-6">Status</th>
+                    <th class="py-3 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="ordersFullTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= TAB 5: EV DRIVERS (Users) ================= -->
+        <section id="tabContent-users" class="space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">Registered EV Drivers</h1>
+              <p class="text-xs text-slate-500 mt-0.5">Customer profiles, telematics telemetry, and loyalty wallet balances</p>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+            <div class="table-container">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="border-b border-slate-100 text-slate-400 uppercase font-extrabold text-[10px] tracking-wider bg-slate-50/50">
+                    <th class="py-3 px-6">Driver Name</th>
+                    <th class="py-3 px-6">Phone & Email</th>
+                    <th class="py-3 px-6">Vehicle Model</th>
+                    <th class="py-3 px-6">City</th>
+                    <th class="py-3 px-6">Sessions</th>
+                    <th class="py-3 px-6">Total Spent</th>
+                    <th class="py-3 px-6 text-right">KYC Status</th>
                   </tr>
                 </thead>
                 <tbody id="usersTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
-                  <!-- Populated by JS -->
+                  <!-- Injected via JavaScript -->
                 </tbody>
               </table>
             </div>
           </div>
         </section>
 
-        <!-- ================= TAB: PRODUCTS (CHARGING PORTS) ================= -->
-        <section id="tabContent-products" class="space-y-6 hidden">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+        <!-- ================= TAB 6: VENDORS (CPO Partners - Next to Users with Password Assignment & Add New Bay) ================= -->
+        <section id="tabContent-vendors" class="space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 class="text-2xl font-extrabold text-slate-900 font-heading tracking-tight">Hardware & Charging Ports</h1>
-              <p class="text-xs text-slate-500 mt-0.5">Manage 34 Gujarat stations, tariffs, and 150+ ultra-fast charging bays</p>
+              <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">Charge Point Operators (CPO Vendors)</h1>
+              <p class="text-xs text-slate-500 mt-0.5">Manage vendor fleets, deploy new charging bays, and assign secure operator portal passwords</p>
             </div>
+            
             <div class="flex items-center gap-2">
-              <button onclick="resetDefaultFleet()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all">
-                Reset Fleet
-              </button>
-              <button onclick="openAddPortModal()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition-all">
-                + Add Charging Bay
+              <button onclick="openDeployBayModal()" class="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-md shadow-indigo-600/20 flex items-center gap-2">
+                <span>➕ Deploy New Charging Bay</span>
               </button>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="stationsHardwareGrid">
-            <!-- Populated by JS -->
+          <!-- Vendors Summary Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <span class="text-2xl font-black text-slate-900 font-mono">5</span>
+              <span class="text-[11px] font-bold text-slate-400 uppercase block">CPO Partners</span>
+            </div>
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <span class="text-2xl font-black text-emerald-600 font-mono">34</span>
+              <span class="text-[11px] font-bold text-slate-400 uppercase block">Network Stations</span>
+            </div>
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <span class="text-2xl font-black text-amber-500 font-mono">85% / 15%</span>
+              <span class="text-[11px] font-bold text-slate-400 uppercase block">Vendor Split</span>
+            </div>
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <span class="text-2xl font-black text-indigo-600 font-mono">₹2,41,953</span>
+              <span class="text-[11px] font-bold text-slate-400 uppercase block">Total Disbursed</span>
+            </div>
+          </div>
+
+          <!-- Vendor Fleet Cards with Password Assignment -->
+          <div class="space-y-4" id="vendorsContainer">
+            <!-- Injected via JavaScript -->
           </div>
         </section>
 
-        <!-- ================= TAB: ORDERS (BOOKINGS & REVENUE) ================= -->
-        <section id="tabContent-orders" class="space-y-6 hidden">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+        <!-- ================= TAB 7: REPORTS & AUDIT (PDF Export with Real Data) ================= -->
+        <section id="tabContent-reports" class="space-y-6 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 class="text-2xl font-extrabold text-slate-900 font-heading tracking-tight">Orders & Revenue Ledger</h1>
-              <p class="text-xs text-slate-500 mt-0.5">Complete charging records, 15% platform commission and 85% vendor payouts</p>
+              <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">Financial & Booking Audit Reports</h1>
+              <p class="text-xs text-slate-500 mt-0.5">Statewide Gujarat EV Infrastructure Network settlement audit trail and GST breakdown</p>
             </div>
+            
             <div class="flex items-center gap-2">
-              <button onclick="exportPdfReport()" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs shadow-xs hover:bg-slate-50">
-                📄 Export PDF
+              <button onclick="exportAuditReportPdf()" class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 transition-all flex items-center gap-2 shadow-md shadow-rose-600/20">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>Export Full PDF Report</span>
               </button>
-              <button onclick="exportCsvReport()" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs shadow-xs hover:bg-slate-50">
-                📊 Export CSV
+
+              <button onclick="exportAllOrdersCSV()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 transition-all flex items-center gap-1.5">
+                <span>📊 Export CSV</span>
               </button>
             </div>
           </div>
 
-          <!-- Filters Bar -->
-          <div class="bg-white rounded-2xl p-4 shadow-xs border border-purple-100/70 flex flex-col sm:flex-row items-center gap-3">
-            <input 
-              type="text" 
-              id="orderSearchInput" 
-              oninput="filterOrders()" 
-              placeholder="Search driver, booking ID, car..." 
-              class="w-full sm:w-64 px-3.5 py-2 rounded-xl bg-slate-100 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-400"
-            />
-            <select id="orderStatusFilter" onchange="filterOrders()" class="w-full sm:w-auto px-3.5 py-2 rounded-xl bg-slate-100 text-xs font-bold text-slate-700 cursor-pointer">
-              <option value="ALL">All Statuses</option>
-              <option value="COMPLETED">Completed</option>
-              <option value="CHARGING">Active / Charging</option>
-              <option value="REFUNDED">Refunded</option>
-            </select>
-            <select id="orderVendorFilter" onchange="filterOrders()" class="w-full sm:w-auto px-3.5 py-2 rounded-xl bg-slate-100 text-xs font-bold text-slate-700 cursor-pointer">
-              <option value="ALL">All CPO Vendors</option>
-              <option value="Jio-bp pulse">Jio-bp pulse</option>
-              <option value="Tata Power">Tata Power</option>
-              <option value="Zeon">Zeon Charging</option>
-              <option value="Statiq">Statiq EV Hub</option>
-              <option value="VoltGrid">VoltGrid Direct</option>
-            </select>
-          </div>
+          <!-- Audit Table Card -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm">Statewide Network Financial Ledger</h3>
+                <span class="text-[11px] text-slate-400">Real-time sync with MongoDB Atlas & VoltGridDB</span>
+              </div>
+              <span class="px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">100% RECONCILED</span>
+            </div>
 
-          <div class="bg-white rounded-2xl shadow-xs border border-purple-100/70 p-5">
             <div class="table-container">
-              <table class="w-full text-left text-xs whitespace-nowrap">
+              <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr class="text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
-                    <th class="py-3 px-4">Ref</th>
-                    <th class="py-3 px-4">Customer</th>
-                    <th class="py-3 px-4">Station & Port</th>
-                    <th class="py-3 px-4">Date</th>
-                    <th class="py-3 px-4">Energy</th>
-                    <th class="py-3 px-4">Total</th>
-                    <th class="py-3 px-4">Platform (15%)</th>
-                    <th class="py-3 px-4">Vendor Net (85%)</th>
-                    <th class="py-3 px-4">Status</th>
-                    <th class="py-3 px-4 text-center">Action</th>
+                  <tr class="border-b border-slate-100 text-slate-400 uppercase font-extrabold text-[10px] tracking-wider bg-slate-50/50">
+                    <th class="py-3 px-6">Ref</th>
+                    <th class="py-3 px-6">Customer</th>
+                    <th class="py-3 px-6">Vehicle</th>
+                    <th class="py-3 px-6">Station</th>
+                    <th class="py-3 px-6">Total (₹)</th>
+                    <th class="py-3 px-6 text-indigo-600">Cut (15%)</th>
+                    <th class="py-3 px-6 text-emerald-600">CPO (85%)</th>
+                    <th class="py-3 px-6">Status</th>
                   </tr>
                 </thead>
-                <tbody id="allOrdersTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
-                  <!-- Populated by JS -->
+                <tbody id="auditReportTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                  <!-- Injected via JavaScript -->
                 </tbody>
               </table>
             </div>
           </div>
         </section>
 
-        <!-- ================= TAB: SALES & VENDOR FLEET ================= -->
-        <section id="tabContent-sales" class="space-y-6 hidden">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
-            <div>
-              <h1 class="text-2xl font-extrabold text-slate-900 font-heading tracking-tight">CPO Vendor Fleet & Settlements</h1>
-              <p class="text-xs text-slate-500 mt-0.5">85% Automated Vendor Settlements, Bank Accounts, and Auto-Sweep Payouts</p>
-            </div>
-            <button onclick="triggerAutoSweepAll()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition-all flex items-center gap-1.5">
-              <span>💳</span> <span>Trigger IMPS Auto-Sweep</span>
-            </button>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="vendorsDetailedGrid">
-            <!-- Populated by JS -->
-          </div>
-        </section>
-
-        <!-- ================= TAB: ANALYTICS ================= -->
+        <!-- ================= TAB 8: ANALYTICS ================= -->
         <section id="tabContent-analytics" class="space-y-6 hidden">
-          <div class="pb-2">
-            <h1 class="text-2xl font-extrabold text-slate-900 font-heading tracking-tight">Energy & Environmental Analytics</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Statewide green power distribution and carbon offset metrics</p>
+          <div>
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">Analytics & Grid Load</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Gujarat statewide power demand curve and hourly peak utilization</p>
           </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <div class="bg-white rounded-2xl p-5 shadow-xs border border-purple-100/70">
-              <span class="text-xs font-bold uppercase text-slate-400 block font-mono">Gross Energy Delivered</span>
-              <span class="text-2xl sm:text-3xl font-extrabold text-indigo-600 font-heading mt-1 block" id="analyticsEnergyKwh">18,420 kWh</span>
-              <span class="text-[11px] text-slate-500 mt-1 block">⚡ Across 34 Gujarat SuperHubs</span>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="p-6 rounded-2xl bg-white border border-slate-200 space-y-4">
+              <h3 class="font-bold text-slate-900 text-sm">Hourly Power Demand (MW)</h3>
+              <div class="h-48 flex items-end gap-2 pt-6">
+                <div class="flex-1 bg-indigo-200 rounded-t h-[30%] text-[9px] text-center font-bold">06:00</div>
+                <div class="flex-1 bg-indigo-300 rounded-t h-[55%] text-[9px] text-center font-bold">09:00</div>
+                <div class="flex-1 bg-indigo-500 rounded-t h-[85%] text-[9px] text-center font-bold text-white">12:00</div>
+                <div class="flex-1 bg-indigo-600 rounded-t h-[95%] text-[9px] text-center font-bold text-white">15:00</div>
+                <div class="flex-1 bg-indigo-700 rounded-t h-[100%] text-[9px] text-center font-bold text-white">18:00</div>
+                <div class="flex-1 bg-indigo-400 rounded-t h-[70%] text-[9px] text-center font-bold">21:00</div>
+              </div>
             </div>
-            <div class="bg-white rounded-2xl p-5 shadow-xs border border-purple-100/70">
-              <span class="text-xs font-bold uppercase text-slate-400 block font-mono">Net Carbon Offset</span>
-              <span class="text-2xl sm:text-3xl font-extrabold text-emerald-600 font-heading mt-1 block" id="analyticsCo2Offset">33,156 kg</span>
-              <span class="text-[11px] text-slate-500 mt-1 block">🌱 Zero emission mobility</span>
-            </div>
-            <div class="bg-white rounded-2xl p-5 shadow-xs border border-purple-100/70">
-              <span class="text-xs font-bold uppercase text-slate-400 block font-mono">Platform Revenue (15%)</span>
-              <span class="text-2xl sm:text-3xl font-extrabold text-purple-600 font-heading mt-1 block" id="analyticsPlatformProfit">₹18,712</span>
-              <span class="text-[11px] text-slate-500 mt-1 block">💼 Retained service fee</span>
+            <div class="p-6 rounded-2xl bg-white border border-slate-200 space-y-4">
+              <h3 class="font-bold text-slate-900 text-sm">CPO Market Share in Gujarat</h3>
+              <div class="space-y-3 text-xs">
+                <div>
+                  <div class="flex justify-between font-bold mb-1"><span>Jio-bp pulse</span><span>38%</span></div>
+                  <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-indigo-600 h-2 rounded-full" style="width: 38%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between font-bold mb-1"><span>Tata Power EZ Charge</span><span>32%</span></div>
+                  <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-sky-500 h-2 rounded-full" style="width: 32%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between font-bold mb-1"><span>Zeon Charging</span><span>18%</span></div>
+                  <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width: 18%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between font-bold mb-1"><span>Statiq & VoltGrid</span><span>12%</span></div>
+                  <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-amber-500 h-2 rounded-full" style="width: 12%"></div></div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- ================= TAB: SETTINGS ================= -->
+        <!-- ================= TAB 9: SALES ================= -->
+        <section id="tabContent-sales" class="space-y-6 hidden">
+          <div>
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">Sales & Financial Settlements</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Automated Escrow split: 85% Vendor Payout & 15% Platform Commission</p>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="p-5 rounded-2xl bg-white border border-slate-200">
+              <span class="text-xs text-slate-400 font-bold uppercase block">Gross Volume</span>
+              <span class="text-2xl font-black text-slate-900 font-mono mt-1 block">₹2,84,650</span>
+              <span class="text-[11px] text-emerald-600 font-bold">100% Escrow Settled</span>
+            </div>
+            <div class="p-5 rounded-2xl bg-white border border-slate-200">
+              <span class="text-xs text-slate-400 font-bold uppercase block">Platform Commission (15%)</span>
+              <span class="text-2xl font-black text-indigo-600 font-mono mt-1 block">₹42,697</span>
+              <span class="text-[11px] text-slate-500">VoltGrid Gross Profit</span>
+            </div>
+            <div class="p-5 rounded-2xl bg-white border border-slate-200">
+              <span class="text-xs text-slate-400 font-bold uppercase block">Vendor Disbursals (85%)</span>
+              <span class="text-2xl font-black text-emerald-600 font-mono mt-1 block">₹2,41,953</span>
+              <span class="text-[11px] text-slate-500">Auto-transferred to CPO Bank</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= TAB 10: SETTINGS ================= -->
         <section id="tabContent-settings" class="space-y-6 hidden">
-          <div class="pb-2">
-            <h1 class="text-2xl font-extrabold text-slate-900 font-heading tracking-tight">Platform Configuration</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Tariff parameters, platform commission splits, and payment gateway controls</p>
+          <div>
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight font-heading">Platform Settings</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Configure booking hold durations, platform margins, and SMS notifications</p>
           </div>
-
-          <div class="bg-white rounded-2xl p-6 shadow-xs border border-purple-100/70 max-w-2xl space-y-4">
+          <div class="p-6 rounded-2xl bg-white border border-slate-200 max-w-xl space-y-4 text-xs">
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">VoltGrid Platform Commission Fee (%)</label>
-              <input type="number" value="15" class="w-full px-3.5 py-2 rounded-xl bg-slate-100 text-xs font-bold" readonly />
-              <p class="text-[11px] text-slate-400 mt-1">Vendors retain 85% of gross tariff per kWh automatically.</p>
+              <label class="block font-bold text-slate-700 mb-1">Reservation Hold Window</label>
+              <input type="text" value="15 Minutes (Guaranteed Slot)" disabled class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold" />
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">Base Grid Plug-in Fee (₹)</label>
-              <input type="number" value="40" class="w-full px-3.5 py-2 rounded-xl bg-slate-100 text-xs font-bold" readonly />
+              <label class="block font-bold text-slate-700 mb-1">VoltGrid Take Rate</label>
+              <input type="text" value="15% Platform Commission" disabled class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold" />
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-700 mb-1">GST Surcharge</label>
-              <input type="text" value="18% (Automated Invoice Generation)" class="w-full px-3.5 py-2 rounded-xl bg-slate-100 text-xs font-bold" readonly />
-            </div>
-            <button onclick="alert('Platform configuration saved.')" class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs shadow-md">
-              Save Parameters
-            </button>
-          </div>
-        </section>
-
-        <!-- ================= TAB: NOTIFICATIONS ================= -->
-        <section id="tabContent-notifications" class="space-y-6 hidden">
-          <div class="pb-2">
-            <h1 class="text-2xl font-extrabold text-slate-900 font-heading tracking-tight">System Alerts & Hub Feeds</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Real-time alerts from 34 Gujarat charging bays and telematics bridge</p>
-          </div>
-
-          <div class="bg-white rounded-2xl p-5 shadow-xs border border-purple-100/70 divide-y divide-slate-100 space-y-3">
-            <div class="pt-3 flex items-start gap-3">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></span>
-              <div>
-                <strong class="text-xs font-bold text-slate-900">Jio-bp pulse SG Highway Bay 01 Session Complete</strong>
-                <p class="text-[11px] text-slate-500">Aarav Sharma completed 38.5 kWh charge. Cable auto-unlocked.</p>
-                <span class="text-[10px] text-slate-400">18 minutes ago</span>
-              </div>
-            </div>
-            <div class="pt-3 flex items-start gap-3">
-              <span class="w-2.5 h-2.5 rounded-full bg-cyan-500 mt-1.5 shrink-0"></span>
-              <div>
-                <strong class="text-xs font-bold text-slate-900">VoltGrid VR Surat Bay 02 Active Session Hookup</strong>
-                <p class="text-[11px] text-slate-500">Kiran Patel plugged in Tata Punch EV. Live draw 60 kW.</p>
-                <span class="text-[10px] text-slate-400">5 minutes ago</span>
-              </div>
-            </div>
-            <div class="pt-3 flex items-start gap-3">
-              <span class="w-2.5 h-2.5 rounded-full bg-amber-500 mt-1.5 shrink-0"></span>
-              <div>
-                <strong class="text-xs font-bold text-slate-900">Scheduled CPO Auto-Sweep Payout Prepared</strong>
-                <p class="text-[11px] text-slate-500">₹8,412 queued for transfer to Tata Power & Jio-bp HDFC Accounts.</p>
-                <span class="text-[10px] text-slate-400">1 hour ago</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- ================= TAB: SECURITY ================= -->
-        <section id="tabContent-security" class="space-y-6 hidden">
-          <div class="pb-2">
-            <h1 class="text-2xl font-extrabold text-slate-900 font-heading tracking-tight">Security & Compliance</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Anti-tamper charging cable locks and database integrity</p>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div class="bg-white rounded-2xl p-5 shadow-xs border border-purple-100/70 space-y-2">
-              <div class="flex items-center gap-2">
-                <span class="text-emerald-500 text-lg">🛡️</span>
-                <strong class="text-sm font-bold text-slate-900">Anti-Steal Electronic Bay Lock</strong>
-              </div>
-              <p class="text-xs text-slate-500">Every bay requires a 4-digit verified OTP PIN before current flows. Unplug without uncouple triggers alarm.</p>
-              <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">100% ARMED</span>
-            </div>
-            <div class="bg-white rounded-2xl p-5 shadow-xs border border-purple-100/70 space-y-2">
-              <div class="flex items-center gap-2">
-                <span class="text-indigo-500 text-lg">☁️</span>
-                <strong class="text-sm font-bold text-slate-900">MongoDB Atlas Cloud Connection</strong>
-              </div>
-              <p class="text-xs text-slate-500">Real-time replication active between browser localStorage and cloud database.</p>
-              <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800">HEALTHY • 24MS LATENCY</span>
+              <label class="block font-bold text-slate-700 mb-1">Master Admin Password</label>
+              <input type="text" value="admin123" disabled class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-indigo-600 font-mono" />
             </div>
           </div>
         </section>
 
       </main>
-
-    </div>
-
-  </div>
-
-  <!-- ================= VIEW ORDER DETAILS MODAL ================= -->
-  <div id="viewOrderModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="text-base font-extrabold text-slate-900 font-heading" id="modalOrderRef">Order Inspection</h3>
-        <button onclick="closeModal('viewOrderModal')" class="text-slate-400 hover:text-slate-700">✕</button>
-      </div>
-
-      <div class="space-y-3 text-xs" id="modalOrderDetails">
-        <!-- Rendered by JS -->
-      </div>
-
-      <div class="pt-2 border-t flex justify-end gap-2">
-        <button onclick="closeModal('viewOrderModal')" class="px-4 py-2 rounded-xl bg-slate-100 font-bold text-xs text-slate-700 hover:bg-slate-200">
-          Close
-        </button>
-      </div>
     </div>
   </div>
 
-  <!-- ================= ADD NEW CHARGING BAY MODAL ================= -->
-  <div id="addPortModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="text-base font-extrabold text-slate-900 font-heading">Deploy New Charging Bay</h3>
-        <button onclick="closeModal('addPortModal')" class="text-slate-400 hover:text-slate-700">✕</button>
+  <!-- ================= MODAL: DEPLOY NEW CHARGING BAY (Screenshot 4) ================= -->
+  <div id="deployBayModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-3xl border border-slate-200 max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-start">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900 font-heading">Deploy New Charging Bay</h3>
+          <p class="text-xs text-slate-500">Add physical charging hardware to a Gujarat SuperHub</p>
+        </div>
+        <button onclick="closeDeployBayModal()" class="text-slate-400 hover:text-slate-700 p-1 font-bold">✕</button>
       </div>
 
-      <form onsubmit="handleAddNewPort(event)" class="space-y-3 text-xs">
+      <form onsubmit="handleDeployBaySubmit(event)" class="space-y-3.5 text-xs">
         <div>
           <label class="block font-bold text-slate-700 mb-1">Select Gujarat Charging Hub</label>
-          <select id="newPortStationSelect" class="w-full px-3 py-2 rounded-xl bg-slate-100 font-bold text-slate-800">
-            <!-- Populated by JS -->
+          <select id="deployBayStationSelect" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 font-bold focus:bg-white focus:ring-2 focus:ring-indigo-500">
+            <!-- Injected via JavaScript -->
           </select>
         </div>
+
         <div>
           <label class="block font-bold text-slate-700 mb-1">Bay Label / Name</label>
-          <input type="text" id="newPortName" placeholder="e.g. Bay 07 (Ultra-Fast DC)" required class="w-full px-3 py-2 rounded-xl bg-slate-100 font-bold text-slate-800" />
+          <input type="text" id="deployBayName" placeholder="e.g. Bay 07 (Ultra-Fast DC)" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 font-medium" />
         </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-bold text-slate-700 mb-1">Power Output (kW)</label>
-            <input type="number" id="newPortKw" value="240" required class="w-full px-3 py-2 rounded-xl bg-slate-100 font-bold text-slate-800" />
+            <input type="number" id="deployBayKw" value="240" min="3" max="360" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-mono font-bold" />
           </div>
+
           <div>
             <label class="block font-bold text-slate-700 mb-1">Connector Gun</label>
-            <select id="newPortConnector" class="w-full px-3 py-2 rounded-xl bg-slate-100 font-bold text-slate-800">
-              <option value="CCS2">CCS2 DC</option>
-              <option value="Type 2">Type 2 AC</option>
-              <option value="Ather Grid">Ather 2W Point</option>
-              <option value="16A Socket">16A Smart Plug</option>
+            <select id="deployBayConnector" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-bold">
+              <option value="CCS2 DC" selected>CCS2 DC</option>
+              <option value="Type 2 AC">Type 2 AC</option>
+              <option value="Ather Grid">Ather Grid</option>
+              <option value="Bharat DC-001">Bharat DC-001</option>
+              <option value="GB/T">GB/T</option>
             </select>
           </div>
         </div>
+
         <div>
           <label class="block font-bold text-slate-700 mb-1">EV Category</label>
-          <select id="newPortVehicleType" class="w-full px-3 py-2 rounded-xl bg-slate-100 font-bold text-slate-800">
-            <option value="4W">4-Wheeler Dedicated</option>
+          <select id="deployBayVehicleType" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 font-bold">
+            <option value="4W" selected>4-Wheeler Dedicated</option>
             <option value="2W">2-Wheeler Dedicated</option>
-            <option value="BOTH">Universal (2W & 4W)</option>
+            <option value="Universal">Universal 2W & 4W</option>
           </select>
         </div>
 
-        <div class="pt-2 border-t flex justify-end gap-2">
-          <button type="button" onclick="closeModal('addPortModal')" class="px-4 py-2 rounded-xl bg-slate-100 font-bold text-xs text-slate-700 hover:bg-slate-200">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md">Deploy Bay</button>
+        <div class="pt-3 border-t border-slate-100 flex gap-2">
+          <button type="button" onclick="closeDeployBayModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 transition-all">
+            Cancel
+          </button>
+          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all">
+            Deploy Bay
+          </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- ================= ADD USER MODAL ================= -->
-  <div id="addUserModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="text-base font-extrabold text-slate-900 font-heading">Register New EV Driver</h3>
-        <button onclick="closeModal('addUserModal')" class="text-slate-400 hover:text-slate-700">✕</button>
+  <!-- ORDER DETAIL MODAL -->
+  <div id="orderDetailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-3xl border border-slate-200 max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-start border-b border-slate-100 pb-3">
+        <div>
+          <span class="text-[10px] font-extrabold uppercase text-slate-400 font-mono">Order Details</span>
+          <h3 id="modalOrderId" class="text-lg font-bold text-slate-900 font-mono mt-0.5">#ORD-001</h3>
+        </div>
+        <button onclick="closeOrderDetailModal()" class="text-slate-400 hover:text-slate-700 p-1 font-bold">✕</button>
       </div>
 
-      <form onsubmit="handleAddNewUser(event)" class="space-y-3 text-xs">
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Driver Full Name</label>
-          <input type="text" id="newUserName" placeholder="e.g. Ramesh Varma" required class="w-full px-3 py-2 rounded-xl bg-slate-100 font-bold text-slate-800" />
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Mobile Phone</label>
-          <input type="text" id="newUserPhone" placeholder="+91 98250 99887" required class="w-full px-3 py-2 rounded-xl bg-slate-100 font-bold text-slate-800" />
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Email Address</label>
-          <input type="email" id="newUserEmail" placeholder="ramesh@gmail.com" required class="w-full px-3 py-2 rounded-xl bg-slate-100 font-bold text-slate-800" />
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">City</label>
-            <input type="text" id="newUserCity" value="Ahmedabad" class="w-full px-3 py-2 rounded-xl bg-slate-100 font-bold text-slate-800" />
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Vehicle Model</label>
-            <select id="newUserVehicle" class="w-full px-3 py-2 rounded-xl bg-slate-100 font-bold text-slate-800">
-              <option value="MG ZS EV">MG ZS EV (50.3 kWh)</option>
-              <option value="Tata Nexon EV">Tata Nexon EV Max</option>
-              <option value="Hyundai Ioniq 5">Hyundai Ioniq 5</option>
-              <option value="Tata Punch EV">Tata Punch EV</option>
-              <option value="Ather 450X">Ather 450X (2W)</option>
-              <option value="Ola S1 Pro">Ola S1 Pro (2W)</option>
-            </select>
-          </div>
-        </div>
+      <div class="space-y-3 text-xs" id="modalOrderDetailsBody">
+        <!-- Injected via JavaScript -->
+      </div>
 
-        <div class="pt-2 border-t flex justify-end gap-2">
-          <button type="button" onclick="closeModal('addUserModal')" class="px-4 py-2 rounded-xl bg-slate-100 font-bold text-xs text-slate-700 hover:bg-slate-200">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md">Register Driver</button>
-        </div>
-      </form>
+      <div class="pt-3 border-t border-slate-100 flex gap-2">
+        <button onclick="closeOrderDetailModal()" class="flex-1 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200">Close</button>
+        <button id="modalOrderRefundBtn" onclick="executeAdminRefund()" class="flex-1 py-2 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700">Refund Order</button>
+      </div>
     </div>
   </div>
 
-  <!-- ================= JAVASCRIPT CONTROLLER ================= -->
+  <!-- TARIFF EDIT MODAL -->
+  <div id="tariffModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-3xl border border-slate-200 max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="flex justify-between items-start">
+        <h3 class="text-base font-bold text-slate-900 font-heading">Edit Station Tariff</h3>
+        <button onclick="closeTariffModal()" class="text-slate-400 hover:text-slate-700 font-bold">✕</button>
+      </div>
+      <p id="tariffModalStationName" class="text-xs text-slate-500 font-medium"></p>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">New Price per kWh (₹)</label>
+        <input type="number" id="tariffModalInput" min="10" max="60" step="1" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm font-bold" />
+      </div>
+      <div class="flex gap-2">
+        <button onclick="closeTariffModal()" class="flex-1 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs">Cancel</button>
+        <button onclick="saveTariffChange()" class="flex-1 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs">Save Tariff</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORE JAVASCRIPT LOGIC -->
   <script>
+    let activeTab = 'dashboard';
     let globalStations = [];
     let globalBookings = [];
-    let globalVendors = [];
     let globalUsers = [];
-    let activeTab = 'dashboard';
+    let globalPorts = [];
+    let globalVendors = [];
+    let activeInspectedOrderId = null;
+    let activeTariffStationId = null;
 
-    function toggleMobileSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const backdrop = document.getElementById('sidebarBackdrop');
-      if (sidebar.classList.contains('-translate-x-full')) {
-        sidebar.classList.remove('-translate-x-full');
-        backdrop.classList.remove('hidden');
+    // Check Admin Authentication
+    function checkAdminAuth() {
+      const isAuth = sessionStorage.getItem('voltgrid_admin_auth') === 'true';
+      const loginScreen = document.getElementById('adminLoginScreen');
+      if (isAuth) {
+        if (loginScreen) loginScreen.classList.add('hidden');
       } else {
-        sidebar.classList.add('-translate-x-full');
-        backdrop.classList.add('hidden');
+        if (loginScreen) loginScreen.classList.remove('hidden');
       }
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const pass = document.getElementById('adminPasswordInput').value.trim();
+      const errEl = document.getElementById('adminLoginError');
+
+      if (pass === 'admin123') {
+        sessionStorage.setItem('voltgrid_admin_auth', 'true');
+        document.getElementById('adminLoginScreen').classList.add('hidden');
+        if (errEl) errEl.classList.add('hidden');
+        refreshDataFromDB();
+      } else {
+        if (errEl) errEl.classList.remove('hidden');
+      }
+    }
+
+    function toggleAdminPasswordVis() {
+      const input = document.getElementById('adminPasswordInput');
+      if (input) {
+        input.type = input.type === 'password' ? 'text' : 'password';
+      }
+    }
+
+    function lockAdminSession() {
+      sessionStorage.removeItem('voltgrid_admin_auth');
+      const input = document.getElementById('adminPasswordInput');
+      if (input) input.value = '';
+      checkAdminAuth();
+    }
+
+    // Dropdown Toggles & Mark as Read
+    function toggleNotifDropdown() {
+      const d = document.getElementById('notifDropdown');
+      const m = document.getElementById('msgDropdown');
+      if (m) m.classList.add('hidden');
+      if (d) d.classList.toggle('hidden');
+    }
+
+    function toggleMsgDropdown() {
+      const m = document.getElementById('msgDropdown');
+      const d = document.getElementById('notifDropdown');
+      if (d) d.classList.add('hidden');
+      if (m) m.classList.toggle('hidden');
+    }
+
+    function markAllNotifsRead() {
+      const badge = document.getElementById('notifBadge');
+      if (badge) badge.classList.add('hidden');
+      const list = document.getElementById('notifList');
+      if (list) {
+        list.innerHTML = `<div class="p-4 text-center text-slate-400 font-mono text-xs">All notifications marked as read ✓</div>`;
+      }
+    }
+
+    function markAllMsgsRead() {
+      const badge = document.getElementById('msgBadge');
+      if (badge) badge.classList.add('hidden');
+      const list = document.getElementById('msgList');
+      if (list) {
+        list.innerHTML = `<div class="p-4 text-center text-slate-400 font-mono text-xs">All driver inquiries marked as read ✓</div>`;
+      }
+    }
+
+    // Refresh Data from VoltGridDB
+    function refreshDataFromDB() {
+      if (window.VoltGridDB) {
+        globalStations = VoltGridDB.getStations();
+        globalBookings = VoltGridDB.getBookings();
+        globalUsers = VoltGridDB.getUsers ? VoltGridDB.getUsers() : [];
+        globalPorts = VoltGridDB.getAllPorts ? VoltGridDB.getAllPorts() : [];
+        globalVendors = VoltGridDB.getVendors ? VoltGridDB.getVendors() : [];
+      }
+
+      // Update Nav Badges
+      const stationsBadge = document.getElementById('badgeStationsNavCount');
+      if (stationsBadge) stationsBadge.innerText = globalStations.length;
+
+      const portsBadge = document.getElementById('badgePortsNavCount');
+      if (portsBadge) portsBadge.innerText = globalPorts.length;
+
+      const ordersBadge = document.getElementById('badgeOrdersNavCount');
+      if (ordersBadge) ordersBadge.innerText = globalBookings.length;
+
+      const usersBadge = document.getElementById('badgeUsersNavCount');
+      if (usersBadge) usersBadge.innerText = globalUsers.length;
+
+      const vendorsBadge = document.getElementById('badgeVendorsNavCount');
+      if (vendorsBadge) vendorsBadge.innerText = globalVendors.length;
+
+      const stationBaysCountEl = document.getElementById('stationsTotalBaysCount');
+      if (stationBaysCountEl) stationBaysCountEl.innerText = globalPorts.length;
+
+      // Update Dashboard KPIs
+      updateDashboardKPIs();
+
+      // Render Active Tab
+      renderActiveTab();
+    }
+
+    function updateDashboardKPIs() {
+      const usersEl = document.getElementById('kpiTotalUsers');
+      if (usersEl) usersEl.innerText = (globalUsers.length * 150 + 4).toLocaleString();
+
+      const ordersEl = document.getElementById('kpiTotalOrders');
+      if (ordersEl) ordersEl.innerText = globalBookings.length.toLocaleString();
+
+      const revenue = globalBookings.reduce((sum, b) => sum + (Number(b.totalAmount || b.amountPaid || 0)), 0);
+      const revEl = document.getElementById('kpiTotalRevenue');
+      if (revEl) revEl.innerText = '₹' + revenue.toLocaleString();
+
+      const occupiedPorts = globalPorts.filter(p => p.status === 'charging' || p.status === 'reserved').length;
+      const rate = globalPorts.length > 0 ? Math.round((occupiedPorts / globalPorts.length) * 100) : 85;
+      const rateEl = document.getElementById('kpiConversionRate');
+      if (rateEl) rateEl.innerText = (rate > 0 ? rate : 85) + '%';
     }
 
     function switchTab(tabId) {
       activeTab = tabId;
 
-      // Close mobile sidebar if open
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active-nav-tab');
+      });
+      const activeNavBtn = document.getElementById('navBtn-' + tabId);
+      if (activeNavBtn) activeNavBtn.classList.add('active-nav-tab');
+
+      const tabs = ['dashboard', 'stations', 'ports', 'orders', 'users', 'vendors', 'reports', 'analytics', 'sales', 'settings'];
+      tabs.forEach(t => {
+        const el = document.getElementById('tabContent-' + t);
+        if (el) el.classList.add('hidden');
+      });
+
+      const targetEl = document.getElementById('tabContent-' + tabId);
+      if (targetEl) targetEl.classList.remove('hidden');
+
       const sidebar = document.getElementById('sidebar');
       const backdrop = document.getElementById('sidebarBackdrop');
       if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
         sidebar.classList.add('-translate-x-full');
-        backdrop.classList.add('hidden');
       }
+      if (backdrop) backdrop.classList.add('hidden');
 
-      // Hide all tabs
-      const tabs = ['dashboard', 'users', 'products', 'orders', 'sales', 'analytics', 'settings', 'notifications', 'security'];
-      tabs.forEach(t => {
-        const el = document.getElementById('tabContent-' + t);
-        const btn = document.getElementById('navBtn-' + t);
-        if (el) el.classList.add('hidden');
-        if (btn) btn.classList.remove('active-nav-tab');
-      });
-
-      // Show selected tab
-      const targetEl = document.getElementById('tabContent-' + tabId);
-      const targetBtn = document.getElementById('navBtn-' + tabId);
-      if (targetEl) targetEl.classList.remove('hidden');
-      if (targetBtn) targetBtn.classList.add('active-nav-tab');
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderActiveTab();
     }
 
-    function loadAdminData() {
-      if (window.VoltGridDB) {
-        globalStations = VoltGridDB.getStations();
-        globalBookings = VoltGridDB.getBookings();
-        globalVendors = VoltGridDB.getVendors();
-        globalUsers = VoltGridDB.getUsers ? VoltGridDB.getUsers() : [];
+    function renderActiveTab() {
+      if (activeTab === 'dashboard') {
+        renderRecentOrders();
+      } else if (activeTab === 'stations') {
+        renderStationsTab();
+      } else if (activeTab === 'ports') {
+        renderPortsTab();
+      } else if (activeTab === 'orders') {
+        renderOrdersTab();
+      } else if (activeTab === 'users') {
+        renderUsersTab();
+      } else if (activeTab === 'vendors') {
+        renderVendorsTab();
+      } else if (activeTab === 'reports') {
+        renderAuditReportTab();
       }
-
-      // Safeguard: Fallback to INITIAL arrays if fewer than 5 records exist
-      if (!globalUsers || globalUsers.length < 5) {
-        globalUsers = (window.INITIAL_USERS && window.INITIAL_USERS.length > 0) ? window.INITIAL_USERS : [
-          { id: 'usr-01', name: 'Nidhi Yadav', email: 'nidhiyadav1218@gmail.com', phone: '+91 93287 03345', city: 'Ahmedabad', vehicle: 'MG ZS EV', soc: 22, bookingsCount: 16, totalSpent: 5240, walletBalance: 1250, kyc: 'VERIFIED' },
-          { id: 'usr-02', name: 'Aarav Sharma', email: 'aarav.sharma@gmail.com', phone: '+91 98250 12345', city: 'Ahmedabad', vehicle: 'MG ZS EV', soc: 78, bookingsCount: 11, totalSpent: 4120, walletBalance: 820, kyc: 'VERIFIED' },
-          { id: 'usr-03', name: 'Rohan Mehra', email: 'rohan.mehra@gmail.com', phone: '+91 98980 54321', city: 'Gandhinagar', vehicle: 'Hyundai Ioniq 5', soc: 65, bookingsCount: 8, totalSpent: 3890, walletBalance: 450, kyc: 'VERIFIED' },
-          { id: 'usr-04', name: 'Kiran Patel', email: 'kiran.patel@gmail.com', phone: '+91 97240 98765', city: 'Surat', vehicle: 'Tata Punch EV', soc: 45, bookingsCount: 6, totalSpent: 1980, walletBalance: 320, kyc: 'VERIFIED' },
-          { id: 'usr-05', name: 'Priya Joshi', email: 'priya.j@gmail.com', phone: '+91 94260 11223', city: 'Vadodara', vehicle: 'Ather 450X', soc: 82, bookingsCount: 14, totalSpent: 1180, walletBalance: 190, kyc: 'VERIFIED' }
-        ];
-      }
-
-      if (!globalBookings || globalBookings.length < 5) {
-        if (window.INITIAL_BOOKINGS && window.INITIAL_BOOKINGS.length > 0) {
-          globalBookings = JSON.parse(JSON.stringify(window.INITIAL_BOOKINGS));
-        }
-      }
-
-      renderAllViews();
     }
 
-    function renderAllViews() {
-      // Update badge counts in sidebar
-      const badgeUsers = document.getElementById('badgeUsersCount');
-      if (badgeUsers) badgeUsers.textContent = globalUsers.length;
-      const badgeStations = document.getElementById('badgeStationsCount');
-      if (badgeStations) badgeStations.textContent = globalStations.length;
-      const badgeOrders = document.getElementById('badgeOrdersCount');
-      if (badgeOrders) badgeOrders.textContent = globalBookings.length;
-
-      // Compute Financial KPIs
-      let grossGmv = 0;
-      let platformProfit = 0;
-      let totalEnergyKwh = 0;
-
-      globalBookings.forEach(b => {
-        const amt = Number(b.totalAmount) || 0;
-        const fee = Number(b.platformFee) || Math.round(amt * 0.15);
-        grossGmv += amt;
-        platformProfit += fee;
-        totalEnergyKwh += Number(b.energyKwh) || 0;
-      });
-
-      const elUsers = document.getElementById('kpiTotalUsers');
-      if (elUsers) elUsers.textContent = (1494 + globalUsers.length).toLocaleString();
-      const elRev = document.getElementById('kpiTotalRevenue');
-      if (elRev) elRev.textContent = '₹' + (115000 + grossGmv).toLocaleString();
-      const elOrders = document.getElementById('kpiTotalOrders');
-      if (elOrders) elOrders.textContent = (312 + globalBookings.length).toString();
-
-      const energyEl = document.getElementById('analyticsEnergyKwh');
-      if (energyEl) energyEl.textContent = (18000 + Math.round(totalEnergyKwh)).toLocaleString() + ' kWh';
-      const co2El = document.getElementById('analyticsCo2Offset');
-      if (co2El) co2El.textContent = Math.round((18000 + totalEnergyKwh) * 1.8).toLocaleString() + ' kg';
-      const profitEl = document.getElementById('analyticsPlatformProfit');
-      if (profitEl) profitEl.textContent = '₹' + (17000 + platformProfit).toLocaleString();
-
-      // Render Tables
-      renderRecentOrdersTable();
-      renderAllOrdersTable();
-      renderUsersTable();
-      renderProductsGrid();
-      renderVendorsViews();
-    }
-
-    function renderRecentOrdersTable() {
+    // 1. Render Recent Orders (Dashboard)
+    function renderRecentOrders() {
       const tbody = document.getElementById('recentOrdersTableBody');
       if (!tbody) return;
 
-      const recentList = globalBookings.slice(0, 5);
-      tbody.innerHTML = recentList.map(b => {
-        const ref = b.id || '#ORD-001';
-        const dateStr = b.createdAt ? new Date(b.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '15 Mar 2025';
-        const amt = Number(b.totalAmount) || 125;
-        const status = b.status || 'COMPLETED';
-
-        let badge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Completed</span>';
-        if (status === 'CHARGING' || status === 'PENDING') {
-          badge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Pending</span>';
-        } else if (status === 'REFUNDED' || status === 'CANCELLED') {
-          badge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800">Cancelled</span>';
-        }
-
-        return `
-          <tr class="hover:bg-slate-50 transition-colors">
-            <td class="py-3.5 px-4 font-mono font-bold text-indigo-600">#${ref}</td>
-            <td class="py-3.5 px-4">
-              <strong class="font-bold text-slate-900 block">${b.customerName || 'John Smith'}</strong>
-              <span class="text-[11px] text-slate-400 font-normal">${b.vehicleModel || 'Tata Nexon EV'}</span>
-            </td>
-            <td class="py-3.5 px-4">
-              <span class="text-xs text-slate-800 block line-clamp-1">${b.stationName || 'Jio-bp SG Highway'}</span>
-              <span class="text-[10px] text-slate-400">${b.vendorName || 'Jio-bp'} &bull; ${b.portId || 'Bay 01'}</span>
-            </td>
-            <td class="py-3.5 px-4 text-slate-500">${dateStr}</td>
-            <td class="py-3.5 px-4 font-bold text-slate-900">₹${amt.toFixed(2)}</td>
-            <td class="py-3.5 px-4">${badge}</td>
-            <td class="py-3.5 px-4 text-center">
-              <button onclick="inspectOrder('${ref}')" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:border-indigo-400 hover:text-indigo-600 font-bold text-[11px] transition-colors inline-flex items-center gap-1">
-                <span>👁️</span> <span>View</span>
-              </button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function renderAllOrdersTable(filteredList) {
-      const tbody = document.getElementById('allOrdersTableBody');
-      if (!tbody) return;
-
-      const list = filteredList || globalBookings;
-      if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10" class="py-8 text-center text-slate-400 font-mono">No matching orders found.</td></tr>';
+      const displayList = globalBookings.slice(0, 8);
+      if (displayList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400 font-mono">No orders found.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = list.map(b => {
-        const ref = b.id || 'BK-000';
-        const amt = Number(b.totalAmount) || 0;
-        const fee = Number(b.platformFee) || Math.round(amt * 0.15);
-        const payout = Number(b.vendorPayout) || (amt - fee);
-        const dateStr = b.createdAt ? new Date(b.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '08:30 AM';
-        const status = b.status || 'COMPLETED';
+      tbody.innerHTML = displayList.map(order => {
+        const orderId = order.id || order._id || order.invoiceNumber || '#ORD-001';
+        const customer = order.customerName || order.customer || 'Driver';
+        const dateStr = formatDate(order.createdAt);
+        const amount = Number(order.totalAmount || order.amountPaid || 0);
+        const status = (order.status || 'Completed').toUpperCase();
 
-        let badge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">COMPLETED</span>';
-        if (status === 'CHARGING') {
-          badge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-800 animate-pulse">⚡ CHARGING</span>';
-        } else if (status === 'REFUNDED') {
-          badge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800">REFUNDED</span>';
+        let statusPill = `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-teal-50 text-teal-600 border border-teal-200">● Completed</span>`;
+        if (status === 'CHARGING' || status === 'PENDING') {
+          statusPill = `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200">● Pending</span>`;
+        } else if (status === 'CANCELLED' || status === 'REFUNDED') {
+          statusPill = `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-200">● Cancelled</span>`;
+        } else if (status === 'CONFIRMED') {
+          statusPill = `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-sky-50 text-sky-600 border border-sky-200">● Confirmed</span>`;
         }
 
         return `
-          <tr class="hover:bg-slate-50 transition-colors">
-            <td class="py-3 px-4 font-mono font-bold text-indigo-600">#${ref}</td>
-            <td class="py-3 px-4">
-              <span class="font-bold text-slate-900 block">${b.customerName || 'Driver'}</span>
-              <span class="text-[10px] text-slate-400">${b.customerPhone || ''}</span>
-            </td>
-            <td class="py-3 px-4">
-              <span class="font-medium text-slate-800 block line-clamp-1">${b.stationName}</span>
-              <span class="text-[10px] text-indigo-500 font-mono">${b.portId}</span>
-            </td>
-            <td class="py-3 px-4 text-slate-500">${dateStr}</td>
-            <td class="py-3 px-4 font-mono">${b.energyKwh || 0} kWh</td>
-            <td class="py-3 px-4 font-bold text-slate-900">₹${amt}</td>
-            <td class="py-3 px-4 font-bold text-indigo-600 font-mono">₹${fee}</td>
-            <td class="py-3 px-4 font-bold text-emerald-600 font-mono">₹${payout}</td>
-            <td class="py-3 px-4">${badge}</td>
-            <td class="py-3 px-4 text-center">
-              <button onclick="inspectOrder('${ref}')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px]">
-                Inspect
+          <tr class="hover:bg-slate-50/80 transition-colors">
+            <td class="py-3.5 px-6 font-mono font-bold text-slate-900">${orderId}</td>
+            <td class="py-3.5 px-6 font-semibold text-slate-800">${customer}</td>
+            <td class="py-3.5 px-6 text-slate-500">${dateStr}</td>
+            <td class="py-3.5 px-6 font-bold text-slate-900 font-mono">₹${amount.toFixed(2)}</td>
+            <td class="py-3.5 px-6">${statusPill}</td>
+            <td class="py-3.5 px-6 text-right">
+              <button onclick="openOrderDetailModal('${orderId}')" class="px-3 py-1 rounded-lg border border-slate-200 text-indigo-600 hover:bg-indigo-50 font-bold text-xs transition-all shadow-2xs">
+                👁️ View
               </button>
             </td>
           </tr>
@@ -1017,430 +1178,567 @@
       }).join('');
     }
 
-    function renderUsersTable() {
+    // 2. Render Stations Tab (34 SuperHubs)
+    function renderStationsTab() {
+      const container = document.getElementById('stationsGridContainer');
+      if (!container) return;
+
+      const cityFilter = document.getElementById('stationCityFilter') ? document.getElementById('stationCityFilter').value : 'ALL';
+      let filtered = globalStations;
+      if (cityFilter !== 'ALL') {
+        filtered = filtered.filter(s => (s.city || '').toLowerCase() === cityFilter.toLowerCase() || (s.name || '').toLowerCase().includes(cityFilter.toLowerCase()));
+      }
+
+      container.innerHTML = filtered.map(st => {
+        const freeBays = (st.ports || []).filter(p => p.status === 'available').length;
+        const totalBays = (st.ports || []).length;
+        const vendor = st.vendorName || 'VoltGrid Partner';
+
+        return `
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide bg-indigo-50 text-indigo-600 border border-indigo-100">${vendor}</span>
+                <span class="text-xs font-mono font-bold ${freeBays > 0 ? 'text-emerald-600' : 'text-rose-500'}">${freeBays}/${totalBays} Free</span>
+              </div>
+              <h4 class="font-bold text-slate-900 text-sm leading-tight">${st.name}</h4>
+              <p class="text-[11px] text-slate-400 mt-1">${st.address || st.city + ', Gujarat'}</p>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Tariff</span>
+                <span class="text-sm font-extrabold text-slate-900 font-mono">₹${st.pricePerKwh}/kWh</span>
+              </div>
+              <div class="flex gap-1.5">
+                <button onclick="openTariffModal('${st.id}', '${st.name}', ${st.pricePerKwh})" class="px-2.5 py-1 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs transition-all">
+                  ✏️ Tariff
+                </button>
+                <a href="hub.html?id=${encodeURIComponent(st.id)}" target="_blank" class="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-bold text-xs transition-all">
+                  ↗ Ports
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 3. Render Ports Tab
+    function renderPortsTab() {
+      const tbody = document.getElementById('portsTableBody');
+      if (!tbody) return;
+
+      const statusFilter = document.getElementById('portStatusFilter') ? document.getElementById('portStatusFilter').value : 'ALL';
+      const vehicleFilter = document.getElementById('portVehicleFilter') ? document.getElementById('portVehicleFilter').value : 'ALL';
+
+      let filtered = globalPorts;
+      if (statusFilter !== 'ALL') {
+        filtered = filtered.filter(p => p.status === statusFilter);
+      }
+      if (vehicleFilter !== 'ALL') {
+        filtered = filtered.filter(p => p.vehicleType === vehicleFilter);
+      }
+
+      tbody.innerHTML = filtered.map(p => {
+        let statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">AVAILABLE</span>`;
+        if (p.status === 'charging') {
+          statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 border border-amber-200">CHARGING (${p.soc || 25}%)</span>`;
+        } else if (p.status === 'reserved') {
+          statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-600 border border-sky-200">RESERVED</span>`;
+        } else if (p.status === 'maintenance') {
+          statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200">MAINTENANCE</span>`;
+        }
+
+        const isOnline = p.status !== 'maintenance';
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition-colors">
+            <td class="py-3 px-6 font-bold text-slate-900">${p.name} <span class="text-[10px] text-slate-400 font-mono">(${p.id})</span></td>
+            <td class="py-3 px-6">
+              <strong class="block text-slate-800 text-xs">${p.stationName}</strong>
+              <span class="text-[10px] text-slate-400">${p.city} • ${p.vendorName}</span>
+            </td>
+            <td class="py-3 px-6 font-mono font-bold text-indigo-600">${p.maxKw} kW</td>
+            <td class="py-3 px-6">
+              <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-bold text-[10px]">${p.connector} (${p.vehicleType})</span>
+            </td>
+            <td class="py-3 px-6">${statusBadge}</td>
+            <td class="py-3 px-6 text-right">
+              <button onclick="togglePortMaintenance('${p.stationId}', '${p.id}', '${p.status}')" class="px-2.5 py-1 rounded-lg border ${isOnline ? 'border-slate-200 text-slate-600 hover:bg-slate-100' : 'bg-emerald-500 text-white font-bold'} text-xs transition-all">
+                ${isOnline ? 'Take Offline' : 'Set Available'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // 4. Render Orders Full Ledger
+    function renderOrdersTab() {
+      const tbody = document.getElementById('ordersFullTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = globalBookings.map(order => {
+        const orderId = order.id || order._id || order.invoiceNumber || '#ORD-001';
+        const customer = order.customerName || order.customer || 'Driver';
+        const phone = order.customerPhone || order.phone || '+91 98250 12345';
+        const station = order.stationName || 'Gujarat Hub';
+        const port = order.portName || order.portId || 'Bay 01';
+        const kwh = order.energyKwh || 35.0;
+        const amount = Number(order.totalAmount || order.amountPaid || 0);
+        const status = (order.status || 'CONFIRMED').toUpperCase();
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition-colors">
+            <td class="py-3 px-6 font-mono font-bold text-slate-900">${orderId}</td>
+            <td class="py-3 px-6">
+              <strong class="block text-slate-800">${customer}</strong>
+              <span class="text-[10px] text-slate-400 font-mono">${phone}</span>
+            </td>
+            <td class="py-3 px-6">
+              <strong class="block text-slate-800 text-xs">${station}</strong>
+              <span class="text-[10px] text-indigo-600 font-bold">${port}</span>
+            </td>
+            <td class="py-3 px-6 font-mono font-bold text-slate-700">${kwh} kWh</td>
+            <td class="py-3 px-6 font-mono font-bold text-emerald-600">₹${amount.toFixed(2)}</td>
+            <td class="py-3 px-6">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${status === 'COMPLETED' ? 'bg-teal-50 text-teal-600' : 'bg-indigo-50 text-indigo-600'} border border-indigo-100">${status}</span>
+            </td>
+            <td class="py-3 px-6 text-right">
+              <button onclick="openOrderDetailModal('${orderId}')" class="px-2.5 py-1 rounded-lg border border-slate-200 text-indigo-600 hover:bg-indigo-50 font-bold text-xs transition-all">
+                Details
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // 5. Render Users Tab
+    function renderUsersTab() {
       const tbody = document.getElementById('usersTableBody');
       if (!tbody) return;
 
       tbody.innerHTML = globalUsers.map(u => {
-        const initials = u.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
         return `
-          <tr class="hover:bg-slate-50 transition-colors">
-            <td class="py-3.5 px-4 flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center shrink-0">
-                ${initials}
-              </div>
-              <div>
-                <strong class="font-bold text-slate-900 block">${u.name}</strong>
-                <span class="text-[11px] text-slate-400">${u.email}</span>
-              </div>
+          <tr class="hover:bg-slate-50/80 transition-colors">
+            <td class="py-3 px-6 font-bold text-slate-900">${u.name}</td>
+            <td class="py-3 px-6">
+              <span class="block text-slate-800 font-mono">${u.phone}</span>
+              <span class="text-[10px] text-slate-400">${u.email || '-'}</span>
             </td>
-            <td class="py-3.5 px-4 text-slate-600 font-mono">${u.phone}</td>
-            <td class="py-3.5 px-4 text-slate-700">📍 ${u.city || 'Gujarat'}</td>
-            <td class="py-3.5 px-4 font-semibold text-slate-800">🚗 ${u.vehicle}</td>
-            <td class="py-3.5 px-4">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${u.soc <= 25 ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
-                🔋 ${u.soc || 45}% SoC
-              </span>
-            </td>
-            <td class="py-3.5 px-4 font-bold text-slate-800">${u.bookingsCount || 1} sessions</td>
-            <td class="py-3.5 px-4 font-bold text-emerald-600 font-mono">₹${(u.totalSpent || 500).toLocaleString()}</td>
-            <td class="py-3.5 px-4">
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800">VERIFIED</span>
+            <td class="py-3 px-6 font-medium text-slate-700">${u.vehicle || u.car || 'MG ZS EV'}</td>
+            <td class="py-3 px-6 text-slate-500">${u.city || 'Ahmedabad'}</td>
+            <td class="py-3 px-6 font-mono font-bold text-indigo-600">${u.bookingsCount || u.sessionsCount || 1}</td>
+            <td class="py-3 px-6 font-mono font-bold text-emerald-600">₹${(u.totalSpent || 1200).toLocaleString()}</td>
+            <td class="py-3 px-6 text-right">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">VERIFIED</span>
             </td>
           </tr>
         `;
       }).join('');
     }
 
-    function renderProductsGrid() {
-      const grid = document.getElementById('stationsHardwareGrid');
-      const selectEl = document.getElementById('newPortStationSelect');
-      if (!grid) return;
+    // 6. Render Vendors Tab (With Admin Password Assignment & Fleet Details)
+    function renderVendorsTab() {
+      const container = document.getElementById('vendorsContainer');
+      if (!container) return;
 
-      if (selectEl) {
-        selectEl.innerHTML = globalStations.map(s => `<option value="${s.id}">${s.name} (${s.city || 'Gujarat'})</option>`).join('');
-      }
+      const vendorPasswords = VoltGridDB.getVendorPasswords ? VoltGridDB.getVendorPasswords() : {};
 
-      grid.innerHTML = globalStations.map(st => {
-        const total = st.ports ? st.ports.length : 0;
-        const avail = st.ports ? st.ports.filter(p => p.status === 'available').length : 0;
-        const portsList = (st.ports || []).map(p => `
-          <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 text-[11px]">
-            <div>
-              <strong class="font-bold text-slate-800 block">${p.name}</strong>
-              <span class="text-slate-400">${p.type} &bull; ${p.maxKw}kW</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <span class="px-2 py-0.5 rounded-full text-[9px] font-bold ${p.status === 'available' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                ${p.status.toUpperCase()}
-              </span>
-              <button onclick="togglePortStatus('${st.id}', '${p.id}')" class="p-1 rounded bg-slate-200 hover:bg-slate-300 text-[10px]" title="Toggle Maintenance / Release">
-                ⚙️
-              </button>
-            </div>
-          </div>
-        `).join('');
+      container.innerHTML = globalVendors.map(v => {
+        const vendorStations = globalStations.filter(s => s.vendorId === v.id);
+        const stationCount = vendorStations.length;
+        const portCount = vendorStations.reduce((sum, s) => sum + (s.ports ? s.ports.length : 0), 0);
+        const currentPass = vendorPasswords[v.id] || 'vendor123';
 
         return `
-          <div class="bg-white rounded-2xl p-5 shadow-xs border border-purple-100/70 space-y-3">
-            <div class="flex items-start justify-between gap-2">
-              <div>
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-50 text-indigo-700">${st.vendorName || 'VoltGrid'}</span>
-                <h4 class="text-sm font-extrabold text-slate-900 font-heading mt-1">${st.name}</h4>
-                <p class="text-[11px] text-slate-400">${st.location}</p>
+          <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs hover:shadow-md transition-shadow">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center text-2xl shadow-sm">
+                  ${v.logo || '⚡'}
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h3 class="font-extrabold text-base text-slate-900">${v.name}</h3>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">VERIFIED CPO</span>
+                  </div>
+                  <p class="text-xs text-slate-400 mt-0.5">Operates ${stationCount} Gujarat SuperHubs • ${portCount} High-Speed Bays</p>
+                </div>
               </div>
-              <span class="px-2 py-0.5 rounded-full text-xs font-bold ${avail > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
-                ${avail}/${total} Free
-              </span>
+
+              <div class="flex items-center gap-2">
+                <a href="vendor.html?vendor=${v.id}" target="_blank" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center gap-1.5 transition-all">
+                  <span>🔑 Open Vendor Portal</span>
+                </a>
+              </div>
             </div>
 
-            <div class="flex items-center justify-between text-xs py-1 border-y border-slate-100 font-mono">
-              <span class="text-slate-500">Tariff Rate:</span>
-              <div class="flex items-center gap-1.5">
-                <strong class="font-extrabold text-slate-900">₹${st.pricePerKwh}/kWh</strong>
-                <button onclick="editStationTariff('${st.id}')" class="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-indigo-600 font-sans font-bold text-[10px]">
-                  Edit
-                </button>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 text-xs">
+              <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                <span class="text-slate-400 uppercase font-bold text-[10px] block">Settlement Destination</span>
+                <strong class="text-slate-800 text-xs mt-0.5 block">${v.bank || 'HDFC Bank •••• 9812'}</strong>
+                <span class="text-[11px] text-emerald-600 font-medium">85% Automated Sweep Active</span>
               </div>
-            </div>
 
-            <div class="space-y-1.5 max-h-48 overflow-y-auto">
-              ${portsList}
+              <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                <span class="text-slate-400 uppercase font-bold text-[10px] block">Fleet & Capacity</span>
+                <strong class="text-slate-800 text-xs mt-0.5 block">${stationCount} Stations • ${portCount} Bays</strong>
+                <span class="text-[11px] text-indigo-600 font-medium">CCS2 DC & Type-2 AC Hardware</span>
+              </div>
+
+              <!-- Admin Password Assignment for Vendor -->
+              <div class="p-3.5 rounded-xl bg-indigo-50/50 border border-indigo-100">
+                <span class="text-indigo-900 uppercase font-bold text-[10px] block">Assign Operator Password</span>
+                <div class="flex items-center gap-1.5 mt-1">
+                  <input 
+                    type="text" 
+                    id="inputPass_${v.id}" 
+                    value="${currentPass}" 
+                    class="w-full px-2.5 py-1.5 rounded-lg border border-indigo-200 text-xs font-mono font-bold bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <button onclick="saveVendorPassword('${v.id}')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shrink-0 shadow-xs">
+                    Save
+                  </button>
+                </div>
+                <span class="text-[10px] text-slate-400 mt-1 block">Vendor can only log in using this password.</span>
+              </div>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    function renderVendorsViews() {
-      const quickContainer = document.getElementById('quickVendorCards');
-      const detailedGrid = document.getElementById('vendorsDetailedGrid');
-      if (!quickContainer && !detailedGrid) return;
+    function saveVendorPassword(vendorId) {
+      const input = document.getElementById('inputPass_' + vendorId);
+      if (!input) return;
+      const newPass = input.value.trim();
+      if (!newPass) {
+        alert('Password cannot be empty.');
+        return;
+      }
+      VoltGridDB.setVendorPassword(vendorId, newPass);
+      alert(`✅ Operator password for ${vendorId} updated to: ${newPass}\n\nThe vendor can now only log into vendor.html using this password.`);
+    }
 
-      const vendorHtml = globalVendors.map(v => {
-        const vStations = globalStations.filter(s => s.vendorId === v.id || (s.vendorName && s.vendorName.includes(v.name)));
-        const stCount = vStations.length || 7;
-        let bayCount = 0;
-        vStations.forEach(s => bayCount += (s.ports ? s.ports.length : 0));
-        if (bayCount === 0) bayCount = 30;
+    // 7. Render Audit Report Tab & Working PDF Export (Resolving empty report)
+    function renderAuditReportTab() {
+      const tbody = document.getElementById('auditReportTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = globalBookings.map(b => {
+        const orderId = b.id || b._id || b.invoiceNumber || '#ORD-001';
+        const customer = b.customerName || b.customer || 'Driver';
+        const vehicle = b.vehicle || b.vehicleModel || 'MG ZS EV';
+        const station = b.stationName || 'Gujarat Hub';
+        const total = Number(b.totalAmount || b.amountPaid || 0);
+        const cut = Math.round(total * 0.15);
+        const vendorShare = total - cut;
+        const status = (b.status || 'CONFIRMED').toUpperCase();
 
         return `
-          <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 text-center space-y-1">
-            <span class="text-2xl">${v.logo || '⚡'}</span>
-            <strong class="text-xs font-bold text-slate-900 block leading-tight">${v.name}</strong>
-            <span class="text-[10px] text-slate-500 block">${stCount} Hubs &bull; ${bayCount} Bays</span>
-            <span class="text-[10px] font-bold text-emerald-600 font-mono">85% Net Sweep</span>
-          </div>
+          <tr class="hover:bg-slate-50/80 transition-colors">
+            <td class="py-3 px-6 font-mono font-bold text-slate-900">${orderId}</td>
+            <td class="py-3 px-6 font-medium text-slate-800">${customer}</td>
+            <td class="py-3 px-6 text-slate-600">${vehicle}</td>
+            <td class="py-3 px-6 text-slate-600 text-xs">${station}</td>
+            <td class="py-3 px-6 font-mono font-bold text-slate-900">₹${total.toFixed(2)}</td>
+            <td class="py-3 px-6 font-mono font-bold text-indigo-600">₹${cut.toFixed(2)}</td>
+            <td class="py-3 px-6 font-mono font-bold text-emerald-600">₹${vendorShare.toFixed(2)}</td>
+            <td class="py-3 px-6">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${status === 'COMPLETED' ? 'bg-teal-50 text-teal-600' : 'bg-indigo-50 text-indigo-600'} border border-indigo-100">${status}</span>
+            </td>
+          </tr>
         `;
       }).join('');
+    }
 
-      if (quickContainer) quickContainer.innerHTML = vendorHtml;
+    // WORKING PDF EXPORT (Populates EVERY record into the table)
+    function exportAuditReportPdf() {
+      if (!window.jspdf || !window.jspdf.jsPDF) {
+        alert('jsPDF library loading... Please try again in a second.');
+        return;
+      }
 
-      if (detailedGrid) {
-        detailedGrid.innerHTML = globalVendors.map(v => {
-          const vStations = globalStations.filter(s => s.vendorId === v.id || (s.vendorName && s.vendorName.includes(v.name)));
-          const stCount = vStations.length || 7;
-          let bayCount = 0;
-          vStations.forEach(s => bayCount += (s.ports ? s.ports.length : 0));
-          if (bayCount === 0) bayCount = 30;
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('landscape');
 
-          return `
-            <div class="bg-white rounded-2xl p-5 shadow-xs border border-purple-100/70 space-y-3">
-              <div class="flex items-center gap-3">
-                <span class="text-3xl">${v.logo || '⚡'}</span>
-                <div>
-                  <h4 class="text-base font-extrabold text-slate-900 font-heading">${v.name}</h4>
-                  <span class="text-[10px] font-mono text-slate-400">GSTIN: ${v.gstin || '24AAACJ1234F1Z8'}</span>
-                </div>
-              </div>
+      // Title & Header
+      doc.setFontSize(16);
+      doc.setTextColor(17, 24, 39);
+      doc.text('VoltGrid Platform Financial & Booking Audit Report', 14, 18);
 
-              <div class="p-3 rounded-xl bg-slate-50 space-y-1.5 text-xs font-mono">
-                <div class="flex justify-between">
-                  <span class="text-slate-400 font-sans">Active Hubs:</span>
-                  <strong>${stCount} SuperHubs</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-400 font-sans">Total Bays:</span>
-                  <strong>${bayCount} Ports</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-400 font-sans">Payout Share:</span>
-                  <strong class="text-emerald-600">85% Gross Net</strong>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-400 font-sans">Settlement Bank:</span>
-                  <span class="text-[11px] text-slate-600 truncate">${v.bank || 'HDFC Bank'}</span>
-                </div>
-              </div>
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text('Statewide Gujarat EV Infrastructure Network • Official Audit Statement', 14, 25);
+      doc.text(`Generated: ${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} • Master Reconciled Ledger`, 14, 31);
 
-              <button onclick="triggerAutoSweep('${v.name}')" class="w-full py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs transition-colors flex items-center justify-center gap-1.5">
-                <span>⚡</span> <span>Process Auto-Sweep</span>
-              </button>
+      // Financial Metrics Summary Box
+      const totalAmount = globalBookings.reduce((sum, b) => sum + Number(b.totalAmount || b.amountPaid || 0), 0);
+      const totalCut = Math.round(totalAmount * 0.15);
+      const totalVendor = totalAmount - totalCut;
+
+      doc.setDrawColor(226, 232, 240);
+      doc.setFillColor(248, 250, 252);
+      doc.roundedRect(14, 36, 268, 16, 2, 2, 'FD');
+
+      doc.setFontSize(9);
+      doc.setTextColor(15, 23, 42);
+      doc.text(`Total Bookings Processed: ${globalBookings.length} Orders`, 20, 46);
+      doc.text(`Gross Volume: Rs. ${totalAmount.toLocaleString()}`, 100, 46);
+      doc.text(`VoltGrid Cut (15%): Rs. ${totalCut.toLocaleString()}`, 175, 46);
+      doc.text(`Vendor Share (85%): Rs. ${totalVendor.toLocaleString()}`, 235, 46);
+
+      // Table Data
+      const tableRows = globalBookings.map(b => {
+        const orderId = b.id || b._id || b.invoiceNumber || '#ORD-001';
+        const customer = b.customerName || b.customer || 'Driver';
+        const vehicle = b.vehicle || b.vehicleModel || 'MG ZS EV';
+        const station = (b.stationName || 'Gujarat Hub').substring(0, 32);
+        const total = Number(b.totalAmount || b.amountPaid || 0);
+        const cut = Math.round(total * 0.15);
+        const vendorShare = total - cut;
+        const status = b.status || 'CONFIRMED';
+
+        return [
+          orderId,
+          customer,
+          vehicle,
+          station,
+          `Rs. ${total}`,
+          `Rs. ${cut}`,
+          `Rs. ${vendorShare}`,
+          status
+        ];
+      });
+
+      doc.autoTable({
+        startY: 56,
+        head: [['Ref', 'Customer', 'Vehicle', 'Station', 'Total', 'Cut (15%)', 'CPO (85%)', 'Status']],
+        body: tableRows,
+        theme: 'striped',
+        headStyles: { fillColor: [79, 70, 229], fontSize: 8, fontStyle: 'bold' },
+        styles: { fontSize: 7, cellPadding: 3 },
+        columnStyles: {
+          0: { fontStyle: 'bold' },
+          4: { fontStyle: 'bold' },
+          5: { textColor: [79, 70, 229], fontStyle: 'bold' },
+          6: { textColor: [16, 185, 129], fontStyle: 'bold' }
+        }
+      });
+
+      doc.save(`VoltGrid_Audit_Report_${Date.now()}.pdf`);
+    }
+
+    function exportAllOrdersCSV() {
+      const headers = ['Order ID', 'Customer Name', 'Customer Phone', 'Station Name', 'Port', 'Energy kWh', 'Total Amount', 'Cut 15%', 'Vendor 85%', 'Status', 'Date'];
+      const rows = globalBookings.map(b => {
+        const total = Number(b.totalAmount || b.amountPaid || 0);
+        const cut = Math.round(total * 0.15);
+        const vendor = total - cut;
+        return [
+          b.id || b._id || b.invoiceNumber || '',
+          `"${b.customerName || b.customer || ''}"`,
+          b.customerPhone || b.phone || '',
+          `"${b.stationName || ''}"`,
+          b.portName || b.portId || '',
+          b.energyKwh || 0,
+          total,
+          cut,
+          vendor,
+          b.status || 'CONFIRMED',
+          b.createdAt || ''
+        ];
+      });
+      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `VoltGrid_Orders_${Date.now()}.csv`;
+      a.click();
+    }
+
+    // Deploy Bay Modal Logic
+    function openDeployBayModal() {
+      const sel = document.getElementById('deployBayStationSelect');
+      if (sel) {
+        sel.innerHTML = globalStations.map(s => `
+          <option value="${s.id}">${s.name} (${s.city})</option>
+        `).join('');
+      }
+      document.getElementById('deployBayModal').classList.remove('hidden');
+    }
+
+    function closeDeployBayModal() {
+      document.getElementById('deployBayModal').classList.add('hidden');
+    }
+
+    function handleDeployBaySubmit(e) {
+      e.preventDefault();
+      const stationId = document.getElementById('deployBayStationSelect').value;
+      const bayName = document.getElementById('deployBayName').value.trim();
+      const kw = Number(document.getElementById('deployBayKw').value) || 240;
+      const connector = document.getElementById('deployBayConnector').value;
+      const vehicleType = document.getElementById('deployBayVehicleType').value;
+
+      if (!bayName) {
+        alert('Please enter a bay name.');
+        return;
+      }
+
+      if (VoltGridDB.addPortToStation) {
+        VoltGridDB.addPortToStation(stationId, {
+          name: bayName,
+          type: kw + 'kW Ultra-Fast DC',
+          maxKw: kw,
+          connector: connector,
+          vehicleType: vehicleType
+        });
+        alert(`⚡ Successfully deployed ${bayName} (${kw}kW ${connector}) to station!\n\nAll drivers and CPO vendors can now see this new charging bay.`);
+        closeDeployBayModal();
+        refreshDataFromDB();
+      }
+    }
+
+    // Order Detail Modal Logic
+    function openOrderDetailModal(orderId) {
+      activeInspectedOrderId = orderId;
+      const order = globalBookings.find(b => (b.id || b._id || b.invoiceNumber) === orderId);
+      if (!order) return;
+
+      const titleEl = document.getElementById('modalOrderId');
+      if (titleEl) titleEl.innerText = order.id || order._id || order.invoiceNumber;
+
+      const bodyEl = document.getElementById('modalOrderDetailsBody');
+      if (bodyEl) {
+        bodyEl.innerHTML = `
+          <div class="grid grid-cols-2 gap-2 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div><span class="text-slate-400 block text-[10px] uppercase">Customer</span><strong>${order.customerName || order.customer || 'Driver'}</strong></div>
+            <div><span class="text-slate-400 block text-[10px] uppercase">Phone</span><strong class="font-mono">${order.customerPhone || order.phone || '-'}</strong></div>
+            <div><span class="text-slate-400 block text-[10px] uppercase">Vehicle</span><strong>${order.vehicle || order.vehicleModel || 'EV'}</strong></div>
+            <div><span class="text-slate-400 block text-[10px] uppercase">PIN</span><strong class="font-mono text-indigo-600 text-sm">${order.pin || '4821'}</strong></div>
+          </div>
+          <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
+            <div><span class="text-slate-400 text-[10px] uppercase block">Station & Port</span><strong>${order.stationName} • ${order.portName || order.portId}</strong></div>
+            <div class="flex justify-between pt-1 border-t border-slate-200 font-bold">
+              <span>Amount Paid</span>
+              <span class="text-emerald-600 font-mono">₹${Number(order.totalAmount || order.amountPaid || 0).toFixed(2)}</span>
             </div>
+          </div>
+        `;
+      }
+
+      document.getElementById('orderDetailModal').classList.remove('hidden');
+    }
+
+    function closeOrderDetailModal() {
+      document.getElementById('orderDetailModal').classList.add('hidden');
+    }
+
+    function executeAdminRefund() {
+      if (!activeInspectedOrderId) return;
+      const order = globalBookings.find(b => (b.id || b._id || b.invoiceNumber) === activeInspectedOrderId);
+      if (order) {
+        order.status = 'REFUNDED';
+        VoltGridDB.saveBookings(globalBookings);
+        alert(`Order ${activeInspectedOrderId} has been refunded.`);
+        closeOrderDetailModal();
+        refreshDataFromDB();
+      }
+    }
+
+    // Tariff Modal
+    function openTariffModal(stationId, stationName, price) {
+      activeTariffStationId = stationId;
+      document.getElementById('tariffModalStationName').innerText = stationName;
+      document.getElementById('tariffModalInput').value = price;
+      document.getElementById('tariffModal').classList.remove('hidden');
+    }
+
+    function closeTariffModal() {
+      document.getElementById('tariffModal').classList.add('hidden');
+    }
+
+    function saveTariffChange() {
+      const newPrice = Number(document.getElementById('tariffModalInput').value);
+      if (activeTariffStationId && newPrice > 0) {
+        VoltGridDB.updateStationTariff(activeTariffStationId, newPrice);
+        closeTariffModal();
+        refreshDataFromDB();
+      }
+    }
+
+    function togglePortMaintenance(stationId, portId, currentStatus) {
+      const newStatus = currentStatus === 'maintenance' ? 'available' : 'maintenance';
+      VoltGridDB.updatePortStatus(stationId, portId, newStatus);
+      refreshDataFromDB();
+    }
+
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (sidebar) sidebar.classList.toggle('-translate-x-full');
+      if (backdrop) backdrop.classList.toggle('hidden');
+    }
+
+    function handleGlobalSearch(query) {
+      const q = (query || '').toLowerCase().trim();
+      if (!q) {
+        refreshDataFromDB();
+        return;
+      }
+
+      const matchingBookings = globalBookings.filter(b => 
+        (b.id || '').toLowerCase().includes(q) ||
+        (b.customerName || '').toLowerCase().includes(q) ||
+        (b.stationName || '').toLowerCase().includes(q) ||
+        (b.customerPhone || '').toLowerCase().includes(q)
+      );
+
+      if (matchingBookings.length > 0 && activeTab === 'dashboard') {
+        const tbody = document.getElementById('recentOrdersTableBody');
+        tbody.innerHTML = matchingBookings.map(order => {
+          const orderId = order.id || order._id || order.invoiceNumber || '#ORD-001';
+          return `
+            <tr class="hover:bg-slate-50/80 transition-colors">
+              <td class="py-3.5 px-6 font-mono font-bold text-slate-900">${orderId}</td>
+              <td class="py-3.5 px-6 font-semibold text-slate-800">${order.customerName || 'Driver'}</td>
+              <td class="py-3.5 px-6 text-slate-500">${formatDate(order.createdAt)}</td>
+              <td class="py-3.5 px-6 font-bold text-slate-900 font-mono">₹${Number(order.totalAmount || 0).toFixed(2)}</td>
+              <td class="py-3.5 px-6"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-teal-50 text-teal-600">● ${order.status || 'Completed'}</span></td>
+              <td class="py-3.5 px-6 text-right"><button onclick="openOrderDetailModal('${orderId}')" class="px-3 py-1 rounded-lg border text-indigo-600 font-bold text-xs">👁️ View</button></td>
+            </tr>
           `;
         }).join('');
       }
     }
 
-    function inspectOrder(orderId) {
-      const order = globalBookings.find(b => (b.id || '') === orderId) || globalBookings[0];
-      if (!order) return;
-
-      document.getElementById('modalOrderRef').textContent = 'Order #' + (order.id || 'BK-000');
-      document.getElementById('modalOrderDetails').innerHTML = `
-        <div class="p-3 rounded-2xl bg-slate-50 space-y-2">
-          <div class="flex justify-between">
-            <span class="text-slate-400">Driver Name:</span>
-            <strong class="text-slate-800">${order.customerName || 'Driver'}</strong>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-slate-400">Vehicle:</span>
-            <strong class="text-slate-800">${order.vehicleModel || 'EV'}</strong>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-slate-400">Station:</span>
-            <strong class="text-slate-800 text-right max-w-[200px] truncate">${order.stationName}</strong>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-slate-400">Charging Bay:</span>
-            <strong class="text-indigo-600 font-mono">${order.portId}</strong>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-slate-400">Energy Added:</span>
-            <strong class="text-slate-800 font-mono">${order.energyKwh || 0} kWh</strong>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-slate-400">Arrival Lock PIN:</span>
-            <strong class="text-emerald-600 font-mono font-bold text-sm tracking-widest">${order.pin || '5421'}</strong>
-          </div>
-        </div>
-
-        <div class="p-3 rounded-2xl bg-indigo-50 text-indigo-900 space-y-1 font-mono">
-          <div class="flex justify-between font-bold text-sm">
-            <span>Total Paid:</span>
-            <span>₹${order.totalAmount || 0}</span>
-          </div>
-          <div class="flex justify-between text-[11px] text-indigo-700">
-            <span>VoltGrid Margin (15%):</span>
-            <span>₹${order.platformFee || Math.round((order.totalAmount||0)*0.15)}</span>
-          </div>
-          <div class="flex justify-between text-[11px] text-indigo-700">
-            <span>CPO Payout (85%):</span>
-            <span>₹${order.vendorPayout || Math.round((order.totalAmount||0)*0.85)}</span>
-          </div>
-        </div>
-      `;
-
-      document.getElementById('viewOrderModal').classList.remove('hidden');
+    function formatDate(isoStr) {
+      if (!isoStr) return 'Today';
+      const d = new Date(isoStr);
+      if (isNaN(d.getTime())) return 'Today';
+      return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     }
 
-    function closeModal(modalId) {
-      const el = document.getElementById(modalId);
-      if (el) el.classList.add('hidden');
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAdminAuth();
+      refreshDataFromDB();
 
-    function openAddModal() {
-      openAddPortModal();
-    }
-
-    function openAddPortModal() {
-      document.getElementById('addPortModal').classList.remove('hidden');
-    }
-
-    function openAddUserModal() {
-      document.getElementById('addUserModal').classList.remove('hidden');
-    }
-
-    function handleAddNewPort(e) {
-      e.preventDefault();
-      const stId = document.getElementById('newPortStationSelect').value;
-      const name = document.getElementById('newPortName').value;
-      const kw = Number(document.getElementById('newPortKw').value) || 120;
-      const connector = document.getElementById('newPortConnector').value;
-      const vehicleType = document.getElementById('newPortVehicleType').value;
-
-      if (window.VoltGridDB) {
-        VoltGridDB.addPortToStation(stId, {
-          name: name,
-          type: kw >= 100 ? (kw + 'kW Ultra-Fast DC') : (kw + 'kW Fast Charger'),
-          maxKw: kw,
-          connector: connector,
-          vehicleType: vehicleType,
-          status: 'available'
-        });
+      if (window.VoltGridDB && typeof window.VoltGridDB.on === 'function') {
+        window.VoltGridDB.on('BOOKINGS_UPDATED', () => refreshDataFromDB());
+        window.VoltGridDB.on('STATIONS_UPDATED', () => refreshDataFromDB());
+        window.VoltGridDB.on('USERS_UPDATED', () => refreshDataFromDB());
+        window.VoltGridDB.on('VENDOR_PASSWORDS_UPDATED', () => refreshDataFromDB());
       }
 
-      closeModal('addPortModal');
-      loadAdminData();
-      alert('✅ New charging bay ' + name + ' successfully deployed and synced live across the network!');
-    }
-
-    function handleAddNewUser(e) {
-      e.preventDefault();
-      const name = document.getElementById('newUserName').value;
-      const phone = document.getElementById('newUserPhone').value;
-      const email = document.getElementById('newUserEmail').value;
-      const city = document.getElementById('newUserCity').value;
-      const vehicle = document.getElementById('newUserVehicle').value;
-
-      const newUser = {
-        id: 'usr-' + Math.floor(10 + Math.random() * 90),
-        name: name,
-        phone: phone,
-        email: email,
-        city: city,
-        vehicle: vehicle,
-        soc: 35,
-        bookingsCount: 0,
-        totalSpent: 0,
-        walletBalance: 500,
-        kyc: 'VERIFIED'
-      };
-
-      globalUsers.unshift(newUser);
-      if (window.VoltGridDB && VoltGridDB.saveUsers) {
-        VoltGridDB.saveUsers(globalUsers);
-      }
-
-      closeModal('addUserModal');
-      renderAllViews();
-      alert('✅ Driver ' + name + ' successfully registered with ₹500 welcome credit!');
-    }
-
-    function editStationTariff(stId) {
-      const st = globalStations.find(s => s.id === stId);
-      if (!st) return;
-
-      const newRate = prompt('Enter new tariff per kWh for ' + st.name + ' (₹):', st.pricePerKwh);
-      if (newRate && !isNaN(newRate) && Number(newRate) > 0) {
-        if (window.VoltGridDB) {
-          VoltGridDB.updateStationTariff(stId, Number(newRate));
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'voltgrid_bookings' || e.key === 'voltgrid_stations' || e.key === 'voltgrid_users' || e.key === 'voltgrid_vendor_passwords') {
+          refreshDataFromDB();
         }
-        loadAdminData();
-        alert('✅ Tariff updated to ₹' + newRate + '/kWh for ' + st.name + '! Synced to all driver and vendor apps.');
-      }
-    }
-
-    function togglePortStatus(stId, portId) {
-      if (window.VoltGridDB) {
-        VoltGridDB.togglePortMaintenance(stId, portId);
-        loadAdminData();
-      }
-    }
-
-    function triggerAutoSweep(vendorName) {
-      alert('💳 IMPS/NEFT Auto-Sweep Triggered! 85% revenue settlement pushed to ' + vendorName + ' bank account.');
-    }
-
-    function triggerAutoSweepAll() {
-      alert('💳 All-Fleet Auto-Sweep Complete! Settlements processed for Jio-bp, Tata Power, Zeon, Statiq, and VoltGrid Direct.');
-    }
-
-    function resetDefaultFleet() {
-      if (!confirm('Reset charging fleet to 34 default statewide stations?')) return;
-      if (window.VoltGridDB) {
-        localStorage.removeItem('voltgrid_stations');
-        loadAdminData();
-        alert('✅ Fleet reset to 34 stations.');
-      }
-    }
-
-    function handleGlobalSearch(q) {
-      q = (q || '').toLowerCase().trim();
-      if (!q) {
-        renderAllOrdersTable();
-        return;
-      }
-
-      const filtered = globalBookings.filter(b => 
-        (b.id || '').toLowerCase().includes(q) ||
-        (b.customerName || '').toLowerCase().includes(q) ||
-        (b.vehicleModel || '').toLowerCase().includes(q) ||
-        (b.stationName || '').toLowerCase().includes(q)
-      );
-      renderAllOrdersTable(filtered);
-      if (activeTab !== 'orders' && activeTab !== 'dashboard') {
-        switchTab('orders');
-      }
-    }
-
-    function filterOrders() {
-      const q = (document.getElementById('orderSearchInput').value || '').toLowerCase().trim();
-      const status = document.getElementById('orderStatusFilter').value;
-      const vendor = document.getElementById('orderVendorFilter').value;
-
-      let list = globalBookings.slice();
-
-      if (status !== 'ALL') {
-        list = list.filter(b => (b.status || 'COMPLETED').toUpperCase() === status);
-      }
-      if (vendor !== 'ALL') {
-        list = list.filter(b => (b.vendorName || '').toLowerCase().includes(vendor.toLowerCase()));
-      }
-      if (q) {
-        list = list.filter(b => 
-          (b.id || '').toLowerCase().includes(q) ||
-          (b.customerName || '').toLowerCase().includes(q) ||
-          (b.vehicleModel || '').toLowerCase().includes(q) ||
-          (b.stationName || '').toLowerCase().includes(q)
-        );
-      }
-
-      renderAllOrdersTable(list);
-    }
-
-    function exportPdfReport() {
-      if (typeof window.jspdf === 'undefined') {
-        alert('PDF generator is ready. Printing browser report.');
-        window.print();
-        return;
-      }
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.text('VoltGrid Platform Financial & Booking Audit Report', 14, 15);
-      doc.text('Statewide Gujarat EV Infrastructure Network', 14, 22);
-
-      const tableData = globalBookings.map(b => [
-        b.id || 'BK-000',
-        b.customerName || 'Driver',
-        b.vehicleModel || 'EV',
-        b.stationName ? b.stationName.slice(0, 25) : '',
-        '₹' + (b.totalAmount || 0),
-        '₹' + (b.platformFee || Math.round((b.totalAmount||0)*0.15)),
-        '₹' + (b.vendorPayout || Math.round((b.totalAmount||0)*0.85)),
-        b.status || 'COMPLETED'
-      ]);
-
-      doc.autoTable({
-        head: [['Ref', 'Customer', 'Vehicle', 'Station', 'Total', 'Cut (15%)', 'CPO (85%)', 'Status']],
-        body: tableData,
-        startY: 28
       });
-
-      doc.save('VoltGrid-Admin-Audit-Report.pdf');
-    }
-
-    function exportCsvReport() {
-      let csv = 'Order Ref,Customer,Phone,Vehicle,Station,Port,Energy (kWh),Total Paid (INR),Platform Cut 15% (INR),Vendor Net 85% (INR),Status\n';
-      globalBookings.forEach(b => {
-        csv += '"' + (b.id || '') + '","' + (b.customerName || '') + '","' + (b.customerPhone || '') + '","' + (b.vehicleModel || '') + '","' + (b.stationName || '') + '","' + (b.portId || '') + '","' + (b.energyKwh || 0) + '","' + (b.totalAmount || 0) + '","' + (b.platformFee || 0) + '","' + (b.vendorPayout || 0) + '","' + (b.status || 'COMPLETED') + '"\n';
-      });
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'VoltGrid-Orders-Ledger.csv';
-      a.click();
-    }
-
-    // Auto-init on page load
-    window.addEventListener('DOMContentLoaded', () => {
-      loadAdminData();
-      if (window.VoltGridDB && VoltGridDB.onSync) {
-        VoltGridDB.onSync(() => {
-          loadAdminData();
-        });
-      }
     });
   </script>
 </body>
