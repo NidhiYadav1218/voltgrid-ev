@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
-  <base href="/">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>VoltGrid Admin Panel • Statewide EV Infrastructure</title>
@@ -2278,15 +2277,16 @@
       return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    function initAdmin() {
       checkAdminAuth();
       refreshDataFromDB();
 
-      if (window.VoltGridDB && typeof window.VoltGridDB.on === 'function') {
-        window.VoltGridDB.on('BOOKINGS_UPDATED', () => refreshDataFromDB());
-        window.VoltGridDB.on('STATIONS_UPDATED', () => refreshDataFromDB());
-        window.VoltGridDB.on('USERS_UPDATED', () => refreshDataFromDB());
-        window.VoltGridDB.on('VENDOR_PASSWORDS_UPDATED', () => refreshDataFromDB());
+      const db = getDB();
+      if (db && typeof db.on === 'function') {
+        db.on('BOOKINGS_UPDATED', () => refreshDataFromDB());
+        db.on('STATIONS_UPDATED', () => refreshDataFromDB());
+        db.on('USERS_UPDATED', () => refreshDataFromDB());
+        db.on('VENDOR_PASSWORDS_UPDATED', () => refreshDataFromDB());
       }
 
       window.addEventListener('storage', (e) => {
@@ -2294,7 +2294,13 @@
           refreshDataFromDB();
         }
       });
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAdmin);
+    } else {
+      initAdmin();
+    }
   </script>
 </body>
 </html>
