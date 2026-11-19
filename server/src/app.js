@@ -8,6 +8,10 @@ import { errorHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.js';
 import stationsRoutes from './routes/stations.js';
 import bookingsRoutes from './routes/bookings.js';
+import usersRoutes from './routes/users.js';
+import vendorsRoutes from './routes/vendors.js';
+import telematicsRoutes from './routes/telematics.js';
+import adminRoutes from './routes/admin.js';
 
 export function createApp() {
   const app = express();
@@ -65,6 +69,18 @@ export function createApp() {
 
   // Bookings Routes
   app.use('/api/bookings', bookingsRoutes);
+
+  // Users Routes
+  app.use('/api/users', usersRoutes);
+
+  // Vendors Routes
+  app.use('/api/vendors', vendorsRoutes);
+
+  // Telematics Routes
+  app.use('/api/telematics', telematicsRoutes);
+
+  // Admin Routes
+  app.use('/api/admin', adminRoutes);
 
   // Central Error Handler
   app.use(errorHandler);
