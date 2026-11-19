@@ -9,6 +9,20 @@ export async function getBookingById(id) {
   return apiClient(`/bookings/${id}`);
 }
 
+export async function createBooking(data) {
+  return apiClient('/bookings', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+}
+
+export async function completeBooking(id, data = {}) {
+  return apiClient(`/bookings/${id}/complete`, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+}
+
 export async function getBookingPass(id) {
   return apiClient(`/bookings/${id}/pass`);
 }

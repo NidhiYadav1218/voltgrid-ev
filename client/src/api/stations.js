@@ -7,6 +7,7 @@ export async function getStations() {
 export async function getStationById(stationId) {
   return apiClient(`/stations/${stationId}`);
 }
+export const getStation = getStationById;
 
 export async function reservePort(stationId, portId, data) {
   return apiClient(`/stations/${stationId}/ports/${portId}/reserve`, {
@@ -27,6 +28,7 @@ export async function releasePort(stationId, portId) {
     method: 'POST'
   });
 }
+export const stopCharging = releasePort;
 
 export async function updateStation(stationId, data) {
   return apiClient(`/stations/${stationId}`, {

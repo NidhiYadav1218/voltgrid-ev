@@ -18,3 +18,10 @@ export const VEHICLES = {
 };
 
 export const DEFAULT_VEHICLE = 'MG ZS EV';
+
+export const VEHICLE_PRESETS = Object.entries(VEHICLES).map(([model, data]) => ({
+  model,
+  batteryKwh: data.battery,
+  rangeKm: Math.round(data.battery * data.efficiency),
+  ...data
+}));

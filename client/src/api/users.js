@@ -14,3 +14,4 @@ export async function updateMyProfile(data) {
 export async function getAllUsers() {
   return apiClient('/users');
 }
+export const getUsers = getAllUsers;

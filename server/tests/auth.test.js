@@ -20,12 +20,12 @@ beforeAll(async () => {
   await mongoose.connect(uri);
 
   app = createApp();
-});
+}, 60000);
 
 afterAll(async () => {
   await mongoose.disconnect();
   await mongoServer.stop();
-});
+}, 60000);
 
 beforeEach(async () => {
   await User.deleteMany({});

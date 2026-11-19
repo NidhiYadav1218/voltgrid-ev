@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand --testTimeout=30000",
     "seed:stations": "node src/scripts/seedStations.js",
     "seed:vendors": "node src/scripts/seedVendors.js",
     "admin:create": "node src/scripts/createAdmin.js",

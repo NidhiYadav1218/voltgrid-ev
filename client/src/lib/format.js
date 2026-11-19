@@ -7,6 +7,8 @@ export function formatRupees(amount) {
   }).format(n);
 }
 
+export const formatRupee = formatRupees;
+
 export function formatNumber(num) {
   const n = Number(num) || 0;
   return new Intl.NumberFormat('en-IN').format(n);

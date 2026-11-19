@@ -10,3 +10,4 @@ export async function resetDemo() {
     body: JSON.stringify({ confirm: 'RESET' })
   });
 }
+export const resetDemoData = resetDemo;
