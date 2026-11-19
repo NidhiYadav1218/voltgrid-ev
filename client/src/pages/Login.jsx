@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {
   Zap,
@@ -10,44 +10,29 @@ import {
   User,
   Phone,
   ArrowRight,
-  AlertCircle,
-  Building,
-  CheckCircle2
+  AlertCircle
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { VEHICLES } from '../constants/vehicles.js';
 
-export default function Login({ defaultPortal }) {
+export default function Login({ portal: propPortal }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { login, register } = useAuth();
 
-  // Determine initial portal: 'vendor', 'admin', or 'driver'
-  const determinePortal = () => {
-    if (defaultPortal) return defaultPortal;
-    const fromPath = location.state?.from?.pathname || '';
-    const search = location.search || '';
-    if (fromPath.startsWith('/vendor') || search.includes('portal=vendor')) return 'vendor';
-    if (fromPath.startsWith('/admin') || search.includes('portal=admin')) return 'admin';
-    return 'driver';
-  };
+  // Determine active portal: strictly fixed based on prop or current URL path
+  const portal =
+    propPortal ||
+    (location.pathname.startsWith('/vendor') ? 'vendor' : location.pathname.startsWith('/admin') ? 'admin' : 'driver');
 
-  const [portal, setPortal] = useState(determinePortal);
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('+91 ');
   const [selectedCar, setSelectedCar] = useState('MG ZS EV');
-  const [cpoName, setCpoName] = useState('');
-  const [gstin, setGstin] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Sync portal if state changes
-  useEffect(() => {
-    setPortal(determinePortal());
-  }, [location]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,37 +52,36 @@ export default function Login({ defaultPortal }) {
         await login(email, password);
       }
 
-      // Route to destination based on portal / from state
+      // Redirect strictly based on portal
       const from = location.state?.from?.pathname;
-      if (from && from !== '/login') {
-        navigate(from, { replace: true });
-      } else if (portal === 'vendor') {
+      if (portal === 'vendor') {
         navigate('/vendor', { replace: true });
       } else if (portal === 'admin') {
         navigate('/admin', { replace: true });
+      } else if (from && !from.includes('/login')) {
+        navigate(from, { replace: true });
       } else {
         navigate('/', { replace: true });
       }
     } catch (err) {
-      setError(err.message || 'Authentication failed. Please check your credentials.');
+      setError(err.message || 'Authentication failed. Please verify your credentials.');
     } finally {
       setLoading(false);
     }
   };
 
-  const fillDemo = (demoEmail, demoPassword, targetPortal) => {
+  const fillDemo = (demoEmail, demoPassword) => {
     setEmail(demoEmail);
     setPassword(demoPassword);
     setIsRegister(false);
     setError('');
-    if (targetPortal) setPortal(targetPortal);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-slate-900 text-slate-100 relative overflow-hidden">
-      {/* Background radial glow */}
+      {/* Background radial glow tailored to portal */}
       <div
-        className={`absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl pointer-events-none transition-colors duration-500 ${
+        className={`absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl pointer-events-none ${
           portal === 'vendor'
             ? 'bg-amber-500/10'
             : portal === 'admin'
@@ -107,64 +91,10 @@ export default function Login({ defaultPortal }) {
       ></div>
 
       <div className="w-full max-w-md bg-slate-800/90 backdrop-blur border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl relative z-10">
-        {/* Portal Switcher Tabs */}
-        <div className="flex p-1 bg-slate-950/80 rounded-2xl mb-6 border border-slate-700/60 shadow-inner">
-          <button
-            type="button"
-            onClick={() => {
-              setPortal('driver');
-              setError('');
-              setIsRegister(false);
-            }}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-              portal === 'driver'
-                ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Car className="w-3.5 h-3.5" />
-            <span>Driver</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setPortal('vendor');
-              setError('');
-              setIsRegister(false);
-            }}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-              portal === 'vendor'
-                ? 'bg-amber-500 text-white shadow-md shadow-amber-500/20'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Store className="w-3.5 h-3.5" />
-            <span>CPO Vendor</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setPortal('admin');
-              setError('');
-              setIsRegister(false);
-            }}
-            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-              portal === 'admin'
-                ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/20'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Shield className="w-3.5 h-3.5" />
-            <span>Admin</span>
-          </button>
-        </div>
-
-        {/* Brand & Portal Header */}
+        {/* Portal Header */}
         <div className="flex flex-col items-center text-center mb-6">
           <div
-            className={`w-12 h-12 rounded-2xl p-0.5 shadow-lg mb-3 transition-all ${
+            className={`w-12 h-12 rounded-2xl p-0.5 shadow-lg mb-3 ${
               portal === 'vendor'
                 ? 'bg-gradient-to-tr from-amber-500 to-emerald-400 shadow-amber-500/20'
                 : portal === 'admin'
@@ -196,22 +126,22 @@ export default function Login({ defaultPortal }) {
                   : 'bg-emerald-950/80 text-emerald-300 border-emerald-700/60'
               }`}
             >
-              {portal === 'vendor' ? 'CPO Partner' : portal === 'admin' ? 'Supergrid Admin' : 'EV Driver'}
+              {portal === 'vendor' ? 'CPO Vendor' : portal === 'admin' ? 'Admin' : 'EV Driver'}
             </span>
           </div>
 
           <p className="text-xs text-slate-400 mt-1 max-w-xs">
             {portal === 'vendor'
-              ? 'Charge Point Operator Hub • Manage bays, dynamic tariffs & auto-sweep IMPS payouts'
+              ? 'Charge Point Operator Hub • Manage bays, live tariffs & automated IMPS payouts'
               : portal === 'admin'
               ? 'Gujarat State Supergrid Operations Command & Escrow Oversight'
               : isRegister
-              ? 'Create your Gujarat EV Supergrid account'
-              : 'Sign in for instant 15-minute slot holds & telemetry digital passes'}
+              ? 'Create an EV Driver account to unlock instant 15-min reservations'
+              : 'Sign in to access Gujarat fast charging network & digital passes'}
           </p>
         </div>
 
-        {/* Tab switch for Driver only */}
+        {/* Tab switch for Driver registration/sign-in only */}
         {portal === 'driver' && (
           <div className="flex p-1 bg-slate-950/60 rounded-xl mb-6 border border-slate-700/60">
             <button
@@ -380,17 +310,17 @@ export default function Login({ defaultPortal }) {
           </button>
         </form>
 
-        {/* Quick Demo Logins Tailored per Portal */}
+        {/* Quick Demo Login Buttons strictly for the active portal */}
         <div className="mt-6 pt-5 border-t border-slate-700/60 text-center">
           <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-2.5">
-            Quick Fill Demo Accounts
+            Quick Fill Demo Account
           </span>
 
           {portal === 'vendor' ? (
             <div className="flex flex-wrap gap-2 justify-center">
               <button
                 type="button"
-                onClick={() => fillDemo('vendor@example.com', 'vendorpassword123', 'vendor')}
+                onClick={() => fillDemo('vendor@example.com', 'vendorpassword123')}
                 className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-amber-500 text-[11px] text-amber-300 hover:text-white transition-all flex items-center gap-1.5"
               >
                 <span>⛽</span>
@@ -398,7 +328,7 @@ export default function Login({ defaultPortal }) {
               </button>
               <button
                 type="button"
-                onClick={() => fillDemo('tatapower.cpo@example.com', 'vendorpassword123', 'vendor')}
+                onClick={() => fillDemo('tatapower.cpo@example.com', 'vendorpassword123')}
                 className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-amber-500 text-[11px] text-amber-300 hover:text-white transition-all flex items-center gap-1.5"
               >
                 <span>⚡</span>
@@ -409,7 +339,7 @@ export default function Login({ defaultPortal }) {
             <div className="flex flex-wrap gap-2 justify-center">
               <button
                 type="button"
-                onClick={() => fillDemo('admin@example.com', 'adminpassword123', 'admin')}
+                onClick={() => fillDemo('admin@example.com', 'adminpassword123')}
                 className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-indigo-500 text-[11px] text-indigo-300 hover:text-white transition-all flex items-center gap-1.5"
               >
                 <span>🔑</span>
@@ -420,7 +350,7 @@ export default function Login({ defaultPortal }) {
             <div className="flex flex-wrap gap-2 justify-center">
               <button
                 type="button"
-                onClick={() => fillDemo('driver1@example.com', 'Password123!', 'driver')}
+                onClick={() => fillDemo('driver1@example.com', 'Password123!')}
                 className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-emerald-500 text-[11px] text-emerald-300 hover:text-white transition-all flex items-center gap-1.5"
               >
                 <span>🚗</span>
@@ -429,36 +359,13 @@ export default function Login({ defaultPortal }) {
             </div>
           )}
 
-          {/* Quick Portal Switch Hint */}
-          <div className="mt-3 flex items-center justify-center gap-3 text-[11px] text-slate-500">
-            <span>Or switch to:</span>
-            {portal !== 'driver' && (
-              <button
-                type="button"
-                onClick={() => setPortal('driver')}
-                className="text-emerald-400 hover:underline"
-              >
-                Driver
-              </button>
-            )}
-            {portal !== 'vendor' && (
-              <button
-                type="button"
-                onClick={() => setPortal('vendor')}
-                className="text-amber-400 hover:underline"
-              >
-                CPO Vendor
-              </button>
-            )}
-            {portal !== 'admin' && (
-              <button
-                type="button"
-                onClick={() => setPortal('admin')}
-                className="text-indigo-400 hover:underline"
-              >
-                Admin
-              </button>
-            )}
+          <div className="mt-4">
+            <Link
+              to="/"
+              className="text-[11px] text-slate-500 hover:text-slate-300 transition-colors"
+            >
+              ← Back to VoltGrid Gujarat Network
+            </Link>
           </div>
         </div>
       </div>

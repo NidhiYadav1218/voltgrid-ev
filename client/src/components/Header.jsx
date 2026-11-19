@@ -77,7 +77,10 @@ export default function Header({ totalPorts, availablePorts }) {
 
           {/* Show CPO Vendor only when logged out, or if logged in as a vendor */}
           {(!isAuthenticated || user?.role === 'vendor') && (
-            <NavLink to="/vendor" className={navClass}>
+            <NavLink
+              to={isAuthenticated && user?.role === 'vendor' ? '/vendor' : '/vendor/login'}
+              className={navClass}
+            >
               <Store className="w-3.5 h-3.5" />
               <span className="hidden md:inline">CPO Vendor</span>
             </NavLink>
@@ -85,7 +88,10 @@ export default function Header({ totalPorts, availablePorts }) {
 
           {/* Show Admin only when logged out, or if logged in as an admin */}
           {(!isAuthenticated || user?.role === 'admin') && (
-            <NavLink to="/admin" className={navClass}>
+            <NavLink
+              to={isAuthenticated && user?.role === 'admin' ? '/admin' : '/admin/login'}
+              className={navClass}
+            >
               <Shield className="w-3.5 h-3.5" />
               <span className="hidden md:inline">Admin</span>
             </NavLink>

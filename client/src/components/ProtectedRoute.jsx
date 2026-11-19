@@ -18,7 +18,8 @@ export function ProtectedRoute({ children, role }) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    const target = role === 'vendor' ? '/vendor/login' : role === 'admin' ? '/admin/login' : '/login';
+    return <Navigate to={target} state={{ from: location }} replace />;
   }
 
   if (role && user?.role !== role && user?.role !== 'admin') {
