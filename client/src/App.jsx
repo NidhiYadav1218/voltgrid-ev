@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
-import Header from './components/Header.jsx';
 import Login from './pages/Login.jsx';
 import NotFound from './pages/NotFound.jsx';
 
@@ -23,14 +22,12 @@ export default function App() {
             {/* Login is standalone full-screen */}
             <Route path="/login" element={<Login />} />
 
-            {/* Standard layout with Header */}
+            {/* Application routes */}
             <Route
               path="/*"
               element={
-                <>
-                  <Header />
-                  <main className="flex-1">
-                    <Routes>
+                <main className="flex-1">
+                  <Routes>
                       <Route path="/" element={<Home />} />
                       <Route path="/hubs" element={<Hubs />} />
                       <Route path="/hub/:id" element={<HubDetail />} />
@@ -61,7 +58,6 @@ export default function App() {
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </main>
-                </>
               }
             />
           </Routes>
