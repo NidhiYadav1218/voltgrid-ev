@@ -52,11 +52,13 @@ export default function Home() {
           setCurrentStation(full);
         }
 
-        // Try load telematics
-        try {
-          const t = await getTelematics();
-          setTelematics(t);
-        } catch {}
+        // Try load telematics if logged in
+        if (isAuthenticated) {
+          try {
+            const t = await getTelematics();
+            setTelematics(t);
+          } catch {}
+        }
       } catch (err) {
         console.error(err);
       } finally {

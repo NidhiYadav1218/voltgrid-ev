@@ -18,13 +18,9 @@ export async function apiClient(endpoint, options = {}) {
     headers
   });
 
-  // Handle 401 Unauthorized
+  // Handle 401 Unauthorized - clear token, but do not force redirect public pages
   if (response.status === 401) {
     localStorage.removeItem('voltgrid_token');
-    // Only redirect if not already on login page
-    if (!window.location.pathname.startsWith('/login')) {
-      window.location.href = '/login';
-    }
   }
 
   let data = null;

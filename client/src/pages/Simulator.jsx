@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import Header from '../components/Header';
 import { getTelematics, updateTelematics } from '../api/telematics';
 import { VEHICLE_PRESETS } from '../constants/vehicles';
+import { useAuth } from '../context/AuthContext';
 
 export default function Simulator() {
+  const { isAuthenticated } = useAuth();
   const [selectedVehicle, setSelectedVehicle] = useState(VEHICLE_PRESETS[0]);
   const [isRunning, setIsRunning] = useState(false);
   const [speed, setSpeed] = useState(0);
@@ -18,8 +20,9 @@ export default function Simulator() {
   const animRef = useRef(null);
   const syncTimeoutRef = useRef(null);
 
-  // Load initial telematics from server
+  // Load initial telematics from server if authenticated
   useEffect(() => {
+    if (!isAuthenticated) return;
     async function init() {
       try {
         const data = await getTelematics();
@@ -58,6 +61,7 @@ export default function Simulator() {
 
   // Sync to API with debounce
   const syncToServer = (newSoc, newSpeed, newOdo, newMode) => {
+    if (!isAuthenticated) return;
     if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
     syncTimeoutRef.current = setTimeout(async () => {
       try {
