@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import mongoSanitize from 'express-mongo-sanitize';
 import rateLimit from 'express-rate-limit';
 import { errorHandler } from './middleware/errorHandler.js';
+import authRoutes from './routes/auth.js';
 
 export function createApp() {
   const app = express();
@@ -53,6 +54,9 @@ export function createApp() {
   app.get('/api/health', (req, res) => {
     res.status(200).json({ ok: true });
   });
+
+  // Auth Routes
+  app.use('/api/auth', authRoutes);
 
   // Central Error Handler
   app.use(errorHandler);
