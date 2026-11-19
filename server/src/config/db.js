@@ -25,6 +25,7 @@ export async function connectDB(uri) {
         const { seedVendors } = await import('../scripts/seedVendors.js');
         const { createAdmin } = await import('../scripts/createAdmin.js');
         const { createVendorUser } = await import('../scripts/createVendorUser.js');
+        const { seedReviews } = await import('../scripts/seedReviews.js');
         const { User } = await import('../models/User.js');
         const bcrypt = (await import('bcryptjs')).default;
 
@@ -32,6 +33,7 @@ export async function connectDB(uri) {
         await seedVendors();
         await createAdmin();
         await createVendorUser();
+        await seedReviews();
 
         // Ensure demo driver exists
         const driverExists = await User.findOne({ email: 'driver1@example.com' });

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { User, Phone, Mail, Car, Shield, Calendar, Clock, Download, XCircle, CheckCircle2, Zap, ArrowLeft, Edit3, Save } from 'lucide-react';
+import { User, Phone, Mail, Car, Shield, Calendar, Clock, Download, XCircle, CheckCircle2, Zap, ArrowLeft, Edit3, Save, Star } from 'lucide-react';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import Invoice from '../components/Invoice';
 import DigitalPassModal from '../components/DigitalPassModal';
+import FeedbackModal from '../components/FeedbackModal';
 import { useAuth } from '../context/AuthContext';
 import { updateMyProfile } from '../api/users';
 import { getBookings, cancelBooking } from '../api/bookings';
@@ -29,6 +31,7 @@ export default function Profile() {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [activePassBooking, setActivePassBooking] = useState(null);
   const [passStation, setPassStation] = useState(null);
+  const [reviewingBooking, setReviewingBooking] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -362,14 +365,24 @@ export default function Profile() {
 
                             {/* Download / View Receipt for completed sessions */}
                             {isCompleted && (
-                              <button
-                                onClick={() => setSelectedInvoice(b)}
-                                className="px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30 text-[11px] font-bold flex items-center gap-1 transition-all"
-                                title="View official GST Tax Receipt"
-                              >
-                                <Download className="w-3 h-3" />
-                                <span>Receipt</span>
-                              </button>
+                              <>
+                                <button
+                                  onClick={() => setSelectedInvoice(b)}
+                                  className="px-2.5 py-1 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30 text-[11px] font-bold flex items-center gap-1 transition-all"
+                                  title="View official GST Tax Receipt"
+                                >
+                                  <Download className="w-3 h-3" />
+                                  <span>Receipt</span>
+                                </button>
+                                <button
+                                  onClick={() => setReviewingBooking(b)}
+                                  className="px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[11px] font-bold flex items-center gap-1 transition-all"
+                                  title="Write a Driver Review for this session"
+                                >
+                                  <Star className="w-3 h-3 fill-current" />
+                                  <span>Review</span>
+                                </button>
+                              </>
                             )}
                           </div>
                         </td>
@@ -407,6 +420,21 @@ export default function Profile() {
           onClose={() => setActivePassBooking(null)}
         />
       )}
+      {/* Feedback & Review Modal */}
+      {reviewingBooking && (
+        <FeedbackModal
+          isOpen={Boolean(reviewingBooking)}
+          stationName={reviewingBooking.stationName || reviewingBooking.station?.name || 'Gujarat Supergrid Hub'}
+          bookingId={reviewingBooking.id || reviewingBooking._id}
+          onClose={() => setReviewingBooking(null)}
+          onReviewSubmitted={() => {
+            alert('🎉 Thank you! Your review is now published live on the homepage.');
+            setReviewingBooking(null);
+          }}
+        />
+      )}
+
+      <Footer />
     </div>
   );
 }

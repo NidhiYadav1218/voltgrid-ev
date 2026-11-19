@@ -12,6 +12,7 @@ import usersRoutes from './routes/users.js';
 import vendorsRoutes from './routes/vendors.js';
 import telematicsRoutes from './routes/telematics.js';
 import adminRoutes from './routes/admin.js';
+import reviewsRoutes from './routes/reviews.js';
 
 export function createApp() {
   const app = express();
@@ -81,6 +82,9 @@ export function createApp() {
 
   // Admin Routes
   app.use('/api/admin', adminRoutes);
+
+  // Reviews & Testimonials Routes
+  app.use('/api/reviews', reviewsRoutes);
 
   // Central Error Handler
   app.use(errorHandler);

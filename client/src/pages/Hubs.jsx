@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { getStations } from '../api/stations';
 import { formatRupee } from '../lib/format';
 
@@ -420,6 +421,7 @@ export default function Hubs() {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

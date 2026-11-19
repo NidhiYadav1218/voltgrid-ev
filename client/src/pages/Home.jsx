@@ -9,6 +9,11 @@ import ActiveChargingSession from '../components/ActiveChargingSession';
 import Invoice from '../components/Invoice';
 import SavingsCalculator from '../components/SavingsCalculator';
 import OperatorTelemetry from '../components/OperatorTelemetry';
+import FeatureShowcase from '../components/FeatureShowcase';
+import Testimonials from '../components/Testimonials';
+import FaqSection from '../components/FaqSection';
+import Footer from '../components/Footer';
+import FeedbackModal from '../components/FeedbackModal';
 import { getStations, getStation, startCharging, stopCharging } from '../api/stations';
 import { createBooking, completeBooking, cancelBooking, getBookings } from '../api/bookings';
 import { getTelematics } from '../api/telematics';
@@ -37,6 +42,9 @@ export default function Home() {
   const [isPassModalOpen, setIsPassModalOpen] = useState(false);
   const [liveSession, setLiveSession] = useState(null);
   const [completedInvoice, setCompletedInvoice] = useState(null);
+  const [feedbackPromptOpen, setFeedbackPromptOpen] = useState(false);
+  const [lastCompletedStation, setLastCompletedStation] = useState('');
+  const [lastBookingId, setLastBookingId] = useState(null);
 
   // Initial load
   useEffect(() => {
@@ -150,6 +158,8 @@ export default function Home() {
         energyKwh: finalData.energyKwh || 22.4,
         meterStop: finalData.energyKwh || 22.4
       });
+      setLastCompletedStation(currentStation?.name || 'Gujarat Supergrid Hub');
+      setLastBookingId(liveSession?.bookingId || null);
       setLiveSession(null);
       setCompletedInvoice(invoiceData.booking || invoiceData);
       const refreshed = await getStation(currentStation.id);
@@ -382,6 +392,18 @@ export default function Home() {
         <OperatorTelemetry />
       </main>
 
+      {/* 1. Powerful Features at Your Fingertips (Mockups Slider) */}
+      <FeatureShowcase />
+
+      {/* 2. What Gujarat EV Drivers Say (Real Live Testimonials from Feedback Form) */}
+      <Testimonials />
+
+      {/* 3. Frequently Asked Questions Accordion */}
+      <FaqSection />
+
+      {/* 4. Complete Statewide Supergrid Footer */}
+      <Footer />
+
       {/* Reservation Modal */}
       {isReserveModalOpen && selectedPort && currentStation && (
         <ReservationModal
@@ -407,7 +429,20 @@ export default function Home() {
       {completedInvoice && (
         <Invoice
           invoice={completedInvoice}
-          onClose={() => setCompletedInvoice(null)}
+          onClose={() => {
+            setCompletedInvoice(null);
+            setFeedbackPromptOpen(true);
+          }}
+        />
+      )}
+
+      {/* Post-Session Feedback & Driver Review Modal */}
+      {feedbackPromptOpen && (
+        <FeedbackModal
+          isOpen={feedbackPromptOpen}
+          stationName={lastCompletedStation}
+          bookingId={lastBookingId}
+          onClose={() => setFeedbackPromptOpen(false)}
         />
       )}
     </div>
