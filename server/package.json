@@ -1,0 +1,35 @@
+{
+  "name": "voltgrid-server",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "VoltGrid EV Platform Backend API",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
+    "seed:stations": "node src/scripts/seedStations.js",
+    "seed:vendors": "node src/scripts/seedVendors.js",
+    "admin:create": "node src/scripts/createAdmin.js",
+    "migrate:legacy": "node src/scripts/migrateLegacy.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.3",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^7.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.24.10",
+    "morgan": "^1.12.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^9.4.0",
+    "nodemon": "^3.1.4",
+    "supertest": "^7.0.0"
+  }
+}
