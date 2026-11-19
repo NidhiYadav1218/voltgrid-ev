@@ -1,0 +1,72 @@
+[
+  {
+    "vendorId": "vendor-tata",
+    "name": "Tata Power EZ Charge",
+    "code": "TATAPOWER",
+    "logo": "⚡",
+    "color": "emerald",
+    "contactEmail": "evsupport@tatapower.com",
+    "supportPhone": "+91 1800 209 5161",
+    "gstin": "07AAACT2727Q1ZU",
+    "commissionRate": 0.15,
+    "bankAccountMasked": "HDFC Bank •••• 9104",
+    "payoutMethod": "Instant IMPS / NEFT Auto-Sweep",
+    "rating": 4.8
+  },
+  {
+    "vendorId": "vendor-jiobp",
+    "name": "Jio-bp pulse",
+    "code": "JIOBP",
+    "logo": "⛽",
+    "color": "blue",
+    "contactEmail": "pulse.care@jiobp.com",
+    "supportPhone": "+91 1800 891 9023",
+    "gstin": "07AABCR2311K1Z2",
+    "commissionRate": 0.15,
+    "bankAccountMasked": "ICICI Bank •••• 4421",
+    "payoutMethod": "Instant IMPS / NEFT Auto-Sweep",
+    "rating": 4.9
+  },
+  {
+    "vendorId": "vendor-zeon",
+    "name": "Zeon Charging",
+    "code": "ZEON",
+    "logo": "🔋",
+    "color": "indigo",
+    "contactEmail": "support@zeoncharging.com",
+    "supportPhone": "+91 93456 78901",
+    "gstin": "33AABCZ4455P1Z8",
+    "commissionRate": 0.15,
+    "bankAccountMasked": "Axis Bank •••• 7820",
+    "payoutMethod": "Instant IMPS / NEFT Auto-Sweep",
+    "rating": 4.7
+  },
+  {
+    "vendorId": "vendor-statiq",
+    "name": "Statiq EV Fast Hub",
+    "code": "STATIQ",
+    "logo": "🚀",
+    "color": "amber",
+    "contactEmail": "ops@statiq.in",
+    "supportPhone": "+91 80000 78284",
+    "gstin": "06AAECS3344F1ZT",
+    "commissionRate": 0.15,
+    "bankAccountMasked": "Kotak Bank •••• 6509",
+    "payoutMethod": "Instant IMPS / NEFT Auto-Sweep",
+    "rating": 4.6
+  },
+  {
+    "vendorId": "vendor-voltgrid",
+    "name": "VoltGrid Direct Flagship",
+    "code": "VOLTGRID",
+    "logo": "🛡️",
+    "color": "cyan",
+    "contactEmail": "host@voltgrid.in",
+    "supportPhone": "+91 98765 43210",
+    "gstin": "07AABCV9999M1ZQ",
+    "commissionRate": 0.05,
+    "bankAccountMasked": "State Bank of India •••• 1102",
+    "payoutMethod": "Direct Escrow Settlement",
+    "rating": 5.0
+  }
+]

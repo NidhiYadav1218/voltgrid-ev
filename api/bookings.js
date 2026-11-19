@@ -114,9 +114,9 @@ export default async function handler(req, res) {
           {
             id: 'BK-98224',
             createdAt: new Date(Date.now() - 1000 * 60 * 2).toISOString(),
-            customerName: 'Nidhi Yadav',
-            customerPhone: '+91 93287 03345',
-            customerEmail: 'nidhiyadav1218@gmail.com',
+            customerName: 'Aarav Patel',
+            customerPhone: '+91 90000 00001',
+            customerEmail: 'driver1@example.com',
             vehicleModel: 'MG ZS EV (50.3 kWh)',
             stationId: 'st-01',
             stationName: 'Jio-bp pulse SG Highway HyperHub • Ahmedabad',

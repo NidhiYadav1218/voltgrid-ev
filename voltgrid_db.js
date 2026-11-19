@@ -2530,7 +2530,7 @@ const INITIAL_VENDORS = [
 ];
 
 const INITIAL_USERS = [
-  { id: 'usr-01', name: 'Nidhi Yadav', email: 'nidhiyadav1218@gmail.com', phone: '+91 93287 03345', city: 'Ahmedabad', vehicle: 'MG ZS EV', soc: 22, bookingsCount: 16, totalSpent: 5240, walletBalance: 1250, kyc: 'VERIFIED', joinedDate: '12 Jan 2025' },
+  { id: 'usr-01', name: 'Aarav Patel', email: 'driver1@example.com', phone: '+91 90000 00001', city: 'Ahmedabad', vehicle: 'MG ZS EV', soc: 22, bookingsCount: 16, totalSpent: 5240, walletBalance: 1250, kyc: 'VERIFIED', joinedDate: '12 Jan 2025' },
   { id: 'usr-02', name: 'Aarav Sharma', email: 'aarav.sharma@gmail.com', phone: '+91 98250 12345', city: 'Ahmedabad', vehicle: 'MG ZS EV', soc: 78, bookingsCount: 11, totalSpent: 4120, walletBalance: 820, kyc: 'VERIFIED', joinedDate: '18 Jan 2025' },
   { id: 'usr-03', name: 'Rohan Mehra', email: 'rohan.mehra@gmail.com', phone: '+91 98980 54321', city: 'Gandhinagar', vehicle: 'Hyundai Ioniq 5', soc: 65, bookingsCount: 8, totalSpent: 3890, walletBalance: 450, kyc: 'VERIFIED', joinedDate: '02 Feb 2025' },
   { id: 'usr-04', name: 'Kiran Patel', email: 'kiran.patel@gmail.com', phone: '+91 97240 98765', city: 'Surat', vehicle: 'Tata Punch EV', soc: 45, bookingsCount: 6, totalSpent: 1980, walletBalance: 320, kyc: 'VERIFIED', joinedDate: '14 Feb 2025' },
@@ -2736,9 +2736,9 @@ const INITIAL_BOOKINGS = [
   {
     id: 'BK-98224',
     createdAt: new Date(Date.now() - 1000 * 60 * 2).toISOString(),
-    customerName: 'Nidhi Yadav',
-    customerPhone: '+91 93287 03345',
-    customerEmail: 'nidhiyadav1218@gmail.com',
+    customerName: 'Aarav Patel',
+    customerPhone: '+91 90000 00001',
+    customerEmail: 'driver1@example.com',
     vehicleModel: 'MG ZS EV (50.3 kWh)',
     stationId: 'st-01',
     stationName: 'Jio-bp pulse SG Highway HyperHub • Ahmedabad',
@@ -3039,7 +3039,7 @@ var VoltGridDB = {
         const newUser = {
           id: 'usr-' + (users.length + 1).toString().padStart(2, '0'),
           name: customerName,
-          phone: customerPhone || '+91 93287 03345',
+          phone: customerPhone || '+91 90000 00001',
           email: booking.customerEmail || `${customerName.toLowerCase().replace(/\s+/g, '.')}@gmail.com`,
           city: (booking.stationName && booking.stationName.includes('•') ? booking.stationName.split('•')[1] : 'Ahmedabad').trim(),
           vehicle: booking.vehicle || 'MG ZS EV',
