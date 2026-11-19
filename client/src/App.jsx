@@ -12,6 +12,7 @@ import HubDetail from './pages/HubDetail.jsx';
 import Simulator from './pages/Simulator.jsx';
 import Vendor from './pages/Vendor.jsx';
 import Admin from './pages/Admin.jsx';
+import Profile from './pages/Profile.jsx';
 
 export default function App() {
   return (
@@ -31,11 +32,12 @@ export default function App() {
                       <Route path="/" element={<Home />} />
                       <Route path="/hubs" element={<Hubs />} />
                       <Route path="/hub/:id" element={<HubDetail />} />
+                      <Route path="/simulator" element={<Simulator />} />
                       <Route
-                        path="/simulator"
+                        path="/profile"
                         element={
-                          <ProtectedRoute role="driver">
-                            <Simulator />
+                          <ProtectedRoute>
+                            <Profile />
                           </ProtectedRoute>
                         }
                       />

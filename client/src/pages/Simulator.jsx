@@ -24,9 +24,25 @@ export default function Simulator() {
       try {
         const data = await getTelematics();
         if (data) {
-          if (data.batterySoC !== undefined) setSoc(data.batterySoC);
-          if (data.speed !== undefined) setSpeed(data.speed);
-          if (data.odometer !== undefined) setOdometer(data.odometer);
+          const rawSoc =
+            typeof data.batterySoC === 'number'
+              ? data.batterySoC
+              : typeof data.battery?.percentRemaining === 'number'
+              ? data.battery.percentRemaining
+              : 100;
+          setSoc(Math.max(0, Math.min(100, rawSoc)));
+
+          const rawSpeed = typeof data.speed === 'number' ? data.speed : 0;
+          setSpeed(rawSpeed);
+
+          const rawOdo =
+            typeof data.odometer === 'number'
+              ? data.odometer
+              : typeof data.odometer?.totalKm === 'number'
+              ? data.odometer.totalKm
+              : 14250.0;
+          setOdometer(rawOdo);
+
           if (data.driveMode) setDriveMode(data.driveMode);
           if (data.vehicleModel) {
             const found = VEHICLE_PRESETS.find((v) => v.model === data.vehicleModel);
@@ -34,7 +50,7 @@ export default function Simulator() {
           }
         }
       } catch (err) {
-        console.warn('Initial telematics load:', err);
+        // Silently continue with local defaults
       }
     }
     init();
@@ -418,7 +434,7 @@ export default function Simulator() {
                 Total Lifetime Odometer
               </span>
               <div className="text-2xl font-mono font-black text-white mt-1">
-                {odometer.toFixed(1)} <span className="text-xs text-slate-400">km</span>
+                {(Number(odometer) || 14250.0).toFixed(1)} <span className="text-xs text-slate-400">km</span>
               </div>
             </div>
 
@@ -427,7 +443,7 @@ export default function Simulator() {
                 Trip Distance Driven
               </span>
               <div className="text-2xl font-mono font-black text-cyan-400 mt-1">
-                {tripDistance.toFixed(2)} <span className="text-xs text-slate-400">km</span>
+                {(Number(tripDistance) || 0.0).toFixed(2)} <span className="text-xs text-slate-400">km</span>
               </div>
             </div>
 

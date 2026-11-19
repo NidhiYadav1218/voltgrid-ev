@@ -7,7 +7,7 @@ import { USER_ROLES } from '../config/constants.js';
 const router = Router();
 
 router.use(auth);
-router.use(requireRole(USER_ROLES.DRIVER));
+router.use(requireRole(USER_ROLES.DRIVER, USER_ROLES.ADMIN));
 
 router.get('/', getTelematics);
 router.post('/', upsertTelematics);

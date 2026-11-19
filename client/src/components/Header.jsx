@@ -57,10 +57,13 @@ export default function Header({ totalPorts, availablePorts }) {
 
         {/* Navigation Links */}
         <nav className="flex items-center gap-1">
-          <NavLink to="/" end className={navClass}>
-            <Car className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Charge</span>
-          </NavLink>
+          {/* Show vehicle name only when user is logged in; hide if no user is logged in */}
+          {isAuthenticated && (
+            <NavLink to="/" end className={navClass}>
+              <Car className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{user?.car || user?.vehicleModel || 'My EV'}</span>
+            </NavLink>
+          )}
 
           <NavLink to="/hubs" className={navClass}>
             <MapPin className="w-3.5 h-3.5" />
@@ -72,25 +75,25 @@ export default function Header({ totalPorts, availablePorts }) {
             <span className="hidden md:inline">Simulator</span>
           </NavLink>
 
-          {(!isAuthenticated || user?.role === 'vendor' || user?.role === 'admin') && (
-            <NavLink to="/vendor" className={navClass}>
-              <Store className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">CPO Vendor</span>
-            </NavLink>
-          )}
+          <NavLink to="/vendor" className={navClass}>
+            <Store className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">CPO Vendor</span>
+          </NavLink>
 
-          {(!isAuthenticated || user?.role === 'admin') && (
-            <NavLink to="/admin" className={navClass}>
-              <Shield className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Admin</span>
-            </NavLink>
-          )}
+          <NavLink to="/admin" className={navClass}>
+            <Shield className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">Admin</span>
+          </NavLink>
 
           {/* User profile / Auth buttons */}
           <div className="ml-2 pl-2 border-l border-slate-200 dark:border-slate-800 flex items-center gap-2">
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs">
+                <Link
+                  to="/profile"
+                  title="View Profile & Bookings"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs transition-all cursor-pointer border border-transparent hover:border-emerald-500/30"
+                >
                   <User className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span className="font-bold text-slate-800 dark:text-slate-200 max-w-[100px] truncate">
                     {user?.name?.split(' ')[0] || 'User'}
@@ -98,11 +101,11 @@ export default function Header({ totalPorts, availablePorts }) {
                   <span className="text-[10px] uppercase font-mono px-1 py-0.2 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold">
                     {user?.role}
                   </span>
-                </div>
+                </Link>
                 <button
                   onClick={handleLogout}
                   title="Sign out"
-                  className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all"
+                  className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
