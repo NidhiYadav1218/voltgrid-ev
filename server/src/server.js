@@ -3,6 +3,7 @@ dotenv.config();
 
 import app from './app.js';
 import { connectDB } from './config/db.js';
+import { startExpiryService } from './services/expiryService.js';
 
 const PORT = process.env.PORT || 5000;
 
@@ -10,6 +11,7 @@ async function startServer() {
   try {
     if (process.env.MONGODB_URI) {
       await connectDB();
+      startExpiryService();
     } else {
       console.warn('[Warning] MONGODB_URI not configured. Database connection deferred.');
     }

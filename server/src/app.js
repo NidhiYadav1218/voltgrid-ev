@@ -6,6 +6,8 @@ import mongoSanitize from 'express-mongo-sanitize';
 import rateLimit from 'express-rate-limit';
 import { errorHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/auth.js';
+import stationsRoutes from './routes/stations.js';
+import bookingsRoutes from './routes/bookings.js';
 
 export function createApp() {
   const app = express();
@@ -57,6 +59,12 @@ export function createApp() {
 
   // Auth Routes
   app.use('/api/auth', authRoutes);
+
+  // Stations Routes
+  app.use('/api/stations', stationsRoutes);
+
+  // Bookings Routes
+  app.use('/api/bookings', bookingsRoutes);
 
   // Central Error Handler
   app.use(errorHandler);
