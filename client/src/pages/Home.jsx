@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import StationSelector from '../components/StationSelector';
 import PortCard from '../components/PortCard';
@@ -14,8 +14,13 @@ import { createBooking, completeBooking, cancelBooking, getBookings } from '../a
 import { getTelematics } from '../api/telematics';
 import { VEHICLE_PRESETS } from '../constants/vehicles';
 import { formatRupee } from '../lib/format';
+import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [stations, setStations] = useState([]);
   const [selectedStationId, setSelectedStationId] = useState('');
   const [currentStation, setCurrentStation] = useState(null);
@@ -73,6 +78,10 @@ export default function Home() {
 
   const handleSelectPort = (port) => {
     if (port.status !== 'available') return;
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
     setSelectedPort(port);
     setIsReserveModalOpen(true);
   };

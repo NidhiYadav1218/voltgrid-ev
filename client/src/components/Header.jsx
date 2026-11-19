@@ -75,15 +75,21 @@ export default function Header({ totalPorts, availablePorts }) {
             <span className="hidden md:inline">Simulator</span>
           </NavLink>
 
-          <NavLink to="/vendor" className={navClass}>
-            <Store className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">CPO Vendor</span>
-          </NavLink>
+          {/* Show CPO Vendor only when logged out, or if logged in as a vendor */}
+          {(!isAuthenticated || user?.role === 'vendor') && (
+            <NavLink to="/vendor" className={navClass}>
+              <Store className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">CPO Vendor</span>
+            </NavLink>
+          )}
 
-          <NavLink to="/admin" className={navClass}>
-            <Shield className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">Admin</span>
-          </NavLink>
+          {/* Show Admin only when logged out, or if logged in as an admin */}
+          {(!isAuthenticated || user?.role === 'admin') && (
+            <NavLink to="/admin" className={navClass}>
+              <Shield className="w-3.5 h-3.5" />
+              <span className="hidden md:inline">Admin</span>
+            </NavLink>
+          )}
 
           {/* User profile / Auth buttons */}
           <div className="ml-2 pl-2 border-l border-slate-200 dark:border-slate-800 flex items-center gap-2">
