@@ -12,6 +12,12 @@
   }
 }
 
+/* Leaflet custom div icon reset */
+.zeon-custom-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
 /* Custom subtle scrollbars */
 ::-webkit-scrollbar {
   width: 6px;

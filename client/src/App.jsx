@@ -28,7 +28,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen flex flex-col bg-black text-zinc-100 font-sans">
+        <div className="w-full h-full min-h-screen flex flex-col bg-black text-zinc-100 font-sans">
           <Routes>
             {/* Dedicated Login portals */}
             <Route path="/login" element={<Login portal="driver" />} />
@@ -39,7 +39,7 @@ export default function App() {
             <Route
               path="/*"
               element={
-                <main className="flex-1">
+                <main className="flex-1 flex flex-col w-full h-full relative">
                   <Routes>
                     {/* Home */}
                     <Route path="/" element={<Home />} />
