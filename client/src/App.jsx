@@ -13,6 +13,7 @@ import Simulator from './pages/Simulator.jsx';
 import Vendor from './pages/Vendor.jsx';
 import Admin from './pages/Admin.jsx';
 import Profile from './pages/Profile.jsx';
+import SmartFeatures from './pages/SmartFeatures.jsx';
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
                       <Route path="/hubs" element={<Hubs />} />
                       <Route path="/hub/:id" element={<HubDetail />} />
                       <Route path="/simulator" element={<Simulator />} />
+                      <Route path="/features" element={<SmartFeatures />} />
                       <Route
                         path="/profile"
                         element={
