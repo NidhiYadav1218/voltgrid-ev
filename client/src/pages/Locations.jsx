@@ -82,10 +82,9 @@ export default function Locations() {
       zoomControl: false
     });
 
-    // Add CartoDB Positron / OSM Light tiles for ultra clean Zeon aesthetic
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-      subdomains: 'abcd',
+    // Add Standard OpenStreetMap tiles (100% Free, NO API Key needed, clean & sharp)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
 
@@ -110,25 +109,28 @@ export default function Locations() {
 
     // Create custom Zeon red marker icon
     filteredStations.forEach((st) => {
-      if (!st.lat || !st.lng) return;
+      const lat = Number(st.lat);
+      const lng = Number(st.lng);
+      if (!lat || !lng || isNaN(lat) || isNaN(lng)) return;
 
-      const isSelected = selectedStation?.id === st.id;
+      const stId = st.stationId || st.id || st._id;
+      const isSelected = selectedStation && (selectedStation.stationId || selectedStation.id || selectedStation._id) === stId;
       const availablePorts = st.ports?.filter((p) => p.status === 'available').length || 0;
 
       const markerHtml = `
         <div style="
-          width: 36px;
-          height: 36px;
+          width: 38px;
+          height: 38px;
           border-radius: 50%;
-          background: ${isSelected ? '#b91c1c' : '#E50914'};
+          background: ${isSelected ? '#991b1b' : '#E50914'};
           border: 3px solid #ffffff;
-          box-shadow: 0 4px 14px rgba(229, 9, 20, 0.45);
+          box-shadow: 0 4px 14px rgba(229, 9, 20, 0.55);
           display: flex;
           align-items: center;
           justify-content: center;
           color: #ffffff;
           font-weight: 900;
-          font-size: 14px;
+          font-size: 16px;
           cursor: pointer;
           transition: transform 0.2s ease;
           transform: scale(${isSelected ? 1.25 : 1});
@@ -140,19 +142,25 @@ export default function Locations() {
       const customIcon = L.divIcon({
         html: markerHtml,
         className: 'zeon-map-marker',
-        iconSize: [36, 36],
-        iconAnchor: [18, 18]
+        iconSize: [38, 38],
+        iconAnchor: [19, 19]
       });
 
-      const marker = L.marker([st.lat, st.lng], { icon: customIcon }).addTo(map);
+      const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
 
       marker.on('click', () => {
         setSelectedStation(st);
-        map.flyTo([st.lat, st.lng], 13, { duration: 1.2 });
+        map.flyTo([lat, lng], 13, { duration: 1.2 });
       });
 
       markersRef.current.push(marker);
     });
+
+    // Auto-fit bounds if markers exist
+    if (markersRef.current.length > 0) {
+      const group = L.featureGroup(markersRef.current);
+      map.fitBounds(group.getBounds().pad(0.12));
+    }
   }, [filteredStations, selectedStation]);
 
   const handleSelectPort = (port) => {
@@ -167,9 +175,11 @@ export default function Locations() {
 
   const handleConfirmReservation = async (reservationData) => {
     try {
+      const stId = selectedStation.stationId || selectedStation.id || selectedStation._id;
+      const pId = selectedPort.portId || selectedPort.id;
       const res = await createBooking({
-        stationId: selectedStation.id,
-        portId: selectedPort.id,
+        stationId: stId,
+        portId: pId,
         vehicleModel: user?.car || 'Tata Nexon EV',
         vehicleType: selectedPort.vehicleType || '4W',
         estimatedDurationMinutes: reservationData.duration || 30
@@ -179,7 +189,7 @@ export default function Locations() {
       setActiveBooking(res.booking);
       setIsPassModalOpen(true);
 
-      const refreshed = await getStation(selectedStation.id);
+      const refreshed = await getStation(stId);
       setSelectedStation(refreshed);
     } catch (err) {
       alert(`Reservation failed: ${err.message}`);
@@ -188,7 +198,8 @@ export default function Locations() {
 
   const handleStartCharging = async (pin) => {
     try {
-      await startCharging(selectedStation.id, activeBooking.portId, pin);
+      const stId = selectedStation.stationId || selectedStation.id || selectedStation._id;
+      await startCharging(stId, activeBooking.portId, pin);
       setIsPassModalOpen(false);
       navigate('/');
     } catch (err) {
