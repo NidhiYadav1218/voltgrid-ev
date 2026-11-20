@@ -26,37 +26,34 @@ export default function MobileApp() {
               Engineered for seamless EV road trips. Locate high-speed DC chargers, check live bay availability, track your real-time charging curve, and pay securely with Zeon Wallet.
             </p>
 
-            {/* App Store / Google Play Buttons & QR Card */}
+            {/* App Store / Google Play Buttons, Web App & APK Download */}
             <div className="flex flex-wrap items-center gap-4 pt-2">
-              <a
-                href="https://apps.apple.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-white font-bold text-xs flex items-center gap-3 transition-all hover:scale-105 shadow-lg"
+              <Link
+                to="/app"
+                className="px-6 py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs flex items-center gap-3 transition-all hover:scale-105 shadow-xl shadow-red-600/30"
               >
-                <div className="w-5 h-5 flex items-center justify-center text-lg font-bold">🍎</div>
+                <div className="w-5 h-5 flex items-center justify-center text-lg font-bold">⚡</div>
                 <div className="text-left">
-                  <span className="block text-[9px] text-zinc-400 uppercase font-mono leading-none">Download on</span>
-                  <span className="block text-sm font-extrabold leading-tight">App Store</span>
+                  <span className="block text-[9px] text-red-200 uppercase font-mono leading-none">In-Browser App</span>
+                  <span className="block text-sm font-black leading-tight">Launch Mobile Web App</span>
                 </div>
-              </a>
+              </Link>
 
               <a
-                href="https://play.google.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-white font-bold text-xs flex items-center gap-3 transition-all hover:scale-105 shadow-lg"
+                href="/downloads/voltgrid.apk"
+                download="voltgrid.apk"
+                className="px-6 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border-2 border-red-600/80 text-white font-bold text-xs flex items-center gap-3 transition-all hover:scale-105 shadow-lg group"
               >
-                <div className="w-5 h-5 flex items-center justify-center text-lg font-bold">▶️</div>
+                <div className="w-5 h-5 flex items-center justify-center text-lg font-bold group-hover:animate-bounce">🤖</div>
                 <div className="text-left">
-                  <span className="block text-[9px] text-zinc-400 uppercase font-mono leading-none">Get it on</span>
-                  <span className="block text-sm font-extrabold leading-tight">Google Play</span>
+                  <span className="block text-[9px] text-zinc-400 uppercase font-mono leading-none">Android Package</span>
+                  <span className="block text-sm font-extrabold leading-tight">Download APK (Direct)</span>
                 </div>
               </a>
 
               <Link
                 to="/locations"
-                className="px-6 py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex items-center gap-2 transition-all hover:scale-105 shadow-xl shadow-red-600/30"
+                className="px-6 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-white font-bold text-xs flex items-center gap-2 transition-all hover:scale-105 shadow-lg"
               >
                 <span>Find Chargers Online</span>
                 <ArrowRight className="w-4 h-4" />
@@ -69,8 +66,8 @@ export default function MobileApp() {
                 <QrCode className="w-12 h-12 text-black" />
               </div>
               <div className="text-xs">
-                <span className="font-bold text-white block">SCAN TO DOWNLOAD</span>
-                <span className="text-[11px] text-zinc-400">Scan with your smartphone camera to install.</span>
+                <span className="font-bold text-white block">SCAN TO DOWNLOAD APK</span>
+                <span className="text-[11px] text-zinc-400">Scan with your smartphone camera to install VoltGrid.</span>
               </div>
             </div>
           </div>

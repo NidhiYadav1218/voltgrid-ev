@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "VoltGrid EV",
+    "slug": "voltgrid",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#D30C15"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.voltgrid.ev"
+    },
+    "android": {
+      "package": "com.voltgrid.ev",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#D30C15"
+      },
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "INTERNET"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "VoltGrid needs camera access to scan QR codes on EV charging stations."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "VoltGrid needs your location to find nearby charging stations in Gujarat."
+        }
+      ]
+    ]
+  }
+}

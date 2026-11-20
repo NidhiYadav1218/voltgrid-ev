@@ -14,8 +14,9 @@ import Vendor from './pages/Vendor.jsx';
 import Admin from './pages/Admin.jsx';
 import Profile from './pages/Profile.jsx';
 
-// Zeon Dedicated Pages
+// Zeon Dedicated Pages & Mobile App
 import MobileApp from './pages/MobileApp.jsx';
+import MobileAppView from './pages/MobileAppView.jsx';
 import AutoCharge from './pages/AutoCharge.jsx';
 import HowToCharge from './pages/HowToCharge.jsx';
 import LocationPartner from './pages/LocationPartner.jsx';
@@ -50,6 +51,8 @@ export default function App() {
                     <Route path="/hub/:id" element={<HubDetail />} />
 
                     {/* Charging Menu Routes */}
+                    <Route path="/app" element={<MobileAppView />} />
+                    <Route path="/voltgrid_app" element={<MobileAppView />} />
                     <Route path="/mobile_app" element={<MobileApp />} />
                     <Route path="/auto_charge" element={<AutoCharge />} />
                     <Route path="/rfid" element={<AutoCharge />} />

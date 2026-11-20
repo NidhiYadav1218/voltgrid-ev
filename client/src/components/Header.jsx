@@ -103,10 +103,19 @@ export default function Header() {
                   {/* Left Links */}
                   <div className="flex-1 space-y-3.5 text-left py-1">
                     <Link
+                      to="/app"
+                      className="flex items-center justify-between text-sm font-bold text-[#E50914] hover:translate-x-1 transition-all"
+                    >
+                      <span>VoltGrid App (Web & APK)</span>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-100 text-red-600 font-bold">
+                        ⚡ LIVE
+                      </span>
+                    </Link>
+                    <Link
                       to="/mobile_app"
                       className="block text-sm font-medium text-zinc-700 hover:text-[#E50914] hover:translate-x-1 transition-all"
                     >
-                      Mobile App
+                      Mobile App Overview
                     </Link>
                     <Link
                       to="/auto_charge"
