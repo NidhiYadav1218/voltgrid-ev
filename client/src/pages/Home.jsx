@@ -14,6 +14,8 @@ import Testimonials from '../components/Testimonials';
 import FaqSection from '../components/FaqSection';
 import Footer from '../components/Footer';
 import FeedbackModal from '../components/FeedbackModal';
+import NetworkStatsCard from '../components/NetworkStatsCard';
+import PartnerLogos from '../components/PartnerLogos';
 import { getStations, getStation, startCharging, stopCharging } from '../api/stations';
 import { createBooking, completeBooking, cancelBooking, getBookings } from '../api/bookings';
 import { getTelematics } from '../api/telematics';
@@ -232,6 +234,12 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* Zeon-Inspired Bold Network Stats Card */}
+        <NetworkStatsCard />
+
+        {/* Zeon-Inspired Multi-CPO & Location Partners Row */}
+        <PartnerLogos />
 
         {/* Live Active Charging Banner */}
         {liveSession && (
