@@ -18,6 +18,7 @@ import {
   Heart,
   Menu,
   Phone,
+  Mail,
   Shield,
   CreditCard,
   QrCode,
@@ -29,16 +30,28 @@ import {
   Minimize2,
   Info
 } from 'lucide-react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Fix Leaflet's default icon path in bundler
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
+});
 
 export default function MobileAppView() {
-  // Device display mode: 'phone' (framed) or 'fullscreen' (full window)
-  const [deviceMode, setDeviceMode] = useState('phone');
+  // Device display mode: 'fullscreen' on mobile viewports, toggleable to 'phone' on desktop
+  const isMobileScreen = typeof window !== 'undefined' && window.innerWidth < 768;
+  const [deviceMode, setDeviceMode] = useState(isMobileScreen ? 'fullscreen' : 'phone');
 
-  // Onboarding walkthrough: 0-5 (slides 1-6), 6 (main app)
+  // App mode: 'map' (main live interactive app) or 'tutorial' (6-slide walkthrough)
+  const [appView, setAppView] = useState('map');
   const [onboardingStep, setOnboardingStep] = useState(0);
 
-  // Active Bottom Tab
-  const [activeTab, setActiveTab] = useState('Map'); // 'Map', 'MyEVs', 'Scan', 'Favourites', 'More'
+  // Active Bottom Tab: 'Map', 'MyEVs', 'Scan', 'Favourites', 'More'
+  const [activeTab, setActiveTab] = useState('Map');
 
   // Map state
   const [mapType, setMapType] = useState('streets'); // 'streets' or 'satellite'
@@ -58,11 +71,18 @@ export default function MobileAppView() {
   const [showFavouritesSheet, setShowFavouritesSheet] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showChargingSimulator, setShowChargingSimulator] = useState(false);
+  const [pwaPrompt, setPwaPrompt] = useState(null);
+  const [showInstallToast, setShowInstallToast] = useState(false);
 
-  // Authentication State
+  // Authentication State (Matching User's Photo with Phone, Email & Reg Number)
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authStep, setAuthStep] = useState(1); // 1: Phone number, 2: OTP
+  const [authStep, setAuthStep] = useState(1); // 1: Form, 2: OTP
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [emailAddress, setEmailAddress] = useState('');
+  const [regPart1, setRegPart1] = useState('GJ');
+  const [regPart2, setRegPart2] = useState('01');
+  const [regPart3, setRegPart3] = useState('EV');
+  const [regPart4, setRegPart4] = useState('4421');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [resendTimer, setResendTimer] = useState(30);
 
@@ -82,8 +102,8 @@ export default function MobileAppView() {
     }
   ]);
   const [favouriteStationIds, setFavouriteStationIds] = useState([
-    GUJARAT_STATIONS[0]?.id || 'st-01',
-    GUJARAT_STATIONS[1]?.id || 'st-02'
+    GUJARAT_STATIONS[0]?.name,
+    GUJARAT_STATIONS[1]?.name
   ]);
 
   // Charging session state
@@ -96,28 +116,45 @@ export default function MobileAppView() {
   const [capacityFilter, setCapacityFilter] = useState(120);
   const [chargerTypeFilter, setChargerTypeFilter] = useState('ALL'); // ALL, DC, AC
   const [connectorFilter, setConnectorFilter] = useState('ALL'); // ALL, CCS2, Type II, 16A
-  const [accessFilter, setAccessFilter] = useState('ALL'); // ALL, Public, Private
 
   // Map container reference
   const mapContainerRef = useRef(null);
   const leafletMapRef = useRef(null);
   const markersRef = useRef([]);
 
-  // Initialize Leaflet Map
+  // Capture beforeinstallprompt for PWA native Android installation
   useEffect(() => {
-    if (onboardingStep < 6) return;
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setPwaPrompt(e);
+      setShowInstallToast(true);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const handleInstallApp = () => {
+    if (pwaPrompt) {
+      pwaPrompt.prompt();
+      pwaPrompt.userChoice.then((choice) => {
+        if (choice.outcome === 'accepted') {
+          setShowInstallToast(false);
+        }
+      });
+    } else {
+      alert('To install on your phone:\n1. Open Chrome on Android\n2. Tap the three dots (⋮)\n3. Tap "Install App" or "Add to Home screen"');
+    }
+  };
+
+  // Initialize and update Leaflet Map
+  useEffect(() => {
+    if (appView !== 'map') return;
     if (!mapContainerRef.current) return;
 
-    if (!window.L) {
-      console.warn('Leaflet not loaded on window');
-      return;
-    }
+    const initialLat = selectedStation ? selectedStation.lat : 23.0225;
+    const initialLng = selectedStation ? selectedStation.lng : 72.5714;
 
     if (!leafletMapRef.current) {
-      const L = window.L;
-      const initialLat = selectedStation ? selectedStation.lat : 23.0225;
-      const initialLng = selectedStation ? selectedStation.lng : 72.5714;
-
       const map = L.map(mapContainerRef.current, {
         center: [initialLat, initialLng],
         zoom: 12,
@@ -125,7 +162,6 @@ export default function MobileAppView() {
         attributionControl: false
       });
 
-      // Default OpenStreetMap layer
       const tileUrl =
         mapType === 'satellite'
           ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
@@ -134,11 +170,11 @@ export default function MobileAppView() {
       const tileLayer = L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(map);
       leafletMapRef.current = { map, tileLayer };
 
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 200);
+      // Multiple resize invalidations to ensure zero gray tiles
+      setTimeout(() => map.invalidateSize(), 100);
+      setTimeout(() => map.invalidateSize(), 300);
+      setTimeout(() => map.invalidateSize(), 600);
     } else {
-      const L = window.L;
       const { map, tileLayer } = leafletMapRef.current;
       map.removeLayer(tileLayer);
       const newUrl =
@@ -150,14 +186,13 @@ export default function MobileAppView() {
       map.invalidateSize();
     }
 
-    // Render Markers
-    const L = window.L;
     const { map } = leafletMapRef.current;
 
     // Clear old markers
     markersRef.current.forEach((m) => map.removeLayer(m));
     markersRef.current = [];
 
+    // Add marker for each Gujarat station
     filteredStations.forEach((st) => {
       const isSelected = selectedStation?.name === st.name;
       const customIcon = L.divIcon({
@@ -194,7 +229,15 @@ export default function MobileAppView() {
 
       markersRef.current.push(marker);
     });
-  }, [onboardingStep, mapType, filteredStations, selectedStation]);
+
+    const handleWindowResize = () => {
+      if (leafletMapRef.current?.map) {
+        leafletMapRef.current.map.invalidateSize();
+      }
+    };
+    window.addEventListener('resize', handleWindowResize);
+    return () => window.removeEventListener('resize', handleWindowResize);
+  }, [appView, mapType, filteredStations, selectedStation]);
 
   // Handle Tab Switch (With Crucial Auth Check for My EVs and Favourites)
   const handleTabClick = (tabName) => {
@@ -246,6 +289,25 @@ export default function MobileAppView() {
     setIsLoggedIn(true);
     setShowAuthSheet(false);
 
+    // Save registered vehicle if entered
+    if (regPart1 && regPart2 && regPart3 && regPart4) {
+      const newPlate = `${regPart1}-${regPart2}-${regPart3}-${regPart4}`.toUpperCase();
+      setUserEVs((prev) => [
+        {
+          id: `ev-${Date.now()}`,
+          name: 'Registered EV',
+          plate: newPlate,
+          soc: 82,
+          range: 340,
+          batterySize: '50 kWh',
+          connector: 'CCS2',
+          rfidLinked: 'VG-RFID-GUJ-992',
+          autoCharge: true
+        },
+        ...prev
+      ]);
+    }
+
     if (pendingTabAfterAuth === 'MyEVs') {
       setShowMyEVsSheet(true);
       setActiveTab('MyEVs');
@@ -256,9 +318,8 @@ export default function MobileAppView() {
     setPendingTabAfterAuth(null);
   };
 
-  // Quick OTP Auto-fill for user convenience
   const handleAutoFillOtp = () => {
-    setOtp(['8', '4', '9', '2', '1', '0']);
+    setOtp(['9', '3', '2', '6', '7', '0']);
   };
 
   // Filter application logic
@@ -291,12 +352,10 @@ export default function MobileAppView() {
     setCapacityFilter(120);
     setChargerTypeFilter('ALL');
     setConnectorFilter('ALL');
-    setAccessFilter('ALL');
     setFilteredStations(GUJARAT_STATIONS);
     setShowFilterSheet(false);
   };
 
-  // Search input filter
   const handleSearch = (query) => {
     setSearchQuery(query);
     if (!query.trim()) {
@@ -319,7 +378,6 @@ export default function MobileAppView() {
     }
   };
 
-  // Locate me button handler
   const handleLocateMe = () => {
     if (leafletMapRef.current?.map && selectedStation) {
       leafletMapRef.current.map.setView([selectedStation.lat, selectedStation.lng], 14, {
@@ -328,20 +386,21 @@ export default function MobileAppView() {
     }
   };
 
-  // Refresh status button handler
   const handleRefresh = () => {
     setIsRefreshing(true);
     setTimeout(() => {
       setIsRefreshing(false);
+      if (leafletMapRef.current?.map) {
+        leafletMapRef.current.map.invalidateSize();
+      }
     }, 600);
   };
 
-  // Toggle Favorite
-  const toggleFavorite = (stationId) => {
-    if (favouriteStationIds.includes(stationId)) {
-      setFavouriteStationIds(favouriteStationIds.filter((id) => id !== stationId));
+  const toggleFavorite = (stationName) => {
+    if (favouriteStationIds.includes(stationName)) {
+      setFavouriteStationIds(favouriteStationIds.filter((name) => name !== stationName));
     } else {
-      setFavouriteStationIds([...favouriteStationIds, stationId]);
+      setFavouriteStationIds([...favouriteStationIds, stationName]);
     }
   };
 
@@ -350,94 +409,119 @@ export default function MobileAppView() {
     {
       title: 'Search & Browse Stations',
       text: 'Search and browse for VoltGrid charging stations through map screen',
-      subtext: 'Find real-time live bays across all Gujarat cities & expressways.',
-      highlight: 'search'
+      subtext: 'Find real-time live bays across all Gujarat cities & expressways.'
     },
     {
       title: 'VoltGrid Wallet Quick Access',
       text: 'Click on wallet button in the map screen to access your wallet',
-      subtext: 'Check live balance, download GST invoices, and top-up seamlessly.',
-      highlight: 'wallet-button'
+      subtext: 'Check live balance, download GST invoices, and top-up seamlessly.'
     },
     {
       title: 'Effortless Top-Up',
       text: 'Top up your wallet through your preferred payment method',
-      subtext: 'Instant UPI (GPay, PhonePe, Paytm), Cards & Netbanking.',
-      highlight: 'wallet-topup'
+      subtext: 'Instant UPI (GPay, PhonePe, Paytm), Cards & Netbanking.'
     },
     {
       title: 'Fast QR Scan to Charge',
       text: 'Tap on the Scan button to quickly start charging at a VoltGrid Charging Station',
-      subtext: 'Plug into your EV and scan the connector gun QR code to initiate high-speed DC charging.',
-      highlight: 'scan-button'
+      subtext: 'Plug into your EV and scan the connector gun QR code to initiate high-speed DC charging.'
     },
     {
       title: 'Station Info & Port Availability',
       text: 'Or tap on any of the map pin to access that charging station',
-      subtext: 'Inspect live kW telemetry, pricing rates, amenities, and turn-by-turn navigation.',
-      highlight: 'map-pin'
+      subtext: 'Inspect live kW telemetry, pricing rates, amenities, and turn-by-turn navigation.'
     },
     {
       title: 'Intelligent Trip Planner',
       text: 'Tap on trip planner to pre-plan your charging stops for a long drive',
-      subtext: 'Calculate charging pit-stops along NE-1, NH-48, and Saurashtra coastal corridors.',
-      highlight: 'trip-planner'
+      subtext: 'Calculate charging pit-stops along NE-1, NH-48, and Saurashtra coastal corridors.'
     }
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-start p-2 sm:p-6 font-sans selection:bg-red-600 selection:text-white">
+    <div className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-start p-1 sm:p-4 font-sans selection:bg-red-600 selection:text-white">
       {/* Top Banner & Control Bar */}
-      <header className="w-full max-w-5xl flex flex-wrap items-center justify-between gap-4 py-3 px-4 bg-zinc-900/90 border border-zinc-800 rounded-3xl mb-4 backdrop-blur-md shadow-xl">
+      <header className="w-full max-w-5xl flex flex-wrap items-center justify-between gap-3 py-2.5 px-4 bg-zinc-900/90 border border-zinc-800 rounded-2xl mb-3 backdrop-blur-md shadow-xl">
         <div className="flex items-center gap-3">
           <Link
             to="/"
-            className="flex items-center gap-2 text-white hover:text-red-500 transition-colors font-bold text-sm"
+            className="flex items-center gap-1.5 text-zinc-300 hover:text-white transition-colors font-bold text-xs"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Portal</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Home</span>
           </Link>
-          <span className="text-zinc-600">|</span>
+          <span className="text-zinc-700">|</span>
           <div className="flex items-center gap-2">
-            <span className="text-red-500 font-black italic tracking-tighter text-lg">⚡ VOLTGRID</span>
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-red-600/20 text-red-400 font-mono font-bold border border-red-600/30">
-              MOBILE APP
+            <span className="text-red-500 font-black italic tracking-tighter text-base">⚡ VOLTGRID</span>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-600/20 text-red-400 font-mono font-bold border border-red-600/30">
+              APP
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          {/* Mode switch (Framed Phone vs Full Screen) */}
+        {/* View mode toggle (Live Map vs Onboarding Tutorial) */}
+        <div className="flex items-center gap-2">
+          <div className="bg-zinc-800 p-1 rounded-xl flex items-center gap-1 border border-zinc-700">
+            <button
+              onClick={() => setAppView('map')}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                appView === 'map' ? 'bg-red-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              🗺️ Live Map
+            </button>
+            <button
+              onClick={() => setAppView('tutorial')}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                appView === 'tutorial' ? 'bg-red-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              📱 Tutorial
+            </button>
+          </div>
+
+          {/* Desktop device mode switch (Framed Phone vs Full Viewport) */}
           <button
             onClick={() => setDeviceMode(deviceMode === 'phone' ? 'fullscreen' : 'phone')}
-            className="px-3.5 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold flex items-center gap-2 border border-zinc-700 transition-all text-zinc-200"
-            title="Toggle between phone mockup and full viewport"
+            className="hidden sm:flex px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold items-center gap-1.5 border border-zinc-700 text-zinc-300 transition-all"
+            title="Toggle between phone mockup frame and full viewport"
           >
             {deviceMode === 'phone' ? <Maximize2 className="w-3.5 h-3.5" /> : <Minimize2 className="w-3.5 h-3.5" />}
-            <span>{deviceMode === 'phone' ? 'Full Viewport' : 'Phone Frame'}</span>
+            <span>{deviceMode === 'phone' ? 'Full' : 'Frame'}</span>
           </button>
 
-          {/* Direct Android APK Download Button */}
+          {/* Direct Valid Android APK Download Button */}
           <a
             href="/downloads/voltgrid.apk"
             download="voltgrid.apk"
-            className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold flex items-center gap-2 shadow-lg shadow-red-600/30 transition-all hover:scale-105"
+            className="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-red-600/30 transition-transform active:scale-95"
+            title="Download verified signed Android APK"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Download Android APK</span>
+            <span>Download APK (1.6 MB)</span>
           </a>
+
+          {/* PWA Phone Install Button */}
+          <button
+            onClick={handleInstallApp}
+            className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold flex items-center gap-1.5 border border-zinc-700"
+            title="Install as Progressive Web App on Phone"
+          >
+            <Smartphone className="w-3.5 h-3.5 text-red-500" />
+            <span className="hidden sm:inline">Install on Phone</span>
+          </button>
         </div>
       </header>
 
-      {/* Main Container */}
+      {/* Main App Container */}
       <div
-        className={`relative transition-all duration-300 ${
+        className={`relative transition-all duration-300 w-full ${
           deviceMode === 'phone'
-            ? 'w-full max-w-[410px] h-[840px] rounded-[52px] border-[8px] border-zinc-800 shadow-2xl bg-white text-zinc-900 overflow-hidden flex flex-col ring-1 ring-zinc-700/50'
-            : 'w-full max-w-4xl h-[86vh] rounded-3xl border border-zinc-800 shadow-2xl bg-white text-zinc-900 overflow-hidden flex flex-col'
+            ? 'max-w-[420px] h-[840px] rounded-[52px] border-[8px] border-zinc-800 shadow-2xl bg-white text-zinc-900 overflow-hidden flex flex-col ring-1 ring-zinc-700/50'
+            : 'max-w-5xl h-[88vh] rounded-3xl border border-zinc-800 shadow-2xl bg-white text-zinc-900 overflow-hidden flex flex-col'
         }`}
       >
-        {/* Phone Speaker Notch / Dynamic Island */}
+        {/* Dynamic Island Notch on Phone Frame */}
         {deviceMode === 'phone' && (
           <div className="absolute top-2 left-1/2 -translate-x-1/2 z-50 w-28 h-5 bg-black rounded-full flex items-center justify-between px-3">
             <div className="w-2.5 h-2.5 rounded-full bg-zinc-900"></div>
@@ -447,16 +531,16 @@ export default function MobileAppView() {
           </div>
         )}
 
-        {/* 1. ONBOARDING WALKTHROUGH FLOW (Matches Screenshot 6, 7, 8, 9, 10, 11) */}
-        {onboardingStep < 6 ? (
+        {/* 1. ONBOARDING TUTORIAL VIEW */}
+        {appView === 'tutorial' ? (
           <div className="w-full h-full bg-gradient-to-b from-[#D30C15] via-[#C00A13] to-[#99060E] text-white flex flex-col justify-between p-6 relative overflow-hidden select-none">
-            {/* Background subtle curved arches */}
+            {/* Background arches */}
             <div className="absolute inset-0 pointer-events-none opacity-20">
               <div className="w-[600px] h-[600px] rounded-full border-[40px] border-white/20 -top-40 -left-20 absolute"></div>
               <div className="w-[500px] h-[500px] rounded-full border-[30px] border-white/10 -bottom-40 -right-20 absolute"></div>
             </div>
 
-            {/* Onboarding Header */}
+            {/* Header */}
             <div className="relative z-10 flex items-center justify-between pt-4">
               {onboardingStep > 0 ? (
                 <button
@@ -471,25 +555,22 @@ export default function MobileAppView() {
               )}
 
               <button
-                onClick={() => setOnboardingStep(6)}
+                onClick={() => setAppView('map')}
                 className="text-white/90 hover:text-white text-sm font-bold flex items-center gap-1 transition-transform active:scale-95"
               >
-                <span>Skip</span>
+                <span>Skip to Map</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Realistic Phone Frame inside Walkthrough (Matching Screenshot Visuals) */}
+            {/* Device preview */}
             <div className="relative z-10 flex-1 flex items-center justify-center my-4">
-              <div className="w-60 h-[380px] bg-zinc-900 rounded-[38px] p-2.5 border-[4px] border-zinc-950 shadow-2xl relative overflow-hidden flex flex-col justify-between">
-                {/* Miniature Notch */}
+              <div className="w-64 h-[390px] bg-zinc-900 rounded-[38px] p-2.5 border-[4px] border-zinc-950 shadow-2xl relative overflow-hidden flex flex-col justify-between">
                 <div className="w-20 h-3 bg-black rounded-full mx-auto mb-2 flex items-center justify-center">
                   <div className="w-2 h-2 rounded-full bg-zinc-900"></div>
                 </div>
 
-                {/* Inner Mock Screen based on current onboarding step */}
-                <div className="flex-1 bg-zinc-100 rounded-[28px] p-2.5 flex flex-col justify-between relative overflow-hidden text-zinc-900">
-                  {/* Top search & trip pill */}
+                <div className="flex-1 bg-zinc-100 rounded-[28px] p-3 flex flex-col justify-between relative overflow-hidden text-zinc-900">
                   <div className="space-y-1.5">
                     <div
                       className={`flex items-center justify-between bg-white rounded-full px-3 py-1.5 shadow-sm border ${
@@ -513,7 +594,6 @@ export default function MobileAppView() {
                       </div>
                     </div>
 
-                    {/* Floating Wallet pill */}
                     <div className="flex justify-end">
                       <div
                         className={`flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border shadow-sm ${
@@ -530,18 +610,15 @@ export default function MobileAppView() {
                     </div>
                   </div>
 
-                  {/* Center Content based on slide */}
                   {onboardingStep === 2 ? (
-                    /* Slide 3: Wallet Preview */
-                    <div className="bg-red-600 rounded-2xl p-3 text-white text-center shadow-md animate-in fade-in">
+                    <div className="bg-red-600 rounded-2xl p-4 text-white text-center shadow-md animate-in fade-in">
                       <span className="text-[8px] text-red-200 uppercase font-mono block">Current balance</span>
-                      <span className="text-xl font-black block">₹ 1000.00</span>
-                      <div className="mt-2 bg-white text-red-600 text-[9px] font-bold py-1 px-3 rounded-full inline-block shadow-sm">
+                      <span className="text-2xl font-black block">₹ 1000.00</span>
+                      <div className="mt-2 bg-white text-red-600 text-[10px] font-bold py-1 px-3 rounded-full inline-block shadow-sm">
                         Add Money
                       </div>
                     </div>
                   ) : (
-                    /* Map Pins Preview */
                     <div className="relative flex-1 flex items-center justify-center">
                       <div className="text-center">
                         <div
@@ -553,15 +630,14 @@ export default function MobileAppView() {
                         >
                           <Zap className="w-6 h-6 fill-current" />
                         </div>
-                        <span className="text-[10px] font-black text-red-600 block mt-2">
+                        <span className="text-[11px] font-black text-red-600 block mt-2">
                           Ahmedabad HyperHub
                         </span>
-                        <span className="text-[8px] text-zinc-500 block">120 kW • Available</span>
+                        <span className="text-[9px] text-zinc-500 block">120 kW • Available</span>
                       </div>
                     </div>
                   )}
 
-                  {/* Miniature Bottom Tab Bar */}
                   <div className="flex items-center justify-between bg-white rounded-full px-2 py-1 shadow-sm border border-zinc-200 text-[8px] text-zinc-500">
                     <span className="text-red-600 font-bold">Map</span>
                     <span>My EVs</span>
@@ -581,7 +657,7 @@ export default function MobileAppView() {
               </div>
             </div>
 
-            {/* Slide Text Content */}
+            {/* Text description */}
             <div className="relative z-10 text-center space-y-2 px-2">
               <h2 className="text-lg sm:text-xl font-bold leading-snug">
                 {onboardingSlides[onboardingStep].text}
@@ -591,7 +667,7 @@ export default function MobileAppView() {
               </p>
             </div>
 
-            {/* 6 Dots Pagination */}
+            {/* Pagination dots */}
             <div className="relative z-10 flex items-center justify-center gap-2 my-3">
               {onboardingSlides.map((_, idx) => (
                 <button
@@ -604,17 +680,17 @@ export default function MobileAppView() {
               ))}
             </div>
 
-            {/* Bottom Action Button */}
+            {/* Action button */}
             <div className="relative z-10 pt-2">
               {onboardingStep === 5 ? (
                 <button
-                  onClick={() => setOnboardingStep(6)}
+                  onClick={() => setAppView('map')}
                   className="w-full py-3.5 bg-white hover:bg-zinc-100 text-[#D30C15] font-black text-sm rounded-full shadow-2xl flex items-center justify-center gap-2 transition-transform active:scale-95"
                 >
                   <div className="w-5 h-5 rounded-full bg-[#D30C15] text-white flex items-center justify-center text-xs">
                     ⚡
                   </div>
-                  <span>Get Started</span>
+                  <span>Get Started & Open Map</span>
                 </button>
               ) : (
                 <button
@@ -628,13 +704,11 @@ export default function MobileAppView() {
             </div>
           </div>
         ) : (
-          /* 2. MAIN APPLICATION INTERACTIVE VIEW (Matches Screenshot 2, 3, 4, 5) */
+          /* 2. MAIN LIVE APPLICATION INTERACTIVE VIEW */
           <div className="w-full h-full flex flex-col justify-between relative bg-zinc-100 overflow-hidden">
             {/* Top Bar with Search & Plan a Trip & Floating Wallet */}
             <div className="absolute top-4 left-3 right-3 z-30 space-y-2 pointer-events-none">
-              {/* Search & Trip Pill */}
               <div className="pointer-events-auto bg-white rounded-full shadow-lg border border-zinc-200/90 flex items-center p-1.5 transition-all">
-                {/* Search side */}
                 <div className="flex-1 flex items-center gap-2 px-3">
                   <Search className="w-4 h-4 text-zinc-400" />
                   <input
@@ -653,7 +727,6 @@ export default function MobileAppView() {
 
                 <div className="w-px h-5 bg-zinc-200"></div>
 
-                {/* Plan a trip side */}
                 <button
                   onClick={() => setShowTripModal(true)}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-zinc-700 hover:text-red-600 transition-colors whitespace-nowrap"
@@ -663,7 +736,7 @@ export default function MobileAppView() {
                 </button>
               </div>
 
-              {/* Top Floating Wallet Pill (Matches Screenshot 2, 4, 5) */}
+              {/* Floating Wallet Pill */}
               <div className="flex justify-end pointer-events-auto">
                 <button
                   onClick={() => setShowWalletModal(true)}
@@ -679,12 +752,14 @@ export default function MobileAppView() {
 
             {/* Interactive Leaflet Map Canvas */}
             <div className="w-full h-full relative z-10 flex-1">
-              <div ref={mapContainerRef} className="w-full h-full bg-[#f0f3f4]" />
+              <div
+                ref={mapContainerRef}
+                style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}
+                className="bg-[#f0f3f4]"
+              />
 
-              {/* 4 Floating Action Buttons over Map (Matches Screenshots 2 & 5) */}
-              {/* Left Action Buttons */}
-              <div className="absolute bottom-60 left-3 z-20 flex flex-col gap-2.5">
-                {/* Layer toggle button */}
+              {/* Left Action Buttons (Layer & Refresh) */}
+              <div className="absolute bottom-64 left-3 z-20 flex flex-col gap-2.5">
                 <button
                   onClick={() => setMapType(mapType === 'streets' ? 'satellite' : 'streets')}
                   title="Toggle Satellite / Streets"
@@ -693,7 +768,6 @@ export default function MobileAppView() {
                   <Layers className={`w-5 h-5 ${mapType === 'satellite' ? 'text-red-600' : 'text-zinc-700'}`} />
                 </button>
 
-                {/* Refresh button */}
                 <button
                   onClick={handleRefresh}
                   title="Refresh station telemetry"
@@ -703,9 +777,8 @@ export default function MobileAppView() {
                 </button>
               </div>
 
-              {/* Right Action Buttons */}
-              <div className="absolute bottom-60 right-3 z-20 flex flex-col gap-2.5">
-                {/* GPS Locate button */}
+              {/* Right Action Buttons (Locate GPS & Filter) */}
+              <div className="absolute bottom-64 right-3 z-20 flex flex-col gap-2.5">
                 <button
                   onClick={handleLocateMe}
                   title="Center on Gujarat"
@@ -714,7 +787,6 @@ export default function MobileAppView() {
                   <Navigation className="w-5 h-5 text-zinc-700" />
                 </button>
 
-                {/* Filter Funnel button */}
                 <button
                   onClick={() => setShowFilterSheet(true)}
                   title="Open Filters"
@@ -724,10 +796,9 @@ export default function MobileAppView() {
                 </button>
               </div>
 
-              {/* Station Details Bottom Popup Card (Matches Screenshot 3) */}
+              {/* Station Details Bottom Popup Card (Photo 3) */}
               {selectedStation && (
                 <div className="absolute bottom-16 left-3 right-3 z-20 bg-white rounded-3xl p-4 shadow-2xl border border-zinc-200/90 animate-in slide-in-from-bottom duration-200">
-                  {/* Top Public Badge & Favorite Heart */}
                   <div className="flex items-center justify-between mb-2">
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-emerald-500 text-emerald-600 text-[10px] font-bold">
                       <Info className="w-2.5 h-2.5" />
@@ -748,7 +819,6 @@ export default function MobileAppView() {
                     </button>
                   </div>
 
-                  {/* Station Name & Brand */}
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <h3 className="font-extrabold text-sm text-zinc-900 leading-tight">
@@ -785,7 +855,7 @@ export default function MobileAppView() {
                     ))}
                   </div>
 
-                  {/* Details & Directions Action Buttons (Matches Screenshot 3) */}
+                  {/* Details & Directions Action Buttons */}
                   <div className="mt-3 flex items-center gap-2 pt-2 border-t border-zinc-100">
                     <button
                       onClick={() =>
@@ -811,9 +881,8 @@ export default function MobileAppView() {
               )}
             </div>
 
-            {/* Bottom Navigation Bar (Matches Screenshot 2, 3, 4) */}
+            {/* Bottom Navigation Bar */}
             <div className="relative z-30 bg-white border-t border-zinc-200 px-3 py-2 flex items-center justify-between shadow-lg">
-              {/* Map Tab */}
               <button
                 onClick={() => handleTabClick('Map')}
                 className={`flex-1 flex flex-col items-center gap-0.5 text-[10px] font-bold transition-colors ${
@@ -824,7 +893,6 @@ export default function MobileAppView() {
                 <span>Map</span>
               </button>
 
-              {/* My EVs Tab */}
               <button
                 onClick={() => handleTabClick('MyEVs')}
                 className={`flex-1 flex flex-col items-center gap-0.5 text-[10px] font-bold transition-colors ${
@@ -835,7 +903,6 @@ export default function MobileAppView() {
                 <span>My EVs</span>
               </button>
 
-              {/* Elevated Central Red Circular Scan Button */}
               <div className="flex-1 flex flex-col items-center -mt-6">
                 <button
                   onClick={() => handleTabClick('Scan')}
@@ -846,7 +913,6 @@ export default function MobileAppView() {
                 <span className="text-[10px] font-bold text-zinc-600 mt-0.5">Scan</span>
               </div>
 
-              {/* Favourites Tab */}
               <button
                 onClick={() => handleTabClick('Favourites')}
                 className={`flex-1 flex flex-col items-center gap-0.5 text-[10px] font-bold transition-colors ${
@@ -857,7 +923,6 @@ export default function MobileAppView() {
                 <span>Favourites</span>
               </button>
 
-              {/* More Tab */}
               <button
                 onClick={() => handleTabClick('More')}
                 className={`flex-1 flex flex-col items-center gap-0.5 text-[10px] font-bold transition-colors ${
@@ -871,49 +936,99 @@ export default function MobileAppView() {
           </div>
         )}
 
-        {/* 3. AUTHENTICATION BOTTOM SHEET (Phone Number & OTP - Crucial User Requirement) */}
+        {/* 3. AUTHENTICATION BOTTOM SHEET (Matches Photo with Phone, Email & Vehicle Registration) */}
         {showAuthSheet && (
           <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end animate-in fade-in duration-150">
-            <div className="w-full bg-white rounded-t-[32px] p-6 shadow-2xl space-y-4 max-h-[90%] overflow-y-auto">
-              <div className="w-12 h-1.5 bg-zinc-300 rounded-full mx-auto mb-2"></div>
+            <div className="w-full bg-white rounded-t-[32px] p-6 shadow-2xl space-y-4 max-h-[92%] overflow-y-auto text-zinc-900">
+              <div className="w-12 h-1.5 bg-zinc-300 rounded-full mx-auto mb-1"></div>
 
               {authStep === 1 ? (
-                /* Step 1: Mobile Number Input */
-                <form onSubmit={handleSendOtp} className="space-y-4">
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-black text-zinc-900">Login / Register</h3>
-                    <p className="text-xs text-zinc-500">
-                      Enter your mobile number to access <span className="font-bold text-red-600">My EVs</span> and{' '}
-                      <span className="font-bold text-red-600">Favourites</span>.
+                /* Step 1: Phone Number, Email & Vehicle Reg Number */
+                <form onSubmit={handleSendOtp} className="space-y-3.5">
+                  <div className="text-center pb-1">
+                    <span className="text-xl font-black italic tracking-tighter text-red-600 font-heading">
+                      ⚡ VOLTGRID
+                    </span>
+                    <h3 className="text-base font-bold text-zinc-900 mt-1">Login / Register to VoltGrid</h3>
+                    <p className="text-[11px] text-zinc-500">
+                      Required to access My EVs, Favourites, and seamless AutoCharge.
                     </p>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-zinc-700 uppercase font-mono">Mobile Number</label>
-                    <div className="flex items-center border-2 border-zinc-200 focus-within:border-red-600 rounded-2xl px-3 py-2.5 transition-all">
-                      <span className="text-sm font-bold text-zinc-800 pr-2 border-r border-zinc-200">+91</span>
+                  {/* Phone Number */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-zinc-700">Phone Number</label>
+                    <div className="flex items-center border border-zinc-300 focus-within:border-red-600 rounded-xl px-3 py-2 bg-zinc-50/50">
+                      <span className="text-xs font-bold text-zinc-700 pr-2 border-r border-zinc-300">🇮🇳 +91</span>
                       <input
                         type="tel"
                         maxLength={10}
-                        autoFocus
+                        required
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                        placeholder="Enter 10 digit number"
-                        className="flex-1 pl-3 text-sm font-bold text-zinc-900 outline-none placeholder:text-zinc-400 placeholder:font-normal"
+                        placeholder="Phone Number (e.g. 9876543210)"
+                        className="flex-1 pl-3 text-xs font-bold text-zinc-900 outline-none bg-transparent"
                       />
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-2 pt-1 text-[11px] text-zinc-500">
-                    <input type="checkbox" defaultChecked required className="mt-0.5 accent-red-600" />
-                    <span>
-                      I agree to VoltGrid's Terms of Service and Privacy Policy for charging and wallet usage.
-                    </span>
+                  {/* Email Address */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-zinc-700">Email Address</label>
+                    <div className="flex items-center border border-zinc-300 focus-within:border-red-600 rounded-xl px-3 py-2 bg-zinc-50/50">
+                      <Mail className="w-3.5 h-3.5 text-zinc-400 mr-2" />
+                      <input
+                        type="email"
+                        value={emailAddress}
+                        onChange={(e) => setEmailAddress(e.target.value)}
+                        placeholder="Enter your mail ID"
+                        className="flex-1 text-xs text-zinc-900 outline-none bg-transparent"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Vehicle Registration Number (Matches photo boxes TN 12 AB 1102 / GJ 01 EV 4421) */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold text-zinc-700">Vehicle Registration Number</label>
+                    <div className="grid grid-cols-4 gap-2">
+                      <input
+                        type="text"
+                        maxLength={2}
+                        value={regPart1}
+                        onChange={(e) => setRegPart1(e.target.value.toUpperCase())}
+                        placeholder="GJ"
+                        className="text-center font-mono font-bold text-xs uppercase border border-zinc-300 focus:border-red-600 rounded-xl py-2 bg-zinc-50/50 outline-none"
+                      />
+                      <input
+                        type="text"
+                        maxLength={2}
+                        value={regPart2}
+                        onChange={(e) => setRegPart2(e.target.value)}
+                        placeholder="01"
+                        className="text-center font-mono font-bold text-xs border border-zinc-300 focus:border-red-600 rounded-xl py-2 bg-zinc-50/50 outline-none"
+                      />
+                      <input
+                        type="text"
+                        maxLength={3}
+                        value={regPart3}
+                        onChange={(e) => setRegPart3(e.target.value.toUpperCase())}
+                        placeholder="EV"
+                        className="text-center font-mono font-bold text-xs uppercase border border-zinc-300 focus:border-red-600 rounded-xl py-2 bg-zinc-50/50 outline-none"
+                      />
+                      <input
+                        type="text"
+                        maxLength={4}
+                        value={regPart4}
+                        onChange={(e) => setRegPart4(e.target.value)}
+                        placeholder="4421"
+                        className="text-center font-mono font-bold text-xs border border-zinc-300 focus:border-red-600 rounded-xl py-2 bg-zinc-50/50 outline-none"
+                      />
+                    </div>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm shadow-xl shadow-red-600/30 transition-transform active:scale-95"
+                    className="w-full py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs shadow-lg shadow-red-600/30 transition-transform active:scale-95"
                   >
                     Get OTP
                   </button>
@@ -929,14 +1044,13 @@ export default function MobileAppView() {
               ) : (
                 /* Step 2: OTP Verification */
                 <form onSubmit={handleVerifyOtp} className="space-y-4">
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-black text-zinc-900">Verify OTP</h3>
+                  <div className="text-center space-y-1">
+                    <h3 className="text-lg font-black text-zinc-900">Enter OTP</h3>
                     <p className="text-xs text-zinc-500">
-                      Enter the 6-digit verification code sent to <span className="font-bold text-zinc-800">+91 {phoneNumber}</span>.
+                      OTP sent to <span className="font-bold text-zinc-800">+91 {phoneNumber || '9326703345'}</span>
                     </p>
                   </div>
 
-                  {/* 6 Digit Boxes */}
                   <div className="flex items-center justify-between gap-1.5 py-2">
                     {otp.map((digit, idx) => (
                       <input
@@ -964,14 +1078,14 @@ export default function MobileAppView() {
                       onClick={handleAutoFillOtp}
                       className="text-red-600 font-bold underline cursor-pointer"
                     >
-                      Auto-fill Demo Code (849210)
+                      Auto-fill Demo Code (932670)
                     </button>
-                    <span>Resend OTP in 24s</span>
+                    <span>Resend in 24s</span>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm shadow-xl shadow-red-600/30 transition-transform active:scale-95"
+                    className="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs shadow-xl shadow-red-600/30 transition-transform active:scale-95"
                   >
                     Verify & Continue
                   </button>
@@ -989,13 +1103,12 @@ export default function MobileAppView() {
           </div>
         )}
 
-        {/* 4. FILTER BOTTOM DRAWER (Matches Screenshot 1) */}
+        {/* 4. FILTER BOTTOM DRAWER (Photo 1) */}
         {showFilterSheet && (
           <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end animate-in fade-in duration-150">
-            <div className="w-full bg-white rounded-t-[32px] p-5 shadow-2xl space-y-4 max-h-[90%] overflow-y-auto">
+            <div className="w-full bg-white rounded-t-[32px] p-5 shadow-2xl space-y-4 max-h-[90%] overflow-y-auto text-zinc-900">
               <div className="w-12 h-1.5 bg-zinc-300 rounded-full mx-auto"></div>
 
-              {/* Charger Capacity (kW) Slider */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <h4 className="text-sm font-extrabold text-zinc-900">Charger Capacity (kW)</h4>
@@ -1023,7 +1136,6 @@ export default function MobileAppView() {
                 </div>
               </div>
 
-              {/* Charger Type */}
               <div className="space-y-2">
                 <h4 className="text-sm font-extrabold text-zinc-900">Charger Type</h4>
                 <div className="grid grid-cols-2 gap-3">
@@ -1053,16 +1165,13 @@ export default function MobileAppView() {
                 </div>
               </div>
 
-              {/* Connector Type */}
               <div className="space-y-2">
                 <h4 className="text-sm font-extrabold text-zinc-900">Connector Type</h4>
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     onClick={() => setConnectorFilter(connectorFilter === 'CCS2' ? 'ALL' : 'CCS2')}
                     className={`p-3 rounded-2xl border text-center transition-all ${
-                      connectorFilter === 'CCS2'
-                        ? 'border-red-600 bg-red-50'
-                        : 'border-zinc-200 hover:border-zinc-300'
+                      connectorFilter === 'CCS2' ? 'border-red-600 bg-red-50' : 'border-zinc-200 hover:border-zinc-300'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-full border border-zinc-400 mx-auto flex items-center justify-center text-[10px] font-mono font-bold mb-1">
@@ -1074,9 +1183,7 @@ export default function MobileAppView() {
                   <button
                     onClick={() => setConnectorFilter(connectorFilter === 'Type II' ? 'ALL' : 'Type II')}
                     className={`p-3 rounded-2xl border text-center transition-all ${
-                      connectorFilter === 'Type II'
-                        ? 'border-red-600 bg-red-50'
-                        : 'border-zinc-200 hover:border-zinc-300'
+                      connectorFilter === 'Type II' ? 'border-red-600 bg-red-50' : 'border-zinc-200 hover:border-zinc-300'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-full border border-zinc-400 mx-auto flex items-center justify-center text-[10px] font-mono font-bold mb-1">
@@ -1088,9 +1195,7 @@ export default function MobileAppView() {
                   <button
                     onClick={() => setConnectorFilter(connectorFilter === '16A' ? 'ALL' : '16A')}
                     className={`p-3 rounded-2xl border text-center transition-all ${
-                      connectorFilter === '16A'
-                        ? 'border-red-600 bg-red-50'
-                        : 'border-zinc-200 hover:border-zinc-300'
+                      connectorFilter === '16A' ? 'border-red-600 bg-red-50' : 'border-zinc-200 hover:border-zinc-300'
                     }`}
                   >
                     <div className="w-8 h-8 rounded-full border border-zinc-400 mx-auto flex items-center justify-center text-[10px] font-mono font-bold mb-1">
@@ -1101,12 +1206,8 @@ export default function MobileAppView() {
                 </div>
               </div>
 
-              {/* Footer Actions */}
               <div className="flex items-center justify-between pt-2">
-                <button
-                  onClick={handleClearFilters}
-                  className="text-xs font-extrabold text-red-600 hover:underline"
-                >
+                <button onClick={handleClearFilters} className="text-xs font-extrabold text-red-600 hover:underline">
                   Clear Filters
                 </button>
                 <button
@@ -1124,7 +1225,7 @@ export default function MobileAppView() {
         {/* 5. WALLET MODAL */}
         {showWalletModal && (
           <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end animate-in fade-in duration-150">
-            <div className="w-full bg-white rounded-t-[32px] p-5 shadow-2xl space-y-4 max-h-[90%] overflow-y-auto">
+            <div className="w-full bg-white rounded-t-[32px] p-5 shadow-2xl space-y-4 max-h-[90%] overflow-y-auto text-zinc-900">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-black text-zinc-900">My Wallet</h3>
                 <button onClick={() => setShowWalletModal(false)} className="text-zinc-400 hover:text-zinc-600">
@@ -1132,7 +1233,6 @@ export default function MobileAppView() {
                 </button>
               </div>
 
-              {/* Red Wallet Balance Card */}
               <div className="bg-gradient-to-r from-red-600 to-red-700 rounded-3xl p-5 text-white shadow-xl space-y-2">
                 <span className="text-xs text-red-200 font-medium">Current balance</span>
                 <div className="text-3xl font-black tracking-tight">₹ {walletBalance.toFixed(2)}</div>
@@ -1152,7 +1252,6 @@ export default function MobileAppView() {
                 </div>
               </div>
 
-              {/* Transactions List */}
               <div className="space-y-2 pt-2">
                 <h4 className="text-xs font-bold text-zinc-500 uppercase font-mono">Recent Transactions</h4>
                 <div className="divide-y divide-zinc-100">
@@ -1193,7 +1292,6 @@ export default function MobileAppView() {
               </button>
             </div>
 
-            {/* Viewfinder Target */}
             <div className="relative w-64 h-64 mx-auto border-2 border-red-500 rounded-3xl flex items-center justify-center overflow-hidden bg-red-950/10">
               <div className="w-full h-1 bg-red-500 shadow-lg shadow-red-500/80 animate-pulse"></div>
               <span className="absolute bottom-4 text-[10px] text-zinc-400 font-mono">
@@ -1236,7 +1334,6 @@ export default function MobileAppView() {
               </button>
             </div>
 
-            {/* Odometer Battery Visual */}
             <div className="text-center space-y-3">
               <div className="relative w-44 h-44 mx-auto rounded-full border-4 border-zinc-800 flex flex-col items-center justify-center bg-zinc-900/60 shadow-2xl">
                 <span className="text-5xl font-black text-red-500 font-mono">{chargingSoC}%</span>
@@ -1245,15 +1342,15 @@ export default function MobileAppView() {
 
               <div className="grid grid-cols-3 gap-2 text-center pt-2">
                 <div className="p-2.5 rounded-2xl bg-zinc-900 border border-zinc-800">
-                  <span className="text-[9px] text-zinc-500 block">CURRENT POWER</span>
+                  <span className="text-[9px] text-zinc-500 block">POWER</span>
                   <span className="text-xs font-mono font-bold text-white">{chargingKw} kW</span>
                 </div>
                 <div className="p-2.5 rounded-2xl bg-zinc-900 border border-zinc-800">
-                  <span className="text-[9px] text-zinc-500 block">ENERGY DELIVERED</span>
+                  <span className="text-[9px] text-zinc-500 block">ENERGY</span>
                   <span className="text-xs font-mono font-bold text-white">{chargingKwh} kWh</span>
                 </div>
                 <div className="p-2.5 rounded-2xl bg-zinc-900 border border-zinc-800">
-                  <span className="text-[9px] text-zinc-500 block">EST. AMOUNT</span>
+                  <span className="text-[9px] text-zinc-500 block">COST</span>
                   <span className="text-xs font-mono font-bold text-emerald-400">₹{chargingCost}</span>
                 </div>
               </div>
@@ -1274,7 +1371,7 @@ export default function MobileAppView() {
         {/* 8. MY EVS BOTTOM SHEET */}
         {showMyEVsSheet && (
           <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end animate-in fade-in duration-150">
-            <div className="w-full bg-white rounded-t-[32px] p-5 shadow-2xl space-y-4 max-h-[90%] overflow-y-auto">
+            <div className="w-full bg-white rounded-t-[32px] p-5 shadow-2xl space-y-4 max-h-[90%] overflow-y-auto text-zinc-900">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-black text-zinc-900">My EVs</h3>
@@ -1306,7 +1403,7 @@ export default function MobileAppView() {
               ))}
 
               <button
-                onClick={() => alert('Vehicle registration dialog opened. Choose manufacturer: Tata, MG, Mahindra, Hyundai, BYD.')}
+                onClick={() => alert('Vehicle registration dialog. Choose manufacturer: Tata, MG, Mahindra, Hyundai, BYD.')}
                 className="w-full py-3 border-2 border-dashed border-red-600 text-red-600 hover:bg-red-50 rounded-2xl font-bold text-xs"
               >
                 + Add Another Vehicle
@@ -1325,7 +1422,7 @@ export default function MobileAppView() {
         {/* 9. FAVOURITES BOTTOM SHEET */}
         {showFavouritesSheet && (
           <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end animate-in fade-in duration-150">
-            <div className="w-full bg-white rounded-t-[32px] p-5 shadow-2xl space-y-4 max-h-[90%] overflow-y-auto">
+            <div className="w-full bg-white rounded-t-[32px] p-5 shadow-2xl space-y-4 max-h-[90%] overflow-y-auto text-zinc-900">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-black text-zinc-900">Starred Favourites</h3>
@@ -1337,7 +1434,7 @@ export default function MobileAppView() {
               </div>
 
               <div className="space-y-2">
-                {GUJARAT_STATIONS.slice(0, 3).map((st) => (
+                {GUJARAT_STATIONS.slice(0, 4).map((st) => (
                   <div
                     key={st.name}
                     className="p-3 rounded-2xl border border-zinc-200 hover:border-red-500 bg-white shadow-sm flex items-center justify-between"
@@ -1372,7 +1469,7 @@ export default function MobileAppView() {
         {/* 10. PLAN A TRIP MODAL */}
         {showTripModal && (
           <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end animate-in fade-in duration-150">
-            <div className="w-full bg-white rounded-t-[32px] p-5 shadow-2xl space-y-4 max-h-[90%] overflow-y-auto">
+            <div className="w-full bg-white rounded-t-[32px] p-5 shadow-2xl space-y-4 max-h-[90%] overflow-y-auto text-zinc-900">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-black text-zinc-900">Plan a Gujarat EV Trip</h3>
                 <button onClick={() => setShowTripModal(false)} className="text-zinc-400 hover:text-zinc-600">
@@ -1409,7 +1506,7 @@ export default function MobileAppView() {
                 <button
                   onClick={() => {
                     setShowTripModal(false);
-                    alert('Route optimized! Charging waypoints pinned on the map.');
+                    alert('Route calculated! Charging stations pinned along your highway journey.');
                   }}
                   className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-2xl shadow-lg shadow-red-600/30"
                 >
@@ -1423,7 +1520,7 @@ export default function MobileAppView() {
         {/* 11. MORE MENU BOTTOM SHEET */}
         {showMoreMenu && (
           <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end animate-in fade-in duration-150">
-            <div className="w-full bg-white rounded-t-[32px] p-5 shadow-2xl space-y-3 max-h-[90%] overflow-y-auto">
+            <div className="w-full bg-white rounded-t-[32px] p-5 shadow-2xl space-y-3 max-h-[90%] overflow-y-auto text-zinc-900">
               <div className="flex items-center justify-between pb-2 border-b border-zinc-100">
                 <span className="font-black text-sm text-zinc-900">VoltGrid Services & Support</span>
                 <button onClick={() => setShowMoreMenu(false)} className="text-zinc-400 hover:text-zinc-600">
@@ -1446,6 +1543,7 @@ export default function MobileAppView() {
                 <button
                   onClick={() => {
                     setShowMoreMenu(false);
+                    setAppView('tutorial');
                     setOnboardingStep(0);
                   }}
                   className="w-full py-3 flex items-center justify-between text-left hover:text-red-600"
@@ -1461,17 +1559,26 @@ export default function MobileAppView() {
                 >
                   <span className="flex items-center gap-1.5">
                     <Download className="w-4 h-4" />
-                    <span>Download Android APK Package</span>
+                    <span>Download Verified Android APK</span>
                   </span>
                   <span className="text-[10px] font-mono bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-                    v1.0.0
+                    1.6 MB
                   </span>
                 </a>
 
-                <div className="py-3 flex items-center justify-between text-zinc-400 text-[11px]">
-                  <span>VoltGrid Mobile Build</span>
-                  <span>2026.11-PROD</span>
-                </div>
+                <button
+                  onClick={() => {
+                    setShowMoreMenu(false);
+                    handleInstallApp();
+                  }}
+                  className="w-full py-3 flex items-center justify-between text-left text-zinc-800"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <Smartphone className="w-4 h-4 text-red-600" />
+                    <span>Install App on Home Screen (PWA)</span>
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-zinc-400" />
+                </button>
               </div>
 
               <button
@@ -1486,10 +1593,10 @@ export default function MobileAppView() {
       </div>
 
       {/* Helpful Instructions under the Simulator */}
-      <div className="mt-4 text-center max-w-xl text-zinc-400 text-xs space-y-1">
+      <div className="mt-3 text-center max-w-xl text-zinc-400 text-xs space-y-1">
         <p>
-          <strong className="text-white">VoltGrid Mobile Web App:</strong> Matches the Zeon Charging design language
-          pixel-for-pixel with all real Gujarat stations. Tapping <strong>My EVs</strong> or <strong>Favourites</strong> triggers the Phone & OTP login flow.
+          <strong className="text-white">VoltGrid Mobile:</strong> Real Gujarat Leaflet map with 34 active stations.
+          Use <strong>Download APK (1.6 MB)</strong> to install on Android, or <strong>Install on Phone</strong> to add to Home Screen directly from your browser!
         </p>
       </div>
     </div>
