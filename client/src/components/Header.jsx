@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Zap, Car, MapPin, Gauge, Store, Shield, LogIn, LogOut, User } from 'lucide-react';
+import { Zap, Car, MapPin, Gauge, Store, Shield, LogIn, LogOut, User, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function Header({ totalPorts, availablePorts }) {
@@ -13,43 +13,43 @@ export default function Header({ totalPorts, availablePorts }) {
   };
 
   const navClass = ({ isActive }) =>
-    `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+    `flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all ${
       isActive
-        ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/30'
-        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+        ? 'bg-red-600 text-white shadow-md shadow-red-600/30 font-bold'
+        : 'text-zinc-300 hover:text-white hover:bg-zinc-800/80'
     }`;
 
   return (
-    <header className="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-40">
+    <header className="border-b border-zinc-800 bg-black/95 text-white backdrop-blur sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand */}
-        <Link to="/" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-0.5 shadow-md shadow-emerald-500/20">
-            <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-              <Zap className="w-4 h-4 text-emerald-400" />
+        {/* Brand: Zeon Charging */}
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-red-600 to-rose-500 p-0.5 shadow-lg shadow-red-600/30 group-hover:scale-105 transition-transform">
+            <div className="w-full h-full bg-black rounded-[10px] flex items-center justify-center">
+              <Zap className="w-4 h-4 text-red-500 fill-current" />
             </div>
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-base tracking-wider text-slate-900 dark:text-white font-heading">
-                VOLT<span className="text-emerald-500">GRID</span>
+              <span className="font-black text-lg tracking-wider text-white font-heading">
+                ZEON<span className="text-red-500 font-extrabold ml-1">CHARGING</span>
               </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 font-bold border border-emerald-300 dark:border-emerald-800">
-                GUJARAT
+              <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-red-950/80 text-red-400 font-bold border border-red-800/80">
+                NETWORK
               </span>
             </div>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 hidden sm:block">
-              Statewide EV Supergrid & Charging Network
+            <p className="text-[10px] text-zinc-400 hidden sm:block font-medium">
+              India's Most Reliable EV Fast Charging Network
             </p>
           </div>
         </Link>
 
         {/* Live Port Stats */}
         {totalPorts !== undefined && availablePorts !== undefined && (
-          <div className="hidden lg:flex items-center gap-2 text-xs font-mono bg-slate-100 dark:bg-slate-800/80 px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span className="text-slate-500 dark:text-slate-400">Live Ports:</span>
-            <span className="font-bold text-emerald-600 dark:text-emerald-400">
+          <div className="hidden lg:flex items-center gap-2 text-xs font-mono bg-zinc-900/90 px-3 py-1 rounded-lg border border-zinc-800">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+            <span className="text-zinc-400">Live Bays:</span>
+            <span className="font-bold text-red-400">
               {availablePorts} / {totalPorts} Available
             </span>
           </div>
@@ -57,17 +57,17 @@ export default function Header({ totalPorts, availablePorts }) {
 
         {/* Navigation Links */}
         <nav className="flex items-center gap-1">
-          {/* Show vehicle name only when user is logged in; hide if no user is logged in */}
+          {/* Show vehicle name only when user is logged in */}
           {isAuthenticated && (
             <NavLink to="/" end className={navClass}>
-              <Car className="w-3.5 h-3.5" />
+              <Car className="w-3.5 h-3.5 text-red-400" />
               <span className="hidden sm:inline">{user?.car || user?.vehicleModel || 'My EV'}</span>
             </NavLink>
           )}
 
           <NavLink to="/hubs" className={navClass}>
             <MapPin className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Hubs</span>
+            <span>Locations</span>
           </NavLink>
 
           <NavLink to="/simulator" className={navClass}>
@@ -75,18 +75,18 @@ export default function Header({ totalPorts, availablePorts }) {
             <span className="hidden md:inline">Simulator</span>
           </NavLink>
 
-          {/* Show CPO Vendor only when logged out, or if logged in as a vendor */}
+          {/* Host a Charger (CPO Vendor Portal) */}
           {(!isAuthenticated || user?.role === 'vendor') && (
             <NavLink
               to={isAuthenticated && user?.role === 'vendor' ? '/vendor' : '/vendor/login'}
               className={navClass}
             >
               <Store className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">CPO Vendor</span>
+              <span className="hidden md:inline">Host a Charger</span>
             </NavLink>
           )}
 
-          {/* Show Admin only when logged out, or if logged in as an admin */}
+          {/* Admin Portal */}
           {(!isAuthenticated || user?.role === 'admin') && (
             <NavLink
               to={isAuthenticated && user?.role === 'admin' ? '/admin' : '/admin/login'}
@@ -98,26 +98,26 @@ export default function Header({ totalPorts, availablePorts }) {
           )}
 
           {/* User profile / Auth buttons */}
-          <div className="ml-2 pl-2 border-l border-slate-200 dark:border-slate-800 flex items-center gap-2">
+          <div className="ml-2 pl-2 border-l border-zinc-800 flex items-center gap-2">
             {isAuthenticated ? (
               <div className="flex items-center gap-2">
                 <Link
                   to="/profile"
                   title="View Profile & Bookings"
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs transition-all cursor-pointer border border-transparent hover:border-emerald-500/30"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-xs transition-all cursor-pointer border border-zinc-700 hover:border-red-500/40 text-white"
                 >
-                  <User className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span className="font-bold text-slate-800 dark:text-slate-200 max-w-[100px] truncate">
+                  <User className="w-3.5 h-3.5 text-red-400" />
+                  <span className="font-bold text-zinc-200 max-w-[100px] truncate">
                     {user?.name?.split(' ')[0] || 'User'}
                   </span>
-                  <span className="text-[10px] uppercase font-mono px-1 py-0.2 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold">
+                  <span className="text-[10px] uppercase font-mono px-1 py-0.2 rounded bg-zinc-800 text-red-300 font-bold border border-red-900/50">
                     {user?.role}
                   </span>
                 </Link>
                 <button
                   onClick={handleLogout}
                   title="Sign out"
-                  className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all cursor-pointer"
+                  className="p-1.5 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-red-950/30 transition-all cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
@@ -125,10 +125,10 @@ export default function Header({ totalPorts, availablePorts }) {
             ) : (
               <Link
                 to="/login"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-sm transition-all"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white shadow-md shadow-red-600/30 transition-all hover:scale-105 active:scale-95"
               >
                 <LogIn className="w-3.5 h-3.5" />
-                <span>Sign In</span>
+                <span>Driver Sign In</span>
               </Link>
             )}
           </div>

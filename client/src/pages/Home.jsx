@@ -22,6 +22,7 @@ import { getTelematics } from '../api/telematics';
 import { VEHICLE_PRESETS } from '../constants/vehicles';
 import { formatRupee } from '../lib/format';
 import { useAuth } from '../context/AuthContext';
+import { Zap, ShieldCheck, Clock, MapPin, Building, ChevronRight, CheckCircle2, Award, Sparkles } from 'lucide-react';
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -160,7 +161,7 @@ export default function Home() {
         energyKwh: finalData.energyKwh || 22.4,
         meterStop: finalData.energyKwh || 22.4
       });
-      setLastCompletedStation(currentStation?.name || 'Gujarat Supergrid Hub');
+      setLastCompletedStation(currentStation?.name || 'Zeon Fast Charging Hub');
       setLastBookingId(liveSession?.bookingId || null);
       setLiveSession(null);
       setCompletedInvoice(invoiceData.booking || invoiceData);
@@ -171,46 +172,59 @@ export default function Home() {
     }
   };
 
+  // Port stats for header
+  const totalPortsCount = stations.reduce((acc, st) => acc + (st.ports?.length || 0), 0);
+  const availablePortsCount = stations.reduce(
+    (acc, st) => acc + (st.ports?.filter((p) => p.status === 'available')?.length || 0),
+    0
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-rose-50/30 via-slate-50 to-purple-50/20 dark:from-[#090d16] dark:via-[#090d16] dark:to-[#090d16] text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-200">
+    <div className="min-h-screen bg-black text-zinc-100 flex flex-col font-sans selection:bg-red-600 selection:text-white transition-colors duration-200">
       {/* Top Notice Banner */}
-      <div className="bg-gradient-to-r from-rose-100 via-purple-100 to-sky-100 dark:from-purple-950/70 dark:via-indigo-950/70 dark:to-sky-950/70 text-purple-950 dark:text-purple-200 font-semibold text-xs py-2 px-3 text-center border-b border-purple-200/50 dark:border-purple-800/40">
+      <div className="bg-gradient-to-r from-red-950/90 via-zinc-950 to-red-950/90 text-zinc-200 font-semibold text-xs py-2 px-3 text-center border-b border-red-900/40">
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 flex-wrap">
-          <span>✨ <strong>15-Minute Guaranteed Hold:</strong> Reserve your charger with zero queue & pay ₹0 upfront.</span>
-          <span className="text-[10px] bg-white/70 dark:bg-purple-900/60 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider hidden md:inline">
-            Gujarat Corridor Sandbox
+          <span>⚡ <strong>15-Minute Guaranteed Slot Lock:</strong> Reserve your highway DC bay with zero queue & pay ₹0 upfront.</span>
+          <span className="text-[10px] bg-red-900/60 text-red-200 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider hidden md:inline border border-red-700/50">
+            Zeon Fast Corridor
           </span>
         </div>
       </div>
 
-      <Header />
+      <Header totalPorts={totalPortsCount} availablePorts={availablePortsCount} />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-12">
-        {/* Hero Section */}
-        <div className="relative rounded-3xl bg-gradient-to-br from-purple-900/90 via-slate-900 to-indigo-950 p-6 sm:p-10 text-white overflow-hidden shadow-2xl border border-purple-500/20">
-          <div className="max-w-2xl space-y-4 relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-xs border border-emerald-500/30">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span>Gujarat Statewide Fast EV Highway Network</span>
+        {/* Zeon Hero Section */}
+        <div className="relative rounded-3xl bg-gradient-to-br from-zinc-950 via-black to-[#1a0505] p-6 sm:p-12 text-white overflow-hidden shadow-2xl border border-red-600/30">
+          {/* Ambient red radial gradient */}
+          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-red-600/15 blur-3xl pointer-events-none"></div>
+          <div className="absolute bottom-0 left-1/4 -mb-24 w-80 h-80 rounded-full bg-rose-600/10 blur-3xl pointer-events-none"></div>
+
+          <div className="max-w-2xl space-y-5 relative z-10">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-950/80 text-red-400 font-bold text-xs border border-red-800/80 tracking-wide">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+              <span>INDIA'S MOST RELIABLE EV CHARGING NETWORK</span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-black font-heading tracking-tight leading-tight">
-              Arrive with zero queue. Guarantee your plug with 15-min instant lock.
+
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tight leading-tight">
+              Powering Your Long Drives with <span className="text-red-500">High-Speed</span> EV Charging.
             </h1>
-            <p className="text-sm sm:text-base text-slate-300">
-              Reserve high-power DC fast chargers across Gujarat's highway corridors and city superhubs. Transparent pricing, instant 4-digit PIN activation, and live BMS telematics.
+
+            <p className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-xl">
+              Experience zero wait times with guaranteed 15-minute slot lock, 150kW+ CCS-2 fast chargers, and strategic hubs at premium highway resorts, food courts, and shopping destinations.
             </p>
 
             {/* Quick Car Selector */}
             <div className="pt-2 flex flex-wrap items-center gap-2">
-              <span className="text-xs font-bold text-slate-400">My EV:</span>
+              <span className="text-xs font-bold text-zinc-400">My EV:</span>
               {VEHICLE_PRESETS.slice(0, 4).map((v) => (
                 <button
                   key={v.model}
                   onClick={() => setSelectedVehicle(v)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     selectedVehicle.model === v.model
-                      ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30 scale-105'
-                      : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                      ? 'bg-red-600 text-white shadow-md shadow-red-600/40 scale-105'
+                      : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800'
                   }`}
                 >
                   {v.model}
@@ -218,30 +232,58 @@ export default function Home() {
               ))}
             </div>
 
+            {/* CTAs */}
             <div className="pt-4 flex flex-wrap items-center gap-3">
               <a
                 href="#chargers"
-                className="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 font-bold text-sm text-white shadow-lg shadow-emerald-500/25 transition-all hover:scale-105"
+                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 font-bold text-sm text-white shadow-xl shadow-red-600/30 transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
               >
-                ⚡ Find Charger Nearby
+                <Zap className="w-4 h-4 fill-current" />
+                <span>Find a Charger Nearby</span>
               </a>
+
               <Link
                 to="/hubs"
-                className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/20 backdrop-blur-sm transition-all"
+                className="px-5 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 font-bold text-sm border border-zinc-700 transition-all flex items-center gap-2"
               >
-                🏛️ View All 34 Gujarat Hubs
+                <MapPin className="w-4 h-4 text-red-500" />
+                <span>Explore Network Map</span>
               </Link>
+
+              <Link
+                to="/vendor"
+                className="px-5 py-3.5 rounded-2xl bg-transparent hover:bg-zinc-900 text-zinc-300 hover:text-white font-bold text-sm border border-zinc-800 transition-all flex items-center gap-2"
+              >
+                <Building className="w-4 h-4 text-zinc-400" />
+                <span>Host a Charger</span>
+              </Link>
+            </div>
+
+            {/* Trust Badges */}
+            <div className="pt-4 flex flex-wrap items-center gap-6 text-xs text-zinc-400 font-mono">
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-red-500" />
+                <span>99.4% Uptime</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-red-500" />
+                <span>Up to 350kW DC</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-red-500" />
+                <span>15-Min Bay Lock</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Zeon-Inspired Bold Network Stats Card */}
+        {/* Zeon Charging Network Counter Card (Red Banner) */}
         <NetworkStatsCard />
 
-        {/* Zeon-Inspired Multi-CPO & Location Partners Row */}
+        {/* Zeon Location Partners Ecosystem (Pitch Black Row) */}
         <PartnerLogos />
 
-        {/* Live Active Charging Banner */}
+        {/* Live Active Charging Session Banner */}
         {liveSession && (
           <div id="live-session">
             <ActiveChargingSession
@@ -251,27 +293,89 @@ export default function Home() {
           </div>
         )}
 
+        {/* Why Zeon Fast Charging Network (4 Core Pillars) */}
+        <section className="space-y-6">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-red-500">
+              WHY ZEON CHARGING
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white font-heading">
+              Engineered for Zero Downtime Highway Road Trips
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-400">
+              Fast, reliable, and convenient charging stations placed along high-speed transit corridors and premier destinations.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-2">
+            {/* Pillar 1 */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 space-y-3 hover:border-red-500/50 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-red-950/80 border border-red-800/80 flex items-center justify-center text-red-400 font-bold">
+                <Zap className="w-5 h-5 fill-current" />
+              </div>
+              <h3 className="font-bold text-white text-base">Ultra-Fast High Power DC</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                50kW to 150kW and 350kW multi-gun DC fast chargers providing 20% to 80% charge in under 30 minutes.
+              </p>
+            </div>
+
+            {/* Pillar 2 */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 space-y-3 hover:border-red-500/50 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-red-950/80 border border-red-800/80 flex items-center justify-center text-red-400 font-bold">
+                <Clock className="w-5 h-5" />
+              </div>
+              <h3 className="font-bold text-white text-base">15-Min Guaranteed Slot Hold</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Lock your designated charging bay 15 minutes before arrival. Zero queue anxiety and instant 4-digit PIN activation.
+              </p>
+            </div>
+
+            {/* Pillar 3 */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 space-y-3 hover:border-red-500/50 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-red-950/80 border border-red-800/80 flex items-center justify-center text-red-400 font-bold">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <h3 className="font-bold text-white text-base">AutoCharge & RFID Tap</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Plug in and start charging instantly without opening an app, using configured VIN detection or Zeon RFID keycards.
+              </p>
+            </div>
+
+            {/* Pillar 4 */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-6 space-y-3 hover:border-red-500/50 transition-all duration-300">
+              <div className="w-10 h-10 rounded-xl bg-red-950/80 border border-red-800/80 flex items-center justify-center text-red-400 font-bold">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <h3 className="font-bold text-white text-base">Premium Amenities & Safety</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Located at verified hotels (Radisson, CGH), Nexus malls, and 24x7 highway food courts with dining, cafes, and clean washrooms.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Charger Finder & Dedicated Bays Section */}
-        <div id="chargers" className="space-y-6">
+        <div id="chargers" className="space-y-6 pt-4">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider mb-2">
-                <span>⚡</span> Live Bay Availability
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/80 border border-red-800/60 text-red-400 text-xs font-bold uppercase tracking-wider mb-2">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                <span>Live Bay Availability</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-heading">
-                Nearest SuperHubs & Ports
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-heading">
+                Nearest Zeon Fast Hubs & Dedicated Bays
               </h2>
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-                Select your preferred station and lock a dedicated bay before departure.
+              <p className="text-xs sm:text-sm text-zinc-400 mt-1">
+                Select your preferred station and lock a dedicated bay before departure with guaranteed 15-min PIN hold.
               </p>
             </div>
 
             <div className="flex items-center gap-2">
               <Link
                 to="/hubs"
-                className="px-4 py-2 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-900 dark:bg-purple-950 dark:text-purple-300 font-bold text-xs border border-purple-200 transition-all"
+                className="px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 font-bold text-xs border border-zinc-700 transition-all"
               >
-                Directory Map (34) &rarr;
+                Directory Map &rarr;
               </Link>
             </div>
           </div>
@@ -279,42 +383,42 @@ export default function Home() {
           {/* Station Selector Pill Bar */}
           <StationSelector
             stations={stations}
-            selectedId={selectedStationId}
-            onSelect={handleStationChange}
+            selectedStationId={selectedStationId}
+            onSelectStation={handleStationChange}
           />
 
           {/* Current Station Details & Port Grid */}
           {currentStation ? (
-            <div className="space-y-6 bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-purple-100 dark:border-slate-800 shadow-sm">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
+            <div className="space-y-6 bg-zinc-900 rounded-3xl p-6 sm:p-8 border border-zinc-800 shadow-xl">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-lg">{currentStation.vendorLogo || '⚡'}</span>
-                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-900 dark:bg-purple-950 dark:text-purple-300">
-                      {currentStation.vendorName}
+                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-red-950/80 text-red-400 border border-red-900/60">
+                      {currentStation.vendorName || 'Zeon Network'}
                     </span>
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300">
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300">
                       📍 {currentStation.city}
                     </span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white font-heading">
+                  <h3 className="text-xl sm:text-2xl font-bold text-white font-heading">
                     {currentStation.name}
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-xs text-zinc-400 mt-0.5">
                     {currentStation.location}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-2xl text-center">
-                    <span className="text-base font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                  <div className="bg-zinc-950 p-3 rounded-2xl text-center border border-zinc-800">
+                    <span className="text-base font-bold font-mono text-red-400">
                       {formatRupee(currentStation.pricePerKwh)}/kWh
                     </span>
-                    <span className="text-[10px] text-slate-500 block">Tariff Rate</span>
+                    <span className="text-[10px] text-zinc-500 block">Tariff Rate</span>
                   </div>
                   <Link
                     to={`/hub/${currentStation.id}`}
-                    className="px-4 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs transition-all shadow-md shadow-purple-600/20"
+                    className="px-4 py-3 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition-all shadow-md shadow-red-600/30"
                   >
                     View Hub Details &rarr;
                   </Link>
@@ -329,87 +433,117 @@ export default function Home() {
                       key={port.id}
                       port={port}
                       pricePerKwh={currentStation.pricePerKwh}
-                      onSelect={() => handleSelectPort(port)}
+                      onReserve={() => handleSelectPort(port)}
+                      onStartCharge={() => handleStartCharging('1234')}
                     />
                   ))
                 ) : (
-                  <div className="col-span-full py-8 text-center text-slate-400">
+                  <div className="col-span-full py-8 text-center text-zinc-400">
                     No ports available at this hub.
                   </div>
                 )}
               </div>
             </div>
           ) : (
-            <div className="py-12 text-center text-slate-400">Loading stations...</div>
+            <div className="py-12 text-center text-zinc-400">Loading stations...</div>
           )}
         </div>
 
         {/* Savings Calculator Section */}
         <div id="customer-savings">
-          <SavingsCalculator vehicle={selectedVehicle} />
+          <SavingsCalculator vehicle={selectedVehicle} user={user} />
         </div>
 
         {/* How It Works Section */}
-        <div id="how-it-works" className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-purple-100 dark:border-slate-800 shadow-sm space-y-6">
+        <div id="how-it-works" className="bg-zinc-900 rounded-3xl p-8 border border-zinc-800 shadow-xl space-y-6">
           <div className="text-center max-w-xl mx-auto space-y-2">
-            <span className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider font-mono">
-              Simple 3-Step Process
+            <span className="text-xs font-bold text-red-400 uppercase tracking-wider font-mono">
+              SIMPLE 3-STEP PROCESS
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white font-heading">
-              How VoltGrid Slot Hold Works
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-heading">
+              How Zeon Fast Charging Works
             </h2>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-xs sm:text-sm text-zinc-400">
               Never wait in a queue again. Arrive, enter your instant 4-digit PIN, and plug in.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-            <div className="p-5 rounded-2xl bg-purple-50/50 dark:bg-slate-800/50 border border-purple-100 dark:border-slate-800 space-y-3">
-              <span className="w-10 h-10 rounded-xl bg-purple-600 text-white font-mono font-bold flex items-center justify-center text-lg">
+            <div className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-3">
+              <span className="w-10 h-10 rounded-xl bg-red-600 text-white font-mono font-bold flex items-center justify-center text-lg">
                 1
               </span>
-              <h3 className="font-bold text-slate-900 dark:text-white">Choose Station & Port</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Pick your preferred power output (from 30kW to 350kW Ultra-Fast) and connector type compatible with your vehicle.
+              <h3 className="font-bold text-white">Choose Station & Port</h3>
+              <p className="text-xs text-zinc-400">
+                Pick your preferred power output (50kW to 150kW+ Ultra-Fast) and connector type compatible with your vehicle.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-emerald-50/50 dark:bg-slate-800/50 border border-emerald-100 dark:border-slate-800 space-y-3">
-              <span className="w-10 h-10 rounded-xl bg-emerald-600 text-white font-mono font-bold flex items-center justify-center text-lg">
+            <div className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-3">
+              <span className="w-10 h-10 rounded-xl bg-rose-600 text-white font-mono font-bold flex items-center justify-center text-lg">
                 2
               </span>
-              <h3 className="font-bold text-slate-900 dark:text-white">Get Guaranteed 15m PIN</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <h3 className="font-bold text-white">Get Guaranteed 15m PIN</h3>
+              <p className="text-xs text-zinc-400">
                 The bay is locked exclusively for you. Your 4-digit PIN prevents unauthorized plug-ins while you drive to the hub.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-sky-50/50 dark:bg-slate-800/50 border border-sky-100 dark:border-slate-800 space-y-3">
-              <span className="w-10 h-10 rounded-xl bg-sky-600 text-white font-mono font-bold flex items-center justify-center text-lg">
+            <div className="p-5 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-3">
+              <span className="w-10 h-10 rounded-xl bg-red-700 text-white font-mono font-bold flex items-center justify-center text-lg">
                 3
               </span>
-              <h3 className="font-bold text-slate-900 dark:text-white">Plug & Settle</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <h3 className="font-bold text-white">Plug & Settle</h3>
+              <p className="text-xs text-zinc-400">
                 Punch in your PIN at the charger screen. Session starts immediately with live telemetry, and you receive an itemized GST invoice upon completion.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Operator Telemetry Banner */}
-        <OperatorTelemetry />
+        {/* Host a Charger / Venue Partner Gateway */}
+        <div className="relative rounded-3xl bg-gradient-to-r from-zinc-950 via-zinc-900 to-[#1e0808] p-8 sm:p-12 border border-red-500/30 overflow-hidden shadow-2xl">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-8 space-y-3">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/80 border border-red-800/80 text-red-400 text-xs font-mono font-bold uppercase tracking-wider">
+                <Building className="w-3.5 h-3.5" />
+                <span>HOTELS, RESORTS, MALLS & LANDOWNERS</span>
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-white font-heading">
+                Monetize Your Parking Space with Zeon Charging
+              </h3>
+              <p className="text-xs sm:text-sm text-zinc-300 max-w-xl leading-relaxed">
+                Join our location partner ecosystem alongside Radisson Blu, CGH Earth, and Nexus Malls. Attract high-spending EV drivers, enhance guest dwell time, and earn monthly recurring revenue.
+              </p>
+            </div>
+            <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-end">
+              <Link
+                to="/vendor"
+                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-xs tracking-wider uppercase text-center shadow-lg shadow-red-600/30 transition-all hover:scale-105 active:scale-95"
+              >
+                Calculate Partner Earnings
+              </Link>
+              <Link
+                to="/vendor/login"
+                className="px-6 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 font-bold text-xs tracking-wider uppercase text-center transition-all"
+              >
+                CPO Partner Portal
+              </Link>
+            </div>
+          </div>
+        </div>
       </main>
 
       {/* 1. Powerful Features at Your Fingertips (Mockups Slider) */}
       <FeatureShowcase />
 
-      {/* 2. What Gujarat EV Drivers Say (Real Live Testimonials from Feedback Form) */}
+      {/* 2. What Our Drivers Say (Real Live Testimonials from MongoDB) */}
       <Testimonials />
 
       {/* 3. Frequently Asked Questions Accordion */}
       <FaqSection />
 
-      {/* 4. Complete Statewide Supergrid Footer */}
+      {/* 4. Complete Zeon Charging Footer */}
       <Footer />
 
       {/* Reservation Modal */}

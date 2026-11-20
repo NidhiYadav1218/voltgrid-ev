@@ -1,65 +1,124 @@
-import React from 'react';
-import { Leaf, IndianRupee, Zap, BatteryCharging } from 'lucide-react';
-import { formatRupees, formatNumber } from '../lib/format.js';
+import React, { useState } from 'react';
+import { Leaf, IndianRupee, Zap, Gauge, ArrowRight } from 'lucide-react';
+import { formatRupees } from '../lib/format.js';
 
-export default function SavingsCalculator({ user, liveKwh = 0 }) {
-  const totalKwh = (user?.totalKwhCharged || 0) + liveKwh;
-  const moneySaved = user?.totalMoneySaved !== undefined ? user.totalMoneySaved : Math.round(totalKwh * 18);
-  const co2Saved = user?.totalCo2Saved !== undefined ? user.totalCo2Saved : Math.round(totalKwh * 1.8);
-  const sessions = user?.sessionsCount || 0;
+export default function SavingsCalculator({ user, vehicle, liveKwh = 0 }) {
+  const [kmPerMonth, setKmPerMonth] = useState(1500);
+
+  // Vehicle stats
+  const carName = vehicle?.name || vehicle?.model || user?.car || 'Electric Vehicle';
+  const batteryKwh = vehicle?.batteryKwh || vehicle?.batteryCapacity || 40.5;
+  const rangeKm = vehicle?.rangeKm || 325;
+
+  // Calculation: EV vs Petrol
+  // EV cost: ~15 kWh / 100km at ₹22/kWh = ₹3.3 / km
+  // Petrol cost: ~15 km/l at ₹98/l = ₹6.5 / km
+  // Savings: ~₹3.2 / km
+  const evCostPerKm = 3.3;
+  const petrolCostPerKm = 6.8;
+
+  const monthlyPetrolCost = Math.round(kmPerMonth * petrolCostPerKm);
+  const monthlyEvCost = Math.round(kmPerMonth * evCostPerKm);
+  const monthlySavings = monthlyPetrolCost - monthlyEvCost;
+  const yearlySavings = monthlySavings * 12;
+  const co2PreventedKg = Math.round(kmPerMonth * 0.14 * 12);
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 my-6">
-      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div className="flex items-center gap-2 mb-1.5 text-emerald-600 dark:text-emerald-400">
-          <IndianRupee className="w-4 h-4" />
-          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
-            Money Saved
-          </span>
+    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 text-white space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
+        <div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/80 border border-red-800/60 text-red-400 text-xs font-mono font-bold uppercase tracking-wider mb-2">
+            <Zap className="w-3.5 h-3.5 text-red-500" />
+            <span>FUEL VS EV SAVINGS CALCULATOR</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-heading">
+            How Much You Save Charging with <span className="text-red-500">Zeon</span>
+          </h2>
+          <p className="text-xs sm:text-sm text-zinc-400 mt-1">
+            Calculate your monthly & annual fuel cost savings driving an EV vs traditional ICE petrol.
+          </p>
         </div>
-        <div className="text-xl font-bold font-heading text-slate-900 dark:text-white">
-          {formatRupees(moneySaved)}
+
+        <div className="bg-black/60 border border-zinc-800 px-4 py-2.5 rounded-2xl flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-red-600/20 text-red-400 flex items-center justify-center font-bold text-xs">
+            EV
+          </div>
+          <div>
+            <span className="text-[10px] text-zinc-400 block font-mono">SELECTED MODEL</span>
+            <span className="text-xs font-bold text-white">{carName}</span>
+          </div>
         </div>
-        <span className="text-[10px] text-slate-400">vs Petrol fuel costs</span>
       </div>
 
-      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div className="flex items-center gap-2 mb-1.5 text-teal-600 dark:text-teal-400">
-          <Leaf className="w-4 h-4" />
-          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
-            CO2 Prevented
+      {/* Slider controls */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between text-xs font-mono">
+          <span className="text-zinc-400">Monthly Driving Distance:</span>
+          <span className="font-bold text-white text-base">
+            {kmPerMonth.toLocaleString()} km / month
           </span>
         </div>
-        <div className="text-xl font-bold font-heading text-slate-900 dark:text-white">
-          {formatNumber(co2Saved)} kg
+        <input
+          type="range"
+          min="500"
+          max="5000"
+          step="100"
+          value={kmPerMonth}
+          onChange={(e) => setKmPerMonth(Number(e.target.value))}
+          className="w-full accent-red-600 h-2 bg-zinc-800 rounded-lg cursor-pointer"
+        />
+        <div className="flex justify-between text-[10px] text-zinc-500 font-mono">
+          <span>500 km</span>
+          <span>1,500 km (Avg)</span>
+          <span>3,000 km</span>
+          <span>5,000 km</span>
         </div>
-        <span className="text-[10px] text-slate-400">Direct tailpipe emission</span>
       </div>
 
-      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div className="flex items-center gap-2 mb-1.5 text-cyan-600 dark:text-cyan-400">
-          <Zap className="w-4 h-4" />
-          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
-            Clean Energy
-          </span>
+      {/* Metrics breakdown grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+        {/* Metric 1 */}
+        <div className="p-5 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-1">
+          <div className="flex items-center gap-1.5 text-red-400 text-xs font-mono">
+            <IndianRupee className="w-3.5 h-3.5" />
+            <span>Monthly Fuel Savings</span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-white font-mono">
+            {formatRupees(monthlySavings)}
+          </div>
+          <p className="text-[10px] text-zinc-500">
+            vs ₹{monthlyPetrolCost.toLocaleString()} petrol fuel expense
+          </p>
         </div>
-        <div className="text-xl font-bold font-heading text-slate-900 dark:text-white">
-          {totalKwh.toFixed(1)} kWh
-        </div>
-        <span className="text-[10px] text-slate-400">Delivered across grid</span>
-      </div>
 
-      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-        <div className="flex items-center gap-2 mb-1.5 text-indigo-600 dark:text-indigo-400">
-          <BatteryCharging className="w-4 h-4" />
-          <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
-            Total Sessions
-          </span>
+        {/* Metric 2 */}
+        <div className="p-5 rounded-2xl bg-zinc-950/80 border border-red-500/30 space-y-1 shadow-lg shadow-red-950/30 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-red-600/10 rounded-full blur-xl pointer-events-none"></div>
+          <div className="flex items-center gap-1.5 text-red-400 text-xs font-mono">
+            <Zap className="w-3.5 h-3.5" />
+            <span>Annual Net Savings</span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-red-500 font-mono">
+            {formatRupees(yearlySavings)}
+          </div>
+          <p className="text-[10px] text-zinc-400 font-medium">
+            12 months saved in your wallet
+          </p>
         </div>
-        <div className="text-xl font-bold font-heading text-slate-900 dark:text-white">
-          {sessions}
+
+        {/* Metric 3 */}
+        <div className="p-5 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-1">
+          <div className="flex items-center gap-1.5 text-emerald-400 text-xs font-mono">
+            <Leaf className="w-3.5 h-3.5" />
+            <span>CO₂ Prevented</span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono">
+            {co2PreventedKg.toLocaleString()} kg
+          </div>
+          <p className="text-[10px] text-zinc-500">
+            Clean tailpipe highway emission
+          </p>
         </div>
-        <span className="text-[10px] text-slate-400">Successful charges</span>
       </div>
     </div>
   );

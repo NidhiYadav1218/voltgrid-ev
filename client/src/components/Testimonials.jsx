@@ -30,105 +30,102 @@ export default function Testimonials() {
   };
 
   return (
-    <section className="py-16 bg-slate-950/60 border-t border-b border-slate-900 relative overflow-hidden">
+    <section className="py-16 bg-black border-t border-b border-zinc-900 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold uppercase tracking-wider mb-2.5">
-              <span>★ 4.9/5 RATED CORRIDOR</span>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-950/80 border border-red-800/60 text-red-400 text-xs font-mono font-bold uppercase tracking-wider mb-2.5">
+              <span>★ 4.9/5 VERIFIED DRIVER SATISFACTION</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight font-heading">
-              What Gujarat EV Drivers{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-heading">
+              What Our Drivers{' '}
+              <span className="text-red-500">
                 Say
               </span>
             </h2>
-            <p className="text-sm text-slate-400 mt-1 max-w-xl">
-              Real stories. Real journeys. Verified charging experiences on Gujarat expressways.
+            <p className="text-sm text-zinc-400 mt-1 max-w-xl">
+              Real stories. Real journeys. Real Zeon Charging experiences across India's highways.
             </p>
           </div>
 
           <button
             onClick={() => setIsFeedbackOpen(true)}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-all cursor-pointer w-fit"
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-red-600/30 transition-all cursor-pointer w-fit hover:scale-105 active:scale-95"
           >
             <MessageSquarePlus className="w-4 h-4" />
             <span>Share Your Experience</span>
           </button>
         </div>
 
-        {/* Reviews Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {reviews.length > 0 ? (
-            reviews.map((rev) => (
+        {/* Reviews Horizontal Scrollable Grid */}
+        {loading ? (
+          <div className="py-12 text-center text-zinc-500">Loading verified driver reviews...</div>
+        ) : reviews.length === 0 ? (
+          <div className="py-12 text-center text-zinc-500 bg-zinc-900/50 rounded-2xl border border-zinc-800">
+            No driver reviews yet. Be the first to share your charging experience!
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reviews.slice(0, 6).map((rev) => (
               <div
                 key={rev._id || rev.id}
-                className="p-5 rounded-2xl bg-slate-900 border border-slate-800/90 shadow-sm flex flex-col justify-between hover:border-slate-700 transition-all duration-300 group"
+                className="bg-zinc-900/90 rounded-2xl p-6 border border-zinc-800 flex flex-col justify-between space-y-4 hover:border-red-500/50 hover:shadow-xl hover:shadow-red-950/20 transition-all duration-300"
               >
                 <div>
-                  {/* Driver Header */}
-                  <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 p-0.5 shadow-md">
-                        <div className="w-full h-full bg-slate-950 rounded-full flex items-center justify-center font-bold text-white text-xs">
-                          {rev.userName?.charAt(0) || 'D'}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <h4 className="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">
-                            {rev.userName}
-                          </h4>
-                          {rev.verifiedDriver && (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" title="Verified Driver" />
-                          )}
-                        </div>
-                        <p className="text-[11px] text-slate-500 font-mono">
-                          {rev.userCity || 'Ahmedabad'} • {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : 'Recent'}
-                        </p>
-                      </div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-1 text-red-500">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < rev.rating ? 'fill-red-500 text-red-500' : 'text-zinc-700'
+                          }`}
+                        />
+                      ))}
                     </div>
-
-                    {/* Vehicle pill */}
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-950 text-slate-300 border border-slate-800 shrink-0">
-                      🚗 {rev.vehicleModel?.split(' ')[0] || 'EV'}
+                    <span className="text-[10px] font-mono text-zinc-500">
+                      {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : 'Verified Driver'}
                     </span>
                   </div>
 
-                  {/* Comment */}
-                  <p className="text-xs text-slate-300 leading-relaxed italic line-clamp-4">
+                  <p className="text-sm text-zinc-300 leading-relaxed italic">
                     "{rev.comment}"
                   </p>
                 </div>
 
-                {/* Rating Stars & Station */}
-                <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                  <div className="flex gap-0.5">
-                    {[...Array(rev.rating || 5)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                    ))}
+                <div className="pt-3 border-t border-zinc-800 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-red-950/80 border border-red-800/80 flex items-center justify-center font-bold text-red-400 text-xs">
+                      {rev.authorName ? rev.authorName[0].toUpperCase() : 'E'}
+                    </div>
+                    <div>
+                      <p className="font-bold text-white text-xs">
+                        {rev.authorName || 'EV Driver'}
+                      </p>
+                      <p className="text-[10px] text-zinc-500 flex items-center gap-1">
+                        <Car className="w-3 h-3 text-red-400" />
+                        <span>{rev.carModel || 'Electric Vehicle'}</span>
+                      </p>
+                    </div>
                   </div>
-                  <span className="text-[10px] text-slate-400 truncate max-w-[170px]" title={rev.stationName}>
-                    📍 {rev.stationName || 'Gujarat Hub'}
+
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700 truncate max-w-[120px]">
+                    {rev.stationName || 'Zeon Hub'}
                   </span>
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="col-span-full py-12 text-center text-slate-500">
-              <p>No verified driver reviews yet. Be the first to review!</p>
-            </div>
-          )}
-        </div>
-      </div>
+            ))}
+          </div>
+        )}
 
-      {/* Driver Feedback Modal */}
-      <FeedbackModal
-        isOpen={isFeedbackOpen}
-        onClose={() => setIsFeedbackOpen(false)}
-        onReviewSubmitted={handleReviewSubmitted}
-      />
+        {/* Modal for adding feedback */}
+        <FeedbackModal
+          isOpen={isFeedbackOpen}
+          onClose={() => setIsFeedbackOpen(false)}
+          onSuccess={handleReviewSubmitted}
+        />
+      </div>
     </section>
   );
 }

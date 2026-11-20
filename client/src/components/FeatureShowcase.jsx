@@ -440,27 +440,27 @@ export default function FeatureShowcase() {
   ];
 
   return (
-    <section className="py-12 sm:py-16 bg-slate-950 relative overflow-hidden">
+    <section className="py-12 sm:py-16 bg-black relative overflow-hidden border-b border-zinc-900">
       {/* Background glow effects */}
-      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 bg-rose-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold uppercase tracking-wider mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/80 border border-red-800/60 text-red-400 text-xs font-mono font-bold uppercase tracking-wider mb-3">
               <span>⚡</span>
-              <span>Next-Gen EV Experience</span>
+              <span>ZEON FAST CHARGING ECOSYSTEM</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight font-heading">
               Powerful Features at{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
+              <span className="text-red-500">
                 Your Fingertips
               </span>
             </h2>
-            <p className="text-sm sm:text-base text-slate-400 mt-2 max-w-xl">
-              Advanced technology engineered for effortless EV road trips across Gujarat's fast-charging corridors.
+            <p className="text-sm sm:text-base text-zinc-400 mt-2 max-w-xl">
+              Advanced technology engineered for effortless EV road trips across India's premier fast-charging corridors.
             </p>
           </div>
 
@@ -469,14 +469,14 @@ export default function FeatureShowcase() {
             <button
               onClick={() => scroll('left')}
               title="Scroll Left"
-              className="w-10 h-10 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md"
+              className="w-10 h-10 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={() => scroll('right')}
               title="Scroll Right"
-              className="w-10 h-10 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md"
+              className="w-10 h-10 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-md"
             >
               <ChevronRight className="w-5 h-5" />
             </button>

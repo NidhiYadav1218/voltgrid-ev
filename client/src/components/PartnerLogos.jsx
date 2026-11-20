@@ -1,93 +1,86 @@
 import React from 'react';
-import { ShieldCheck, Building2, Zap, Store } from 'lucide-react';
 
 export default function PartnerLogos() {
-  const partners = [
-    {
-      name: 'Tata Power EZ Charge',
-      role: 'Unified CPO Partner',
-      icon: '⚡',
-      color: 'emerald'
-    },
-    {
-      name: 'Jio-bp pulse',
-      role: 'Expressway Fuel Plazas',
-      icon: '⛽',
-      color: 'blue'
-    },
-    {
-      name: 'Zeon Charging',
-      role: 'Highway Fast Network',
-      icon: '🔋',
-      color: 'indigo'
-    },
-    {
-      name: 'Statiq EV Hubs',
-      role: 'Smart Superhubs',
-      icon: '🚀',
-      color: 'amber'
-    },
-    {
-      name: 'Shell Recharge',
-      role: 'Corridor Fast Plazas',
-      icon: '🐚',
-      color: 'red'
-    },
-    {
-      name: 'Radisson Blu & Aerohub',
-      role: 'Hospitality Venue Hosts',
-      icon: '🏨',
-      color: 'purple'
-    },
-    {
-      name: 'Gujarat GSRDC (NE1)',
-      role: 'Expressway Authority',
-      icon: '🛣️',
-      color: 'teal'
-    },
-    {
-      name: 'Honest Highway Plazas',
-      role: 'Corridor Rest Stops',
-      icon: '🍽️',
-      color: 'orange'
-    }
-  ];
-
   return (
-    <div className="py-8 border-y border-slate-200 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-950/40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-        <div>
-          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 block mb-1">
-            OPEN MULTI-CPO ECOSYSTEM
-          </span>
-          <h3 className="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">
-            Our Network & Location Partners
-          </h3>
-          <p className="text-xs text-slate-500 max-w-lg mx-auto mt-0.5">
-            Interconnected across leading charging point operators, highway authorities, and premier hospitality venues.
-          </p>
-        </div>
+    <section className="py-16 bg-black text-white w-full overflow-hidden border-y border-zinc-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {/* Section Heading */}
+        <h2 className="text-2xl sm:text-3xl font-normal font-sans tracking-wide text-white mb-12">
+          Our Location Partners
+        </h2>
 
-        {/* Partners Marquee / Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 pt-2">
-          {partners.map((p, idx) => (
-            <div
-              key={idx}
-              className="p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500/40 dark:hover:border-emerald-500/30 transition-all duration-300 flex flex-col items-center justify-center text-center group"
-            >
-              <span className="text-2xl mb-1.5 group-hover:scale-110 transition-transform">
-                {p.icon}
-              </span>
-              <p className="text-[11px] font-bold text-slate-800 dark:text-slate-200 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors leading-tight">
-                {p.name}
-              </p>
-              <p className="text-[9px] font-mono text-slate-400 mt-0.5 truncate w-full">
-                {p.role}
-              </p>
+        {/* Partners Logos Container */}
+        <div className="flex flex-wrap items-center justify-center gap-10 sm:gap-14 lg:gap-20 opacity-90 hover:opacity-100 transition-opacity">
+          {/* AMPA SKYONE */}
+          <div className="flex items-center gap-2 group cursor-pointer">
+            <div className="w-10 h-10 rounded-full border border-pink-500/80 flex items-center justify-center relative">
+              <div className="w-4 h-4 rounded-full border border-pink-400"></div>
             </div>
-          ))}
+            <div className="text-left font-sans">
+              <span className="block text-[10px] tracking-widest text-zinc-400 uppercase font-semibold">AMPA</span>
+              <span className="block text-sm sm:text-base font-extrabold tracking-wider text-white">SKYONE</span>
+            </div>
+          </div>
+
+          {/* AEROHUB */}
+          <div className="flex items-center group cursor-pointer">
+            <span className="text-lg sm:text-2xl font-black tracking-widest text-[#f97316] font-heading">
+              AEROHUB
+            </span>
+          </div>
+
+          {/* CGH Earth */}
+          <div className="flex items-center gap-2 group cursor-pointer text-left">
+            <div className="w-7 h-7 flex items-center justify-center text-zinc-300">
+              <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current text-zinc-300" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z"/>
+              </svg>
+            </div>
+            <div>
+              <span className="block text-base sm:text-lg font-bold lowercase tracking-tight text-white font-serif">
+                cgh<span className="font-light">earth</span>
+              </span>
+              <span className="block text-[8px] uppercase tracking-widest text-zinc-400">
+                experience hotels
+              </span>
+            </div>
+          </div>
+
+          {/* Nexus */}
+          <div className="flex items-center gap-1.5 group cursor-pointer">
+            {/* Nexus colored star */}
+            <span className="text-lg sm:text-xl text-amber-500 font-black">✱</span>
+            <span className="text-xl sm:text-2xl font-bold tracking-tight text-white lowercase font-sans">
+              nexus
+            </span>
+          </div>
+
+          {/* Radisson Blu */}
+          <div className="flex flex-col items-center group cursor-pointer text-left">
+            <span className="text-xl sm:text-2xl font-bold italic tracking-wide text-white font-serif">
+              Radisson
+            </span>
+            <span className="text-[10px] font-sans font-bold tracking-widest text-sky-400 uppercase -mt-1 bg-blue-950/80 px-1 rounded">
+              BLU
+            </span>
+          </div>
+
+          {/* Highway Food Plazas */}
+          <div className="flex items-center gap-2 group cursor-pointer text-left">
+            <div className="w-8 h-8 rounded-lg bg-red-950/60 border border-red-800/50 flex items-center justify-center text-red-400 font-bold text-xs">
+              NH
+            </div>
+            <div>
+              <span className="block text-xs font-bold text-white tracking-wide">
+                Highway Plazas
+              </span>
+              <span className="block text-[9px] text-zinc-400">
+                Food Courts & Rest Stops
+              </span>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
