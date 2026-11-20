@@ -39,17 +39,16 @@ export default function MobileApp() {
                 </div>
               </Link>
 
-              <a
-                href="/downloads/voltgrid.apk"
-                download="voltgrid.apk"
+              <Link
+                to="/app"
                 className="px-6 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 border-2 border-red-600/80 text-white font-bold text-xs flex items-center gap-3 transition-all hover:scale-105 shadow-lg group"
               >
-                <div className="w-5 h-5 flex items-center justify-center text-lg font-bold group-hover:animate-bounce">🤖</div>
+                <div className="w-5 h-5 flex items-center justify-center text-lg font-bold text-red-500">📲</div>
                 <div className="text-left">
-                  <span className="block text-[9px] text-zinc-400 uppercase font-mono leading-none">Android Package</span>
-                  <span className="block text-sm font-extrabold leading-tight">Download APK (Direct)</span>
+                  <span className="block text-[9px] text-zinc-400 uppercase font-mono leading-none">Instant Mobile Install</span>
+                  <span className="block text-sm font-extrabold leading-tight">Install App on Phone</span>
                 </div>
-              </a>
+              </Link>
 
               <Link
                 to="/locations"

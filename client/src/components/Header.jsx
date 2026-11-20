@@ -106,7 +106,7 @@ export default function Header() {
                       to="/app"
                       className="flex items-center justify-between text-sm font-bold text-[#E50914] hover:translate-x-1 transition-all"
                     >
-                      <span>VoltGrid App (Web & APK)</span>
+                      <span>VoltGrid App (Mobile & Web)</span>
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-100 text-red-600 font-bold">
                         ⚡ LIVE
                       </span>

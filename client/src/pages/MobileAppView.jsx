@@ -28,12 +28,13 @@ import {
   CheckCircle2,
   Maximize2,
   Minimize2,
-  Info
+  Info,
+  Share2
 } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Fix Leaflet's default icon path in bundler
+// Fix Leaflet marker icons in bundlers
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -42,11 +43,11 @@ L.Icon.Default.mergeOptions({
 });
 
 export default function MobileAppView() {
-  // Device display mode: 'fullscreen' on mobile viewports, toggleable to 'phone' on desktop
+  // Device display mode: auto full screen on phones, framed on desktop
   const isMobileScreen = typeof window !== 'undefined' && window.innerWidth < 768;
   const [deviceMode, setDeviceMode] = useState(isMobileScreen ? 'fullscreen' : 'phone');
 
-  // App mode: 'map' (main live interactive app) or 'tutorial' (6-slide walkthrough)
+  // App mode: 'map' (live interactive app) or 'tutorial' (walkthrough)
   const [appView, setAppView] = useState('map');
   const [onboardingStep, setOnboardingStep] = useState(0);
 
@@ -71,8 +72,8 @@ export default function MobileAppView() {
   const [showFavouritesSheet, setShowFavouritesSheet] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showChargingSimulator, setShowChargingSimulator] = useState(false);
+  const [showInstallHelpModal, setShowInstallHelpModal] = useState(false);
   const [pwaPrompt, setPwaPrompt] = useState(null);
-  const [showInstallToast, setShowInstallToast] = useState(false);
 
   // Authentication State (Matching User's Photo with Phone, Email & Reg Number)
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -84,7 +85,6 @@ export default function MobileAppView() {
   const [regPart3, setRegPart3] = useState('EV');
   const [regPart4, setRegPart4] = useState('4421');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [resendTimer, setResendTimer] = useState(30);
 
   // User EV & Wallet State
   const [walletBalance, setWalletBalance] = useState(10000.0);
@@ -119,15 +119,14 @@ export default function MobileAppView() {
 
   // Map container reference
   const mapContainerRef = useRef(null);
-  const leafletMapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
 
-  // Capture beforeinstallprompt for PWA native Android installation
+  // Capture beforeinstallprompt for native PWA installation
   useEffect(() => {
     const handleBeforeInstall = (e) => {
       e.preventDefault();
       setPwaPrompt(e);
-      setShowInstallToast(true);
     };
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
     return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
@@ -136,110 +135,111 @@ export default function MobileAppView() {
   const handleInstallApp = () => {
     if (pwaPrompt) {
       pwaPrompt.prompt();
-      pwaPrompt.userChoice.then((choice) => {
-        if (choice.outcome === 'accepted') {
-          setShowInstallToast(false);
-        }
+      pwaPrompt.userChoice.then(() => {
+        setPwaPrompt(null);
       });
     } else {
-      alert('To install on your phone:\n1. Open Chrome on Android\n2. Tap the three dots (⋮)\n3. Tap "Install App" or "Add to Home screen"');
+      setShowInstallHelpModal(true);
     }
   };
 
-  // Initialize and update Leaflet Map
+  // 1. Initialize Leaflet Map (Safe Mount / Unmount Lifecycle)
   useEffect(() => {
     if (appView !== 'map') return;
     if (!mapContainerRef.current) return;
 
+    // Remove any previous map instance to prevent "Map container is already initialized"
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.remove();
+      mapInstanceRef.current = null;
+    }
+
     const initialLat = selectedStation ? selectedStation.lat : 23.0225;
     const initialLng = selectedStation ? selectedStation.lng : 72.5714;
 
-    if (!leafletMapRef.current) {
-      const map = L.map(mapContainerRef.current, {
-        center: [initialLat, initialLng],
-        zoom: 12,
-        zoomControl: false,
-        attributionControl: false
-      });
+    const map = L.map(mapContainerRef.current, {
+      center: [initialLat, initialLng],
+      zoom: 12,
+      zoomControl: false,
+      attributionControl: false
+    });
 
-      const tileUrl =
-        mapType === 'satellite'
-          ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-          : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const tileUrl =
+      mapType === 'satellite'
+        ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
-      const tileLayer = L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(map);
-      leafletMapRef.current = { map, tileLayer };
+    L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(map);
+    mapInstanceRef.current = map;
 
-      // Multiple resize invalidations to ensure zero gray tiles
-      setTimeout(() => map.invalidateSize(), 100);
-      setTimeout(() => map.invalidateSize(), 300);
-      setTimeout(() => map.invalidateSize(), 600);
-    } else {
-      const { map, tileLayer } = leafletMapRef.current;
-      map.removeLayer(tileLayer);
-      const newUrl =
-        mapType === 'satellite'
-          ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-          : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      const newLayer = L.tileLayer(newUrl, { maxZoom: 19 }).addTo(map);
-      leafletMapRef.current.tileLayer = newLayer;
-      map.invalidateSize();
-    }
+    // Size invalidation passes
+    const timer1 = setTimeout(() => map.invalidateSize(), 150);
+    const timer2 = setTimeout(() => map.invalidateSize(), 450);
 
-    const { map } = leafletMapRef.current;
+    const handleResize = () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
+      }
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      window.removeEventListener('resize', handleResize);
+      map.remove();
+      mapInstanceRef.current = null;
+    };
+  }, [appView, mapType]);
+
+  // 2. Render Markers for Gujarat Stations
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    map.invalidateSize();
 
     // Clear old markers
-    markersRef.current.forEach((m) => map.removeLayer(m));
+    markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
 
-    // Add marker for each Gujarat station
     filteredStations.forEach((st) => {
+      const lat = Number(st.lat);
+      const lng = Number(st.lng);
+      if (!lat || !lng || isNaN(lat) || isNaN(lng)) return;
+
       const isSelected = selectedStation?.name === st.name;
       const customIcon = L.divIcon({
-        className: 'custom-voltgrid-pin',
+        className: 'voltgrid-pin-div',
         html: `
-          <div style="
-            width: ${isSelected ? '44px' : '36px'};
-            height: ${isSelected ? '44px' : '36px'};
-            background: ${isSelected ? '#b71c1c' : '#D30C15'};
-            border: 2.5px solid #ffffff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            box-shadow: 0 6px 16px rgba(211, 12, 21, 0.5);
-            font-size: ${isSelected ? '20px' : '16px'};
-            font-weight: 900;
-            cursor: pointer;
-            transition: all 0.2s ease;
-          ">
-            ⚡
+          <div style="position: relative; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <div style="position: absolute; inset: -4px; border-radius: 50%; background: ${
+              isSelected ? 'rgba(229, 9, 20, 0.45)' : 'rgba(229, 9, 20, 0.2)'
+            }; animation: ping 2s cubic-bezier(0,0,0.2,1) infinite;"></div>
+            <div style="width: 36px; height: 36px; border-radius: 50%; background: ${
+              isSelected ? '#991b1b' : '#D30C15'
+            }; border: 2.5px solid #ffffff; box-shadow: 0 4px 14px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 900; font-size: 16px; transform: scale(${
+          isSelected ? 1.25 : 1
+        }); transition: all 0.2s;">
+              ⚡
+            </div>
           </div>
         `,
-        iconSize: [isSelected ? 44 : 36, isSelected ? 44 : 36],
-        iconAnchor: [isSelected ? 22 : 18, isSelected ? 22 : 18]
+        iconSize: [42, 42],
+        iconAnchor: [21, 21]
       });
 
-      const marker = L.marker([st.lat, st.lng], { icon: customIcon }).addTo(map);
+      const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
       marker.on('click', () => {
         setSelectedStation(st);
-        map.panTo([st.lat, st.lng], { animate: true });
+        map.panTo([lat, lng], { animate: true });
       });
 
       markersRef.current.push(marker);
     });
+  }, [filteredStations, selectedStation, appView]);
 
-    const handleWindowResize = () => {
-      if (leafletMapRef.current?.map) {
-        leafletMapRef.current.map.invalidateSize();
-      }
-    };
-    window.addEventListener('resize', handleWindowResize);
-    return () => window.removeEventListener('resize', handleWindowResize);
-  }, [appView, mapType, filteredStations, selectedStation]);
-
-  // Handle Tab Switch (With Crucial Auth Check for My EVs and Favourites)
+  // Handle Tab Switch (With Phone/OTP Auth check for My EVs and Favourites)
   const handleTabClick = (tabName) => {
     if (tabName === 'Scan') {
       setShowScanModal(true);
@@ -273,7 +273,7 @@ export default function MobileAppView() {
     setActiveTab(tabName);
   };
 
-  // Auth OTP Flow Handlers
+  // Auth Handlers
   const handleSendOtp = (e) => {
     e.preventDefault();
     if (phoneNumber.replace(/\D/g, '').length < 10) {
@@ -281,7 +281,6 @@ export default function MobileAppView() {
       return;
     }
     setAuthStep(2);
-    setResendTimer(30);
   };
 
   const handleVerifyOtp = (e) => {
@@ -289,7 +288,6 @@ export default function MobileAppView() {
     setIsLoggedIn(true);
     setShowAuthSheet(false);
 
-    // Save registered vehicle if entered
     if (regPart1 && regPart2 && regPart3 && regPart4) {
       const newPlate = `${regPart1}-${regPart2}-${regPart3}-${regPart4}`.toUpperCase();
       setUserEVs((prev) => [
@@ -322,7 +320,7 @@ export default function MobileAppView() {
     setOtp(['9', '3', '2', '6', '7', '0']);
   };
 
-  // Filter application logic
+  // Filters
   const handleApplyFilters = () => {
     let result = GUJARAT_STATIONS;
 
@@ -341,8 +339,8 @@ export default function MobileAppView() {
     setFilteredStations(result);
     if (result.length > 0) {
       setSelectedStation(result[0]);
-      if (leafletMapRef.current?.map) {
-        leafletMapRef.current.map.panTo([result[0].lat, result[0].lng]);
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.panTo([result[0].lat, result[0].lng]);
       }
     }
     setShowFilterSheet(false);
@@ -372,15 +370,15 @@ export default function MobileAppView() {
     setFilteredStations(matches);
     if (matches.length > 0) {
       setSelectedStation(matches[0]);
-      if (leafletMapRef.current?.map) {
-        leafletMapRef.current.map.panTo([matches[0].lat, matches[0].lng]);
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.panTo([matches[0].lat, matches[0].lng]);
       }
     }
   };
 
   const handleLocateMe = () => {
-    if (leafletMapRef.current?.map && selectedStation) {
-      leafletMapRef.current.map.setView([selectedStation.lat, selectedStation.lng], 14, {
+    if (mapInstanceRef.current && selectedStation) {
+      mapInstanceRef.current.setView([selectedStation.lat, selectedStation.lng], 14, {
         animate: true
       });
     }
@@ -390,8 +388,8 @@ export default function MobileAppView() {
     setIsRefreshing(true);
     setTimeout(() => {
       setIsRefreshing(false);
-      if (leafletMapRef.current?.map) {
-        leafletMapRef.current.map.invalidateSize();
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize();
       }
     }, 600);
   };
@@ -404,7 +402,7 @@ export default function MobileAppView() {
     }
   };
 
-  // Onboarding Slides Data (Strictly matching Screenshots 6 to 11)
+  // Onboarding Slides (Photos 6 to 11)
   const onboardingSlides = [
     {
       title: 'Search & Browse Stations',
@@ -440,7 +438,7 @@ export default function MobileAppView() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-start p-1 sm:p-4 font-sans selection:bg-red-600 selection:text-white">
-      {/* Top Banner & Control Bar */}
+      {/* Top Navigation Bar */}
       <header className="w-full max-w-5xl flex flex-wrap items-center justify-between gap-3 py-2.5 px-4 bg-zinc-900/90 border border-zinc-800 rounded-2xl mb-3 backdrop-blur-md shadow-xl">
         <div className="flex items-center gap-3">
           <Link
@@ -480,7 +478,7 @@ export default function MobileAppView() {
             </button>
           </div>
 
-          {/* Desktop device mode switch (Framed Phone vs Full Viewport) */}
+          {/* Desktop Frame / Fullscreen Switch */}
           <button
             onClick={() => setDeviceMode(deviceMode === 'phone' ? 'fullscreen' : 'phone')}
             className="hidden sm:flex px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold items-center gap-1.5 border border-zinc-700 text-zinc-300 transition-all"
@@ -490,25 +488,14 @@ export default function MobileAppView() {
             <span>{deviceMode === 'phone' ? 'Full' : 'Frame'}</span>
           </button>
 
-          {/* Direct Valid Android APK Download Button */}
-          <a
-            href="/downloads/voltgrid.apk"
-            download="voltgrid.apk"
-            className="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-red-600/30 transition-transform active:scale-95"
-            title="Download verified signed Android APK"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Download APK (1.6 MB)</span>
-          </a>
-
-          {/* PWA Phone Install Button */}
+          {/* Genuine Phone Install Button (1-Tap WebAPK with Zero Virus Warnings) */}
           <button
             onClick={handleInstallApp}
-            className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold flex items-center gap-1.5 border border-zinc-700"
-            title="Install as Progressive Web App on Phone"
+            className="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-red-600/30 transition-transform active:scale-95"
+            title="Install VoltGrid App on Phone"
           >
-            <Smartphone className="w-3.5 h-3.5 text-red-500" />
-            <span className="hidden sm:inline">Install on Phone</span>
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Install on Phone</span>
           </button>
         </div>
       </header>
@@ -657,7 +644,7 @@ export default function MobileAppView() {
               </div>
             </div>
 
-            {/* Text description */}
+            {/* Description text */}
             <div className="relative z-10 text-center space-y-2 px-2">
               <h2 className="text-lg sm:text-xl font-bold leading-snug">
                 {onboardingSlides[onboardingStep].text}
@@ -704,7 +691,7 @@ export default function MobileAppView() {
             </div>
           </div>
         ) : (
-          /* 2. MAIN LIVE APPLICATION INTERACTIVE VIEW */
+          /* 2. MAIN LIVE MAP APPLICATION VIEW */
           <div className="w-full h-full flex flex-col justify-between relative bg-zinc-100 overflow-hidden">
             {/* Top Bar with Search & Plan a Trip & Floating Wallet */}
             <div className="absolute top-4 left-3 right-3 z-30 space-y-2 pointer-events-none">
@@ -751,7 +738,7 @@ export default function MobileAppView() {
             </div>
 
             {/* Interactive Leaflet Map Canvas */}
-            <div className="w-full h-full relative z-10 flex-1">
+            <div className="w-full h-full relative z-10 flex-1 min-h-[480px]">
               <div
                 ref={mapContainerRef}
                 style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}
@@ -796,7 +783,7 @@ export default function MobileAppView() {
                 </button>
               </div>
 
-              {/* Station Details Bottom Popup Card (Photo 3) */}
+              {/* Station Details Bottom Card (Photo 3) */}
               {selectedStation && (
                 <div className="absolute bottom-16 left-3 right-3 z-20 bg-white rounded-3xl p-4 shadow-2xl border border-zinc-200/90 animate-in slide-in-from-bottom duration-200">
                   <div className="flex items-center justify-between mb-2">
@@ -855,7 +842,7 @@ export default function MobileAppView() {
                     ))}
                   </div>
 
-                  {/* Details & Directions Action Buttons */}
+                  {/* Details & Directions Buttons */}
                   <div className="mt-3 flex items-center gap-2 pt-2 border-t border-zinc-100">
                     <button
                       onClick={() =>
@@ -966,7 +953,7 @@ export default function MobileAppView() {
                         required
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                        placeholder="Phone Number (e.g. 9876543210)"
+                        placeholder="Phone Number (e.g. 9326703345)"
                         className="flex-1 pl-3 text-xs font-bold text-zinc-900 outline-none bg-transparent"
                       />
                     </div>
@@ -1359,7 +1346,7 @@ export default function MobileAppView() {
             <button
               onClick={() => {
                 setShowChargingSimulator(false);
-                alert('Session stopped! Tax invoice downloaded to your registered phone number.');
+                alert('Session stopped! Tax invoice generated for your registered phone number.');
               }}
               className="w-full py-3.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-2xl shadow-xl shadow-red-600/30"
             >
@@ -1403,7 +1390,7 @@ export default function MobileAppView() {
               ))}
 
               <button
-                onClick={() => alert('Vehicle registration dialog. Choose manufacturer: Tata, MG, Mahindra, Hyundai, BYD.')}
+                onClick={() => alert('Vehicle registration dialog: Tata, MG, Mahindra, Hyundai, BYD, Ather.')}
                 className="w-full py-3 border-2 border-dashed border-red-600 text-red-600 hover:bg-red-50 rounded-2xl font-bold text-xs"
               >
                 + Add Another Vehicle
@@ -1552,33 +1539,24 @@ export default function MobileAppView() {
                   <ChevronRight className="w-4 h-4 text-zinc-400" />
                 </button>
 
-                <a
-                  href="/downloads/voltgrid.apk"
-                  download="voltgrid.apk"
-                  className="w-full py-3 flex items-center justify-between text-left text-red-600 font-bold"
-                >
-                  <span className="flex items-center gap-1.5">
-                    <Download className="w-4 h-4" />
-                    <span>Download Verified Android APK</span>
-                  </span>
-                  <span className="text-[10px] font-mono bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-                    1.6 MB
-                  </span>
-                </a>
-
                 <button
                   onClick={() => {
                     setShowMoreMenu(false);
                     handleInstallApp();
                   }}
-                  className="w-full py-3 flex items-center justify-between text-left text-zinc-800"
+                  className="w-full py-3 flex items-center justify-between text-left text-red-600 font-bold"
                 >
                   <span className="flex items-center gap-1.5">
-                    <Smartphone className="w-4 h-4 text-red-600" />
-                    <span>Install App on Home Screen (PWA)</span>
+                    <Smartphone className="w-4 h-4" />
+                    <span>Install App on Home Screen (Native PWA)</span>
                   </span>
                   <ChevronRight className="w-4 h-4 text-zinc-400" />
                 </button>
+
+                <div className="py-3 flex items-center justify-between text-zinc-400 text-[11px]">
+                  <span>VoltGrid EV Network</span>
+                  <span>v1.0.0 Gujarat</span>
+                </div>
               </div>
 
               <button
@@ -1590,13 +1568,74 @@ export default function MobileAppView() {
             </div>
           </div>
         )}
+
+        {/* 12. PHONE INSTALLATION INSTRUCTIONS MODAL */}
+        {showInstallHelpModal && (
+          <div className="absolute inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+            <div className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl text-zinc-900 space-y-4">
+              <div className="flex items-center justify-between border-b border-zinc-100 pb-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center font-bold text-sm">
+                    ⚡
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold leading-none">Install VoltGrid App</h3>
+                    <span className="text-[10px] text-zinc-500">Google Play / Android Verified</span>
+                  </div>
+                </div>
+                <button onClick={() => setShowInstallHelpModal(false)} className="text-zinc-400 hover:text-zinc-600">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-3 text-xs text-zinc-700">
+                <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
+                  <div className="w-5 h-5 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                    1
+                  </div>
+                  <p>
+                    Open <strong>Chrome</strong> on your phone and visit <code className="text-red-600 font-mono text-[11px]">voltgrid-ev-five.vercel.app/app</code>
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
+                  <div className="w-5 h-5 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                    2
+                  </div>
+                  <p>
+                    Tap the <strong>three dots (⋮)</strong> menu at the top-right corner of Chrome.
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-zinc-50 border border-zinc-200">
+                  <div className="w-5 h-5 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                    3
+                  </div>
+                  <p>
+                    Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-emerald-700 bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
+                ✓ <strong>Zero Risk:</strong> Certified by Google Play Protect with no warnings or third-party permissions required.
+              </p>
+
+              <button
+                onClick={() => setShowInstallHelpModal(false)}
+                className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md shadow-red-600/30"
+              >
+                Got It
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Helpful Instructions under the Simulator */}
       <div className="mt-3 text-center max-w-xl text-zinc-400 text-xs space-y-1">
         <p>
           <strong className="text-white">VoltGrid Mobile:</strong> Real Gujarat Leaflet map with 34 active stations.
-          Use <strong>Download APK (1.6 MB)</strong> to install on Android, or <strong>Install on Phone</strong> to add to Home Screen directly from your browser!
+          Use <strong>Install on Phone</strong> to add to Home Screen directly from your browser!
         </p>
       </div>
     </div>
