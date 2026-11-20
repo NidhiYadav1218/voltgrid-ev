@@ -193,26 +193,51 @@ export default function Home() {
 
       <Header totalPorts={totalPortsCount} availablePorts={availablePortsCount} />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-12">
-        {/* Zeon Hero Section */}
-        <div className="relative rounded-3xl bg-gradient-to-br from-zinc-950 via-black to-[#1a0505] p-6 sm:p-12 text-white overflow-hidden shadow-2xl border border-red-600/30">
-          {/* Ambient red radial gradient */}
-          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-red-600/15 blur-3xl pointer-events-none"></div>
-          <div className="absolute bottom-0 left-1/4 -mb-24 w-80 h-80 rounded-full bg-rose-600/10 blur-3xl pointer-events-none"></div>
+      {/* Zeon Hero Section (Matches Image 1) */}
+      <section className="relative w-full min-h-[580px] sm:min-h-[640px] flex items-center justify-start overflow-hidden bg-zinc-950 pt-20">
+        {/* Background Station Image & Gradient Overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=2072&auto=format&fit=crop')`,
+            filter: 'brightness(0.38) contrast(1.15)'
+          }}
+        ></div>
 
-          <div className="max-w-2xl space-y-5 relative z-10">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-950/80 text-red-400 font-bold text-xs border border-red-800/80 tracking-wide">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-              <span>INDIA'S MOST RELIABLE EV CHARGING NETWORK</span>
-            </div>
+        {/* Ambient Dark-to-Red Vignette Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tight leading-tight">
-              Powering Your Long Drives with <span className="text-red-500">High-Speed</span> EV Charging.
+        {/* Hero Content (Matches Image 1) */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full">
+          <div className="max-w-2xl space-y-6">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black font-heading tracking-tight text-white uppercase leading-none">
+              India's Most Reliable EV <br />
+              Charging Network
             </h1>
 
-            <p className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-xl">
-              Experience zero wait times with guaranteed 15-minute slot lock, 150kW+ CCS-2 fast chargers, and strategic hubs at premium highway resorts, food courts, and shopping destinations.
+            <p className="text-base sm:text-lg text-zinc-200 font-medium max-w-lg leading-relaxed">
+              Ultra-fast highway DC charging across Gujarat’s high-traffic corridors, luxury resorts, and shopping destinations. Zero wait times with guaranteed 15-minute slot lock.
             </p>
+
+            {/* Find Nearest Station Button (Exact Match to Image 1) */}
+            <div className="pt-2 flex flex-wrap items-center gap-4">
+              <Link
+                to="/locations"
+                className="inline-flex items-center gap-2.5 px-7 py-4 rounded-full bg-[#E50914] hover:bg-red-700 text-white font-bold text-sm tracking-wide shadow-2xl shadow-red-600/40 transition-all hover:scale-105 active:scale-95"
+              >
+                <span>Find Nearest Station</span>
+                <MapPin className="w-4 h-4 fill-current" />
+              </Link>
+
+              <Link
+                to="/how_to_charge"
+                className="inline-flex items-center gap-2 px-6 py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-sm backdrop-blur-md border border-white/20 transition-all"
+              >
+                <span>How to Charge</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
 
             {/* Quick Car Selector */}
             <div className="pt-2 flex flex-wrap items-center gap-2">
@@ -221,62 +246,21 @@ export default function Home() {
                 <button
                   key={v.model}
                   onClick={() => setSelectedVehicle(v)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                     selectedVehicle.model === v.model
                       ? 'bg-red-600 text-white shadow-md shadow-red-600/40 scale-105'
-                      : 'bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800'
+                      : 'bg-black/60 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 backdrop-blur-sm'
                   }`}
                 >
                   {v.model}
                 </button>
               ))}
             </div>
-
-            {/* CTAs */}
-            <div className="pt-4 flex flex-wrap items-center gap-3">
-              <a
-                href="#chargers"
-                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 font-bold text-sm text-white shadow-xl shadow-red-600/30 transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
-              >
-                <Zap className="w-4 h-4 fill-current" />
-                <span>Find a Charger Nearby</span>
-              </a>
-
-              <Link
-                to="/hubs"
-                className="px-5 py-3.5 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 font-bold text-sm border border-zinc-700 transition-all flex items-center gap-2"
-              >
-                <MapPin className="w-4 h-4 text-red-500" />
-                <span>Explore Network Map</span>
-              </Link>
-
-              <Link
-                to="/vendor"
-                className="px-5 py-3.5 rounded-2xl bg-transparent hover:bg-zinc-900 text-zinc-300 hover:text-white font-bold text-sm border border-zinc-800 transition-all flex items-center gap-2"
-              >
-                <Building className="w-4 h-4 text-zinc-400" />
-                <span>Host a Charger</span>
-              </Link>
-            </div>
-
-            {/* Trust Badges */}
-            <div className="pt-4 flex flex-wrap items-center gap-6 text-xs text-zinc-400 font-mono">
-              <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-red-500" />
-                <span>99.4% Uptime</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-red-500" />
-                <span>Up to 350kW DC</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <Clock className="w-4 h-4 text-red-500" />
-                <span>15-Min Bay Lock</span>
-              </div>
-            </div>
           </div>
         </div>
+      </section>
 
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-14">
         {/* Zeon Charging Network Counter Card (Red Banner) */}
         <NetworkStatsCard />
 
