@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Zap, Car, MapPin, Gauge, Store, Shield, LogIn, LogOut, User, Sparkles } from 'lucide-react';
+import { Zap, Car, MapPin, Gauge, Store, Shield, LogIn, LogOut, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function Header({ totalPorts, availablePorts }) {
@@ -73,11 +73,6 @@ export default function Header({ totalPorts, availablePorts }) {
           <NavLink to="/simulator" className={navClass}>
             <Gauge className="w-3.5 h-3.5" />
             <span className="hidden md:inline">Simulator</span>
-          </NavLink>
-
-          <NavLink to="/features" className={navClass}>
-            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="hidden md:inline">Features</span>
           </NavLink>
 
           {/* Show CPO Vendor only when logged out, or if logged in as a vendor */}

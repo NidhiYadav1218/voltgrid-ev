@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import { Link } from 'react-router-dom';
 import {
   MapPin,
   Zap,
@@ -12,8 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldCheck,
-  CheckCircle2,
-  ArrowRight
+  CheckCircle2
 } from 'lucide-react';
 
 export default function FeatureShowcase() {
@@ -466,15 +464,8 @@ export default function FeatureShowcase() {
             </p>
           </div>
 
-          {/* Action & Carousel Navigation Buttons */}
-          <div className="flex items-center gap-2.5">
-            <Link
-              to="/features"
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-bold text-xs shadow-md shadow-emerald-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
-            >
-              <span>Try Live Interactive Tools</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+          {/* Carousel Navigation Buttons */}
+          <div className="flex items-center gap-2">
             <button
               onClick={() => scroll('left')}
               title="Scroll Left"
