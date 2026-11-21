@@ -1,0 +1,28 @@
+{
+  "short_name": "VoltGrid",
+  "name": "VoltGrid EV Charging Network",
+  "description": "Gujarat's Most Reliable EV Charging Network. Find Chargers, Charge & Pay.",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/app",
+  "background_color": "#D30C15",
+  "theme_color": "#D30C15",
+  "display": "standalone",
+  "orientation": "portrait",
+  "categories": ["utilities", "travel", "navigation"]
+}

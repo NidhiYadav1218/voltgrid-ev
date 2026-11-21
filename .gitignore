@@ -11,7 +11,6 @@ node_modules/
 .env.production.local
 
 # Production build outputs
-dist/
 build/
 
 # Logs
