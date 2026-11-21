@@ -43,9 +43,35 @@ L.Icon.Default.mergeOptions({
 });
 
 export default function MobileAppView() {
-  // Device display mode: auto full screen on phones, framed on desktop
-  const isMobileScreen = typeof window !== 'undefined' && window.innerWidth < 768;
-  const [deviceMode, setDeviceMode] = useState(isMobileScreen ? 'fullscreen' : 'phone');
+  // Responsive screen detection: true on real phones & standalone PWA apps
+  const [isMobileScreen, setIsMobileScreen] = useState(
+    typeof window !== 'undefined'
+      ? (window.innerWidth < 768 || window.matchMedia('(display-mode: standalone)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent))
+      : false
+  );
+  const [deviceMode, setDeviceMode] = useState('phone');
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const isMobile =
+        window.innerWidth < 768 ||
+        window.matchMedia('(display-mode: standalone)').matches ||
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      setIsMobileScreen(isMobile);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Invalidate Leaflet map size on viewport change
+  useEffect(() => {
+    if (mapInstanceRef.current) {
+      setTimeout(() => {
+        mapInstanceRef.current?.invalidateSize();
+      }, 200);
+    }
+  }, [isMobileScreen, deviceMode]);
 
   // App mode: 'map' (live interactive app) or 'tutorial' (walkthrough)
   const [appView, setAppView] = useState('map');
@@ -437,79 +463,89 @@ export default function MobileAppView() {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-start p-1 sm:p-4 font-sans selection:bg-red-600 selection:text-white">
-      {/* Top Navigation Bar */}
-      <header className="w-full max-w-5xl flex flex-wrap items-center justify-between gap-3 py-2.5 px-4 bg-zinc-900/90 border border-zinc-800 rounded-2xl mb-3 backdrop-blur-md shadow-xl">
-        <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            className="flex items-center gap-1.5 text-zinc-300 hover:text-white transition-colors font-bold text-xs"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Home</span>
-          </Link>
-          <span className="text-zinc-700">|</span>
+    <div
+      className={
+        isMobileScreen
+          ? 'fixed inset-0 w-full h-[100dvh] z-50 bg-white text-zinc-900 overflow-hidden flex flex-col p-0 m-0 select-none'
+          : 'min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-start p-1 sm:p-4 font-sans selection:bg-red-600 selection:text-white'
+      }
+    >
+      {/* Top Navigation Bar (Shown ONLY on Desktop Screens) */}
+      {!isMobileScreen && (
+        <header className="w-full max-w-5xl flex flex-wrap items-center justify-between gap-3 py-2.5 px-4 bg-zinc-900/90 border border-zinc-800 rounded-2xl mb-3 backdrop-blur-md shadow-xl">
+          <div className="flex items-center gap-3">
+            <Link
+              to="/"
+              className="flex items-center gap-1.5 text-zinc-300 hover:text-white transition-colors font-bold text-xs"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Home</span>
+            </Link>
+            <span className="text-zinc-700">|</span>
+            <div className="flex items-center gap-2">
+              <span className="text-red-500 font-black italic tracking-tighter text-base">⚡ VOLTGRID</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-600/20 text-red-400 font-mono font-bold border border-red-600/30">
+                APP
+              </span>
+            </div>
+          </div>
+
+          {/* View mode toggle (Live Map vs Onboarding Tutorial) */}
           <div className="flex items-center gap-2">
-            <span className="text-red-500 font-black italic tracking-tighter text-base">⚡ VOLTGRID</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-600/20 text-red-400 font-mono font-bold border border-red-600/30">
-              APP
-            </span>
-          </div>
-        </div>
+            <div className="bg-zinc-800 p-1 rounded-xl flex items-center gap-1 border border-zinc-700">
+              <button
+                onClick={() => setAppView('map')}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  appView === 'map' ? 'bg-red-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                🗺️ Live Map
+              </button>
+              <button
+                onClick={() => setAppView('tutorial')}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  appView === 'tutorial' ? 'bg-red-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
+                }`}
+              >
+                📱 Tutorial
+              </button>
+            </div>
 
-        {/* View mode toggle (Live Map vs Onboarding Tutorial) */}
-        <div className="flex items-center gap-2">
-          <div className="bg-zinc-800 p-1 rounded-xl flex items-center gap-1 border border-zinc-700">
+            {/* Desktop Frame / Fullscreen Switch */}
             <button
-              onClick={() => setAppView('map')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                appView === 'map' ? 'bg-red-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
-              }`}
+              onClick={() => setDeviceMode(deviceMode === 'phone' ? 'fullscreen' : 'phone')}
+              className="hidden sm:flex px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold items-center gap-1.5 border border-zinc-700 text-zinc-300 transition-all"
+              title="Toggle between phone mockup frame and full viewport"
             >
-              🗺️ Live Map
+              {deviceMode === 'phone' ? <Maximize2 className="w-3.5 h-3.5" /> : <Minimize2 className="w-3.5 h-3.5" />}
+              <span>{deviceMode === 'phone' ? 'Full' : 'Frame'}</span>
             </button>
+
+            {/* Genuine Phone Install Button */}
             <button
-              onClick={() => setAppView('tutorial')}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                appView === 'tutorial' ? 'bg-red-600 text-white shadow-sm' : 'text-zinc-400 hover:text-white'
-              }`}
+              onClick={handleInstallApp}
+              className="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-red-600/30 transition-transform active:scale-95"
+              title="Install VoltGrid App on Phone"
             >
-              📱 Tutorial
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>Install on Phone</span>
             </button>
           </div>
-
-          {/* Desktop Frame / Fullscreen Switch */}
-          <button
-            onClick={() => setDeviceMode(deviceMode === 'phone' ? 'fullscreen' : 'phone')}
-            className="hidden sm:flex px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold items-center gap-1.5 border border-zinc-700 text-zinc-300 transition-all"
-            title="Toggle between phone mockup frame and full viewport"
-          >
-            {deviceMode === 'phone' ? <Maximize2 className="w-3.5 h-3.5" /> : <Minimize2 className="w-3.5 h-3.5" />}
-            <span>{deviceMode === 'phone' ? 'Full' : 'Frame'}</span>
-          </button>
-
-          {/* Genuine Phone Install Button (1-Tap WebAPK with Zero Virus Warnings) */}
-          <button
-            onClick={handleInstallApp}
-            className="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-red-600/30 transition-transform active:scale-95"
-            title="Install VoltGrid App on Phone"
-          >
-            <Smartphone className="w-3.5 h-3.5" />
-            <span>Install on Phone</span>
-          </button>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* Main App Container */}
       <div
         className={`relative transition-all duration-300 w-full ${
-          deviceMode === 'phone'
+          isMobileScreen
+            ? 'w-full h-[100dvh] flex-1 bg-white text-zinc-900 overflow-hidden flex flex-col p-0 m-0 rounded-none border-0 shadow-none ring-0'
+            : deviceMode === 'phone'
             ? 'max-w-[420px] h-[840px] rounded-[52px] border-[8px] border-zinc-800 shadow-2xl bg-white text-zinc-900 overflow-hidden flex flex-col ring-1 ring-zinc-700/50'
             : 'max-w-5xl h-[88vh] rounded-3xl border border-zinc-800 shadow-2xl bg-white text-zinc-900 overflow-hidden flex flex-col'
         }`}
       >
-        {/* Dynamic Island Notch on Phone Frame */}
-        {deviceMode === 'phone' && (
+        {/* Dynamic Island Notch on Phone Frame (ONLY on Desktop Phone Mockup) */}
+        {!isMobileScreen && deviceMode === 'phone' && (
           <div className="absolute top-2 left-1/2 -translate-x-1/2 z-50 w-28 h-5 bg-black rounded-full flex items-center justify-between px-3">
             <div className="w-2.5 h-2.5 rounded-full bg-zinc-900"></div>
             <div className="w-3 h-3 rounded-full bg-zinc-800 flex items-center justify-center">
@@ -1553,6 +1589,18 @@ export default function MobileAppView() {
                   <ChevronRight className="w-4 h-4 text-zinc-400" />
                 </button>
 
+                <Link
+                  to="/"
+                  onClick={() => setShowMoreMenu(false)}
+                  className="w-full py-3 flex items-center justify-between text-left text-zinc-700 hover:text-red-600 font-semibold"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <span>🌐</span>
+                    <span>Back to VoltGrid Website</span>
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-zinc-400" />
+                </Link>
+
                 <div className="py-3 flex items-center justify-between text-zinc-400 text-[11px]">
                   <span>VoltGrid EV Network</span>
                   <span>v1.0.0 Gujarat</span>
@@ -1632,12 +1680,14 @@ export default function MobileAppView() {
         )}
       </div>
 
-      <div className="mt-3 text-center max-w-xl text-zinc-400 text-xs space-y-1">
-        <p>
-          <strong className="text-white">VoltGrid Mobile:</strong> Real Gujarat Leaflet map with 34 active stations.
-          Use <strong>Install on Phone</strong> to add to Home Screen directly from your browser!
-        </p>
-      </div>
+      {!isMobileScreen && (
+        <div className="mt-3 text-center max-w-xl text-zinc-400 text-xs space-y-1">
+          <p>
+            <strong className="text-white">VoltGrid Mobile:</strong> Real Gujarat Leaflet map with 34 active stations.
+            Use <strong>Install on Phone</strong> to add to Home Screen directly from your browser!
+          </p>
+        </div>
+      )}
     </div>
   );
 }
